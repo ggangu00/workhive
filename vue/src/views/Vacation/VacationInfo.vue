@@ -103,14 +103,7 @@
           <!-- 휴가 신청 목록 -->
           <div class="row mt-3">
             <div class="col" style="height: 300px; width: 800px;">
-              <!-- ag-grid -->
-              <ag-grid-vue
-                :columnDefs="columnDefs"
-                :rowData="rowData"
-                :defaultColDef="defaultColDef"
-                class="ag-theme-alpine"
-                style="width: 100%; height: 100%;"
-              ></ag-grid-vue>
+
             </div>
           </div>
   
@@ -122,100 +115,42 @@
   </template>
   
   <script>
-  import { AgGridVue } from "ag-grid-vue3";
   
   export default {
     components: {
-      AgGridVue,
     },
     data() {
       return {
-        columnDefs: [
-          { headerName: "시작일", field: "vc_start_dt"},
-          { headerName: "종료일", field: "vc_end_dt"},
-          { headerName: "휴가종류", field: "vc_type"},
-          { headerName: "사용일수", field: "use_days"},
-          { headerName: "신청일", field: "create_dt", sortable: true, filter: true },
-          { headerName: "결재자", field: "sign_id"},
-          { 
-            headerName: "결재상태", 
-            field: "sign_state", 
-            cellRenderer: this.statusRenderer,
-            cellStyle: {
-              textAlign: "center",
-            },
-          }
-        ],
-        rowData: [
-          { 
-            vc_start_dt: "2025-02-12",
-            vc_end_dt: "2025-02-13", 
-            vc_type: "공가", 
-            use_days: 0, 
-            create_dt: "2025-02-02", 
-            sign_id: "관리자1", 
-            sign_state: "보완" 
-          },
-          { 
-            vc_start_dt: "2025-01-24", 
-            vc_end_dt: "2025-01-27", 
-            vc_type: "연차", 
-            use_days: 2, 
-            create_dt: "2025-01-22", 
-            sign_id: "관리자1", 
-            sign_state: "대기" 
-          },
-          { 
-            vc_start_dt: "2025-01-20", 
-            vc_end_dt: "2025-01-20", 
-            vc_type: "공가", 
-            use_days: 0, 
-            create_dt: "2025-01-12", 
-            sign_id: "관리자1", 
-            sign_state: "승인" 
-          },
-          { 
-            vc_start_dt: "2025-01-15", 
-            vc_end_dt: "2025-01-16", 
-            vc_type: "연차", 
-            use_days: 2, 
-            create_dt: "2025-01-12", 
-            sign_id: "관리자1", 
-            sign_state: "승인" 
-          },
-        ],
-        defaultColDef: {
-          flex: 1, resizable: true, minWidth: 100
-        }
+        
       };
     },
     methods: {
-      statusRenderer(params) {
-        let status = params.value;
+      // statusRenderer(params) {
+      //   let status = params.value;
   
-        let btnTag;
-        if (status === "보완") {
-          btnTag = `<button class="btn btn-warning btn-fill cell-btn-custom">
-                      ${status}
-                    </button>
-                    <button class="btn btn-danger btn-fill cell-btn-custom">
-                      삭제
-                    </button>`;
-        }
-        else if (status === "대기") {
-          btnTag = `<button class="btn btn-success btn-fill cell-btn-custom">
-                      ${status}
-                    </button>
-                    <button class="btn btn-danger btn-fill cell-btn-custom">
-                      삭제
-                    </button>`;
-        }
-        else if (status === "승인") {
-          btnTag = `<a>${status}</a>`;
-        }
+      //   let btnTag;
+      //   if (status === "보완") {
+      //     btnTag = `<button class="btn btn-warning btn-fill cell-btn-custom">
+      //                 ${status}
+      //               </button>
+      //               <button class="btn btn-danger btn-fill cell-btn-custom">
+      //                 삭제
+      //               </button>`;
+      //   }
+      //   else if (status === "대기") {
+      //     btnTag = `<button class="btn btn-success btn-fill cell-btn-custom">
+      //                 ${status}
+      //               </button>
+      //               <button class="btn btn-danger btn-fill cell-btn-custom">
+      //                 삭제
+      //               </button>`;
+      //   }
+      //   else if (status === "승인") {
+      //     btnTag = `<a>${status}</a>`;
+      //   }
   
-        return btnTag;
-      }
+      //   return btnTag;
+      // }
     }
   };
   
