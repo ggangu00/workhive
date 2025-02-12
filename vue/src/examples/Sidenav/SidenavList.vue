@@ -115,7 +115,7 @@
           url="#"
           :aria-controls="''"
           v-bind:collapse="false"
-          collapseRef="/deptStore/deptJobInfo"
+          collapseRef="/deptstore/list"
           navText="부서 업무 관리"
         >
           <template v-slot:icon>
@@ -128,16 +128,17 @@
             url="#"
             :aria-controls="''"
             v-bind:collapse="false"
-            collapseRef="/vacation"
-            navText="휴가 관리"
+            collapseRef="/commute/cmtlist"
+            navText="출퇴근 관리"
         >
           <template v-slot:icon>
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
           </template>
           <template v-slot:list>
-            <li class="sub-item" @click="movePage('VacationInfo')">휴가 조회</li>
-            <li class="sub-item" @click="movePage('VacationManage')">휴가 등록</li>
-            <li class="sub-item" @click="movePage('VacationInfo')">휴가 등록</li>
+            <li class="sub-item" @click="movePage('CmtList')">출퇴근 기록 조회</li>
+            <li class="sub-item" @click="movePage('CrctManage')">출퇴근 정정 요청 등록</li>
+            <li class="sub-item" @click="movePage('CrctList')">출퇴근 정정 요청 조회</li>
+            <li class="sub-item" @click="movePage('CrctSignManage')">출퇴근 정정 요청 결재</li>
           </template>
         </sidenav-collapse>
       </li>
@@ -146,14 +147,16 @@
             url="#"
             :aria-controls="''"
             v-bind:collapse="false"
-            collapseRef="/vacation"
-            navText="출퇴근 관리"
+            collapseRef="/vacation/vclist"
+            navText="휴가 관리"
         >
           <template v-slot:icon>
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
           </template>
           <template v-slot:list>
-            <li class="sub-item" @click="movePage('CommuteInfo')">출퇴근 조회</li>
+            <li class="sub-item" @click="movePage('VcList')">휴가 조회</li>
+            <li class="sub-item" @click="movePage('VcManage')">휴가 신청 등록</li>
+            <li class="sub-item" @click="movePage('VcSignManage')">휴가 신청 결재</li>
           </template>
         </sidenav-collapse>
       </li>
