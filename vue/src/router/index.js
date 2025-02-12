@@ -13,7 +13,7 @@ import Layout from '../views/Layout.vue';
 
 //skh컴포넌트
 import ApprovalList from "../components/SkhComponents/ApprovalList.vue";
-import ApprovalLine from "../views/Approval/ApprovalLine.vue";
+import ApprovalLine from "../components/SkhComponents/ApprovalLine.vue";
 //skh
 import Test from "../views/Approval/test.vue";
 import Completed from "../views/Approval/Completed.vue";

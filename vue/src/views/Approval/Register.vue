@@ -76,6 +76,8 @@
                     <h4 class="card-title">결재선</h4>
                   </div>
                   <div class='selectbox d-flex'>
+                    <button class="btn btn-primary btn-fill float-right" data-bs-toggle="modal"
+                    data-bs-target="#organizationModal">결재선지정 모달</button>
                     <button class="btn btn-primary btn-fill">결재선지정</button>
                   </div>
                 </div>
@@ -100,12 +102,40 @@
         </div>
       </div>
     </div>
+
+    <!-- 모달 시작 -->
+  <div class="modal fade" id="organizationModal" tabindex="-1" aria-labelledby="organizationModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content">
+        <!-- 모달 헤더 -->
+        <div class="modal-header">
+          <h5 class="modal-title" id="organizationModalLabel">결재선</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <!-- 모달 바디 -->
+        <div class="modal-body">
+          <ApprovalLine/>
+        </div>
+
+        <!-- 모달 푸터 -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary btn-fill" data-bs-dismiss="modal">등록</button>
+          <button type="button" class="btn btn-secondary btn-fill" data-bs-dismiss="modal">닫기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- 모달 끝 -->
   </template>
   <script>
     import '@toast-ui/editor/dist/toastui-editor.css';
     import { Editor } from '@toast-ui/editor';
+    import ApprovalLine from '../../components/SkhComponents/ApprovalLine.vue';
     export default {
       components: {
+        ApprovalLine
       },
       data () {
         return {
@@ -130,6 +160,13 @@
     
   </script>
   <style>
+    .modal-xl {
+      max-width: 80vw !important; /* 🔥 모달 가로 크기 확장 */
+    }
+    .modal-content {
+      max-height: 80vh; /* 🔥 모달 세로 크기 제한 */
+      overflow-y: auto; /* 🔥 내부 스크롤 적용 */
+    }
     .button-collection button{
         margin-right: 10px;
     }
