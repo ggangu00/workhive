@@ -1,160 +1,155 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>월간 일정</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>업무 목록</title>
     <style>
-        .calendar-container {
-            max-width: 800px;
-            margin: 20px auto;
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
             display: flex;
-            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
-
-        .calendar-header {
-            font-weight: bold;
-            background-color: #eeeeee;
-            padding: 10px;
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 800px;
+        }
+        .header {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        select, input, button {
+            padding: 8px;
+            border: 1px solid #ccc;
             border-radius: 5px;
         }
-
-        .calendar-table {
+        button {
+            cursor: pointer;
+        }
+        .btn-gray {
+            background: #ccc;
+            border: none;
+        }
+        .btn-blue {
+            background: #4a90e2;
+            color: white;
+            border: none;
+        }
+        .table-container {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        table {
             width: 100%;
             border-collapse: collapse;
-            text-align: center;
-            position: relative;
         }
-
-        .calendar-table th,
-        .calendar-table td {
+        th, td {
             padding: 10px;
-            width: 14.28%;
-            position: relative;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
         }
-
-        .calendar-table .highlight,
-        .calendar-table .today {
-            position: relative;
+        th {
+            background: #f8f8f8;
         }
-
-        .calendar-table .highlight::before,
-        .calendar-table .today::before {
-            content: '';
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1;
+        .btn-red {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
         }
-
-        .calendar-table .highlight::before {
-            border: 2px solid #007bff;
-            background-color: transparent;
+        .btn-small {
+            padding: 5px 10px;
         }
-
-        .calendar-table .today::before {
-            border: 2px solid red;
-            background-color: transparent;
-        }
-
-        .schedule-container {
-            background-color: white;
-            padding: 15px;
-            border-left: 1px solid #ddd;
-            flex-grow: 1;
-            min-width: 300px;
-        }
-
-        .schedule-header {
-            font-weight: bold;
-            padding-bottom: 10px;
-        }
-
-        .schedule-item {
-            padding: 5px 0;
+        .checkbox {
+            width: 16px;
+            height: 16px;
         }
     </style>
 </head>
-
 <body>
-    <div class="calendar-container">
-        <!-- Calendar Section -->
-        <div class="flex-grow-1 p-3">
-            <div class="calendar-header">월간 일정</div>
-            <table class="calendar-table mt-2">
-                <tr>
-                    <th>일</th>
-                    <th>월</th>
-                    <th>화</th>
-                    <th>수</th>
-                    <th>목</th>
-                    <th>금</th>
-                    <th>토</th>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td>1</td>
-                    <td class="highlight">2</td>
-                    <td>3</td>
-                    <td class="highlight">4</td>
-                    <td>5</td>
-                </tr>
-                <tr>
-                    <td>6</td>
-                    <td>7</td>
-                    <td>8</td>
-                    <td>9</td>
-                    <td class="today">10</td>
-                    <td>11</td>
-                    <td>12</td>
-                </tr>
-                <tr>
-                    <td>13</td>
-                    <td>14</td>
-                    <td>15</td>
-                    <td>16</td>
-                    <td>17</td>
-                    <td>18</td>
-                    <td>19</td>
-                </tr>
-                <tr>
-                    <td>20</td>
-                    <td>21</td>
-                    <td>22</td>
-                    <td>23</td>
-                    <td>24</td>
-                    <td>25</td>
-                    <td>26</td>
-                </tr>
-                <tr>
-                    <td>27</td>
-                    <td>28</td>
-                    <td>29</td>
-                    <td>30</td>
-                    <td>31</td>
-                </tr>
+    <div class="container">
+        <div class="header">
+            <select>
+                <option>내부업무</option>
+            </select>
+            <input type="text" placeholder="업무내용을 입력해주세요">
+            <button class="btn-gray">등록</button>
+            <button class="btn-blue">상세등록</button>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" class="checkbox"></th>
+                        <th>상태</th>
+                        <th>업무분류</th>
+                        <th>업무내용</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td>완료</td>
+                        <td>내부업무</td>
+                        <td>부품 재고 정리</td>
+                        <td>
+                            <button class="btn-small">수정</button>
+                            <button class="btn-red btn-small">삭제</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" class="checkbox" checked></td>
+                        <td>완료</td>
+                        <td>프로젝트</td>
+                        <td>빵틀2 빵송2 MES 시스템 서버 구축</td>
+                        <td>
+                            <button class="btn-small">수정</button>
+                            <button class="btn-red btn-small">삭제</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" class="checkbox" checked></td>
+                        <td>미완료</td>
+                        <td>프로젝트</td>
+                        <td>빵틀2 빵송2 MES 시스템 주요 과업 조율</td>
+                        <td>
+                            <button class="btn-small">수정</button>
+                            <button class="btn-red btn-small">삭제</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" class="checkbox" checked></td>
+                        <td>미완료</td>
+                        <td>외부업무</td>
+                        <td>대구전자진흥원회 기업간담회 참석</td>
+                        <td>
+                            <button class="btn-small">수정</button>
+                            <button class="btn-red btn-small">삭제</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" class="checkbox" checked></td>
+                        <td>미완료</td>
+                        <td>기타</td>
+                        <td>세미나 장소 사전답사</td>
+                        <td>
+                            <button class="btn-small">수정</button>
+                            <button class="btn-red btn-small">삭제</button>
+                        </td>
+                    </tr>
+                </tbody>
             </table>
         </div>
-        <!-- Schedule Section -->
-        <div class="schedule-container p-3">
-            <div class="schedule-header">2025-01-10</div>
-            <div class="schedule-item"><strong>백업</strong><br>(전체) 사내 보안 문서 연간 정기백업</div>
-            <div class="schedule-item"><strong>회의</strong><br>(개발팀) 개발팀 부서회의</div>
-            <div class="schedule-item">...</div>
-            <div class="schedule-item">...</div>
-        </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

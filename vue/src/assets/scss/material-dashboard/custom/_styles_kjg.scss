@@ -21,15 +21,19 @@
 .mlp10 {
     margin-left: 10px;
 }
+
 .mlp20 {
     margin-left: 20px;
 }
+
 .mlp30 {
     margin-left: 30px;
 }
+
 .mlp40 {
     margin-left: 40px;
 }
+
 .mlp50 {
     margin-left: 50px;
 }
@@ -37,15 +41,19 @@
 .mrp10 {
     margin-right: 10px;
 }
+
 .mrp20 {
     margin-right: 20px;
 }
+
 .mrp30 {
     margin-right: 30px;
 }
+
 .mrp40 {
     margin-right: 40px;
 }
+
 .mrp50 {
     margin-right: 50px;
 }
@@ -288,11 +296,13 @@
             width: 40vw;
         }
     }
+
     @media (max-width: 600px) {
         .status-box {
             width: 60vw;
         }
     }
+
     @media (max-width: 400px) {
         .status-box {
             width: 90%;
@@ -319,27 +329,32 @@
 
 
 .home-container {
-    color:$gray-800;
+    color: $gray-800;
     border-radius: 8px;
-    min-height:300px;
+    min-height: 300px;
 }
+
 .home-container-header {
     font-weight: bold;
     padding: 10px;
     border-bottom: 1px solid #b5b5b5;
 }
+
 .board-item {
     display: flex;
     align-items: center;
     padding: 12px;
     border-bottom: 1px solid #ddd;
 }
+
 .board-item:last-child {
     border-bottom: none;
 }
+
 .board-title {
     flex-grow: 1;
 }
+
 .board-meta {
     text-align: right;
     min-width: 150px;
@@ -352,13 +367,16 @@
     border-bottom: 1px solid #ddd;
     position: relative;
 }
+
 .meeting-item:last-child {
     border-bottom: none;
 }
+
 .meeting-category {
     font-size: 14px;
     color: $gray-800;
 }
+
 .meeting-title {
     font-weight: bold;
     font-size: 18px;
@@ -366,6 +384,7 @@
     align-items: center;
     gap: 8px;
 }
+
 .meeting-date {
     color: $gray-800;
     font-size: 14px;
@@ -377,15 +396,16 @@
 }
 
 .calendar-container {
-    color:$gray-800;
+    color: $gray-800;
     border-radius: 8px;
     display: flex;
     flex-wrap: wrap;
 
-    .cal{
+    .cal {
         max-width: 40%;
     }
-    .list{
+
+    .list {
         width: 60%;
     }
 }
@@ -438,3 +458,56 @@
     border: 2px solid $danger;
     background-color: transparent;
 }
+
+
+//업무일지
+.todo-container {
+    padding: 10px;
+    text-align: center;
+    
+    .month {
+        font-size: 20px;
+        font-weight: bold;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .days {
+        display: flex;
+        justify-content: center;
+        gap: 1px;
+    }
+
+    .day {
+        width: 40px;
+        text-align: center;
+        color: black;
+    }
+
+    .red {
+        color: red;
+    }
+
+    .blue {
+        color: blue;
+    }
+
+    .todo-header {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        font-size: 14px;
+        color: gray;
+    }
+
+    button {
+        border: none;
+        background: none;
+        font-size: inherit;
+        cursor: pointer;
+    }
+
+}
+

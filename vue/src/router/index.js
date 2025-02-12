@@ -22,10 +22,11 @@ import Calendar from "../views/schedule/Calendar.vue";
 
 
 // pjh
-import Todo from '../views/Todo/TodoList.vue'
+import Todo from '../views/Todo/TodoManage.vue'
 import ProjectAdd from '../views/Project/ProjectAdd.vue'
 import ProjectList from '../views/Project/ProjectList.vue'
 import ProjectPlan from '../views/Project/ProjectPlan.vue'
+import ProjectMem from '../views/Project/ProjectMem.vue'
 import MeetAdd from '../views/Meet/MeetAdd.vue'
 import MeetList from '../views/Meet/MeetList.vue'
 import LoginLog from '../views/Setting/LoginLog.vue'
@@ -55,7 +56,7 @@ const routes = [
   {
     path: "/",
     name: "/",
-    redirect: "/dashboard",
+    redirect: "/home",
   },
   {
     path: "/dashboard",
@@ -216,31 +217,43 @@ const routes = [
     path: '/project/add',
     name: 'ProjectAdd',
     component: ProjectAdd
-  }, {
+  }, 
+  {
     path: '/project/list',
     name: 'ProjectList',
     component: ProjectList
-  }, {
+  }, 
+  {
     path: '/project/plan',
     name: 'ProjectPlan',
     component: ProjectPlan
-  }, {
+  },
+  {
+    path: '/project/mem',
+    name: 'ProjectMem',
+    component: ProjectMem
+  }, 
+  {
     path: '/meet/add',
     name: 'MeetAdd',
     component: MeetAdd
-  }, {
+  }, 
+  {
     path: '/meet/list',
     name: 'MeetList',
     component: MeetList
-  }, {
-    path: '/setting/LoginLog',
+  }, 
+  {
+    path: '/setting/loginLog',
     name: 'LoginLog',
     component: LoginLog
-  }, {
-    path: '/todo/list',
+  }, 
+  {
+    path: '/todo/manage',
     name: 'Todo',
     component: Todo
-  }, {
+  }, 
+  {
     path: '/home',
     name: 'Home',
     component: Home
