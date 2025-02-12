@@ -1,0 +1,105 @@
+.table{
+  vertical-align: middle;
+  border: 1px solid $gray-300;
+  text-align: center;
+  .radio,
+  .checkbox{
+    position: relative;
+    height: 20px;
+    display: block;
+    width: 20px;
+    padding: 0px 0px;
+    margin: 0px 5px;
+    text-align: center;
+
+    .icons{
+      left: 5px;
+    }
+  }
+  > thead > tr{
+    border-bottom: 1px solid $gray-300;
+  }
+  
+  > thead > tr > th,
+  > tbody > tr > th,
+  > tfoot > tr > th,
+  > thead > tr > td,
+  > tbody > tr > td,
+  > tfoot > tr > td{
+    color: #606266;
+    vertical-align: middle;
+    font-size: 14px;
+  }
+
+  > tbody > tr > td{
+    border: 1px solid $gray-300;
+  }
+
+  > thead > tr > th{   
+    color: #606266;
+    border-bottom-width: 1px;    
+    text-transform: uppercase;
+    font-weight: revert-layer;
+    padding-bottom: 5px;
+    border-top: none !important;
+    border-bottom: none;
+  }
+
+  .td-actions .btn{
+    @include opacity(0.36);
+
+    &.btn-xs{
+      padding-left: 3px;
+      padding-right: 3px;
+    }
+  }
+  .td-actions{
+    min-width: 90px;
+  }
+
+  > tbody > tr{
+    position: relative;
+
+    &:hover{
+      .td-actions .btn{
+        @include opacity(1);
+      }
+    }
+  }
+
+  .btn:focus{
+    box-shadow: none !important;
+  }
+}
+
+.table.table-sm {
+
+  > thead > tr > th,
+  > tbody > tr > th,
+  > tfoot > tr > th,
+  > thead > tr > td,
+  > tbody > tr > td,
+  > tfoot > tr > td{
+    padding: 6px 6px;
+  }
+
+  > thead > tr > th,
+  > thead > th {
+    font-size: $font-size-small;
+    padding-bottom: 3px;
+  }
+
+  > tbody > tr > td {
+    font-size: $font-size-small;
+  }
+}
+
+.table-upgrade{
+  .table{
+    tr{
+      td{
+        width: 100%
+      }
+    }
+  }
+}

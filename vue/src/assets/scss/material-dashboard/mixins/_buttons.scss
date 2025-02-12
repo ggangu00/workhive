@@ -1,0 +1,81 @@
+@mixin colored-shadows($value){
+  // new box shadow optimized for Tablets and Phones
+  box-shadow: 0 3px 3px 0 rgba($value, .15),
+              0 3px 1px -2px rgba($value, .2),
+              0 1px 5px 0 rgba($value, .15);
+}
+
+@mixin colored-shadows-hover($value){
+    box-shadow: 0 14px 26px -12px rgba($value, .4),
+                0 4px 23px 0 rgba($value, .15),
+                0 8px 10px -5px rgba($value, .2);
+}
+
+@mixin btn-styles($btn-color, $btn-states-color) {
+  border-color: $btn-color;
+  color: $btn-color;
+  
+  &:hover,
+  &:focus,
+  &:active,
+  &.active,
+  .open > &.dropdown-toggle {
+    background-color: $transparent-bg;
+    color: $btn-states-color;
+    border-color: $btn-states-color;
+  }
+  
+  &.disabled,
+  &:disabled,
+  &[disabled],
+  fieldset[disabled] & {
+    &,
+    &:hover,
+    &:focus,
+    &.focus,
+    &:active,
+    &.active {
+      background-color: $transparent-bg;
+          border-color: $btn-color;
+    }
+  }
+
+  &.btn-fill {
+    color: $white;
+    background-color: $btn-color;
+    @include opacity(1);  
+
+    &:hover,
+    &:focus,
+    &:active,
+    &.active,
+    .open > &.dropdown-toggle{
+        background-color: $btn-states-color;
+        color: $white;
+    }
+    
+    .caret{
+        border-top-color: $white;
+    }
+  }
+  
+  .caret{
+      border-top-color: $btn-color;
+  }
+}
+  
+
+@mixin btn-size($padding-vertical, $padding-horizontal, $font-size, $border){
+  font-size: $font-size;
+  border-radius: $border;
+  padding: $padding-vertical $padding-horizontal;
+   
+  &.btn-round{
+      padding: $padding-vertical + 1 $padding-horizontal;
+  }
+  
+  &.btn-simple{
+      padding: $padding-vertical + 2 $padding-horizontal; 
+  }
+   
+}
