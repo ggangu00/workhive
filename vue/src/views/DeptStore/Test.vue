@@ -204,7 +204,4 @@ div::v-deep .cell-btn-custom {
   padding: 0;
 }
 
-div::v-deep .nav-link {
-  display: flex !important;
-}
 </style>

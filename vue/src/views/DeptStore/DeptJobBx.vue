@@ -1,0 +1,82 @@
+<template>
+  <ul>
+    <li v-for="dept in departments" :key="dept.id">
+      <div @click="toggleDept(dept)" class="flex-container">
+        <i :class="dept.open ? 'fa-regular fa-folder-open' : 'fa-solid fa-folder'"></i>
+        <span>{{ dept.name }}</span>
+        <i class="fa-solid fa-plus" @click.stop="addDept(dept)"></i>
+      </div>
+      <ul v-if="dept.open">
+        <li v-for="sub in dept.subDepartments" :key="sub.id">
+          <div @click="toggleDept(sub)" class="flex-container">
+            <i :class="sub.open ? 'fa-regular fa-folder-open' : 'fa-solid fa-folder'"></i>
+            <span>{{ sub.name }}</span>
+            <i class="fa-solid fa-plus" @click.stop="addDept(sub)"></i>
+          </div>
+          <ul v-if="sub.open">
+            <li v-for="job in sub.jobs" :key="job.id" class="flex-container">
+              <i class="fa-solid fa-file"></i>
+              <span>{{ job.name }}</span>
+              <i class="fa-solid fa-pen" @click.stop="editJob(job)"></i>
+              <i class="fa-solid fa-x" @click.stop="removeJob(job)"></i>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+  </template>
+  
+  <script>
+  
+  export default {
+    name: "DeptJobBx",
+    data() {
+      return {
+        departments: [
+          {
+            id: 1, name: "개발팀", open: false,
+            subDepartments: [
+              { id: 2, name: "서버팀", open: false, jobs: [{ id: 101, name: "서버 유지보수" }] }
+            ]
+          },
+          {
+            id: 3, name: "디자인팀", open: false,
+            subDepartments: [
+              { id: 4, name: "UI 디자인팀", open: false, jobs: [{ id: 102, name: "앱 UI 개선" }] }
+            ]
+          }
+        ]
+      }
+    },
+    methods: {
+      toggleDept(dept) {
+        dept.open = !dept.open;
+      },
+      addDept(parent) {
+        console.log("부서 추가", parent);
+      },
+      editJob(job) {
+        console.log("업무 수정", job);
+      },
+      removeJob(job) {
+        console.log("업무 삭제", job);
+      }
+    }
+  }
+  </script>
+  
+  <style>
+  ul {
+    list-style-type: none;
+    padding: 5px 8px !important;
+  }
+  .flex-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  </style>
+  
+  
+  

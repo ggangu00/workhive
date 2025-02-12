@@ -34,11 +34,15 @@ import Home from '../views/Home.vue'
 
 
 // ksy
-import DeptjobInfo from '../views/DeptStore/DeptJobInfo.vue';
 import KsyTest from '../views/DeptStore/Test.vue';
-import VacationInfo from '../views/Vacation/VacationInfo.vue';
-import VacationManage from '../views/Vacation/VacationManage.vue';
-import CommuteInfo from '../views/Commute/CommuteInfo.vue';
+import DeptjobInfo from '../views/DeptStore/DeptJobInfo.vue';
+import VcList from '../views/Vacation/VacationInfo.vue';
+import VcManage from '../views/Vacation/VacationManage.vue';
+import VcSignManage from '../views/Vacation/VacationSign.vue';
+import CmtList from '../views/Commute/CommuteInfo.vue';
+import CrctManage from '../views/Commute/CommuteCrctManage.vue';
+import CrctList from '../views/Commute/CommuteCrctInfo.vue';
+import CrctSignManage from '../views/Commute/CommuteCrctSign.vue';
 
 // kjg
 import BbsAdd from '../views/bbs/bbsadd.vue';
@@ -137,30 +141,50 @@ const routes = [
   },
 
   //ksy
-  {
-    path: '/deptStore/deptJobInfo',
-    name: 'DeptjobInfo',
-    component: DeptjobInfo,
-  },
-  {
-    path: '/deptStore/Test',
+  { // 테스트
+    path: '/deptstore/test',
     name: 'KsyTest',
     component: KsyTest,
   },
-  {
-    path: '/vacation/vacationInfo',
-    name: 'VacationInfo',
-    component: VacationInfo,
+  { // 부서 업무 관리
+    path: '/deptstore/list',
+    name: 'DeptjobInfo',
+    component: DeptjobInfo,
   },
-  {
+  { // 출퇴근 기록 조회
+    path: '/commute/cmtlist',
+    name: 'CmtList',
+    component: CmtList,
+  },
+  { // 출퇴근 정정 요청 관리
+    path: '/commute/crctmanage',
+    name: 'CrctManage',
+    component: CrctManage,
+  },
+  { // 출퇴근 정정 요청 조회
+    path: '/commute/crctlist',
+    name: 'CrctList',
+    component: CrctList,
+  },
+  { // 출퇴근 정정 요청 결재
+    path: '/commute/crctsignmanage',
+    name: 'CrctSignManage',
+    component: CrctSignManage,
+  },
+  { // 휴가 조회
+    path: '/vacation/vclist',
+    name: 'VcList',
+    component: VcList,
+  },
+  { // 휴가 신청 관리(등록, 수정 등)
     path: '/vacation/vacationManage',
-    name: 'VacationManage',
-    component: VacationManage,
+    name: 'VcManage',
+    component: VcManage,
   },
-  {
-    path: '/commute/commuteInfo',
-    name: 'CommuteInfo',
-    component: CommuteInfo,
+  { // 휴가 신청 결재
+    path: '/vacation/vcsignmanage',
+    name: 'VcSignManage',
+    component: VcSignManage,
   },
 
   //kjg

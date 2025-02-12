@@ -14,19 +14,10 @@
       <!-- 업무함 사이드바 -->
       <div class="col-3">
         <div class="jobbx">
-          <ul>
-            <li>
-              <i class="fa-solid fa-folder"></i> <!-- 닫힌 폴더 -->>
-              <i class="fa-regular fa-folder-open"></i> <!-- 열린 폴더 -->
-              <i class="fa-solid fa-plus"></i> <!-- 추가 아이콘 -->
-              <i class="fa-solid fa-pen"></i> <!-- 수정 아이콘 -->
-              <i class="fa-solid fa-x"></i> <!-- 삭제 아이콘 -->
-            </li>
-          </ul>
+          <DeptJobBx></DeptJobBx>
         </div>
       </div>
 
-      <!-- 업무 목록 -->
       <div class="col-9">
         <!-- 업무 관리 기능 -->
         <div class="row justify-content-between align-items-center">
@@ -40,18 +31,12 @@
             <button class="btn btn-info">검색</button>
           </div>
         </div>
-
+        
+        <!-- 업무 목록 -->
         <div class="row mt-2">
           <div class="col" style="height: 550px;">
-            <!-- ag-grid -->
-            <ag-grid-vue
-              :columnDefs="columnDefs"
-              :rowData="rowData"
-              :defaultColDef="defaultColDef"
-              class="ag-theme-alpine"
-              style="width: 100%; height: 100%;"
-              rowSelection="multiple"
-            ></ag-grid-vue>
+            <div id="employeeGrid"></div>
+
           </div>
         </div>
       </div>
@@ -64,14 +49,38 @@
 
 </template>
 
-<script>
+<script setup>
+import DeptJobBx from "./DeptJobBx.vue";
+import { ref, onMounted } from 'vue'
+
+let gridInstance = ref();
+
+// Toast UI Grid 초기화
+onMounted(() => {
+  gridInstance.value = new window.tui.Grid({
+    el: document.getElementById('employeeGrid'),
+    data: [],
+    scrollX: false,
+    scrollY: true,
+    columns: [
+      { header: '이름', name: 'name', sortable: true, editor: 'text', align: 'center' },
+      { header: '직책', name: 'title', sortable: true, align: 'center' },
+      { header: '부서', name: 'dept', sortable: true, align: 'center' },
+      { header: '선택', name: 'select', align: 'center', renderer: { type: 'checkbox' } }
+    ]
+  })
+})
+
+
+/*
 import { AgGridVue } from "ag-grid-vue3";
+import DeptJobBx from "./DeptJobBx.vue";
 
 export default {
   name: "DeptJobInfo",
   components: {
     AgGridVue,
-
+    DeptJobBx,
   },
   data() {
     return {
@@ -120,7 +129,7 @@ export default {
     }
   }
 };
-
+*/
 </script>
 
 
@@ -145,7 +154,7 @@ h3, h4 {
   color: white;
   height: 600px;
   margin: 5px 0;
-  padding: 5px;
+  /* padding: 5px; */
 }
 
 div::v-deep .cell-btn-custom {
