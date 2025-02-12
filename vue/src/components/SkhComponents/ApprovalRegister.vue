@@ -5,16 +5,18 @@
             <div class='col-8'>
                 <div class="card left-card">
                   <!-- head -->
-                    <div class="button-collection d-flex justify-content-between align-items-center flex-wrap" style='padding: 5px ;'>
+                    <div class="button-collection d-flex justify-content-end align-items-center flex-wrap" style='padding: 5px ;'>
                         <div class='d-flex'>
-                            <h4 class="card-title">문서기안</h4>
+                            <h4 class="card-title me-auto" >문서기안</h4>
                         </div>
-                        <div class='selectbox d-flex'>
-                            <button class="btn btn-primary btn-fill">양식선택</button>
-                            <button class="btn btn-warning btn-fill">초기화</button>
-                            <button class="btn btn-success">결재문서첨부</button>
-                            <button class="btn btn-success">상신</button>
-                        </div>
+                        <button 
+                        v-for="(btn, index) in headButtons" 
+                        :key="index"
+                        :class="['btn', btn.class, 'btn-fill']"
+                        @click="$emit('button-click', btn.action)">
+                        <!-- 자식컴포넌트 클릭이벤트 -->
+                        {{ btn.label }}
+                        </button>
                     </div>
                     <!-- 제목구분선 -->
                     <div class="divid_line"></div>
@@ -46,9 +48,10 @@
                       </div>
                       <div class="d-flex" style='margin-top: 20px;'>
                         <!-- 왼쪽 -->
-                        <div class="col-5">
+                        <div class="col-5" v-if="showFile">
                             <strong>첨부파일</strong>
-                            <button class="btn btn-primary file-upload-btn d-flex">파일선택</button>
+                            <br>
+                            <input type="file"/>
                             <p class="file-info">개별 파일 기준 최대 30MB까지 첨부할 수 있습니다.</p>
                         </div>
 
@@ -59,10 +62,14 @@
 
                         <!-- 첨부된 파일 목록 -->
                         <div class="col-5 file-upload-right">
-                            <ul class="file-list">
-                                <li> 첨부2.JPG (60KB)</li>
-                                <li> 첨부2.JPG (60KB)</li>
-                            </ul>
+                        <strong>첨부된 파일 목록</strong>
+                        <ul class="file-list">
+                            <li v-for="(file, index) in fileList" :key="index">
+                            {{ file.name }} ({{ formatFileSize(file.size) }})
+                            <button class="btn btn-sm btn-danger">삭제</button>
+                            </li>
+                            <li v-if="fileList.length == 0">첨부된 파일이 없습니다.</li>
+                        </ul>
                         </div>
                     </div>
                   </div>
@@ -76,7 +83,7 @@
                     <h4 class="card-title">결재선</h4>
                   </div>
                   <div class='selectbox d-flex'>
-                    <button class="btn btn-primary btn-fill float-right" data-bs-toggle="modal"
+                    <button v-if="ApprovalButtons" class="btn btn-primary btn-fill float-right" data-bs-toggle="modal"
                     data-bs-target="#organizationModal">결재선지정</button>
                   </div>
                 </div>
@@ -133,12 +140,17 @@
     import { Editor } from '@toast-ui/editor';
     import ApprovalLine from '../../components/SkhComponents/ApprovalLine.vue';
     export default {
+    props:{
+        headButtons: {type:Array, required: true},
+        ApprovalButtons: {type:Boolean, default: true},
+        showFile:{type: Boolean, default: true}
+    },
       components: {
         ApprovalLine
       },
-      data () {
-        return {
-        
+      data(){
+        return{
+            fileList:[]
         }
       },
       mounted() {
@@ -146,10 +158,10 @@
       },
       methods: {
           initEditor() {
-            this.editor = new Editor({
+            this.editor = new Editor({ //토스트유아이에디터
               el: document.querySelector('#editor'),
               height: '500px',
-              initialEditType: 'WYSIWYG',
+              initialEditType: 'wysiwygw',
               previewStyle: 'vertical'
             });
           }
@@ -160,11 +172,11 @@
   </script>
   <style>
     .modal-xl {
-      max-width: 70vw !important; 
+      max-width: 70vw !important; /* 모달 가로 크기 확장 */
     }
     .modal-content {
-      max-height: 80vh; 
-      overflow-y: auto; 
+      max-height: 80vh; /* 모달 세로 크기 제한 */
+      overflow-y: auto; /* 내부 스크롤 적용 */
     }
     .button-collection button{
         margin-right: 10px;

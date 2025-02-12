@@ -14,8 +14,10 @@ import Layout from '../views/Layout.vue';
 //skh컴포넌트
 import ApprovalList from "../components/SkhComponents/ApprovalList.vue";
 import ApprovalLine from "../components/SkhComponents/ApprovalLine.vue";
+import ApprovalRegister from "../components/SkhComponents/ApprovalRegister.vue";
 //skh
 import Test from "../views/Approval/test.vue";
+import RegisterTest from "../views/Approval/RegisterTest.vue";
 import Completed from "../views/Approval/Completed.vue";
 import Register from "../views/Approval/Register.vue";
 import Calendar from "../views/schedule/Calendar.vue";
@@ -119,12 +121,22 @@ const routes = [
     path: '/approvalLine',
     name: 'ApprovalLine',
     component: ApprovalLine
+  }, 
+  {
+    path: '/approvalRegister',
+    name: 'ApprovalRegister',
+    component: ApprovalRegister
   },
   //skh
   {
     path: '/schdule/test',
     name: 'Test',
     component: Test
+  },
+  {
+    path: '/registerTest',
+    name: 'RegisterTest',
+    component: RegisterTest
   },
   {
     path: '/schdule/calendar',
