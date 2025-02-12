@@ -41,9 +41,10 @@ import VacationManage from '../views/Vacation/VacationManage.vue';
 import CommuteInfo from '../views/Commute/CommuteInfo.vue';
 
 // kjg
-import BbsAdd from '../views/bbs/bbsadd.vue';
-import BbsList from '../views/bbs/bbslist.vue';
-
+import BoardList from '../views/Board/BoardList.vue';
+import BoardAdd from '../views/Board/BoardAdd.vue';
+import BulletinList from "../views/Bulletin/BulletinList.vue";
+import BulletinAdd from "../views/Bulletin/BulletinAdd.vue";
 
 
 const routes = [
@@ -165,15 +166,26 @@ const routes = [
 
   //kjg
   {
-    path:'/bbs/bbsList',
-    name: 'BbsList',
-    component : BbsList,
+    path:'/board/boardList',
+    name: 'BoardList',
+    component : BoardList,
   },
   {
-    path:'/bbs/bbsAdd',
-    name: 'BbsAdd',
-    component : BbsAdd,
+    path:'/board/boardAdd',
+    name: 'BoardAdd',
+    component : BoardAdd,
   },
+  {
+    path:'/bulletin/bulletinList',
+    name: 'BulletinList',
+    component : BulletinList,
+  },
+  {
+    path:'/bulletin/bulletinAdd',
+    name: 'BulletinAdd',
+    component : BulletinAdd,
+  },
+
 
   //pjh
   {
