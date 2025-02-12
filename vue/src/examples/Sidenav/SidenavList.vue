@@ -21,6 +21,22 @@
             url="#"
             :aria-controls="''"
             v-bind:collapse="false"
+            collapseRef="/todo/manage"
+            navText="업무일지 관리"
+        >
+          <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+          <template v-slot:list>
+            <li class="sub-item" @click="movePage('Todo')">업무일지 관리</li>
+          </template>
+        </sidenav-collapse>
+      </li>
+      <li class="nav-item">
+        <sidenav-collapse
+            url="#"
+            :aria-controls="''"
+            v-bind:collapse="false"
             collapseRef="/project/list"
             navText="프로젝트 관리"
         >
@@ -29,7 +45,8 @@
           </template>
           <template v-slot:list>
             <li class="sub-item" @click="movePage('ProjectList')">프로젝트 조회</li>
-            <li class="sub-item" @click="movePage('ProjectAdd')">프로젝트 등록</li>            
+            <li class="sub-item" @click="movePage('ProjectAdd')">프로젝트 등록</li>
+            <li class="sub-item" @click="movePage('ProjectMem')">프로젝트 참여자관리</li>
           </template>
         </sidenav-collapse>
       </li>
@@ -57,7 +74,7 @@
             url="#"
             :aria-controls="''"
             v-bind:collapse="false"
-            collapseRef="/setting"
+            collapseRef=""
             navText="관리자"
         >
           <template v-slot:icon>
