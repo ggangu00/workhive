@@ -22,7 +22,7 @@
                     <div class="divid_line"></div>
                     <!-- body -->
                     <div class="document-input-section">
-                      <div class='col-6'>
+                      <div class=''> 
                         <div class="d-flex justify-content-between mb-1">
                             <div class="col-3 title-box"><strong>결재종류</strong></div>
                             <div class="col-3 title-box"><strong>양식</strong></div>
@@ -188,7 +188,7 @@
   onMounted(() => {
     initEditor();
   });
-  
+
   </script>
   <style>
     .modal-xl {

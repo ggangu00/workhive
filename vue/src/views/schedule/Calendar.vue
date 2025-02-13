@@ -115,15 +115,11 @@ import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
+import axios from "axios";
 
 export default {
   components: {
     FullCalendar
-  },
-  methods: {
-    toggle() {
-      this.isAllDay = !this.isAllDay;
-    }
   },
   data() {
     return {
@@ -136,7 +132,35 @@ export default {
           right: 'dayGridMonth,timeGridWeek,timeGridDay'  
         },
       },
+      department: "총무팀",
+      position: "부장",
+      role: "팀장",
+      userId: "ongsim",
+      employeeId: "2025001",
+      name: "Ongsim, Kim",
+      email: "ongsim@mail.com",
+      phone: "053-425-1234",
+      mobile: "010-1234-5678",
+      memberList: [],
+
       isAllDay: false
+    }
+  },
+  mounted() {
+    this.memberGetList();
+  },
+  methods: {
+    async memberGetList() {
+      try {
+        const result = await axios.get('/api/schedule/month');
+        this.memberList = result.data; // result.data 사용
+        console.log(result.data);
+      } catch (err) {
+        this.memberList = [];
+      }
+    },
+    toggle() {
+      this.isAllDay = !this.isAllDay;
     }
   }
 }
