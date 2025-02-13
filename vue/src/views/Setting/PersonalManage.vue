@@ -60,11 +60,11 @@
                   </div>
                   <div class="col-md-3">
                     <label>전화</label>
-                    <input type="text" v-model="phone" class="form-control editable" />
+                    <input type="text" v-model="phone" class="editable" />
                   </div>
                   <div class="col-md-3">
                     <label>휴대폰</label>
-                    <input type="text" v-model="mobile" class="form-control editable" />
+                    <input type="text" v-model="mobile" class="editable" />
                   </div>
                 </div>
               </div>
@@ -79,8 +79,9 @@
 </template>
 
 <script setup>
-  import axios from "axios";
-  import { onBeforeMount, ref } from 'vue';
+  // import axios from "axios";
+  // import { onBeforeMount, ref } from 'vue';
+  import { ref } from 'vue';
 
   const department = ref("총무팀");
   const position = ref("부장");
@@ -91,28 +92,27 @@
   const email = ref("ongsim@mail.com");
   const phone = ref("053-425-1234");
   const mobile = ref("010-1234-5678");
-  const memberList = ref([]);
+  //const memberList = ref([]);
 
-  onBeforeMount(() => {
+  // onBeforeMount(() => {
+  //   memberGetList();
+  // });
 
-      getMemberList(); // 자재 재고 조회
-  });
+  // const memberGetList = async () => {
+  //   try {
+  //     const result = await axios.get('/api/member');
+  //     memberList.value = result;
+  //     console.log(result.data);
+  //   } catch (err) {
+  //     memberList.value = [];
 
-  const getMemberList = async () => {
-    try {
-      const result = await axios.get('/api/member');
-      memberList.value = result;
-      console.log(result.data);
-    } catch (err) {
-      memberList.value = [];
-
-      // Swal.fire({
-      //   icon: "error",
-      //   title: "API 요청 오류:",
-      //   text: err.message || err
-      // });
-    }
-  }
+  //     // Swal.fire({
+  //     //   icon: "error",
+  //     //   title: "API 요청 오류:",
+  //     //   text: err.message || err
+  //     // });
+  //   }
+  // }
 </script>
 
 <style scoped>
