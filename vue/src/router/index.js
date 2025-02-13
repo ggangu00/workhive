@@ -57,10 +57,15 @@ import CrctList from '../views/Commute/CommuteCrctInfo.vue';
 import CrctSignManage from '../views/Commute/CommuteCrctSign.vue';
 
 // kjg
+import PaymentList from '../views/Payment/PaymentList.vue';
+import PaymentAdd from '../views/Payment/PaymentAdd.vue';
+import PaymentManage from '../views/Payment/PaymentManage.vue';
 import BoardList from '../views/Board/BoardList.vue';
 import BoardAdd from '../views/Board/BoardAdd.vue';
 import BulletinList from "../views/Bulletin/BulletinList.vue";
 import BulletinAdd from "../views/Bulletin/BulletinAdd.vue";
+import BulletinInfo from "../views/Bulletin/BulletinInfo.vue";
+
 
 
 const routes = [
@@ -224,25 +229,46 @@ const routes = [
   },
 
   //kjg
-  {
+   {//외부지출 조회
+    path:'/payment/paymentList',
+    name: 'PaymentList',
+    component : PaymentList,
+  },
+  {//외부지출 등록
+    path:'/payment/paymentAdd',
+    name: 'PaymentAdd',
+    component : PaymentAdd,
+  },
+    {//외부지출 승인/반려 관리
+      path:'/payment/paymentManage',
+      name: 'PaymentManage',
+      component : PaymentManage,
+    },
+
+  {//게시판 목록
     path:'/board/boardList',
     name: 'BoardList',
     component : BoardList,
   },
-  {
+  {//게시판 등록
     path:'/board/boardAdd',
     name: 'BoardAdd',
     component : BoardAdd,
   },
-  {
+  {//게시글 목록
     path:'/bulletin/bulletinList',
     name: 'BulletinList',
     component : BulletinList,
   },
-  {
+  {//게시글 등록
     path:'/bulletin/bulletinAdd',
     name: 'BulletinAdd',
     component : BulletinAdd,
+  },
+  {//게시글 상세조회
+    path:'/bulletin/bulletinInfo',
+    name: 'BulletinInfo',
+    component : BulletinInfo,
   },
 
 
