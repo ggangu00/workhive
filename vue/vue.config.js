@@ -1,5 +1,5 @@
 const { defineConfig } = require('@vue/cli-service')
-const server = 'http://localhost:85/workhive';
+const server = 'http://localhost:85/server';
 var path = require("path");
 
 module.exports = defineConfig({
