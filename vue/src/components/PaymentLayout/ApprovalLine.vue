@@ -82,7 +82,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, watch } from 'vue';
 import "tui-grid/dist/tui-grid.css";
 import Grid from "tui-grid";
 
@@ -91,6 +91,7 @@ import Grid from "tui-grid";
     const receivers = ref([]);
     const approvers = ref([]);
     let gridInstance = null; 
+
     const departmentTree = ref([
       { name: '총무팀', children: ['총무 1팀', '총무 2팀'], expanded: false },
       { name: '영업팀', children: ['영업 1팀', '영업 2팀'], expanded: false },
@@ -115,7 +116,7 @@ import Grid from "tui-grid";
 
     const selectDept = (subDept) => {
       selectedDept.value = subDept;
-      updateGridData();
+      updateGridData() ;
     };
 
     const addReceiver = () => {
@@ -134,20 +135,30 @@ import Grid from "tui-grid";
       });
     };
 
-    onMounted(() => { //화면실행후 실행
+    const initGrid = () => {
       gridInstance = new Grid({
         el: document.getElementById('employeeGrid'),
-        data: employees.value, // 초기 데이터
+        data: employees.value,
         scrollX: false,
         scrollY: true,
         columns: [
-          { header: '이름', name: 'name', sortable: true, align: 'center' },
-          { header: '직책', name: 'title', sortable: true, align: 'center' },
-          { header: '부서', name: 'dept', sortable: true, align: 'center' },
+          { header: '이름', name: 'name' },
+          { header: '직책', name: 'title' },
+          { header: '부서', name: 'dept' },
         ]
       });
-    });
+    };
 
+    // ✅ 모달이 열릴 때 Toast UI Grid를 다시 초기화
+    const onModalOpen = () => {
+      setTimeout(() => {  // 💡 모달 애니메이션이 끝난 뒤 실행되도록 setTimeout 추가
+        if (!gridInstance) {
+          initGrid();
+        } else {
+          gridInstance.resetData(employees.value);
+        }
+      },); // Bootstrap 모달 애니메이션 시간 고려
+    };
     // ✅ 부서 선택 시 직원 목록 갱신
     const updateGridData = () => {
       if (gridInstance) {
@@ -157,6 +168,8 @@ import Grid from "tui-grid";
     watch(selectedDept, () => {
       updateGridData();
     });
+
+    defineExpose({ onModalOpen });
 </script>
 
 <style scoped>

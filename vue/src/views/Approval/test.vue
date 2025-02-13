@@ -4,7 +4,7 @@
 </template>
   
   <script>
-  import ApprovalList from '@/components/SkhComponents/ApprovalList.vue'
+  import ApprovalList from '@/components/PaymentLayout/ApprovalList.vue'
   
   export default {
     components: { ApprovalList },

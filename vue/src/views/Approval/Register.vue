@@ -131,7 +131,7 @@
   <script>
     import '@toast-ui/editor/dist/toastui-editor.css';
     import { Editor } from '@toast-ui/editor';
-    import ApprovalLine from '../../components/SkhComponents/ApprovalLine.vue';
+    import ApprovalLine from '../../components/PaymentLayout/ApprovalLine.vue';
     export default {
       components: {
         ApprovalLine

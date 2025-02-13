@@ -44,7 +44,7 @@
                       </div>
                       <!-- 에디터 -->
                       <div class='col-12'>
-                          <div :id="editor"></div>
+                          <div id="editor"></div>
                       </div>
                       <div class="d-flex" style='margin-top: 20px;'>
                         <!-- 왼쪽 -->
@@ -122,7 +122,7 @@
 
         <!-- 모달 바디 -->
         <div class="modal-body">
-          <ApprovalLine/>
+          <ApprovalLine ref="approvalLineRef" />
         </div>
 
         <!-- 모달 푸터 -->
@@ -135,34 +135,61 @@
   </div>
   <!-- 모달 끝 -->
   </template>
-<script setup>
-import { ref, onMounted } from 'vue';
-import '@toast-ui/editor/dist/toastui-editor.css';
-import { Editor } from '@toast-ui/editor';
-import ApprovalLine from '../../components/SkhComponents/ApprovalLine.vue';
+  <script setup>
+  import { ref, onMounted,onUnmounted } from 'vue';
+  import '@toast-ui/editor/dist/toastui-editor.css';
+  import { Editor } from '@toast-ui/editor';
+  import ApprovalLine from '../../components/PaymentLayout/ApprovalLine.vue';
 
-defineProps({
-  headButtons: { type: Array, required: true },
-  ApprovalButtons: { type: Boolean, default: true },
-  showFile: { type: Boolean, default: true }
-});
-
-const fileList = ref([]);
-const editor = ref('');
-
-const initEditor = () => {
-  editor.value = new Editor({
-    el: document.querySelector('#editor'),
-    height: '500px',
-    initialEditType: 'wysiwyg',
-    previewStyle: 'vertical'
+  defineProps({
+    headButtons: { type: Array, required: true },
+    ApprovalButtons: { type: Boolean, default: true },
+    showFile: { type: Boolean, default: true }
   });
-};
 
-onMounted(() => {
-  initEditor();
-});
-</script>
+  // ✅ ApprovalLine을 참조할 ref 생성
+  const approvalLineRef = ref(null);
+
+  // ✅ 모달이 열릴 때 Toast Grid를 초기화하는 함수
+  const handleModalOpen = () => {
+    if (approvalLineRef.value) {
+      approvalLineRef.value.onModalOpen();  // ApprovalLine의 onModalOpen() 실행
+    }
+  };
+
+  // ✅ Bootstrap 모달 이벤트 리스너 추가
+  onMounted(() => {
+    const modalElement = document.getElementById('approvalRegiModal');
+    if (modalElement) {
+      modalElement.addEventListener('shown.bs.modal', handleModalOpen);
+    }
+  });
+
+  // ✅ 컴포넌트 언마운트 시 이벤트 리스너 제거
+  onUnmounted(() => {
+    const modalElement = document.getElementById('approvalRegiModal');
+    if (modalElement) {
+      modalElement.removeEventListener('shown.bs.modal', handleModalOpen);
+    }
+  });
+
+  const fileList = ref([]);
+  const editor = ref('');
+
+  const initEditor = () => {
+    editor.value = new Editor({
+      el: document.querySelector('#editor'),
+      height: '500px',
+      initialEditType: 'wysiwyg',
+      previewStyle: 'vertical'
+    });
+  };
+
+  onMounted(() => {
+    initEditor();
+  });
+  
+  </script>
   <style>
     .modal-xl {
       max-width: 70vw !important; /* 모달 가로 크기 확장 */
@@ -204,7 +231,7 @@ onMounted(() => {
       margin: 30px;
     }
     .left-card, .right-card {
-    height: 100%;
-}
+      height: 100%;
+    }
   </style>
   

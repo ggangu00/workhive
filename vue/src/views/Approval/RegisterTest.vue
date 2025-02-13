@@ -4,14 +4,13 @@
         :headButtons="headButtons"
         :ApprovalButtons="true"
         :showFile="true"
-        @button-click="openModal"
       />
       <!--  이벤트추가-->
     </div>
   </template>
   
   <script>
-  import ApprovalRegister from '@/components/SkhComponents/ApprovalRegister.vue';
+  import ApprovalRegister from '@/components/PaymentLayout/ApprovalRegister.vue';
   
   export default {
     components: {
