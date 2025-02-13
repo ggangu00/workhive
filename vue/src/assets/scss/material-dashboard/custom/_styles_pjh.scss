@@ -464,7 +464,22 @@
 .todo-container {
     padding: 10px;
     text-align: center;
+
+    $day-per : 3.22% !default;
     
+    .day28{
+        $day-per : 3.57% !default;
+    }
+    .day29{
+        $day-per : 3.44% !default;
+    }
+    .day30{
+        $day-per : 3.33% !default;
+    }
+    .day31{
+        $day-per : 3.22% !default;
+    }
+
     .month {
         font-size: 20px;
         font-weight: bold;
@@ -481,7 +496,7 @@
     }
 
     .day {
-        width: 40px;
+        width: $day-per;
         text-align: center;
         color: black;
     }
@@ -511,3 +526,6 @@
 
 }
 
+.bg-gradient-main {
+    background: $main;
+}
