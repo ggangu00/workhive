@@ -18,6 +18,19 @@
       </li>
       <li class="nav-item">
         <sidenav-collapse
+          url="#"
+          :aria-controls="''"
+          v-bind:collapse="false"
+          collapseRef="/layout"
+          navText="레이아웃틀"
+        >
+          <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+        </sidenav-collapse>
+      </li>
+      <li class="nav-item">
+        <sidenav-collapse
             url="#"
             :aria-controls="''"
             v-bind:collapse="false"
@@ -178,7 +191,7 @@
         </sidenav-collapse>
       </li>
 
-          <!--kjg-->
+      <!--kjg-->
       <li class="nav-item">
         <sidenav-collapse
           url="#"
@@ -217,6 +230,25 @@
 
       <li class="nav-item">
         <sidenav-collapse
+            url="#"
+            :aria-controls="''"
+            v-bind:collapse="false"
+            collapseRef=""
+            navText="관리자"
+        >
+          <template v-slot:icon>
+            <i class="fa-solid fa-gears"></i>
+          </template>
+          <template v-slot:list>
+            <li class="sub-item" @click="movePage('PersonalManage')">개인정보 설정</li>
+            <li class="sub-item" @click="movePage('MemberManage')">구성원</li>
+            <li class="sub-item" @click="movePage('LoginLog')">접속기록 조회</li>
+          </template>
+        </sidenav-collapse>
+      </li>
+
+      <!-- <li class="nav-item">
+        <sidenav-collapse
           url="#"
           :aria-controls="''"
           v-bind:collapse="false"
@@ -227,8 +259,8 @@
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
           </template>
         </sidenav-collapse>
-      </li>
-      <li class="nav-item">
+      </li> -->
+      <!-- <li class="nav-item">
         <sidenav-collapse
           url="#"
           :aria-controls="''"
@@ -240,8 +272,8 @@
             <i class="material-icons-round opacity-10 fs-5">table_view</i>
           </template>
         </sidenav-collapse>
-      </li>
-      <li class="nav-item">
+      </li> -->
+      <!-- <li class="nav-item">
         <sidenav-collapse
           url="#"
           :aria-controls="''"
@@ -253,8 +285,8 @@
             <i class="material-icons-round opacity-10 fs-5">receipt_long</i>
           </template>
         </sidenav-collapse>
-      </li>
-      <li class="nav-item">
+      </li> -->
+      <!-- <li class="nav-item">
         <sidenav-collapse
           url="#"
           :aria-controls="''"
@@ -266,16 +298,16 @@
             <i class="material-icons-round opacity-10 fs-5">notifications</i>
           </template>
         </sidenav-collapse>
-      </li>
-      <li class="mt-3 nav-item">
+      </li> -->
+      <!-- <li class="mt-3 nav-item">
         <h6
           class="text-xs ps-4 text-uppercase font-weight-bolder text-white"
           :class="$store.state.isRTL ? 'me-4' : 'ms-2'"
         >
           ACCOUNT PAGES
         </h6>
-      </li>
-      <li class="nav-item">
+      </li> -->
+      <!-- <li class="nav-item">
         <sidenav-collapse
           url="#"
           :aria-controls="''"
@@ -287,8 +319,8 @@
             <i class="material-icons-round opacity-10 fs-5">person</i>
           </template>
         </sidenav-collapse>
-      </li>
-      <li class="nav-item">
+      </li> -->
+      <!-- <li class="nav-item">
         <sidenav-collapse
           url="#"
           :aria-controls="''"
@@ -300,8 +332,8 @@
             <i class="material-icons-round opacity-10 fs-5">login</i>
           </template>
         </sidenav-collapse>
-      </li>
-      <li class="nav-item">
+      </li> -->
+      <!-- <li class="nav-item">
         <sidenav-collapse
           url="#"
           :aria-controls="''"
@@ -313,7 +345,7 @@
             <i class="material-icons-round opacity-10 fs-5">assignment</i>
           </template>
         </sidenav-collapse>
-      </li>  
+      </li>   -->
     </ul>     
   </div>
 </template>
