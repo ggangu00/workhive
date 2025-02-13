@@ -27,7 +27,7 @@
               </div>
   
               <div class="mb-3">              
-                <textarea class="form-control w50" placeholder="내용을 입력해주세요" rows="10" style="margin-top: 20px;"></textarea>
+                <textarea class="form-control w100" placeholder="내용을 입력해주세요" rows="10" style="margin-top: 20px;"></textarea>
               </div>
               
               <div class="mb-3">

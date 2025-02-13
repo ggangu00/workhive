@@ -19,10 +19,10 @@
               <input type="text" class="form-control" placeholder="제목을 입력해주세요">
             </div>
 
-            <div class="mb-3">
-              <label>내용 <em class="point-red">*</em></label>
-              <textarea class="form-control w50" placeholder="내용을 입력해주세요" rows="10"></textarea>
-            </div>
+            <!--에디터 생성-->
+            <div class='col-12'>
+              <div id="editor"></div>
+            </div>            
 
             <div class="mb-3">
               <label>공지여부</label>
@@ -77,17 +77,36 @@
 </template>
 
 <script>
+import '@toast-ui/editor/dist/toastui-editor.css';
+import { Editor } from '@toast-ui/editor';
+
 export default {
   name: "billing-card",
   data() {
     return {
       showPasswordField: false, // 비밀번호 필드 표시 여부
+      editor: null // TOAST UI Editor 인스턴스 저장
     };
   },
   methods: {
+    // 비밀번호 필드 토글
     togglePasswordField() {
-      this.showPasswordField = !this.showPasswordField; // 체크박스 클릭 시 필드 표시/숨기기
+      this.showPasswordField = !this.showPasswordField;
+    },
+    
+    // TOAST UI Editor 초기화
+    initEditor() {
+      this.editor = new Editor({
+        el: document.querySelector("#editor"),
+        height: "500px",
+        initialEditType: "WYSIWYG",
+        previewStyle: "vertical"
+      });
     }
+  },
+  mounted() {
+    this.initEditor(); // 컴포넌트가 마운트되면 에디터 초기화 실행
   }
 };
+
 </script>
