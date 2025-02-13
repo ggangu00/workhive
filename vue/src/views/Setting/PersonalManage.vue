@@ -28,7 +28,7 @@
                   </div>
                   <div class="col-md-3">
                     <label>직책</label>
-                    <input type="text" v-model="role" class="readonly" />
+                    <input type="text" v-model="role" class="form-control readonly" />
                   </div>
                 </div>
               </div>
@@ -124,9 +124,9 @@
     font-weight: bold;
     font-size: 15px;
     margin-bottom: 20px;
-    border-bottom: 1px solid #374375;
+    border-bottom: 1.5px solid #002966;
     padding-bottom: 10px;
-    color: #393939;
+    color: #636363;
   }
 
   .form-group:last-child {
@@ -137,14 +137,14 @@
     width: 100%;
     padding: 5px;
     border: none;
-    border-bottom: 0.5px solid #858585;
+    border-bottom: 0.5px solid #7c7c7c;
     border-radius: 0;
   }
 
   .readonly {
     background: white;
     cursor: not-allowed;
-    border-bottom: 0.5px solid #858585;
+    border-bottom: 0.5px solid #7c7c7c;
     padding: 8px;
   }
 
