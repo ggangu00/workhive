@@ -4,6 +4,7 @@
     :isUpdate="false"
     :modalTitle="'업무 관리'"
     :width="600"
+    @click.self="closeJobModal"
   >
     <template v-slot:body>
       <div class="content">
@@ -28,10 +29,10 @@
                       <label>업무함명</label>
                     </div>
                     <div class="col">
-                      <label>라디오</label>
+                      <label>우선순위</label>
                     </div>
                   </div>
-                  <div class="row d-flex align-items-center">
+                  <div class="row align-items-center">
                     <div class="col-6">
                       <select class="form-select" aria-label="Default select example">
                         <option selected>Open this select menu</option>
@@ -41,27 +42,37 @@
                       </select>
                     </div>
                     <div class="col-6">
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1"
+                      <div class="form-check form-check-inline d-flex align-items-center">
+                        <input class="form-check-input my-0" type="radio" name="inlineRadioOptions" id="inlineRadio1"
                           value="option1">
-                        <label class="form-check-label" for="inlineRadio1">1</label>
+                        <label class="form-check-label my-0" for="inlineRadio1">높음</label>
                       </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2"
+                      <div class="form-check form-check-inline d-flex align-items-center">
+                        <input class="form-check-input my-0" type="radio" name="inlineRadioOptions" id="inlineRadio2"
                           value="option2">
-                        <label class="form-check-label" for="inlineRadio2">2</label>
+                        <label class="form-check-label my-0" for="inlineRadio2">보통</label>
                       </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3"
-                          value="option3" disabled>
-                        <label class="form-check-label" for="inlineRadio3">3 (disabled)</label>
+                      <div class="form-check form-check-inline d-flex align-items-center">
+                        <input class="form-check-input my-0" type="radio" name="inlineRadioOptions" id="inlineRadio3"
+                          value="option3">
+                        <label class="form-check-label my-0" for="inlineRadio3">낮음</label>
                       </div>
                     </div>
                   </div>
                 </div>
 
+                <div class="mb-3">
+                  <label>업무명<em class="point-red">*</em></label>
+                  <input type="text" class="form-control" placeholder="업무명을 입력해주세요">
+                </div>
+
+                <div class="mb-3">
+                  <label>업무내용<em class="point-red">*</em></label>
+                  <textarea class="form-control" placeholder="업무내용을 입력해주세요" style="height: 85px;"></textarea>
+                </div>
 
 
+                
                 <div class="mb-3">
                   <label>제목 <em class="point-red">*</em></label>
                   <input type="text" class="form-control" placeholder="제목을 입력해주세요">
@@ -158,6 +169,10 @@ const confirmJobModal = () => {
 
 
 <style>
-
+.col-6 {
+  display: flex;
+  align-items: center;
+  height: 100%; /* 높이 설정 */
+}
 </style>
 

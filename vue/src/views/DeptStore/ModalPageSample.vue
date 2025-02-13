@@ -4,6 +4,7 @@
     :isShowModal="props.isShowModal"
     :modalTitle="'modal title'"
     :width="600"
+    @click.self="closeModal"
   >
     <template v-slot:body>
       <div>
@@ -32,6 +33,7 @@ const closeModal = () => {
 const confirm = () => {
   emit('confirm');
 }
+
 </script>
 
 
