@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.mapper.com.project.ProjectMapper">
+
+	<!-- 등록 -->
+	<insert id="insert" parameterType="projectDTO">
+		INSERT INTO project (
+			pr_cd,
+			type_cd,
+			pr_nm,
+			ahead_dt,
+			start_dt,
+			end_dt,
+			price,
+			create_id,
+			entrprs_mber
+		)
+		VALUES (
+			seq_pr_cd.nextval,
+			#{typeCd},
+			#{prNm},
+			#{aheadDt},
+			#{startDt},
+			#{endDt},
+			#{price},
+			#{createId},
+			#{entrprsMber}
+		)
+		
+	</insert>
+	
+	<!-- 수정 -->
+	<update id="update" parameterType="projectDTO">
+		update project
+		set	type_cd = #{typeCd}, 
+			pr_nm = #{prNm},
+			ahead_dt = #{aheadDt},
+			start_dt = #{startDt},
+			end_dt = #{endDt},
+			price = #{price},
+			update_id = #{updateId},
+			update_dt = sysdate
+		where pr_cd = ${prCd}				
+	</update>
+	
+	<!-- 삭제 -->
+	<delete id="delete" parameterType="Long">
+		delete from project
+		where pr_cd = #{prCd}
+	</delete>
+	
+	<!-- 단건조회 -->
+	<select id="read" parameterType="Long">
+		select pr_cd,
+			   type_cd,
+			   pr_nm,
+			   ahead_dt,
+			   start_dt,
+			   end_dt,
+			   price,
+			   create_id,
+			   create_dt,
+			   entrprs_mber
+		from project
+		where pr_cd = #{prCd}
+	</select>
+	
+	<!-- 전체조회 -->
+	<select id="read" parameterType="Long">
+		select pr_cd,
+			   type_cd,
+			   pr_nm,
+			   ahead_dt,
+			   start_dt,
+			   end_dt,
+			   price,
+			   create_id,
+			   create_dt,
+			   entrprs_mber_id
+		from project
+	</select>
+
+</mapper>

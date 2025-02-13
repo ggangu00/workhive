@@ -181,6 +181,33 @@
   </div>
 </template>
 
+<script setup>
+  import axios from "axios";
+  import { onBeforeMount, ref } from 'vue';
+
+  const memberList = ref([]);
+
+  onBeforeMount(() => {
+    memberGetList();
+  });
+
+  const memberGetList = async () => {
+    try {
+      const result = await axios.get('/api/member');
+      memberList.value = result;
+      console.log(result.data);
+    } catch (err) {
+      memberList.value = [];
+
+      // Swal.fire({
+      //   icon: "error",
+      //   title: "API 요청 오류:",
+      //   text: err.message || err
+      // });
+    }
+  }
+</script>
+
 <script>
 import Card from '@/components/Cards/Card.vue'
 
