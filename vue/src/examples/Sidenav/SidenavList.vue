@@ -38,7 +38,7 @@
             navText="업무일지 관리"
         >
           <template v-slot:icon>
-            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+            <i class="fa-solid fa-list-ol"></i>
           </template>
           <template v-slot:list>
             <li class="sub-item" @click="movePage('Todo')">업무일지 관리</li>
@@ -54,7 +54,7 @@
             navText="프로젝트 관리"
         >
           <template v-slot:icon>
-            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+            <i class="fa-solid fa-chart-line"></i>
           </template>
           <template v-slot:list>
             <li class="sub-item" @click="movePage('ProjectList')">프로젝트 조회</li>
@@ -73,7 +73,7 @@
             navText="회의 관리"
         >
           <template v-slot:icon>
-            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+            <i class="fa-solid fa-users-line"></i>
           </template>
           <template v-slot:list>
             <li class="sub-item" @click="movePage('MeetList')">회의 조회</li>
@@ -111,7 +111,7 @@
           navText="전자결재"
         >
         <template v-slot:icon>
-            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          <i class="fa-solid fa-file"></i>
           </template>
           <template v-slot:list>
             <li class="sub-item" @click="movePage('Register')">문서기안</li>
@@ -129,7 +129,7 @@
           navText="일정관리"
         >
         <template v-slot:icon>
-            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          <i class="fa-regular fa-calendar-check"></i>
           </template>
           <template v-slot:list>
             <li class="sub-item" @click="movePage('Calendar')">풀캘린더</li>
@@ -149,7 +149,7 @@
           navText="부서 업무 관리"
         >
           <template v-slot:icon>
-            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+            <i class="fa-solid fa-box-archive"></i>
           </template>
         </sidenav-collapse>
       </li>

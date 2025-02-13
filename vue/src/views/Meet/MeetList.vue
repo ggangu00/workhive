@@ -137,7 +137,9 @@
                                 </td>
                                 <td>2025-02-04(화) 13:00 ~ 13:30</td>
                                 <td>회의실A</td>
-                                <td>김민진, 신강현</td>
+                                <td>
+                                    <div class="subject">김민진, 신강현</div>
+                                </td>
                                 <td>
                                     <button class="btn btn-success btn-fill btn-sm mr-1">수정</button>
                                     <button class="btn btn-danger btn-fill btn-sm mr-1">삭제</button>

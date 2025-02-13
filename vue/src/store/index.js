@@ -5,7 +5,7 @@ export default createStore({
     hideConfigButton: false,
     isPinned: true,
     showConfig: false,
-    sidebarType: "bg-gradient-dark",
+    sidebarType: "bg-gradient-main",
     isRTL: false,
     color: "success",
     isNavFixed: false,

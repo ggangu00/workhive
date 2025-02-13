@@ -69,6 +69,7 @@
           max-width: $navbar-vertical-open-width !important;
           padding: 0;
           box-shadow: none;
+          overflow-y: auto;
 
           .navbar-collapse {
             display: block;
@@ -202,7 +203,6 @@
 //
 
 .sidenav {
-  z-index: 9999;
 
   .navbar-brand,
   .navbar-heading {

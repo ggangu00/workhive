@@ -109,12 +109,11 @@
   }
 
   .bg-gradient-dark {
-    background-color: #374375;
-    // background-image: linear-gradient(
-    //   195deg,
-    //   $dark-gradient-dark,
-    //   $dark-gradient-state-dark
-    // );
+    background-image: linear-gradient(
+      195deg,
+      $dark-gradient-dark,
+      $dark-gradient-state-dark
+    );
   }
 
   .dropdown {

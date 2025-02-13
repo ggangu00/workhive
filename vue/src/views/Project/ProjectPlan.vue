@@ -67,7 +67,7 @@
       <div class="modal-content">
         <!-- 모달 헤더 -->
         <div class="modal-header">
-          <h5 class="modal-title" id="organizationModalLabel">조직도</h5>
+          <h5 class="modal-title" id="organizationModalLabel">일정 등록</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 

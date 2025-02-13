@@ -66,7 +66,7 @@
             </div>
             <div class="col-2">
               <button class="btn btn-secondary btn-fill btn-sm float-left">등록</button>
-              <button class="btn btn-primary btn-fill btn-sm float-left">상세등록</button>
+              <button class="btn btn-primary btn-fill btn-sm float-left" data-bs-toggle="modal" data-bs-target="#organizationModal">상세등록</button>
             </div>
           </div>
           <div class="table-responsive">
@@ -147,4 +147,72 @@
       </div>
     </div>
   </div>
+
+  <!-- 모달 시작 -->
+  <div class="modal fade" id="organizationModal" tabindex="-1" aria-labelledby="organizationModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <!-- 모달 헤더 -->
+        <div class="modal-header">
+          <h5 class="modal-title" id="organizationModalLabel">업무일지 상세등록</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <!-- 모달 바디 -->
+        <div class="modal-body">
+          <div class="card">
+            <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label">업무일 <em class="point-red">*</em></label>
+            <input type="date" name="project_nm" class="form-control w30">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">업무분류 <em class="point-red">*</em></label>
+            <div class="row">
+              <div class="col-auto">
+                <select class="form-select">
+                  <option value="1">내부업무</option>
+                  <option value="2">외부업무</option>
+                  <option value="3">프로젝트</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <div class="form-group has-label">
+              <label>일지제목 <em class="point-red">*</em></label>
+            </div>
+            <input type="text" name="project_nm" class="form-control" placeholder="일지제목을 입력해주세요">
+          </div>
+          <div class="mb-3">
+            <div class="form-group has-label">
+              <label>업무내용 <em class="point-red">*</em></label>
+            </div>
+            <textarea type="text" name="project_nm" class="form-control" placeholder="업무내용을 입력해주세요"></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">상태 <em class="point-red">*</em></label>
+            <div class="row">
+              <div class="col-auto">
+                <select class="form-select">
+                  <option value="1">미완료</option>
+                  <option value="2">완료</option>
+                </select>
+              </div>
+            </div>
+          </div></div>
+        </div>
+        </div>
+
+        <!-- 모달 푸터 -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary btn-fill" data-bs-dismiss="modal">등록</button>
+          <button type="button" class="btn btn-secondary btn-fill" data-bs-dismiss="modal">닫기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- 모달 끝 -->
+
 </template>
