@@ -20,7 +20,7 @@
         </div>
 
         <!-- 모달 푸터 -->
-        <div class="modal-footer">
+        <div class="modal-footer justify-content-center">
           <slot name="footer">slot</slot>
         </div>
       </div>
@@ -35,7 +35,6 @@ export default {
   props: {
     isShowModal: Boolean,
     modalTitle: String,
-    width: Number
   },
 
   data() {

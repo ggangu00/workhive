@@ -1,6 +1,6 @@
 <template>
 
-<div class="content">
+<div class="content"  @keydown.esc="modalCloseFunc">
   <div class="container-fluid">
     <!-- 페이지 헤더 -->
     <div class="row">
@@ -23,13 +23,13 @@
         <div class="row justify-content-between align-items-center">
           <div class="col-auto">
             <button class="btn btn-danger btn-fill me-2">선택 삭제</button>
-            <button class="btn btn-primary btn-fill" @click="openJobModal">업무 등록</button>
+            <button class="btn btn-primary btn-fill" @click="modalOpenJob">업무 등록</button>
 
             <!-- 업무 등록 모달 -->
             <JobManage
               :isShowJobModal="isShowJobModal"
-              @closeJobModal="closeJobModal"
-              @confirmJobModal="confirmJobModal"
+              @modalCloseJob="modalCloseJob"
+              @modalConfirmJob="modalConfirmJob"
             />
           </div>
           <div class="col d-flex justify-content-end align-items-center">
@@ -80,18 +80,25 @@ onMounted(() => {
 })
 
 const isShowJobModal = ref(false);
-const openJobModal = () => {
+const modalOpenJob = () => {
   isShowJobModal.value = true;
 }
 
-const closeJobModal = () => {
+const modalCloseJob = () => {
   isShowJobModal.value = false;
 }
-const confirmJobModal = () => {
+const modalConfirmJob = () => {
   console.log('job modal confirm click');
   isShowJobModal.value = false;
 }
 
+const modalCloseFunc = (e) => {
+  if (e.key === "Escape") {
+      if(isShowJobModal.value) {
+        isShowJobModal.value = !isShowJobModal.value;
+      }
+  }
+}
 
 
 /*
