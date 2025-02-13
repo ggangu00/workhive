@@ -203,7 +203,8 @@
 //
 
 .sidenav {
-
+  z-index:10;
+  
   .navbar-brand,
   .navbar-heading {
     display: block;
@@ -373,7 +374,7 @@ body:not(.dark-version) {
     color: $white;
     border-right-width: 0;
     border-bottom-width: 0;
-    background-color: $navbar-vertical-hover-bg-color;
+    background-color: #4e587f;
     & + .collapse,
     & + .collapsing {
       .nav-item.active {

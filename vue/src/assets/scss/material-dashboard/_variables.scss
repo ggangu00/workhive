@@ -3,6 +3,10 @@
 // Variables should follow the `$component-state-property-size` formula for
 // consistent naming. Ex: $nav-link-disabled-color and $modal-content-box-shadow-xs.
 
+* {
+  font-family: 'Noto Sans KR', serif;
+}
+
 // $soft-background-color: #fbfbfb !default;
 $soft-background-color: #ffffff !default; // Testing
 $font-color: #7b809a !default;
@@ -87,7 +91,7 @@ $yellow: #fbd38d !default;
 $green: #81e6d9 !default;
 $teal: #20c997 !default;
 $cyan: #0dcaf0 !default;
-$main: #374375 !default;
+$main: #002966 !default;
 
 // scss-docs-start colors-map
 $colors: (
@@ -110,7 +114,7 @@ $colors: (
 
 $primary: #83a2e9 !default;
 $secondary: #b1b1b1 !default;
-$info: #ebd6d1 !default;
+$info: #bdaee9 !default;
 $success: #b8e389 !default;
 $warning: #ffcb88 !default;
 $danger: #ff9097 !default;
@@ -843,7 +847,7 @@ $input-btn-border-width: $border-width !default;
 $btn-padding-y: 0.625rem !default;
 $btn-padding-x: 1.5rem !default;
 $btn-font-family: $input-btn-font-family !default;
-$btn-font-size: $text-xs-font-size !default;
+$btn-font-size: $text-sm-font-size !default;
 $btn-line-height: 1.667 !default;
 $btn-white-space: null !default; // Set to `nowrap` to prevent text wrapping
 $btn-letter-spacing: 0 !default; // Set to `nowrap` to prevent text wrapping

@@ -30,7 +30,6 @@ const modalCloseFunc = (e) => {
       }
   }
 }
-
 const openModal = () => {
   isShowModal.value = true;
 }

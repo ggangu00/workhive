@@ -1,9 +1,9 @@
 <template>
-  <div class="content">
+  <div class="content" @keydown.esc="modalCloseFunc">
     <div class="container-fluid">
       <div class="card">
         <div class="card-body">
-          <h4 class="card-title float-left mt-1">업무일지 관리</h4>
+          <h4 class="card-title float-left">업무일지 관리</h4>
         </div>
       </div>
 
@@ -66,7 +66,7 @@
             </div>
             <div class="col-2">
               <button class="btn btn-secondary btn-fill btn-sm float-left">등록</button>
-              <button class="btn btn-primary btn-fill btn-sm float-left" data-bs-toggle="modal" data-bs-target="#organizationModal">상세등록</button>
+              <button class="btn btn-primary btn-fill btn-sm float-left" @click="openModal">상세등록</button>
             </div>
           </div>
           <div class="table-responsive">
@@ -148,71 +148,81 @@
     </div>
   </div>
 
-  <!-- 모달 시작 -->
-  <div class="modal fade" id="organizationModal" tabindex="-1" aria-labelledby="organizationModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content">
-        <!-- 모달 헤더 -->
-        <div class="modal-header">
-          <h5 class="modal-title" id="organizationModalLabel">업무일지 상세등록</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-
-        <!-- 모달 바디 -->
-        <div class="modal-body">
-          <div class="card">
-            <div class="card-body">
-          <div class="mb-3">
-            <label class="form-label">업무일 <em class="point-red">*</em></label>
-            <input type="date" name="project_nm" class="form-control w30">
+  <!--업무등록 모달[s]-->
+  <Modal :isShowModal="isShowModal" :modalTitle="'일지등록'" @click.self="closeModal">
+    <!-- 모달 바디 -->
+    <template v-slot:body>
+      <div class="mb-3">
+        <label class="form-label">업무일 <em class="point-red">*</em></label>
+        <input type="date" name="project_nm" class="form-control w30">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">업무분류 <em class="point-red">*</em></label>
+        <div class="row">
+          <div class="col-auto">
+            <select class="form-select">
+              <option value="1">내부업무</option>
+              <option value="2">외부업무</option>
+              <option value="3">프로젝트</option>
+            </select>
           </div>
-          <div class="mb-3">
-            <label class="form-label">업무분류 <em class="point-red">*</em></label>
-            <div class="row">
-              <div class="col-auto">
-                <select class="form-select">
-                  <option value="1">내부업무</option>
-                  <option value="2">외부업무</option>
-                  <option value="3">프로젝트</option>
-                </select>
-              </div>
-            </div>
-          </div>
-          <div class="mb-3">
-            <div class="form-group has-label">
-              <label>일지제목 <em class="point-red">*</em></label>
-            </div>
-            <input type="text" name="project_nm" class="form-control" placeholder="일지제목을 입력해주세요">
-          </div>
-          <div class="mb-3">
-            <div class="form-group has-label">
-              <label>업무내용 <em class="point-red">*</em></label>
-            </div>
-            <textarea type="text" name="project_nm" class="form-control" placeholder="업무내용을 입력해주세요"></textarea>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">상태 <em class="point-red">*</em></label>
-            <div class="row">
-              <div class="col-auto">
-                <select class="form-select">
-                  <option value="1">미완료</option>
-                  <option value="2">완료</option>
-                </select>
-              </div>
-            </div>
-          </div></div>
-        </div>
-        </div>
-
-        <!-- 모달 푸터 -->
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary btn-fill" data-bs-dismiss="modal">등록</button>
-          <button type="button" class="btn btn-secondary btn-fill" data-bs-dismiss="modal">닫기</button>
         </div>
       </div>
-    </div>
-  </div>
-  <!-- 모달 끝 -->
+      <div class="mb-3">
+        <div class="form-group has-label">
+          <label>일지제목 <em class="point-red">*</em></label>
+        </div>
+        <input type="text" name="project_nm" class="form-control" placeholder="일지제목을 입력해주세요">
+      </div>
+      <div class="mb-3">
+        <div class="form-group has-label">
+          <label>업무내용 <em class="point-red">*</em></label>
+        </div>
+        <textarea type="text" name="project_nm" class="form-control" placeholder="업무내용을 입력해주세요"></textarea>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">상태 <em class="point-red">*</em></label>
+        <div class="row">
+          <div class="col-auto">
+            <select class="form-select">
+              <option value="1">미완료</option>
+              <option value="2">완료</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <!-- 모달 푸터 -->
+    <template v-slot:footer>
+      <button type="button" class="btn btn-primary btn-fill" @click="confirm">등록</button>
+      <button type="button" class="btn btn-secondary btn-fill" @click="closeModal">닫기</button>
+    </template>
+  </Modal>
+  <!--업무등록 모달[e]-->
 
 </template>
+
+<script setup>
+import Modal from '../../components/Modal.vue';
+import { ref } from 'vue';
+
+const isShowModal = ref(false);
+
+const modalCloseFunc = (e) => {
+  if (e.key === "Escape") {
+      if(isShowModal.value) {
+      isShowModal.value = !isShowModal.value
+      }
+  }
+}
+const openModal = () => {
+  isShowModal.value = true;
+}
+const closeModal = () => {
+  isShowModal.value = false;
+}
+const confirm = () => {
+  isShowModal.value = false;
+}
+</script>
