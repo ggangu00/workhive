@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div @keydown.esc="modalCloseFunc">
     <h1>Ksy Test Page</h1>
 
     <!-- 모달 열기-->
@@ -22,6 +22,15 @@ import ModalPageSample from './ModalPageSample.vue';
 import { ref } from 'vue';
 
 const isShowModal = ref(false);
+
+const modalCloseFunc = (e) => {
+  if (e.key === "Escape") {
+      if(isShowModal.value) {
+      isShowModal.value = !isShowModal.value
+      }
+  }
+}
+
 const openModal = () => {
   isShowModal.value = true;
 }
