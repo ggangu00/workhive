@@ -44,7 +44,7 @@
                       </div>
                       <!-- 에디터 -->
                       <div class='col-12'>
-                          <div id="editor"></div>
+                          <div :id="editor"></div>
                       </div>
                       <div class="d-flex" style='margin-top: 20px;'>
                         <!-- 왼쪽 -->
@@ -84,7 +84,7 @@
                   </div>
                   <div class='selectbox d-flex'>
                     <button v-if="ApprovalButtons" class="btn btn-primary btn-fill float-right" data-bs-toggle="modal"
-                    data-bs-target="#organizationModal">결재선지정</button>
+                    data-bs-target="#approvalRegiModal">결재선지정</button>
                   </div>
                 </div>
 
@@ -110,13 +110,13 @@
     </div>
 
     <!-- 모달 시작 -->
-  <div class="modal fade" id="organizationModal" tabindex="-1" aria-labelledby="organizationModalLabel"
+  <div class="modal fade" id="approvalRegiModal" tabindex="-1" aria-labelledby="approvalRegiModalLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered">
       <div class="modal-content">
         <!-- 모달 헤더 -->
         <div class="modal-header">
-          <h5 class="modal-title" id="organizationModalLabel">결재선</h5>
+          <h5 class="modal-title" id="approvalRegiModalLabel">결재선</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
@@ -135,41 +135,34 @@
   </div>
   <!-- 모달 끝 -->
   </template>
-  <script>
-    import '@toast-ui/editor/dist/toastui-editor.css';
-    import { Editor } from '@toast-ui/editor';
-    import ApprovalLine from '../../components/SkhComponents/ApprovalLine.vue';
-    export default {
-    props:{
-        headButtons: {type:Array, required: true},
-        ApprovalButtons: {type:Boolean, default: true},
-        showFile:{type: Boolean, default: true}
-    },
-      components: {
-        ApprovalLine
-      },
-      data(){
-        return{
-            fileList:[]
-        }
-      },
-      mounted() {
-       this.initEditor();
-      },
-      methods: {
-          initEditor() {
-            this.editor = new Editor({ //토스트유아이에디터
-              el: document.querySelector('#editor'),
-              height: '500px',
-              initialEditType: 'wysiwygw',
-              previewStyle: 'vertical'
-            });
-          }
-        }
-      };
-    
-    
-  </script>
+<script setup>
+import { ref, onMounted } from 'vue';
+import '@toast-ui/editor/dist/toastui-editor.css';
+import { Editor } from '@toast-ui/editor';
+import ApprovalLine from '../../components/SkhComponents/ApprovalLine.vue';
+
+defineProps({
+  headButtons: { type: Array, required: true },
+  ApprovalButtons: { type: Boolean, default: true },
+  showFile: { type: Boolean, default: true }
+});
+
+const fileList = ref([]);
+const editor = ref('');
+
+const initEditor = () => {
+  editor.value = new Editor({
+    el: document.querySelector('#editor'),
+    height: '500px',
+    initialEditType: 'wysiwyg',
+    previewStyle: 'vertical'
+  });
+};
+
+onMounted(() => {
+  initEditor();
+});
+</script>
   <style>
     .modal-xl {
       max-width: 70vw !important; /* 모달 가로 크기 확장 */

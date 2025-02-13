@@ -97,6 +97,7 @@
             <li class="sub-item" @click="movePage('Register')">문서기안</li>
             <li class="sub-item" @click="movePage('Completed')">완료함</li>
             <li class="sub-item" @click="movePage('Test')">컴포넌트테스트</li>
+            <li class="sub-item" @click="movePage('RegisterTest')">등록테스트</li>
           </template>
         </sidenav-collapse>
       </li>

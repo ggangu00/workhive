@@ -2,10 +2,11 @@
     <div class="content">
       <ApprovalRegister
         :headButtons="headButtons"
-        :ApprovalButtons="false"
-        :showFile="false"
+        :ApprovalButtons="true"
+        :showFile="true"
+        @button-click="openModal"
       />
-      <!-- @button-click="ClickMethod" 이벤트추가-->
+      <!--  이벤트추가-->
     </div>
   </template>
   

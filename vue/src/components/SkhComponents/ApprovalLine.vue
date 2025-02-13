@@ -86,6 +86,7 @@ import { ref, computed, onMounted, watch } from 'vue';
 import "tui-grid/dist/tui-grid.css";
 import Grid from "tui-grid";
 
+
     const selectedDept = ref(''); //UI가 자동 업데이트
     const receivers = ref([]);
     const approvers = ref([]);
@@ -133,11 +134,10 @@ import Grid from "tui-grid";
       });
     };
 
-    // ✅ Toast UI Grid 초기화
     onMounted(() => { //화면실행후 실행
       gridInstance = new Grid({
         el: document.getElementById('employeeGrid'),
-        data: [], // 초기 데이터
+        data: employees.value, // 초기 데이터
         scrollX: false,
         scrollY: true,
         columns: [
@@ -170,15 +170,16 @@ import Grid from "tui-grid";
   border: 1px solid #ddd;
   padding: 15px;
   border-radius: 5px;
+  height: 400px;
   background-color: #f8f9fa;
 }
 
 /* 결재 및 수신 박스 */
 .approval-box {
-  height: 300px;
+  height: 80%;
   overflow-y: auto;
   border: 1px solid #ddd;
-  padding: 10px;
+  padding: 5px;
 }
 
 /* 트리 구조 스타일 */
@@ -197,6 +198,6 @@ import Grid from "tui-grid";
 /* Toast UI Grid 스타일 */
 #employeeGrid {
   width: 100%;
-  height: 300px;
+  height: 100%;
 }
 </style>
