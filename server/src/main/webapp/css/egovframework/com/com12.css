@@ -40,7 +40,7 @@ a, button, input[type="button"] { cursor: pointer; }
 textarea,
 input[type="file"],
 input[type="password"],
-input[type="text"] { color: #727272; height: 21px; border: 1px solid #d2d2d2; }
+input[type="text"] { color: #808080; height: 21px; border: 1px solid #d2d2d2; }
 textarea[readonly="readonly"],
 button[readonly="readonly"],
 select[readonly="readonly"],

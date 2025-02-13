@@ -1,16 +1,12 @@
 <template>
   <div class="content">
     <div class="container-fluid">
-      <div class="row">
-        <div class="col-12">
-          <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-              <h4 class="card-title">개인정보 설정</h4>
-              <div class="button-group">
-                <button class="btn btn-secondary btn-fill mr-1">초기화</button>
-                <button class="btn btn-primary btn-fill mr-1">저장</button>
-              </div>
-            </div>
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h4 class="card-title">개인정보 설정</h4>
+          <div class="button-group">
+            <button class="btn btn-secondary btn-fill mr-1">초기화</button>
+            <button class="btn btn-primary btn-fill mr-1">저장</button>
           </div>
         </div>
       </div>
@@ -42,11 +38,11 @@
                 <div class="row p-1">
                   <div class="col-md-3">
                     <label>아이디 <i class="fa-solid fa-asterisk"></i></label>
-                    <input type="text" v-model="userId" disabled class="form-control readonly" />
+                    <input type="text" v-model="userId" class="form-control readonly" />
                   </div>
                   <div class="col-md-3">
                     <label>사번 <i class="fa-solid fa-asterisk"></i></label>
-                    <input type="text" v-model="employeeId" disabled class="form-control readonly" />
+                    <input type="text" v-model="employeeId" class="form-control readonly" />
                   </div>
                   <div class="col-md-3">
                     <label>성명 <i class="fa-solid fa-asterisk"></i></label>
@@ -59,8 +55,8 @@
                 <div class="section-header">[ 연락처 ]</div>
                 <div class="row p-1">
                   <div class="col-md-3">
-                    <label>이메일 <i class="fa-solid fa-asterisk"></i></label>
-                    <input type="text" v-model="email" class="form-control readonly" />
+                    <label class="align-items-center">이메일 <i class="fa-solid fa-asterisk"></i></label>
+                    <input type="text" v-model="email" class="editable" />
                   </div>
                   <div class="col-md-3">
                     <label>전화</label>
@@ -126,21 +122,15 @@
 
   .section-header {
     font-weight: bold;
-    font-size: 16px;
+    font-size: 15px;
     margin-bottom: 20px;
     border-bottom: 1px solid #374375;
     padding-bottom: 10px;
+    color: #393939;
   }
 
   .form-group:last-child {
     margin-right: 0;
-  }
-
-  label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: #393939;
   }
 
   input {

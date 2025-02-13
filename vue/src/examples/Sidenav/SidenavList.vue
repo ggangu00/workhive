@@ -81,26 +81,6 @@
           </template>
         </sidenav-collapse>
       </li>
-
-      <li class="nav-item">
-        <sidenav-collapse
-            url="#"
-            :aria-controls="''"
-            v-bind:collapse="false"
-            collapseRef=""
-            navText="관리자"
-        >
-          <template v-slot:icon>
-            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
-          </template>
-          <template v-slot:list>
-            <li class="sub-item" @click="movePage('PersonalInfo')">개인정보 설정</li>
-            <li class="sub-item" @click="movePage('LoginLog')">접속기록 조회</li>
-          </template>
-        </sidenav-collapse>
-      </li>
-
-
       
       <li class="nav-item">
         <sidenav-collapse

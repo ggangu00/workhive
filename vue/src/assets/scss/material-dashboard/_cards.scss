@@ -47,23 +47,24 @@
       border-bottom: none !important;
 
   }
-  .card-category,
-  label{
-      font-size: $font-size-base;
-      font-weight: $font-weight-normal;
-      color: $default-states-color;
-      margin-bottom: 0px;
-      margin-left: 0.25rem;
+    .card-category,
+    label{
+        font-size: 13px;
+        font-weight: 500;
+        color: #333;
+        margin-bottom: 0px;
+        margin-left: 0.25rem;
 
-      i{
-          font-size: $font-paragraph;
-      }
-  }
+        i{
+            font-size: 9px;
+            color: #a50000;
+        }
+    }
 
-  label{
-      font-size: $font-size-medium;
-      margin-bottom: 5px;
-  }
+    label{
+        font-size: $font-size-medium;
+        margin-bottom: 5px;
+    }
 
   .card-title{
       margin: $none;
