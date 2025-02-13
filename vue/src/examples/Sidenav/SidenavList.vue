@@ -34,6 +34,22 @@
             url="#"
             :aria-controls="''"
             v-bind:collapse="false"
+            collapseRef="/todo/manage"
+            navText="업무일지 관리"
+        >
+          <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+          <template v-slot:list>
+            <li class="sub-item" @click="movePage('Todo')">업무일지 관리</li>
+          </template>
+        </sidenav-collapse>
+      </li>
+      <li class="nav-item">
+        <sidenav-collapse
+            url="#"
+            :aria-controls="''"
+            v-bind:collapse="false"
             collapseRef="/project/list"
             navText="프로젝트 관리"
         >
@@ -42,7 +58,8 @@
           </template>
           <template v-slot:list>
             <li class="sub-item" @click="movePage('ProjectList')">프로젝트 조회</li>
-            <li class="sub-item" @click="movePage('ProjectAdd')">프로젝트 등록</li>            
+            <li class="sub-item" @click="movePage('ProjectAdd')">프로젝트 등록</li>
+            <li class="sub-item" @click="movePage('ProjectMem')">프로젝트 참여자관리</li>
           </template>
         </sidenav-collapse>
       </li>
@@ -70,7 +87,7 @@
             url="#"
             :aria-controls="''"
             v-bind:collapse="false"
-            collapseRef="/setting"
+            collapseRef=""
             navText="관리자"
         >
           <template v-slot:icon>
@@ -128,7 +145,7 @@
           url="#"
           :aria-controls="''"
           v-bind:collapse="false"
-          collapseRef="/deptStore/deptJobInfo"
+          collapseRef="/deptstore/list"
           navText="부서 업무 관리"
         >
           <template v-slot:icon>
@@ -141,16 +158,17 @@
             url="#"
             :aria-controls="''"
             v-bind:collapse="false"
-            collapseRef="/vacation"
-            navText="휴가 관리"
+            collapseRef="/commute/cmtlist"
+            navText="출퇴근 관리"
         >
           <template v-slot:icon>
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
           </template>
           <template v-slot:list>
-            <li class="sub-item" @click="movePage('VacationInfo')">휴가 조회</li>
-            <li class="sub-item" @click="movePage('VacationManage')">휴가 등록</li>
-            <li class="sub-item" @click="movePage('VacationInfo')">휴가 등록</li>
+            <li class="sub-item" @click="movePage('CmtList')">출퇴근 기록 조회</li>
+            <li class="sub-item" @click="movePage('CrctManage')">출퇴근 정정 요청 등록</li>
+            <li class="sub-item" @click="movePage('CrctList')">출퇴근 정정 요청 조회</li>
+            <li class="sub-item" @click="movePage('CrctSignManage')">출퇴근 정정 요청 결재</li>
           </template>
         </sidenav-collapse>
       </li>
@@ -159,14 +177,16 @@
             url="#"
             :aria-controls="''"
             v-bind:collapse="false"
-            collapseRef="/vacation"
-            navText="출퇴근 관리"
+            collapseRef="/vacation/vclist"
+            navText="휴가 관리"
         >
           <template v-slot:icon>
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
           </template>
           <template v-slot:list>
-            <li class="sub-item" @click="movePage('CommuteInfo')">출퇴근 조회</li>
+            <li class="sub-item" @click="movePage('VcList')">휴가 조회</li>
+            <li class="sub-item" @click="movePage('VcManage')">휴가 신청 등록</li>
+            <li class="sub-item" @click="movePage('VcSignManage')">휴가 신청 결재</li>
           </template>
         </sidenav-collapse>
       </li>
@@ -177,15 +197,33 @@
           url="#"
           :aria-controls="''"
           v-bind:collapse="false"
-          collapseRef="/bbs"
+          collapseRef="/BoardList"
           navText="게시판 관리"
         >
           <template v-slot:icon>
             <i class="material-icons-round opacity-10 fs-5">dashboard</i>
           </template>
           <template v-slot:list>
-            <li class="sub-item" @click="movePage('BbsList')">게시판 목록</li>
-            <li class="sub-item" @click="movePage('BbsAdd')">게시판 등록</li>           
+            <li class="sub-item" @click="movePage('BoardList')">게시판 목록</li>
+            <li class="sub-item" @click="movePage('BoardAdd')">게시판 등록</li>           
+          </template>                    
+        </sidenav-collapse>
+      </li>
+
+      <li class="nav-item">
+        <sidenav-collapse
+          url="#"
+          :aria-controls="''"
+          v-bind:collapse="false"
+          collapseRef="/bbs"
+          navText="게시글 관리"
+        >
+          <template v-slot:icon>
+            <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+          </template>
+          <template v-slot:list>
+            <li class="sub-item" @click="movePage('BulletinList')">게시글 목록</li>
+            <li class="sub-item" @click="movePage('BulletinAdd')">게시글 등록</li>           
           </template>                    
         </sidenav-collapse>
       </li>
