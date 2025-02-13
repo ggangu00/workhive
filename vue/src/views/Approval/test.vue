@@ -1,5 +1,6 @@
 <template>
-    <ApprovalList :buttons="buttons" :columnDefs="columnDefs" :rowData="rowData" />
+    <ApprovalList :buttons="buttons" :columnDefs="columnDefs" :rowData="rowData"
+    @button-click="linkButton" />
 </template>
   
   <script>
@@ -7,10 +8,15 @@
   
   export default {
     components: { ApprovalList },
+    methods:{
+      linkButton(action){
+        window.location.href = action;
+      }
+    },
     data() {
       return {
         buttons: [
-          { label: '기안', class: 'btn-primary' },
+          { label: '기안', class: 'btn-primary', action: 'http://localhost:8077/RegisterTest'},
           { label: '공람발송', class: 'btn-warning' },
           { label: '인쇄/다운로드', class: 'btn-excel' }
         ],

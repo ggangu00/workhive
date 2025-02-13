@@ -81,18 +81,15 @@
   </div>
 </template>
 
-<script>
-import { ref, computed, onMounted } from 'vue';
+<script setup>
+import { ref, computed, onMounted, watch } from 'vue';
 import "tui-grid/dist/tui-grid.css";
 import Grid from "tui-grid";
 
-export default {
-  setup() {
-    const selectedDept = ref('');
+    const selectedDept = ref(''); //UI가 자동 업데이트
     const receivers = ref([]);
     const approvers = ref([]);
-    let gridInstance = null; // ✅ Toast UI Grid 인스턴스
-
+    let gridInstance = null; 
     const departmentTree = ref([
       { name: '총무팀', children: ['총무 1팀', '총무 2팀'], expanded: false },
       { name: '영업팀', children: ['영업 1팀', '영업 2팀'], expanded: false },
@@ -107,8 +104,8 @@ export default {
       { name: '이과장', title: '과장', dept: '총무 2팀' }
     ]);
 
-    const filteredEmployees = computed(() => {
-      return selectedDept.value ? employees.value.filter(emp => emp.dept === selectedDept.value) : [];
+    const filteredEmployees = computed(() => { //자동계산
+      return selectedDept.value ? employees.value.filter(emp => emp.dept == selectedDept.value) : [];
     });
 
     const toggleDept = (dept) => {
@@ -130,24 +127,23 @@ export default {
       if (!gridInstance) return;
       const selectedData = gridInstance.getCheckedRows();
       selectedData.forEach(emp => {
-        if (!approvers.value.find(appr => appr.name === emp.name)) {
+        if (!approvers.value.find(appr => appr.name == emp.name)) {
           approvers.value.push({ ...emp, status: '결재' });
         }
       });
     };
 
     // ✅ Toast UI Grid 초기화
-    onMounted(() => {
+    onMounted(() => { //화면실행후 실행
       gridInstance = new Grid({
         el: document.getElementById('employeeGrid'),
-        data: employees.value, // 초기 데이터
+        data: [], // 초기 데이터
         scrollX: false,
         scrollY: true,
         columns: [
           { header: '이름', name: 'name', sortable: true, align: 'center' },
           { header: '직책', name: 'title', sortable: true, align: 'center' },
           { header: '부서', name: 'dept', sortable: true, align: 'center' },
-          { header: '선택', name: 'select', align: 'center', renderer: { type: 'checkbox' } }
         ]
       });
     });
@@ -155,24 +151,12 @@ export default {
     // ✅ 부서 선택 시 직원 목록 갱신
     const updateGridData = () => {
       if (gridInstance) {
-        gridInstance.resetData(filteredEmployees.value);
+      gridInstance.resetData(filteredEmployees.value); //토스트유아이 내장메서드 데이터 업데이트나 새로 교체
       }
     };
-
-    return {
-      selectedDept,
-      receivers,
-      approvers,
-      departmentTree,
-      toggleDept,
-      selectDept,
-      employees,
-      filteredEmployees,
-      addReceiver,
-      addApproval
-    };
-  }
-};
+    watch(selectedDept, () => {
+      updateGridData();
+    });
 </script>
 
 <style scoped>

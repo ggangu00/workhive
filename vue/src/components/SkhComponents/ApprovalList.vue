@@ -4,16 +4,14 @@
       <div class="row">
         <div class="col-12">
           <div class="card">
-            <!-- 제목 -->
-            <h3 class="card-title" style="padding: 15px;">{{ title }}</h3>
-
             <!-- 버튼 & 필터 -->
             <div class="button-collection d-flex justify-content-between align-items-center flex-wrap" style="padding: 15px;">
               <div class="d-flex">
                 <button 
                   v-for="(btn, index) in buttons" 
                   :key="index"
-                  :class="['btn', btn.class, 'btn-fill']">
+                  :class="['btn', btn.class, 'btn-fill']"
+                  @click="$emit('button-click', btn.action)">
                   {{ btn.label }}
                 </button>
               </div>
@@ -46,13 +44,14 @@
                     <input type="date" class="form-control">
                   </div>
                 </div>
+                
                 <button class="btn btn-secondary btn-fill">초기화</button>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- 🔹 Toast UI Grid 영역 -->
+        <!-- Toast UI Grid 영역 -->
         <div class="col-12">
           <div id="tableGrid" class="toastui-grid-container"></div>
         </div>
@@ -67,16 +66,15 @@ import Grid from "tui-grid";
 
 export default {
   props: {
-    title: { type: String, required: true },
     buttons: { type: Array, required: true },
     columnDefs: { type: Array, required: true }, // Column 정의
     rowData: { type: Array, required: true } // 데이터
   },
   mounted() {
-    this.initToastGrid();
+    this.toastGrid();
   },
   methods: {
-    initToastGrid() {
+    toastGrid() {
       this.grid = new Grid({
         el: document.getElementById("tableGrid"),
         data: this.rowData, // 데이터 적용
