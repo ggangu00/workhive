@@ -58,7 +58,7 @@
 
 <script setup>
 import DeptJobBx from "./DeptJobBx.vue";
-import { ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue';
 import JobManage from "./JobManage.vue";
 
 let gridInstance = ref();
