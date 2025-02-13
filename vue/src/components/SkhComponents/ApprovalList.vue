@@ -53,7 +53,7 @@
 
         <!-- Toast UI Grid 영역 -->
         <div class="col-12">
-          <div id="tableGrid" class="toastui-grid-container"></div>
+          <div id="tableGrid" class="toastuiContainer"></div>
         </div>
       </div>
     </div>
@@ -99,7 +99,7 @@ export default {
 .selectbox select {
   margin-right: 10px;
 }
-.toastui-grid-container {
+.toastuiContainer {
   width: 100%;
   height: 500px;
 }
