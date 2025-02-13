@@ -23,7 +23,14 @@
         <div class="row justify-content-between align-items-center">
           <div class="col-auto">
             <button class="btn btn-danger btn-fill me-2">선택 삭제</button>
-            <button class="btn btn-primary btn-fill">업무 등록</button>
+            <button class="btn btn-primary btn-fill" @click="openJobModal">업무 등록</button>
+
+            <!-- 업무 등록 모달 -->
+            <JobManage
+              :isShowJobModal="isShowJobModal"
+              @closeJobModal="closeJobModal"
+              @confirmJobModal="confirmJobModal"
+            />
           </div>
           <div class="col d-flex justify-content-end align-items-center">
             <label for="title-search" class="m-0 me-2">제목 검색</label>
@@ -52,6 +59,7 @@
 <script setup>
 import DeptJobBx from "./DeptJobBx.vue";
 import { ref, onMounted } from 'vue'
+import JobManage from "./JobManage.vue";
 
 let gridInstance = ref();
 
@@ -70,6 +78,20 @@ onMounted(() => {
     ]
   })
 })
+
+const isShowJobModal = ref(false);
+const openJobModal = () => {
+  isShowJobModal.value = true;
+}
+
+const closeJobModal = () => {
+  isShowJobModal.value = false;
+}
+const confirmJobModal = () => {
+  console.log('job modal confirm click');
+  isShowJobModal.value = false;
+}
+
 
 
 /*
