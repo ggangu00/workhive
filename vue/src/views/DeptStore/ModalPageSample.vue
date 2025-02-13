@@ -30,6 +30,7 @@ const closeModal = () => {
 const confirm = () => {
   emit('confirm');
 }
+
 </script>
 
 
