@@ -21,9 +21,9 @@ import MemberManage from '../views/Setting/MemberManage.vue'
 
 
 //skh컴포넌트
-import ApprovalList from "../components/SkhComponents/ApprovalList.vue";
-import ApprovalLine from "../components/SkhComponents/ApprovalLine.vue";
-import ApprovalRegister from "../components/SkhComponents/ApprovalRegister.vue";
+import ApprovalList from "../components/PaymentLayout/ApprovalList.vue";
+import ApprovalLine from "../components/PaymentLayout/ApprovalLine.vue";
+import ApprovalRegister from "../components/PaymentLayout/ApprovalRegister.vue";
 //skh
 import Test from "../views/Approval/test.vue";
 import RegisterTest from "../views/Approval/RegisterTest.vue";

@@ -1,35 +1,3 @@
-<script>
-import FullCalendar from '@fullcalendar/vue3'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import timeGridPlugin from '@fullcalendar/timegrid'
-import interactionPlugin from '@fullcalendar/interaction'
-
-export default {
-  components: {
-    FullCalendar
-  },
-  methods: {
-    toggle() {
-      this.isAllDay = !this.isAllDay;
-    }
-  },
-  data() {
-    return {
-      calendarOptions: {
-        plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],  
-        initialView: 'dayGridMonth',  
-        headerToolbar: { 
-          left: 'prev,next today',
-          center: 'title',
-          right: 'dayGridMonth,timeGridWeek,timeGridDay'  
-        },
-      },
-      isAllDay: false
-    }
-  }
-}
-</script>
-
 <template>    
 <div class="content">
     <div class="container-fluid">
@@ -142,6 +110,37 @@ export default {
   </div>
   <!-- 모달 끝 -->
 </template>
+<script>
+import FullCalendar from '@fullcalendar/vue3'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import timeGridPlugin from '@fullcalendar/timegrid'
+import interactionPlugin from '@fullcalendar/interaction'
+
+export default {
+  components: {
+    FullCalendar
+  },
+  methods: {
+    toggle() {
+      this.isAllDay = !this.isAllDay;
+    }
+  },
+  data() {
+    return {
+      calendarOptions: {
+        plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],  
+        initialView: 'dayGridMonth',  
+        headerToolbar: { 
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay'  
+        },
+      },
+      isAllDay: false
+    }
+  }
+}
+</script>
 <style>
 .calendar{
   width: 70%;
