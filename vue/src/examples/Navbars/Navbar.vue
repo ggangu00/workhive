@@ -17,7 +17,6 @@
           class="pe-md-3 d-flex align-items-center"
           :class="isRTL ? 'me-md-auto' : 'ms-md-auto'"
         >
-          <material-input id="search" label="Search here" />
         </div>
         <ul class="navbar-nav justify-content-end">
           <li class="nav-item d-flex align-items-center">
@@ -185,7 +184,6 @@
   </nav>
 </template>
 <script>
-import MaterialInput from "@/components/MaterialInput.vue";
 import Breadcrumbs from "../Breadcrumbs.vue";
 import { mapMutations, mapState } from "vuex";
 
@@ -209,7 +207,6 @@ export default {
   },
   components: {
     Breadcrumbs,
-    MaterialInput,
   },
   computed: {
     ...mapState(["isRTL", "isAbsolute"]),

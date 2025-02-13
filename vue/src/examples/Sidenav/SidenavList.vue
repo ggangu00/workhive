@@ -234,7 +234,7 @@
             url="#"
             :aria-controls="''"
             v-bind:collapse="false"
-            collapseRef=""
+            collapseRef="/setting/personalInfo"
             navText="관리자"
         >
           <template v-slot:icon>

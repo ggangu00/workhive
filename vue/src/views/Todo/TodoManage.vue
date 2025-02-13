@@ -195,8 +195,8 @@
 
     <!-- 모달 푸터 -->
     <template v-slot:footer>
-      <button type="button" class="btn btn-primary btn-fill" @click="confirm">등록</button>
       <button type="button" class="btn btn-secondary btn-fill" @click="closeModal">닫기</button>
+      <button type="button" class="btn btn-primary btn-fill" @click="confirm">등록</button>      
     </template>
   </Modal>
   <!--업무등록 모달[e]-->
