@@ -2,17 +2,15 @@
   <!-- 모달 컴포넌트 -->
   <Modal
     :isShowModal="props.isShowModal"
-    :modalTitle="'modal title'"
-    :width="600"
+    :modalTitle="'모달 타이틀'"
+    @click.self="closeModal"
   >
     <template v-slot:body>
-      <div>
-        <h3>modal body content</h3>
-      </div>
+      내용부
     </template>
     <template v-slot:footer>
-      <button class="btn btn-secondary btn-fill mx-2" @click="closeModal">닫기</button>
-      <button class="btn btn-success btn-fill mx-2" @click="confirm">저장</button>
+      <button class="btn btn-primary btn-fill" @click="confirm">등록</button>
+      <button class="btn btn-secondary btn-fill" @click="closeModal">닫기</button>      
     </template>
   </Modal>
 </template>
