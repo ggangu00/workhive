@@ -221,13 +221,15 @@
     }
 
     .card-sub {
-        font-size: 14px;
+        font-size: 15px;
         color: #8d8d8d;
+        margin-top: 0;
         margin-bottom: 0;
     }
 
     .card-sub:first-child {
-        margin-top: 17px;
+        font-weight: 600;
+        color: $primary;
     }
 }
 
@@ -466,17 +468,20 @@
     text-align: center;
 
     $day-per : 3.22% !default;
-    
-    .day28{
+
+    .day28 {
         $day-per : 3.57% !default;
     }
-    .day29{
+
+    .day29 {
         $day-per : 3.44% !default;
     }
-    .day30{
+
+    .day30 {
         $day-per : 3.33% !default;
     }
-    .day31{
+
+    .day31 {
         $day-per : 3.22% !default;
     }
 

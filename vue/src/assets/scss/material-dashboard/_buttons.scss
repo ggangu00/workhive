@@ -4,7 +4,7 @@
   font-weight: $font-weight-normal;
   margin: .25rem .125rem;
 
-  padding: $padding-base-vertical $padding-base-horizontal;
+  padding: 5px 10px;
 
   @include btn-styles($default-color, $default-states-color);
 
@@ -107,7 +107,6 @@
 
 .btn-info {
   @include btn-styles($info, $info-gradient-state);
-  color: #656667 !important;
 }
 
 .btn-warning {

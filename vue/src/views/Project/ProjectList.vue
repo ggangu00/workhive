@@ -3,7 +3,7 @@
     <div class="container-fluid">
       <div class="card">
         <div class="card-body">
-          <h4 class="card-title float-left mt-1">프로젝트 조회</h4>
+          <h4 class="card-title float-left">프로젝트 조회</h4>
           <button class="btn btn-primary btn-sm btn-fill float-right" onclick="location.href ='/project/add'">프로젝트
             등록</button>
         </div>
