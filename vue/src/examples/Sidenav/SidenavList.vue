@@ -184,6 +184,25 @@
           url="#"
           :aria-controls="''"
           v-bind:collapse="false"
+          collapseRef="/PaymentList"
+          navText="외부지출 관리"
+        >
+        <template v-slot:icon>
+          <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+        </template>
+        <template v-slot:list>
+            <li class="sub-item" @click="movePage('PaymentList')">외부지출 조회</li>
+            <li class="sub-item" @click="movePage('PaymentAdd')">외부지출 등록</li>  
+            <li class="sub-item" @click="movePage('PaymentManage')">외부지출 승인/반려 관리</li>          
+        </template>                    
+        </sidenav-collapse>
+      </li>
+
+      <li class="nav-item">
+        <sidenav-collapse
+          url="#"
+          :aria-controls="''"
+          v-bind:collapse="false"
           collapseRef="/BoardList"
           navText="게시판 관리"
         >
@@ -202,7 +221,7 @@
           url="#"
           :aria-controls="''"
           v-bind:collapse="false"
-          collapseRef="/bbs"
+          collapseRef="/BulletinList"
           navText="게시글 관리"
         >
           <template v-slot:icon>
@@ -210,7 +229,8 @@
           </template>
           <template v-slot:list>
             <li class="sub-item" @click="movePage('BulletinList')">게시글 목록</li>
-            <li class="sub-item" @click="movePage('BulletinAdd')">게시글 등록</li>           
+            <li class="sub-item" @click="movePage('BulletinAdd')">게시글 등록</li>   
+            <li class="sub-item" @click="movePage('BulletinInfo')">게시글 상세조회</li>           
           </template>                    
         </sidenav-collapse>
       </li>
