@@ -15,8 +15,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springmodules.validation.commons.DefaultBeanValidator;
@@ -58,7 +60,8 @@ import org.egovframe.rte.psl.dataaccess.util.EgovMap;
  *
  * </pre>
  */
-@Controller
+@RestController
+@RequestMapping("/schedule")
 public class EgovIndvdlSchdulManageController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EgovIndvdlSchdulManageController.class);
@@ -335,8 +338,8 @@ public class EgovIndvdlSchdulManageController {
 	 * @return "egovframework/com/cop/smt/sim/EgovIndvdlSchdulManageMonthList"
 	 * @throws Exception
 	 */
-	@RequestMapping(value="/cop/smt/sim/EgovIndvdlSchdulManageMonthList.do")
-	public String egovIndvdlSchdulManageMonthList(
+	@RequestMapping(value="/month")
+	public List<EgovMap> egovIndvdlSchdulManageMonthList(
 			@ModelAttribute("searchVO") ComDefaultVO searchVO,
 			@RequestParam Map<String, String> commandMap,
 			IndvdlSchdulManageVO indvdlSchdulManageVO,
@@ -383,7 +386,7 @@ public class EgovIndvdlSchdulManageController {
     	List<EgovMap> resultList = egovIndvdlSchdulManageService.selectIndvdlSchdulManageRetrieve(commandMap);
         model.addAttribute("resultList", resultList);
 
-		return "egovframework/com/cop/smt/sim/EgovIndvdlSchdulManageMonthList";
+		return egovIndvdlSchdulManageService.selectIndvdlSchdulManageRetrieve(commandMap);
 	}
 
 	/**
@@ -720,21 +723,21 @@ public class EgovIndvdlSchdulManageController {
 	 * @return "egovframework/com/cop/smt/sim/EgovIndvdlSchdulManageRegistActor"
 	 * @throws Exception
 	 */
-	@RequestMapping(value="/cop/smt/sim/EgovIndvdlSchdulManageRegistActor.do")
-	public String indvdlSchdulManageRegistActor(
+	@PostMapping(value="/register")
+	public List<EgovMap> indvdlSchdulManageRegistActor(
 			final MultipartHttpServletRequest multiRequest,
 			@ModelAttribute("searchVO") ComDefaultVO searchVO,
-			@RequestParam Map<?, ?> commandMap,
+			@RequestParam Map<String, String> commandMap,
 			@ModelAttribute("indvdlSchdulManageVO") IndvdlSchdulManageVO indvdlSchdulManageVO,
 			BindingResult bindingResult,
     		ModelMap model)
     throws Exception {
     	// 0. Spring Security 사용자권한 처리
-    	Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-    	if(!isAuthenticated) {
-    		model.addAttribute("message", egovMessageSource.getMessage("fail.common.login"));
-        	return "redirect:/uat/uia/egovLoginUsr.do";
-    	}
+//    	Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+//    	if(!isAuthenticated) {
+//    		model.addAttribute("message", egovMessageSource.getMessage("fail.common.login"));
+//        	return "redirect:/uat/uia/egovLoginUsr.do";
+//    	}
 
 		//로그인 객체 선언
 		LoginVO loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
@@ -746,11 +749,11 @@ public class EgovIndvdlSchdulManageController {
 
         if(sCmd.equals("save")){
     		//서버  validate 체크
-            beanValidator.validate(indvdlSchdulManageVO, bindingResult);
-    		if(bindingResult.hasErrors()){
-
-    			return sLocationUrl;
-    		}
+//            beanValidator.validate(indvdlSchdulManageVO, bindingResult);
+//    		if(bindingResult.hasErrors()){
+//
+//    			return sLocationUrl;
+//    		}
 
         	// 첨부파일 관련 첨부파일ID 생성
     		List<FileVO> _result = null;
@@ -777,7 +780,7 @@ public class EgovIndvdlSchdulManageController {
         	sLocationUrl = "redirect:/cop/smt/sim/EgovIndvdlSchdulManageList.do";
         }
 
-        return sLocationUrl;
+        return egovIndvdlSchdulManageService.selectIndvdlSchdulManageRetrieve(commandMap);
 
 
 	}
