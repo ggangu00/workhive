@@ -91,7 +91,7 @@ $yellow: #fbd38d !default;
 $green: #81e6d9 !default;
 $teal: #20c997 !default;
 $cyan: #0dcaf0 !default;
-$main: #002966 !default;
+$main: #626267 !default;
 
 // scss-docs-start colors-map
 $colors: (
@@ -115,7 +115,7 @@ $colors: (
 $primary: #83a2e9 !default;
 $secondary: #b1b1b1 !default;
 $info: #bdaee9 !default;
-$success: #b8e389 !default;
+$success: #9ecf7a !default;
 $warning: #ffcb88 !default;
 $danger: #ff9097 !default;
 $excel: #64d36e !default;
@@ -138,25 +138,25 @@ $theme-colors: (
 // scss-docs-end theme-colors-map
 
 // Gradient colors
-$primary-gradient: #83a2e9 !default;
+$primary-gradient: $primary !default;
 $primary-gradient-state: lighten($primary, 8%) !default;
 
-$secondary-gradient: #b1b1b1 !default;
+$secondary-gradient: $secondary !default;
 $secondary-gradient-state: lighten($secondary, 8%) !default;
 
-$info-gradient: #ebd6d1 !default;
+$info-gradient: $info !default;
 $info-gradient-state: lighten($info, 8%) !default;
 
-$success-gradient: #b8e389 !default;
+$success-gradient: $success !default;
 $success-gradient-state: lighten($success, 8%) !default;
 
-$danger-gradient: #ff9097 !default;
+$danger-gradient: $danger !default;
 $danger-gradient-state: lighten($danger, 8%) !default;
 
-$warning-gradient: #ffcb88 !default;
+$warning-gradient: $warning !default;
 $warning-gradient-state: lighten($warning, 8%) !default;
 
-$excel-gradient: #64d36e !default;
+$excel-gradient: $excel !default;
 $excel-gradient-state: lighten($excel, 8%) !default;
 
 $dark-gradient: #42424a !default;

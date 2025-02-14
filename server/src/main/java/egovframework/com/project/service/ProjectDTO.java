@@ -1,4 +1,4 @@
-package egovframework.com.project.dto;
+package egovframework.com.project.service;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,16 +10,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor //Builder, All, No 세투세투
 public class ProjectDTO {
-	private long prCd;
-	private long typeCd;
+	private String prCd;
+	private String typeCd;
 	private String prNm;
 	private String aheadDt;
 	private String endDt;
 	private String price;
-	private long state;
-	private long updateId;
+	private String state;
+	private String updateId;
 	private String updateDt;
-	private long createId;
+	private String createId;
 	private String createDt;
 	private String entrprsMberId;
 }

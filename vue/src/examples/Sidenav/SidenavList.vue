@@ -382,7 +382,8 @@ export default {
 
 <style scoped>
   .sub-item {
-    font-size: 14px;
+    color:#cfcfcf;
+    font-size: 13px;
     border-left: 3px solid;
     padding: 2px 1px 2px 4px;
     margin: 7px 6px 11px 32px;
