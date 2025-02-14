@@ -4,15 +4,13 @@ import Tables from "../views/Tables.vue";
 import Billing from "../views/Billing.vue";
 import Notifications from "../views/Notifications.vue";
 import Profile from "../views/Profile.vue";
-import SignIn from "../views/SignIn.vue";
-import SignUp from "../views/SignUp.vue";
 import Guide from "../views/Guide.vue";
 import Layout from '../views/Layout.vue';
 
 // kmj
 import PersonalManage from '../views/Setting/PersonalManage.vue';
 import MemberManage from '../views/Setting/MemberManage.vue'
-
+import DepartmentManage from "../views/Setting/DepartmentManage.vue";
 
 
 
@@ -99,16 +97,6 @@ const routes = [
     name: "Profile",
     component: Profile,
   },
-  {
-    path: "/sign-in",
-    name: "SignIn",
-    component: SignIn,
-  },
-  {
-    path: "/sign-up",
-    name: "SignUp",
-    component: SignUp,
-  },
   { // ui가이드
     path: '/guide',
     name: 'Guide',
@@ -126,12 +114,16 @@ const routes = [
     name: 'PersonalManage',
     component: PersonalManage
   },
-  { // 
+  { // 부서 구성원 관리
     path: '/setting/member/users',
     name: 'MemberManage',
     component: MemberManage
   },
-
+  { // 부서 관리
+    path: '/setting/department',
+    name: 'DepartmentManage',
+    component: DepartmentManage
+  },
 
 
 

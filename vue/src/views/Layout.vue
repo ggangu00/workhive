@@ -11,13 +11,9 @@
         </div>
       </div>
 
-      <div class="row">
-        <div class="col-12">
-          <div class="card">
-            <div class="card-body">
-              <p>내용 넣기</p>
-            </div>
-          </div>
+      <div class="card">
+        <div class="card-body">
+          <p>내용 넣기</p>
         </div>
       </div>
     </div>
