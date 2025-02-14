@@ -13,3 +13,38 @@
    </div>
    
    </template>
+
+import 'tui-grid/dist/tui-grid.css';
+import { Grid } from '@toast-ui/vue-grid';
+
+export default {
+  components: {
+    grid: Grid
+  },
+  created() {
+    this.gridProps = {
+      data: [
+        // for rowData prop
+        {
+          name: 'Beautiful Lies',
+          artist: 'Birdy'
+        },
+        {
+          name: 'X',
+          artist: 'Ed Sheeran'
+        }
+      ],
+      columns: [
+        // for columnData prop
+        {
+          header: 'Name',
+          name: 'name'
+        },
+        {
+          header: 'Artist',
+          name: 'artist'
+        }
+      ]
+    };
+  }
+};

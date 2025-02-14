@@ -63,7 +63,7 @@
 			A.REPTIT_SE_CODE 
 		FROM COMTNSCHDULINFO A
 		WHERE 1=1 
-		AND A.SCHDUL_KND_CODE = '2'   
+		 
 		AND (A.SCHDUL_CHARGER_ID = #{uniqId} OR A.MEM_CD = #{uniqId})  
 		
 		
@@ -104,7 +104,7 @@
 			A.REPTIT_SE_CODE 
 		FROM COMTNSCHDULINFO A
 		WHERE 1=1 
-		AND A.SCHDUL_KND_CODE = '2' 
+		
 	 
 	 <if test='searchMode != null and searchMode != ""'>
 	 <if test='searchMode == "MONTH"'>
@@ -290,7 +290,7 @@
 	</select>
 	
 	<!-- 개인일정정보::입력  -->
-	<insert id="insertIndvdlSchdulManage">
+	<insert id="insertIndvdlSchdulManage" parameterType="egovframework.com.cop.smt.sim.service.IndvdlSchdulManageVO">
 	 
 	 
 		INSERT INTO COMTNSCHDULINFO ( 

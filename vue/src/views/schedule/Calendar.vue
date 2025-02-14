@@ -10,14 +10,14 @@
 
       <div class="card" style="padding: 10px;">
         <div class='calendar'>
-          <FullCalendar :options="calendarOptions" />
+          <FullCalendar @dateClick="handleDateClick" :options="calendarOptions"/>
         </div>
     </div>
   </div>
 </div>
 
 <!-- 모달 시작 -->
-<div class="modal fade" id="scheduleModal" tabindex="-1" aria-labelledby="scheduleModalLabel">
+<div class="modal fade" id="scheduleModal" tabindex="-1" aria-labelledby="scheduleModalLabel" aria-hidden="false">
     <div class="modal-dialog modal-lg modal-dialog-centered">
       <div class="modal-content">
         <!-- 모달 헤더 -->
@@ -35,8 +35,8 @@
               <div class="mb-3">
                 <label class="form-label">일정유형 <em class="point-red">*</em></label>
                 <select class="form-select w30" aria-label="Default select example" v-model="schedule.type">
-                  <option value="A03">회의</option>
-                  <option value="A04">세미나</option>
+                  <option value="1">회의</option>
+                  <option value="2">세미나</option>
                 </select>
               </div>
               <div class="mb-3">
@@ -115,7 +115,6 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import axios from "axios";
-import { Modal } from "bootstrap";
 
 
 export default {
@@ -136,6 +135,7 @@ export default {
         events: []
       },
       isAllDay: false,
+      
       schedule:{
       type:"",
       title:"",
@@ -152,12 +152,12 @@ export default {
   mounted() {
     this.scheduleGetList();
 
-    document.getElementById("openModalButton").addEventListener("click", () => {
-        const modal = new Modal(document.getElementById("scheduleModal"));
-        modal.show();
-    });
   },
   methods: {
+    //달력 클릭이벤트
+    handleDateClick(arg) {
+      alert(arg.date)
+  	},
 
     //일정 정보 호출 메소드
     async scheduleGetList() {
@@ -177,20 +177,27 @@ export default {
     },
     //등록 메소드
     async scheduleAdd(){
-      const addList={
-        cmd: "save",
-          schdulId: "",
-          schdulDeptId: this.schedule.dept,
-          schdulSe: this.schedule.type,
-          schdulNm: this.schedule.title,
-          schdulCn: this.schedule.content,
-          schdulPlace: this.schedule.place,
-          schdulBgnde: this.schedule.start.replace(/-/g, ''),
-          schdulEndde: this.schedule.end.replace(/-/g, ''),
-          reptitSeCode: this.schedule.allDay ? '1' : '0'
-    }
-    const response = await axios.post('/api/schedule/register', addList);
-    console.log(response);
+      const addList = new FormData();
+      addList.append("schdulId", "");
+      addList.append("cmd", "save");
+      addList.append("schdulDeptId", this.schedule.dept);
+      addList.append("schdulSe", this.schedule.type);
+      addList.append("schdulNm", this.schedule.title);
+      addList.append("schdulCn", this.schedule.content);
+      addList.append("schdulPlace", this.schedule.place);
+      addList.append("schdulBgnde", this.schedule.start.replace(/-/g, ''));
+      addList.append("schdulEndde", this.schedule.end.replace(/-/g, ''));
+
+      //입력테이터 찍어보기
+      for (let pair of addList.entries()) {
+        console.log(`${pair[0]}: ${pair[1]}`);
+      }
+
+        const result = await axios.post('/api/schedule/register', addList, {
+          headers: { "Content-Type": "multipart/form-data" }
+        });
+        //서버응답 찍어보기
+        console.log("서버 응답:", result.data);
 
     //다시불러오기
     this.scheduleGetList();
