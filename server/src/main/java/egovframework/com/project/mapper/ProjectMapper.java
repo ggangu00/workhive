@@ -10,7 +10,7 @@ public interface ProjectMapper {
 	
 	int insert(ProjectDTO projectDTO);
 	int update(ProjectDTO projectDTO);
-	int delete(Long prCd);
-	ProjectDTO read(Long prCd);
-	List<ProjectDTO> selectProjectList();
+	int delete(String prCd);
+	ProjectDTO read(String prCd);
+	List<ProjectDTO> getList();
 }

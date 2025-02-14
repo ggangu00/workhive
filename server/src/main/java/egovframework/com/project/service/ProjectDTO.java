@@ -14,6 +14,7 @@ public class ProjectDTO {
 	private String typeCd;
 	private String prNm;
 	private String aheadDt;
+	private String startDt;
 	private String endDt;
 	private String price;
 	private String state;

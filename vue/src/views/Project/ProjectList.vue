@@ -1,13 +1,11 @@
 <template>
-  <div class="content">
+  <div class="content" @keydown.esc="modalCloseFunc">
     <div class="container-fluid">
-      <div class="card">
-        <div class="card-body">
-          <h4 class="card-title float-left">프로젝트 조회</h4>
-          <button class="btn btn-primary btn-sm btn-fill float-right" onclick="location.href ='/project/add'">프로젝트
-            등록</button>
-        </div>
-      </div>
+      <card>
+        <h4 class="card-title float-left">프로젝트 조회</h4>
+        <button class="btn btn-primary btn-sm btn-fill float-right" onclick="location.href ='/project/add'">프로젝트
+          등록</button>
+      </card>
       <card>
         <ul class="nav nav-pills">
           <li class="nav-item">
@@ -71,7 +69,8 @@
         <div class="d-flex">
           <div class="p-2 w90">
             <button class="btn btn-danger btn-fill btn-sm">다중삭제</button>
-            <button class="btn btn-excel btn-sm"><i class="fa-regular fa-file-excel"></i> 엑셀다운로드</button>
+            <button class="btn btn-excel btn-sm"><img class="me-1" src="../../assets/img/icon/excel.svg" alt="xls">
+              엑셀다운로드</button>
           </div>
           <div class="p-2 flex-shrink-1">
             <select class="form-select form-select-sm">
@@ -103,30 +102,38 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                  </div>
-                </td>
-                <td>1</td>
-                <td>진행중</td>
-                <td>
-                  <div class="category">(대구)사람이좋다협회</div>
-                  <div class="subject">아동복지 홈페이지 구축 용역
-                    <span class="badge badge-danger">D-10</span>
-                  </div>
-                </td>
-                <td>2025-01-01 ~ 2025-03-31</td>
-                <td>30,000,000</td>
-                <td>김지환</td>
-                <td><button class="btn btn-primary btn-sm" onclick="location.href ='/project/plan'">일정등록</button></td>
-                <td>2024-12-01</td>
-                <td>
-                  <button class="btn btn-success btn-fill btn-sm mr-1">수정</button>
-                  <button class="btn btn-danger btn-fill btn-sm mr-1">삭제</button>
+              <template v-if="projectCount > 0">
+                <tr :key="i" v-for="(project, i) in projectList">
+                  <td>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+                    </div>
+                  </td>
+                  <td>{{ i + 1 }}</td>
+                  <td>진행중</td>
+                  <td>
+                    <div class="category">{{ project.entrprsMberId }}</div>
+                    <div class="subject"><a href="#" @click="openModal" class="mrp5">{{ project.prNm }}</a>
+                      <span class="badge badge-danger">D-10</span>
+                    </div>
+                  </td>
+                  <td>{{ dateFormat(project.startDt) }} ~ {{ dateFormat(project.endDt) }}</td>
+                  <td>{{ Number(project.price).toLocaleString() }}</td>
+                  <td>김지환</td>
+                  <td><button class="btn btn-primary btn-sm" onclick="location.href ='/project/plan'">일정등록</button></td>
+                  <td>{{ dateFormat(project.createDt) }}</td>
+                  <td>
+                    <button class="btn btn-success btn-fill btn-sm mr-1">수정</button>
+                    <button class="btn btn-danger btn-fill btn-sm mr-1">삭제</button>
+                  </td>
+                </tr>
+              </template>
+              <tr v-else>
+                <td colspan="10">
+                  <div class="list-nodata">등록된 프로젝트가 없습니다.</div>
                 </td>
               </tr>
+              <!--
               <tr>
                 <td>
                   <div class="form-check">
@@ -172,44 +179,137 @@
                   <button class="btn btn-success btn-fill btn-sm mr-1">수정</button>
                   <button class="btn btn-danger btn-fill btn-sm mr-1">삭제</button>
                 </td>
-              </tr>
+              </tr>-->
             </tbody>
           </table>
         </div>
       </card>
+
+      <!--프로젝트 상세보기 모달[s]-->
+      <Modal :isShowModal="isShowModal" :modalTitle="'프로젝트 상세보기'" @click.self="closeModal">
+        <!-- 모달 바디 -->
+        <template v-slot:body>
+          <card>
+            <p class="card-title mb-2">프로젝트 정보</p>
+
+            <div class="table-responsive">
+              <table class="table table-hover project">
+                <tbody>
+                  <tr>
+                    <th class="table-secondary">프로젝트명</th>
+                    <td class="text-start">아동복지 홈페이지 구축 용역</td>
+                    <th class="table-secondary">거래처명</th>
+                    <td class="text-start">대구사람이좋다 협회</td>
+                  </tr>
+                  <tr>
+                    <th class="table-secondary">프로젝트 기간</th>
+                    <td class="text-start">2025-01 ~ 2025-03-31</td>
+                    <th class="table-secondary">금액</th>
+                    <td class="text-start">30,000,000</td>
+                  </tr>
+                  <tr>
+                    <th class="table-secondary">참여자</th>
+                    <td colspan="3" class="text-start">김민진, 박주현, 신강현</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </card>
+
+          <card>
+            <p class="card-title mb-2">프로젝트 과업</p>
+
+            <div class="table-responsive">
+              <table class="table table-hover project">
+                <thead class="table-secondary">
+                  <tr>
+                    <th>순서</th>
+                    <th>과업명</th>
+                    <th>진행률</th>
+                    <th>상태</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template v-if="projectCount > 0">
+                    <tr>
+                      <th>1</th>
+                      <td>교내 SSO 연동</td>
+                      <th>100%</th>
+                      <td>완료</td>
+                    </tr>
+                  </template>
+                  <tr v-else>
+                    <td colspan="4">
+                      <div class="list-nodata">등록된 일정이 없습니다.</div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </card>
+        </template>
+
+        <!-- 모달 푸터 -->
+        <template v-slot:footer>
+          <button type="button" class="btn btn-secondary btn-fill" @click="closeModal">닫기</button>
+          <button type="button" class="btn btn-primary btn-fill" @click="confirm">등록</button>
+        </template>
+      </Modal>
+      <!--프로젝트 상세보기 모달[e]-->
+
     </div>
   </div>
 </template>
 
 <script setup>
-  import axios from "axios";
-  import { onBeforeMount, ref } from 'vue';
+import axios from "axios";
+import { onBeforeMount, ref } from 'vue';
+import Card from '../../components/Cards/Card.vue'
+import Modal from '../../components/Modal.vue';
 
-  const memberList = ref([]);
+const projectList = ref([]);
+const isShowModal = ref(false);
+const projectCount = ref(0);
 
-  onBeforeMount(() => {
-    memberGetList();
-  });
+onBeforeMount(() => {
+  projectGetList();
+});
 
-  const memberGetList = async () => {
-    try {
-      const result = await axios.get('/api/project');
-      memberList.value = result;
-      console.log(result.data);
-    } catch (err) {
-      memberList.value = [];
+const modalCloseFunc = (e) => {
+  if (e.key === "Escape") {
+    if (isShowModal.value) {
+      isShowModal.value = !isShowModal.value
     }
   }
-</script>
-
-<script>
-import Card from '@/components/Cards/Card.vue'
-
-export default {
-  components: {
-    Card
-  },
+}
+const openModal = () => {
+  isShowModal.value = true;
+}
+const closeModal = () => {
+  isShowModal.value = false;
 }
 
+const projectGetList = async () => {
+  try {
+    const result = await axios.get('/api/project');
+
+    projectList.value = result.data;
+    projectCount.value = result.data.length;
+    console.log(result.data);
+  } catch (err) {
+    projectList.value = [];
+  }
+}
+
+const dateFormat = (value) => {
+  let date = value == null ? new Date() : new Date(value);
+
+  let year = date.getFullYear();
+  let month = ('0' + (date.getMonth() + 1)).slice(-2);
+  let day = ('0' + date.getDate()).slice(-2);
+
+  let result = year + '-' + month + '-' + day;
+  return result;
+};
+
 </script>
-<style></style>

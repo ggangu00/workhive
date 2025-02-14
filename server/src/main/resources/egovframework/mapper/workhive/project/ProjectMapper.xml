@@ -52,7 +52,7 @@
 	<!-- 단건조회 -->
 	<select id="read" parameterType="Long">
 		select pr_cd,
-			   type_cd,
+			   fn_get_codename(type_cd) as ACT_TYPE,
 			   pr_nm,
 			   ahead_dt,
 			   start_dt,
@@ -60,15 +60,15 @@
 			   price,
 			   create_id,
 			   create_dt,
-			   entrprs_mber
+			   entrprs_mber_id
 		from project
 		where pr_cd = #{prCd}
 	</select>
 	
 	<!-- 전체조회 -->
-	<select id="selectProjectList" parameterType="int" resultType="projectDTO">
+	<select id="getList" parameterType="int" resultType="projectDTO">
 		select pr_cd,
-			   type_cd,
+			   fn_get_codename(type_cd) as ACT_TYPE,
 			   pr_nm,
 			   ahead_dt,
 			   start_dt,
