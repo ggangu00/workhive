@@ -1,5 +1,5 @@
 .card {
-    border-radius: $border-radius-base;
+    border-radius: 3px;
     background-color: $white;
     margin-bottom: 30px;
 
@@ -45,7 +45,6 @@
         padding: 15px;
         background-color: $white;
         border-bottom: none !important;
-
     }
     .card-category,
     label{
@@ -181,8 +180,6 @@
             line-height: 59px;
         }
     }
-
-
 }
 
 .card-user{
