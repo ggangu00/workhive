@@ -134,7 +134,7 @@
             <button class="btn btn-info btn-fill">검색/조회</button>
             <button class="btn btn-info btn-fill"><i class="bi bi-search"></i></button>
             <button class="btn btn-secondary btn-fill">초기화/닫기</button>
-            <button class="btn btn-excel">엑셀다운로드</button>
+            <button class="btn btn-excel"><img class="me-1" src="../assets/img/icon/excel.svg" alt="xls">엑셀다운로드</button>
 
             <button class="btn btn-primary">승인</button>
             <button class="btn btn-danger">반려</button>
