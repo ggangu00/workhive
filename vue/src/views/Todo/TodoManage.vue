@@ -152,51 +152,54 @@
   <Modal :isShowModal="isShowModal" :modalTitle="'일지등록'" @click.self="closeModal">
     <!-- 모달 바디 -->
     <template v-slot:body>
-      <div class="mb-3">
-        <label class="form-label">업무일 <em class="point-red">*</em></label>
-        <input type="date" name="project_nm" class="form-control w30">
-      </div>
-      <div class="mb-3">
-        <label class="form-label">업무분류 <em class="point-red">*</em></label>
-        <div class="row">
-          <div class="col-auto">
-            <select class="form-select">
-              <option value="1">내부업무</option>
-              <option value="2">외부업무</option>
-              <option value="3">프로젝트</option>
-            </select>
+      <card>
+
+        <div class="mb-3">
+          <label class="form-label">업무일 <em class="point-red">*</em></label>
+          <input type="date" name="project_nm" class="form-control w30">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">업무분류 <em class="point-red">*</em></label>
+          <div class="row">
+            <div class="col-auto">
+              <select class="form-select">
+                <option value="1">내부업무</option>
+                <option value="2">외부업무</option>
+                <option value="3">프로젝트</option>
+              </select>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="mb-3">
-        <div class="form-group has-label">
-          <label>일지제목 <em class="point-red">*</em></label>
+        <div class="mb-3">
+          <div class="form-group has-label">
+            <label>일지제목 <em class="point-red">*</em></label>
+          </div>
+          <input type="text" name="project_nm" class="form-control" placeholder="일지제목을 입력해주세요">
         </div>
-        <input type="text" name="project_nm" class="form-control" placeholder="일지제목을 입력해주세요">
-      </div>
-      <div class="mb-3">
-        <div class="form-group has-label">
-          <label>업무내용 <em class="point-red">*</em></label>
+        <div class="mb-3">
+          <div class="form-group has-label">
+            <label>업무내용 <em class="point-red">*</em></label>
+          </div>
+          <textarea type="text" name="project_nm" class="form-control" placeholder="업무내용을 입력해주세요"></textarea>
         </div>
-        <textarea type="text" name="project_nm" class="form-control" placeholder="업무내용을 입력해주세요"></textarea>
-      </div>
-      <div class="mb-3">
-        <label class="form-label">상태 <em class="point-red">*</em></label>
-        <div class="row">
-          <div class="col-auto">
-            <select class="form-select">
-              <option value="1">미완료</option>
-              <option value="2">완료</option>
-            </select>
+        <div class="mb-3">
+          <label class="form-label">상태 <em class="point-red">*</em></label>
+          <div class="row">
+            <div class="col-auto">
+              <select class="form-select">
+                <option value="1">미완료</option>
+                <option value="2">완료</option>
+              </select>
+            </div>
           </div>
         </div>
-      </div>
+      </card>
     </template>
 
     <!-- 모달 푸터 -->
     <template v-slot:footer>
       <button type="button" class="btn btn-secondary btn-fill" @click="closeModal">닫기</button>
-      <button type="button" class="btn btn-primary btn-fill" @click="confirm">등록</button>      
+      <button type="button" class="btn btn-primary btn-fill" @click="confirm">등록</button>
     </template>
   </Modal>
   <!--업무등록 모달[e]-->
@@ -206,14 +209,15 @@
 <script setup>
 import Modal from '../../components/Modal.vue';
 import { ref } from 'vue';
+import Card from '../../components/Cards/Card.vue'
 
 const isShowModal = ref(false);
 
 const modalCloseFunc = (e) => {
   if (e.key === "Escape") {
-      if(isShowModal.value) {
+    if (isShowModal.value) {
       isShowModal.value = !isShowModal.value
-      }
+    }
   }
 }
 const openModal = () => {
