@@ -16,6 +16,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -723,8 +724,20 @@ public class EgovIndvdlSchdulManageController {
 	 * @return "egovframework/com/cop/smt/sim/EgovIndvdlSchdulManageRegistActor"
 	 * @throws Exception
 	 */
+	
+	
+	   /** 일정 등록 */
+//	@PostMapping("/register")
+//	public Map<String, String> registerSchedule(@RequestParam Map<String, String> commandMap) {
+//	    LOGGER.info("🔹 받은 데이터: {}", commandMap);  // 받은 데이터 로그 확인
+//
+//	    // 서버가 받은 데이터 즉시 반환
+//	    return commandMap;
+//	}
+
+    
 	@PostMapping(value="/register")
-	public List<EgovMap> indvdlSchdulManageRegistActor(
+	public Map<String, String> indvdlSchdulManageRegistActor(
 			final MultipartHttpServletRequest multiRequest,
 			@ModelAttribute("searchVO") ComDefaultVO searchVO,
 			@RequestParam Map<String, String> commandMap,
@@ -755,6 +768,8 @@ public class EgovIndvdlSchdulManageController {
 //    			return sLocationUrl;
 //    		}
 
+        	
+        	
         	// 첨부파일 관련 첨부파일ID 생성
     		List<FileVO> _result = null;
     		String _atchFileId = "";
@@ -778,9 +793,10 @@ public class EgovIndvdlSchdulManageController {
 
         	egovIndvdlSchdulManageService.insertIndvdlSchdulManage(indvdlSchdulManageVO);
         	sLocationUrl = "redirect:/cop/smt/sim/EgovIndvdlSchdulManageList.do";
+        	LOGGER.info("🔹 받은 데이터: {}", commandMap);
         }
 
-        return egovIndvdlSchdulManageService.selectIndvdlSchdulManageRetrieve(commandMap);
+        return commandMap;
 
 
 	}
