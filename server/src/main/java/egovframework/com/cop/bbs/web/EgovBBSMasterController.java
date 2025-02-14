@@ -9,9 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springmodules.validation.commons.DefaultBeanValidator;
 
@@ -57,7 +59,8 @@ import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
  * </pre>
  */
 
-@Controller
+@RestController
+@RequestMapping("/board/")
 public class EgovBBSMasterController {
 
     @Resource(name = "EgovBBSMasterService")
@@ -94,8 +97,9 @@ public class EgovBBSMasterController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/cop/bbs/insertBBSMasterView.do")
-    public String insertBBSMasterView(@ModelAttribute("searchVO") BoardMasterVO boardMasterVO, ModelMap model) throws Exception {
+    //@RequestMapping("/cop/bbs/insertBBSMasterView.do")
+    @GetMapping("/boardadd")
+    public List<CmmnDetailCode> insertBBSMasterView(@ModelAttribute("searchVO") BoardMasterVO boardMasterVO, ModelMap model) throws Exception {
 		BoardMasterVO boardMaster = new BoardMasterVO();
 		//공통코드(게시판유형)
 		ComDefaultCodeVO vo = new ComDefaultCodeVO();
@@ -117,7 +121,7 @@ public class EgovBBSMasterController {
 			model.addAttribute("useSatisfaction", "true");
 		}
 		
-		return "egovframework/com/cop/bbs/EgovBBSMasterRegist";
+		return codeResult;
     }
 
     /**
