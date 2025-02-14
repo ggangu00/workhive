@@ -9,9 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springmodules.validation.commons.DefaultBeanValidator;
@@ -63,7 +65,8 @@ import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
  *
  */
 
-@Controller
+@RestController
+@RequestMapping("/jobbx")
 public class EgovDeptJobController {
 
 	@Resource(name="EgovDeptJobService")
@@ -184,7 +187,6 @@ public class EgovDeptJobController {
 		return "egovframework/com/cop/smt/djm/EgovDeptList";
 	}
 
-
 	/**
 	 * 부서업무함 정보에 대한 팝업 목록을 조회한다.
 	 * @param DeptVO
@@ -207,8 +209,9 @@ public class EgovDeptJobController {
 	 */
 	@SuppressWarnings("unchecked")
 	@IncludedInfo(name="부서업무함관리", order = 400 ,gid = 40)
-	@RequestMapping("/cop/smt/djm/selectDeptJobBxList.do")
-	public String selectDeptJobBxList(@ModelAttribute("searchVO") DeptJobBxVO deptJobBxVO, ModelMap model) throws Exception{
+//	@RequestMapping("/cop/smt/djm/selectDeptJobBxList.do")
+	@GetMapping("/jobbxlist")
+	public List<DeptJobBxVO> selectDeptJobBxList(@ModelAttribute("searchVO") DeptJobBxVO deptJobBxVO, ModelMap model) throws Exception{
 		//LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
 		String sLocationUrl = "egovframework/com/cop/smt/djm/EgovDeptJobBxList";
 
@@ -241,8 +244,10 @@ public class EgovDeptJobController {
 			model.addAttribute("resultNum", list.size());
 		model.addAttribute("paginationInfo", paginationInfo);
 
-		return sLocationUrl;
+//		return sLocationUrl;
+		return list;
 	}
+	
 
 	/**
 	 * 부서업무함 정보를 조회한다.
@@ -459,16 +464,17 @@ public class EgovDeptJobController {
 	 * @param deptJobVO
 	 */
 	@IncludedInfo(name="부서업무정보", order = 401 ,gid = 40)
-	@RequestMapping("/cop/smt/djm/selectDeptJobList.do")
-	public String selectDeptJobList(@ModelAttribute("searchVO") DeptJobVO deptJobVO, ModelMap model) throws Exception{
+//	@RequestMapping("/cop/smt/djm/selectDeptJobList.do")
+	@GetMapping("joblist")
+	public Map<String, Object> selectDeptJobList(@ModelAttribute("searchVO") DeptJobVO deptJobVO, ModelMap model) throws Exception{
 		//로그인 객체 선언
 		LoginVO loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
    	 	// KISA 보안취약점 조치 (2018-12-10, 신용호)
         Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
 
-        if(!isAuthenticated) {
-            return "redirect:/uat/uia/egovLoginUsr.do";
-        }
+//        if(!isAuthenticated) {
+//            return "redirect:/uat/uia/egovLoginUsr.do";
+//        }
 
 		deptJobVO.setPageUnit(propertyService.getInt("pageUnit"));
 		deptJobVO.setPageSize(propertyService.getInt("pageSize"));
@@ -495,7 +501,8 @@ public class EgovDeptJobController {
 		model.addAttribute("resultCnt", map.get("resultCnt"));
 		model.addAttribute("paginationInfo", paginationInfo);
 
-		return "egovframework/com/cop/smt/djm/EgovDeptJobList";
+//		return "egovframework/com/cop/smt/djm/EgovDeptJobList";
+		return map;
 	}
 
 	/**

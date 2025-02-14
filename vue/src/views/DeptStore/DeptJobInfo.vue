@@ -3,9 +3,9 @@
 <div class="content"  @keydown.esc="modalCloseFunc">
   <div class="container-fluid">
     <!-- 페이지 헤더 -->
-    <div class="row">
-      <div class="col">
-        <h3>부서 업무 관리</h3>
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title float-left mt-1">부서 업무 관리</h4>
       </div>
     </div>
 
@@ -42,7 +42,7 @@
         <!-- 업무 목록 -->
         <div class="row mt-2">
           <div class="col" style="height: 550px;">
-            <div id="employeeGrid"></div>
+            <div id="jobGrid"></div>
 
           </div>
         </div>
@@ -57,27 +57,56 @@
 </template>
 
 <script setup>
-import DeptJobBx from "./DeptJobBx.vue";
 import { ref, onMounted } from 'vue';
+import axios from 'axios';
+
+import DeptJobBx from "./DeptJobBx.vue";
 import JobManage from "./JobManage.vue";
 
 let gridInstance = ref();
+let rowData = ref([]);
 
 // Toast UI Grid 초기화
 onMounted(() => {
   gridInstance.value = new window.tui.Grid({
-    el: document.getElementById('employeeGrid'),
-    data: [],
+    el: document.getElementById('jobGrid'),
+    data: rowData.value,
     scrollX: false,
     scrollY: true,
-    columns: [
-      { header: '이름', name: 'name', sortable: true, editor: 'text', align: 'center' },
-      { header: '직책', name: 'title', sortable: true, align: 'center' },
-      { header: '부서', name: 'dept', sortable: true, align: 'center' },
-      { header: '선택', name: 'select', align: 'center', renderer: { type: 'checkbox' } }
+    columns: [ // 체크박스 / 번호 / 제목 / 담당자 / 작성일 / 버튼
+      { header: '', name: ''},
+      { header: '번호', name: '', sortable: true, align: 'center' },
+      { header: '제목', name: 'deptJobNm', sortable: true},
+      { header: '담당자', name: 'chargerNm', sortable: true},
+      { header: '작성일', name: 'frstRegisterPnttm', sortable: true},
+      { header: '', name: ''},
     ]
   })
+  
+  jobbxGetList();
+  jobGetList("DX_012");
 })
+
+// 업무함 목록 조회
+const jobbxGetList = async () => {
+  await axios.get('/api/jobbx/jobbxlist')
+  .then(response => {
+    console.log("데이터:", response.data);
+    
+  })
+  .catch(error => console.error("에러 :", error));
+};
+// 업무 목록 조회 업무함 아이디로 검색
+const jobGetList = async (searchDeptJobBxId) => {
+  let joblist = await axios.get('/api/jobbx/joblist', {
+    params: {searchDeptJobBxId: searchDeptJobBxId}
+  })
+  .catch(error => console.error("에러 :", error));
+
+  rowData.value = [...joblist.data.resultList];
+  console.log(rowData.value);
+  gridInstance.value.resetData(rowData.value);
+};
 
 const isShowJobModal = ref(false);
 const modalOpenJob = () => {
@@ -101,82 +130,10 @@ const modalCloseFunc = (e) => {
 }
 
 
-/*
-import { AgGridVue } from "ag-grid-vue3";
-import DeptJobBx from "./DeptJobBx.vue";
-
-export default {
-  name: "DeptJobInfo",
-  components: {
-    AgGridVue,
-    DeptJobBx,
-  },
-  data() {
-    return {
-      columnDefs: [
-        { 
-          headerCheckboxSelection: true,
-          checkboxSelection: true,
-          headerName: "",
-        },
-        { headerName: "번호", field: "job_num" },
-        { headerName: "제목", field: "dept_job_nm" },
-        { headerName: "담당자", field: "charger_id" },
-        { headerName: "작성일", field: "create_dt" },
-        { 
-          headerName: "",
-          field: "",
-          cellRenderer: this.btnRenderer,
-          cellStyle: { textAlign: "center" },
-        }
-      ],
-      rowData: [
-        { job_num: 1, dept_job_nm: "업무1", charger_id: "이름1", create_dt: "2025-01-12" },
-        { job_num: 2, dept_job_nm: "업무2", charger_id: "이름2", create_dt: "2025-01-13" },
-        { job_num: 3, dept_job_nm: "업무3", charger_id: "이름3", create_dt: "2025-01-14" },
-        { job_num: 4, dept_job_nm: "업무4", charger_id: "이름4", create_dt: "2025-01-15" },
-      ],
-      defaultColDef: {
-        flex: 1, resizable: true, minWidth: 100
-      },
-    };
-  },
-  methods: {
-    btnRenderer() {
-      let btnTag = `<button class="btn btn-success btn-fill cell-btn-custom">
-                      수정
-                    </button>
-                    <button class="btn btn-danger btn-fill cell-btn-custom">
-                      삭제
-                    </button>`;
-      return btnTag;
-    },
-    
-    // 업무함 선택, 업무 목록 가져오기
-    selectJobBx() {
-
-    }
-  }
-};
-*/
 </script>
 
 
 <style scoped>
-.content {
-  padding: 0 !important;
-}
-.container-fluid > .row {
-  background-color: white;
-  border-radius: 7px;
-  margin: 10px 0 10px 0;
-  padding: 5px 0 5px 0;
-}
-h3, h4 {
-  margin: 5px 0;
-  font-weight: 900;
-}
-
 .jobbx {
   background-color: gray;
   border-radius: 5px;
