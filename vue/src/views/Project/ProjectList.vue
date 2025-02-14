@@ -71,7 +71,7 @@
         <div class="d-flex">
           <div class="p-2 w90">
             <button class="btn btn-danger btn-fill btn-sm">다중삭제</button>
-            <button class="btn btn-excel btn-fill btn-sm">엑셀다운로드</button>
+            <button class="btn btn-excel btn-sm"><i class="fa-regular fa-file-excel"></i> 엑셀다운로드</button>
           </div>
           <div class="p-2 flex-shrink-1">
             <select class="form-select form-select-sm">
@@ -84,7 +84,7 @@
         </div>
         <div class="table-responsive">
           <table class="table table-hover project">
-            <thead>
+            <thead class="table-light">
               <tr>
                 <th>
                   <div class="form-check">
@@ -193,17 +193,11 @@
 
   const memberGetList = async () => {
     try {
-      const result = await axios.get('/api/member');
+      const result = await axios.get('/api/project');
       memberList.value = result;
       console.log(result.data);
     } catch (err) {
       memberList.value = [];
-
-      // Swal.fire({
-      //   icon: "error",
-      //   title: "API 요청 오류:",
-      //   text: err.message || err
-      // });
     }
   }
 </script>

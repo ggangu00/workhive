@@ -100,7 +100,6 @@
           .navbar-nav .nav-link {
             padding-top: $navbar-vertical-nav-link-padding-y;
             padding-bottom: $navbar-vertical-nav-link-padding-y;
-            margin: 0 $navbar-vertical-nav-link-padding-x;
             margin-bottom: 1.5px;
 
             .nav-link-text,
@@ -374,7 +373,7 @@ body:not(.dark-version) {
     color: $white;
     border-right-width: 0;
     border-bottom-width: 0;
-    background-color: #4e587f;
+    background-color: #999999;
     & + .collapse,
     & + .collapsing {
       .nav-item.active {

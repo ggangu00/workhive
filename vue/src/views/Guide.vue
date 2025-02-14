@@ -94,31 +94,31 @@
               <button type="button" aria-hidden="true" class="close" data-dismiss="alert">
                 <i class="bi bi-x-lg"></i>
               </button>
-              <span><b> Primary - </b> This is a regular notification made with ".alert-primary"</span>
+              <span><i class="fa-solid fa-circle-info"></i> <b> Primary - </b> This is a regular notification made with ".alert-primary"</span>
             </div>
             <div class="alert alert-info">
               <button type="button" aria-hidden="true" class="close" data-dismiss="alert">
                 <i class="bi bi-x-lg"></i>
               </button>
-              <span><b> Info - </b> This is a regular notification made with ".alert-info"</span>
+              <span><i class="fa-solid fa-circle-question"></i> <b> Info - </b> This is a regular notification made with ".alert-info"</span>
             </div>
             <div class="alert alert-success">
               <button type="button" aria-hidden="true" class="close" data-dismiss="alert">
                 <i class="bi bi-x-lg"></i>
               </button>
-              <span><b> Success - </b> This is a regular notification made with ".alert-success"</span>
+              <span><i class="fa-solid fa-check"></i> <b> Success - </b> This is a regular notification made with ".alert-success"</span>
             </div>
             <div class="alert alert-warning">
               <button type="button" aria-hidden="true" class="close" data-dismiss="alert">
                 <i class="bi bi-x-lg"></i>
               </button>
-              <span><b> Warning - </b> This is a regular notification made with ".alert-warning"</span>
+              <span><i class="fa-solid fa-triangle-exclamation"></i> <b> Warning - </b> This is a regular notification made with ".alert-warning"</span>
             </div>
             <div class="alert alert-danger">
               <button type="button" aria-hidden="true" class="close" data-dismiss="alert">
                 <i class="bi bi-x-lg"></i>
               </button>
-              <span><b> Danger - </b> This is a regular notification made with ".alert-danger"</span>
+              <span><i class="bi bi-x-circle-fill"></i> <b> Danger - </b> This is a regular notification made with ".alert-danger"</span>
             </div>
           </div>
 
@@ -134,7 +134,7 @@
             <button class="btn btn-info btn-fill">검색/조회</button>
             <button class="btn btn-info btn-fill"><i class="bi bi-search"></i></button>
             <button class="btn btn-secondary btn-fill">초기화/닫기</button>
-            <button class="btn btn-excel">엑셀다운로드</button>
+            <button class="btn btn-excel"><i class="fa-regular fa-file-excel"></i> 엑셀다운로드</button>
 
             <button class="btn btn-primary">승인</button>
             <button class="btn btn-danger">반려</button>
