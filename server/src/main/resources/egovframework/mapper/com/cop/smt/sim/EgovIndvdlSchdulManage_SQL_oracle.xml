@@ -16,7 +16,7 @@
 	<resultMap id="IndvdlSchdulManage" type="egovframework.com.cop.smt.sim.service.IndvdlSchdulManageVO">
 		<result property="schdulId" column="SCHDUL_ID"/>
 		<result property="schdulSe" column="SCHDUL_SE"/>
-		<result property="schdulDeptId" column="SCHDUL_DEPT_ID"/>
+		<result property="schdulDeptId" column="DEPT_CD"/>
 		<result property="schdulDeptName" column="SCHDUL_DEPT_NAME"/>
 		
 		<result property="schdulKindCode" column="SCHDUL_KND_CODE"/>
@@ -32,8 +32,8 @@
 		<result property="atchFileId" column="ATCH_FILE_ID"/>
 		<result property="reptitSeCode" column="REPTIT_SE_CODE"/>    
 		<result property="frstRegisterPnttm" column="FRST_REGIST_PNTTM"/>
-		<result property="frstRegisterId" column="FRST_REGISTER_ID"/>
-		<result property="lastUpdusrPnttm" column="LAST_UPDT_PNTTM"/>
+		<result property="frstRegisterId" column="MEM_CD"/>
+		<result property="lastUpdusrPnttm" column="UPDATE_DT"/>
 		<result property="lastUpdusrId" column="LAST_UPDUSR_ID"/>				
 	</resultMap>
 	
@@ -46,7 +46,7 @@
 			TO_CHAR(sysdate, 'YYYY-MM-DD') TO_DAY,
 			A.SCHDUL_ID,
 			A.SCHDUL_SE,
-			A.SCHDUL_DEPT_ID,
+			A.DEPT_CD,
 			A.SCHDUL_KND_CODE SCHDUL_KIND_CODE,
 			A.SCHDUL_BGNDE,
 			A.SCHDUL_ENDDE,
@@ -57,14 +57,14 @@
 			A.SCHDUL_CHARGER_ID,					
 			A.ATCH_FILE_ID,
 			TO_CHAR(A.FRST_REGIST_PNTTM,'YYYY-MM-DD') FRST_REGISTER_PNTTM,
-			A.FRST_REGISTER_ID,
-			A.LAST_UPDT_PNTTM,
+			A.MEM_CD,
+			A.UPDATE_DT,
 			A.LAST_UPDUSR_ID,
 			A.REPTIT_SE_CODE 
 		FROM COMTNSCHDULINFO A
 		WHERE 1=1 
 		AND A.SCHDUL_KND_CODE = '2'   
-		AND (A.SCHDUL_CHARGER_ID = #{uniqId} OR A.FRST_REGISTER_ID = #{uniqId})  
+		AND (A.SCHDUL_CHARGER_ID = #{uniqId} OR A.MEM_CD = #{uniqId})  
 		
 		
 		AND ( 
@@ -86,7 +86,7 @@
 		SELECT 
 			A.SCHDUL_ID,
 			A.SCHDUL_SE,
-			A.SCHDUL_DEPT_ID,
+			A.DEPT_CD,
 			A.SCHDUL_KND_CODE SCHDUL_KIND_CODE,
 			A.SCHDUL_BGNDE,
 			A.SCHDUL_ENDDE,
@@ -98,8 +98,8 @@
 			(SELECT USER_NM FROM COMTNEMPLYRINFO WHERE ESNTL_ID = A.SCHDUL_CHARGER_ID) SCHDUL_CHARGER_NAME,		
 			A.ATCH_FILE_ID,
 			A.FRST_REGIST_PNTTM FRST_REGISTER_PNTTM,
-			A.FRST_REGISTER_ID,
-			A.LAST_UPDT_PNTTM,
+			A.MEM_CD,
+			A.UPDATE_DT,
 			A.LAST_UPDUSR_ID,
 			A.REPTIT_SE_CODE 
 		FROM COMTNSCHDULINFO A
@@ -147,8 +147,8 @@
 		SELECT 
 			A.SCHDUL_ID,
 			A.SCHDUL_SE,
-			A.SCHDUL_DEPT_ID,
-			(SELECT ORGNZT_NM FROM COMTNORGNZTINFO WHERE ORGNZT_ID = A.SCHDUL_DEPT_ID) SCHDUL_DEPT_NAME,
+			A.DEPT_CD,
+			(SELECT ORGNZT_NM FROM COMTNORGNZTINFO WHERE ORGNZT_ID = A.DEPT_CD) SCHDUL_DEPT_NAME,
 			A.SCHDUL_KND_CODE,
 			A.SCHDUL_BGNDE,
 			A.SCHDUL_ENDDE,
@@ -161,8 +161,8 @@
 			A.ATCH_FILE_ID,
 			A.REPTIT_SE_CODE,
 			A.FRST_REGIST_PNTTM,
-			A.FRST_REGISTER_ID,
-			A.LAST_UPDT_PNTTM,
+			A.MEM_CD,
+			A.UPDATE_DT,
 			A.LAST_UPDUSR_ID 
 		FROM COMTNSCHDULINFO A
 		WHERE 1=1 
@@ -181,7 +181,7 @@
 		SELECT 
 			A.SCHDUL_ID,
 			A.SCHDUL_SE,
-			A.SCHDUL_DEPT_ID,
+			A.DEPT_CD,
 			A.SCHDUL_KND_CODE SCHDUL_KIND_CODE,
 			A.SCHDUL_BGNDE,
 			A.SCHDUL_ENDDE,
@@ -192,8 +192,8 @@
 			A.SCHDUL_CHARGER_ID,		
 			A.ATCH_FILE_ID,
 			A.FRST_REGIST_PNTTM FRST_REGISTER_PNTTM,
-			A.FRST_REGISTER_ID,
-			A.LAST_UPDT_PNTTM,
+			A.MEM_CD,
+			A.UPDATE_DT,
 			A.LAST_UPDUSR_ID,
 			A.REPTIT_SE_CODE 
 		FROM COMTNSCHDULINFO A
@@ -247,7 +247,7 @@
 		UPDATE COMTNSCHDULINFO 
 		SET  
 			SCHDUL_SE=#{schdulSe},
-			SCHDUL_DEPT_ID=#{schdulDeptId},
+			DEPT_CD=#{schdulDeptId},
 			SCHDUL_KND_CODE=#{schdulKindCode},
 			SCHDUL_BGNDE=#{schdulBgnde},
 			SCHDUL_ENDDE=#{schdulEndde},
@@ -257,7 +257,7 @@
 			SCHDUL_CHARGER_ID=#{schdulChargerId},
 			ATCH_FILE_ID=#{atchFileId},
 			REPTIT_SE_CODE=#{reptitSeCode},
-			LAST_UPDT_PNTTM = sysdate,
+			UPDATE_DT = sysdate,
 			LAST_UPDUSR_ID = #{lastUpdusrId}
 		WHERE SCHDUL_ID = #{schdulId}
 	</update>
@@ -267,8 +267,8 @@
 		SELECT 
 			A.SCHDUL_ID,
 			A.SCHDUL_SE,
-			A.SCHDUL_DEPT_ID,
-			(SELECT ORGNZT_NM FROM COMTNORGNZTINFO WHERE ORGNZT_ID = A.SCHDUL_DEPT_ID) SCHDUL_DEPT_NAME,
+			A.DEPT_CD,
+			(SELECT ORGNZT_NM FROM COMTNORGNZTINFO WHERE ORGNZT_ID = A.DEPT_CD) SCHDUL_DEPT_NAME,
 			A.SCHDUL_KND_CODE SCHDUL_KIND_CODE,
 			A.SCHDUL_BGNDE,
 			A.SCHDUL_ENDDE,
@@ -280,8 +280,8 @@
 			(SELECT USER_NM FROM COMTNEMPLYRINFO WHERE ESNTL_ID = A.SCHDUL_CHARGER_ID) SCHDUL_CHARGER_NAME,	
 			A.ATCH_FILE_ID,
 			A.FRST_REGIST_PNTTM FRST_REGISTER_PNTTM,
-			A.FRST_REGISTER_ID,
-			A.LAST_UPDT_PNTTM,
+			A.MEM_CD,
+			A.UPDATE_DT,
 			A.LAST_UPDUSR_ID,
 			A.REPTIT_SE_CODE
 		FROM COMTNSCHDULINFO A
@@ -296,7 +296,7 @@
 		INSERT INTO COMTNSCHDULINFO ( 
 			SCHDUL_ID,
 			SCHDUL_SE,
-			SCHDUL_DEPT_ID,
+			DEPT_CD,
 			SCHDUL_KND_CODE,
 			SCHDUL_BGNDE,
 			SCHDUL_ENDDE,
@@ -308,8 +308,8 @@
 			ATCH_FILE_ID,
 			REPTIT_SE_CODE,
 			FRST_REGIST_PNTTM,
-			FRST_REGISTER_ID,
-			LAST_UPDT_PNTTM,
+			MEM_CD,
+			UPDATE_DT,
 			LAST_UPDUSR_ID
 		)VALUES( 
 			#{schdulId},
