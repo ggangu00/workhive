@@ -10,7 +10,9 @@
 
       <div class="card" style="padding: 10px;">
         <div class='calendar'>
-          <FullCalendar @dateClick="handleDateClick" :options="calendarOptions"/>
+          <FullCalendar 
+          :options="calendarOptions" 
+          />
         </div>
     </div>
   </div>
@@ -115,6 +117,7 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import axios from "axios";
+import { Modal } from "bootstrap";
 
 
 export default {
@@ -132,7 +135,9 @@ export default {
           center: 'title',
           right: 'dayGridMonth,timeGridWeek,timeGridDay'  
         },
-        events: []
+        events: [],
+        dateClick: this.handleDateClick, //연결헤ㅐ줘야함 이벤트
+        eventClick: this.handleEventClick,  
       },
       isAllDay: false,
       
@@ -151,13 +156,66 @@ export default {
   },
   mounted() {
     this.scheduleGetList();
-
+    this.dataReset();
   },
   methods: {
+    //모달클릭시 데이터 초기화
+    dataReset(){
+      document.getElementById("openModalButton").addEventListener('click', ()=>{
+        this.schedule = {
+          type:"",
+          title:"",
+          content:"",
+          place:"",
+          start:"",
+          end:"",
+          dept:"",
+          name:""
+        }
+      })
+    },
+
+
     //달력 클릭이벤트
-    handleDateClick(arg) {
-      alert(arg.date)
-  	},
+    async handleEventClick(e){
+      console.log(e.event.id)
+      const modal = new Modal(document.getElementById("scheduleModal"));
+      modal.show();
+      
+      this.schedule.title = e.event.title;
+      this.schedule.content = e.event.extendedProps.schdulCn;
+      this.schedule.place = e.event.extendedProps.place;
+      this.schedule.name = e.event.extendedProps.name;
+      this.selectedEventId = e.event.id
+
+    //   const modifyList = new FormData();
+    //   modifyList.append("schdulId", e.event.id);
+    //   modifyList.append("cmd", "save");
+    //   modifyList.append("schdulDeptId", this.schedule.dept);
+    //   modifyList.append("schdulSe", this.schedule.type);
+    //   modifyList.append("schdulNm", this.schedule.title);
+    //   modifyList.append("schdulCn", this.schedule.content);
+    //   modifyList.append("schdulPlace", this.schedule.place);
+    //   modifyList.append("schdulBgnde", this.schedule.start.replace(/-/g, ''));
+    //   modifyList.append("schdulEndde", this.schedule.end.replace(/-/g, ''));
+
+    //   //입력테이터 찍어보기
+    //   for (let pair of modifyList.entries()) {
+    //     console.log(`${pair[0]}: ${pair[1]}`);
+    //   }
+
+    //     const result = await axios.put('/api/schedule/modify', modifyList, {
+    //       headers: { "Content-Type": "multipart/form-data" }
+    //     });
+    //     //서버응답 찍어보기
+    //     console.log("서버 응답:", result.data);
+
+    // //다시불러오기
+    // this.scheduleGetList();
+
+    },
+
+
 
     //일정 정보 호출 메소드
     async scheduleGetList() {
@@ -167,33 +225,33 @@ export default {
           title: event.schdulNm,
           start: this.formatDate(event.schdulBgnde),  // 받은 날짜형식변환
           end: this.formatDate(event.schdulEndde),
-          schdulNm: event.schdulNm,
           schdulCn: event.schdulCn,
           place: event.schdulPlace,
           charger: event.schdulChargerId,
           register: event.memCd,
-          kind: event.schdulKndCode
+          kind: event.schdulKndCode,
+          name: event.memCd
         }));
     },
-    //등록 메소드
+    //수정메소드 실험
     async scheduleAdd(){
-      const addList = new FormData();
-      addList.append("schdulId", "");
-      addList.append("cmd", "save");
-      addList.append("schdulDeptId", this.schedule.dept);
-      addList.append("schdulSe", this.schedule.type);
-      addList.append("schdulNm", this.schedule.title);
-      addList.append("schdulCn", this.schedule.content);
-      addList.append("schdulPlace", this.schedule.place);
-      addList.append("schdulBgnde", this.schedule.start.replace(/-/g, ''));
-      addList.append("schdulEndde", this.schedule.end.replace(/-/g, ''));
+      const modifyList = new FormData();
+      modifyList.append("cmd", "save");
+      modifyList.append("schdulId", this.selectedEventId);
+      modifyList.append("schdulDeptId", this.schedule.dept);
+      modifyList.append("schdulSe", this.schedule.type);
+      modifyList.append("schdulNm", this.schedule.title);
+      modifyList.append("schdulCn", this.schedule.content);
+      modifyList.append("schdulPlace", this.schedule.place);
+      modifyList.append("schdulBgnde", this.schedule.start.replace(/-/g, ''));
+      modifyList.append("schdulEndde", this.schedule.end.replace(/-/g, ''));
 
       //입력테이터 찍어보기
-      for (let pair of addList.entries()) {
+      for (let pair of modifyList.entries()) {
         console.log(`${pair[0]}: ${pair[1]}`);
       }
 
-        const result = await axios.post('/api/schedule/register', addList, {
+        const result = await axios.post('/api/schedule/modify', modifyList, {
           headers: { "Content-Type": "multipart/form-data" }
         });
         //서버응답 찍어보기
@@ -201,19 +259,48 @@ export default {
 
     //다시불러오기
     this.scheduleGetList();
-
-    //필드초기화
-    this.schedule = {
-      type:"",
-      title:"",
-      content:"",
-      place:"",
-      start:"",
-      end:"",
-      dept:"",
-      name:""
-    }
   },
+
+
+    //등록 메소드
+  //   async scheduleAdd(){
+  //     const addList = new FormData();
+  //     addList.append("schdulId", "");
+  //     addList.append("cmd", "save");
+  //     addList.append("schdulDeptId", this.schedule.dept);
+  //     addList.append("schdulSe", this.schedule.type);
+  //     addList.append("schdulNm", this.schedule.title);
+  //     addList.append("schdulCn", this.schedule.content);
+  //     addList.append("schdulPlace", this.schedule.place);
+  //     addList.append("schdulBgnde", this.schedule.start.replace(/-/g, ''));
+  //     addList.append("schdulEndde", this.schedule.end.replace(/-/g, ''));
+
+  //     //입력테이터 찍어보기
+  //     for (let pair of addList.entries()) {
+  //       console.log(`${pair[0]}: ${pair[1]}`);
+  //     }
+
+  //       const result = await axios.post('/api/schedule/register', addList, {
+  //         headers: { "Content-Type": "multipart/form-data" }
+  //       });
+  //       //서버응답 찍어보기
+  //       console.log("서버 응답:", result.data);
+
+  //   //다시불러오기
+  //   this.scheduleGetList();
+
+  //   //필드초기화
+  //   this.schedule = {
+  //     type:"",
+  //     title:"",
+  //     content:"",
+  //     place:"",
+  //     start:"",
+  //     end:"",
+  //     dept:"",
+  //     name:""
+  //   }
+  // },
     formatDate(date) { //풀캘린더 데이터 형식으로 변환
       if (!date) return null;
       return `${date.substring(0, 4)}-${date.substring(4, 6)}-${date.substring(6, 8)}T${date.substring(8, 10)}:${date.substring(10, 12)}:00`;
