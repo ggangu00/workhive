@@ -36,25 +36,38 @@
     onMounted(() => {
       gridInstance.value = new window.tui.Grid({
         el: document.getElementById('paymentGrid'),
-        data: [],   
+        data: [
+        { id: 1, name: '홍길동', items: 30, },
+        { id: 2, name: '김철수', items: 25 },
+        { id: 3, name: '이영희', items: 28 },
+        { id: 1, name: '홍길동', items: 30 },
+        { id: 2, name: '김철수', items: 25 },
+        { id: 3, name: '이영희', items: 28 }
+        
+        
+        ], 
+          
         scrollX: false,
         scrollY: true,
         pageOptions:{
             useClient:true,
-            perPage:5
+            perPage:3
          },  
-         rowHeaders: [
-        { type: 'rowNum', width: 100, align: 'left', valign: 'bottom' },
+         rowHeaders: [       
         { type: 'checkbox' }
-      ],     
+      ],    
+       
         columns: [
-        {header : "부서", name:"dept", editor: "text"},
-        {header : "작성자", name:"writer",  editor: "text"},
-        {header : "지출항목", name:"EXPEN_ITEM",  editor: "text"},
-        {header : "금액", name:"amount",  editor: "text"},
-        {header : "사용일", name:"date",  editor: "text"},
-        {header : "승인상태", name:"PYM_STATUS",  editor: "text"},
-        ],    
+        { name: 'id', header: '부서', sortable: true },  // 정렬 가능
+        { name: 'name', header: '작성자', sortable: true, filter: 'text' }, // 검색 필터 추가
+        { name: 'items', header: '지출항목', sortable: true },
+        { name : 'age', header: '금액', sortable: true },
+        { name: 'id', header: '사용일', sortable: true },  
+        { name: 'name', header: '승인상태', sortable: true, filter: 'text' }, 
+       
+        
+        ],   
+         
       })
     })
     </script>
