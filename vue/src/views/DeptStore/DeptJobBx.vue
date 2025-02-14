@@ -29,7 +29,7 @@
   <Modal
     :isShowModal="isShowModal"
     :modalTitle="'업무함 관리'"
-    @click.self="closeJobModal"
+    @click.self="modalClose"
   >
     <template v-slot:body>
       <div class="content">
@@ -68,12 +68,32 @@
     </template>
   </Modal>
 
-  <button @click="modalOpen">임시</button>
+  <button @click="datareturn">임시</button>
 </template>
   
 <script setup>
   import { ref, onMounted } from 'vue';
+  import axios from 'axios';
+
   import Modal from '../../components/Modal.vue';
+
+
+  let deptlist = [];
+  let jobbxlist = [];
+  // 부서 목록 조회  
+  const deptGetList = async () => {
+    let result = await axios.get('/api/deptstore/deptlist')
+                            .catch(error => console.error("에러 :", error));
+    
+    deptlist.value = result.data.resultList;
+  };
+  // 업무함 목록 조회
+  const jobbxGetList = async () => {
+    let result = await axios.get('/api/deptstore/jobbxlist')
+                            .catch(error => console.error("에러 :", error));
+    
+    jobbxlist.value = result.data;
+  };
 
   const departments = ref([
     {
@@ -125,7 +145,17 @@
         modalOpen();
       }
     })
+
+    deptGetList();
+    jobbxGetList();
   })
+
+  // 업무함 클릭시 부서/업무함 정보 전달
+  const emit = defineEmits('datareturn');
+  const datareturn = () => {
+  emit('datareturn', { deptId: deptlist.value[0].orgnztId, jobbxId: jobbxlist.value[0].deptJobBxId });
+};
+
 </script>
   
 <style>

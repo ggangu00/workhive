@@ -3,9 +3,9 @@
   <div class="content">
     <div class="container-fluid">
       <!-- 페이지 헤더 -->
-      <div class="row">
-        <div class="col">
-          <h3>휴가 조회</h3>
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title float-left mt-1">휴가 조회</h4>
         </div>
       </div>
   
@@ -158,19 +158,6 @@
   
   
   <style scoped>
-  .content {
-    padding: 0 !important;
-  }
-  .container-fluid > .row {
-    background-color: white;
-    border-radius: 7px;
-    margin: 10px 0 10px 0;
-    padding: 5px 0 5px 0;
-  }
-  h3, h4 {
-    margin: 5px 0;
-    font-weight: 900;
-  }
   
   .header > hr {
     height: 2px;

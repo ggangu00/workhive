@@ -66,7 +66,7 @@ import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
  */
 
 @RestController
-@RequestMapping("/jobbx")
+@RequestMapping("/deptstore")
 public class EgovDeptJobController {
 
 	@Resource(name="EgovDeptJobService")
@@ -160,8 +160,9 @@ public class EgovDeptJobController {
 	 *
 	 * @param deptVO
 	 */
-	@RequestMapping("/cop/smt/djm/selectDeptList.do")
-	public String selectDeptList(@ModelAttribute("searchVO") DeptVO deptVO, ModelMap model) throws Exception{
+//	@RequestMapping("/cop/smt/djm/selectDeptList.do")
+	@GetMapping("/deptlist")
+	public Map<String, Object> selectDeptList(@ModelAttribute("searchVO") DeptVO deptVO, ModelMap model) throws Exception{
 		//LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
 
 		deptVO.setPageUnit(propertyService.getInt("pageUnit"));
@@ -184,7 +185,8 @@ public class EgovDeptJobController {
 		model.addAttribute("resultCnt", map.get("resultCnt"));
 		model.addAttribute("paginationInfo", paginationInfo);
 
-		return "egovframework/com/cop/smt/djm/EgovDeptList";
+//		return "egovframework/com/cop/smt/djm/EgovDeptList";
+		return map;
 	}
 
 	/**
@@ -465,7 +467,7 @@ public class EgovDeptJobController {
 	 */
 	@IncludedInfo(name="부서업무정보", order = 401 ,gid = 40)
 //	@RequestMapping("/cop/smt/djm/selectDeptJobList.do")
-	@GetMapping("joblist")
+	@GetMapping("/joblist")
 	public Map<String, Object> selectDeptJobList(@ModelAttribute("searchVO") DeptJobVO deptJobVO, ModelMap model) throws Exception{
 		//로그인 객체 선언
 		LoginVO loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
