@@ -1,3 +1,4 @@
+// MemberManage
 .table-line {
    border-bottom: 1px solid #c7c7c7;
 }
@@ -16,14 +17,15 @@
    display: block;
 }
 
-.treeview, .personal-group {
+.treeview, .m-group {
    border: 1px solid #dee2e6;
-   min-height: 600px;
+   min-height: 700px;
    padding: 0%;
-   border-radius: 0.375rem;
+   border-radius: 3px;
+   
 }
 
-.personal-table {
+.m-table {
    border: none;
 
    tbody > tr > td {
@@ -65,4 +67,107 @@
    font-size: 14px;
    font-weight: bold;
    color: #333;
+}
+
+/* 헤더 스타일 */
+.list_head {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 10px 15px;
+   background: white;
+   border-bottom: 1px solid #ddd;
+}
+
+/* 버튼 */
+.btn_search {
+   background: none;
+   border: none;
+   cursor: pointer;
+}
+
+/* 테이블 스타일 */
+.lw_table {
+   width: 100%;
+}
+
+.lw_tr {
+   display: flex;
+   padding: 10px 0;
+   border-bottom: 1px solid #ddd;
+}
+
+.lw_th {
+   flex: 1;
+   text-align: left;
+   font-weight: bold;
+}
+
+.leader, .storage {
+   text-align: center;
+}
+
+/* 트리 스타일 */
+.org_tree {
+   list-style: none;
+   padding: 0;
+}
+
+.tree_item {
+   display: flex;
+   align-items: center;
+   padding: 8px;
+   border-bottom: 1px solid #eee;
+}
+
+/* 체크박스 스타일 */
+.lw_checkbox {
+   cursor: pointer;
+}
+
+/* 조직명 */
+.group_name {
+   display: flex;
+   align-items: center;
+   font-size: 16px;
+   font-weight: 500;
+   text-decoration: none;
+   color: #333;
+}
+
+/* 트리 토글 버튼 */
+.btn_toggle_tree {
+   background: none;
+   border: none;
+   cursor: pointer;
+   font-size: 16px;
+   margin-right: 10px;
+}
+
+/* 계층 들여쓰기 */
+.depth_1 {
+   padding-left: 10px;
+}
+.depth_2 {
+   padding-left: 30px;
+}
+.depth_3 {
+   padding-left: 50px;
+}
+.depth_4 {
+   padding-left: 70px;
+}
+.depth_5 {
+   padding-left: 90px;
+}
+.cst_tooltip {
+   display: none;
+   position: absolute;
+   border-radius: 2px;
+   background-color: rgba(0, 0, 0, .6);
+   color: #fff;
+   font-size: 14px;
+   line-height: 20px;
+   padding: 2px 8px;
+   white-space: nowrap;
 }

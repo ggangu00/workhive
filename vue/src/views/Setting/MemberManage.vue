@@ -26,7 +26,7 @@
                   </div>
 
                   <!-- 구성원 테이블 (오른쪽) -->
-                  <div class="col-9 personal-group">
+                  <div class="col-9 m-group">
                      <div class="table-line">
                         <div class="d-flex justify-content-between align-items-center p-2">
                            <div class="button-group justify-content-between">
@@ -34,18 +34,19 @@
                               <button class="btn btn-primary btn-fill">저장</button>
                               <button class="btn btn-danger btn-fill">삭제</button>
                            </div>
-                           <div class="d-flex justify-content-between align-items-center">
-                              <select name="searchSel" id="searchSel" class="form-select w-30">
+
+                           <div class="d-flex justify-content-between align-items-center w50">
+                              <select name="searchSel" id="searchSel" class="form-select w25">
                                  <option value="name">이름</option>
                                  <option value="auth">권한</option>
                               </select>
-                              <input type="text" class="form-control w-50" placeholder="검색어 입력"/>
-                              <button class="btn btn-info btn-fill">검색</button>
+                              <input type="text" class="form-control w50" placeholder="검색어 입력"/>
+                              <button class="btn btn-info btn-fill w20">검색</button>
                            </div>
                         </div>
                      </div>
 
-                     <table class="table personal-table">
+                     <table class="table m-table">
                         <thead class="table-light">
                            <tr>
                               <th>

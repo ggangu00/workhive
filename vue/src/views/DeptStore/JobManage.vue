@@ -2,7 +2,7 @@
   <Modal
     :isShowModal="props.isShowJobModal"
     :modalTitle="'업무 관리'"
-    @click.self="closeJobModal"
+    @click.self="modalCloseJob"
   >
     <template v-slot:body>
       <div class="content">
@@ -16,7 +16,7 @@
                 <label>부서명</label>
                 <div class="row">
                   <div class="col-6">
-                    <input type="text" class="form-control" placeholder="부서명" readonly>
+                    <input type="text" class="form-control" placeholder="부서명" v-model="localJobbxSelected.searchDeptId" readonly />
                   </div>
                 </div>
               </div>
@@ -32,12 +32,13 @@
                 </div>
                 <div class="row align-items-center">
                   <div class="col-6">
-                    <select class="form-select" aria-label="Default select example">
+                    <input type="text"  v-model="localJobbxSelected.searchDeptJobBxId" readonly>
+                    <!-- <select class="form-select" aria-label="Default select example"  v-model="localJobbxSelected.searchDeptJobBxId">
                       <option selected>Open this select menu</option>
                       <option value="1">One</option>
                       <option value="2">Two</option>
                       <option value="3">Three</option>
-                    </select>
+                    </select> -->
                   </div>
                   <div class="col-6">
                     <div class="form-check form-check-inline d-flex align-items-center">
@@ -94,11 +95,21 @@
 
 
 <script setup>
+import { ref, defineProps, watch } from 'vue';
 import Modal from '../../components/Modal.vue';
 
 const props = defineProps({
   isShowJobModal: Boolean,
+  jobbxSelected: Object,
 });
+console.log('props : ', props);
+// jobbxSelected를 로컬 데이터로 복사
+let localJobbxSelected = ref({ ...props.jobbxSelected });
+
+watch(() => props.jobbxSelected, (newVal) => {
+  console.log('props 변경 감지', newVal);
+});
+
 
 const emit = defineEmits(['modalCloseJob', 'modalConfirmJob']);
 const modalCloseJob = () => {
