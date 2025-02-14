@@ -49,7 +49,9 @@
                         <thead class="table-light">
                            <tr>
                               <th>
-                                 <input type="checkbox" />
+                                 <div class="form-check">
+                                    <input class="form-check-input" type="checkbox">
+                                 </div>
                               </th>
                               <th>사번</th>
                               <th>이름</th>
@@ -61,7 +63,11 @@
 
                         <tbody>
                            <tr v-for="member in members" :key="member.id">
-                              <td><input type="checkbox" /></td>
+                              <td>
+                                 <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" >
+                                 </div>
+                              </td>
                               <td>{{ member.id }}</td>
                               <td class="profile-cell">
                                  <img :src="member.profileImage" alt="프로필 이미지" class="profile-img">
