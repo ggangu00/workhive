@@ -1,6 +1,6 @@
 // MemberManage
-.table-line {
-   border-bottom: 1px solid #c7c7c7;
+.bottom-line {
+   border-bottom: 1px solid #dee2e6;
 }
 
 .treeview ul {
@@ -22,7 +22,7 @@
    min-height: 700px;
    padding: 0%;
    border-radius: 3px;
-   
+
 }
 
 .m-table {
@@ -170,4 +170,31 @@
    line-height: 20px;
    padding: 2px 8px;
    white-space: nowrap;
+}
+
+// AuthorityManage
+.options {
+   cursor: pointer;
+   position: relative; /* 부모 역할을 명확하게 지정 */
+   display: inline-block; /* 필요하면 추가 */
+}
+
+.dropdown {
+   position: absolute;
+   background: white;
+   box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+   border-radius: 3px;
+   padding: 10px;
+   min-width: 100px; /* 최소 너비 설정 */
+   top: 100%; /* `options` 요소 바로 아래 배치 */
+   left: 0;
+   z-index: 10; /* 다른 요소 위로 오도록 설정 */
+   white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+}
+
+.role-item {
+   display: flex;
+   justify-content: space-between;
+   padding: 8px;
+   cursor: pointer;
 }
