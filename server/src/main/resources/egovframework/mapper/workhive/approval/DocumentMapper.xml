@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="egovframework.com.approval.mapper.DocumentMapper">
+	
+	<!-- 문서기안 -->
+    <insert id="documentInsert">
+       INSERT INTO DOCUMENT (
+	       DOC_CD, 
+	       DOC_TITLE, 
+	       DOC_CN, 
+	       DOC_CN_EDITOR, 
+	       MEM_CD, 
+	       CRNT_SIGN_STAT, 
+	       DRAFT_DT, 
+	       COMPLETE_DT, 
+	       DOC_KIND, 
+	       ATCH_FILE_ID, 
+	       FORM_CD)
+       VALUES (
+	       #{docCd}, 
+	       #{docTitle}, 
+	       #{docCn}, 
+	       #{docCnEditor}, 
+	       #{memCd}, 
+	       #{crntSignStat}, 
+	       SYSDATE, 
+	       #{completeDt},
+	       #{docKind}, 
+		   #{atchFileId}, 
+		   #{formCd})
+    </insert>
+    
+    <!-- 문서조회 -->
+    <select id="getList" resultType="egovframework.com.approval.service.DocumentDTO" parameterType="egovframework.com.approval.service.SearchDTO">
+		 SELECT * FROM (
+		            SELECT 
+		                ROWNUM AS rn,
+		                DOC_CD,
+		                DOC_TITLE,
+		                DOC_CN,
+		                DOC_CN_EDITOR,
+		                MEM_CD,
+		                CRNT_SIGN_STAT,
+		                DRAFT_DT,
+		                COMPLETE_DT,
+		                DOC_KIND,
+		                ATCH_FILE_ID,
+		                FORM_CD
+		            FROM (
+		                SELECT * FROM DOCUMENT
+		                WHERE 1=1
+		                <include refid="searchCriteria"/>
+		                ORDER BY DRAFT_DT DESC
+		            )
+		            <![CDATA[WHERE ROWNUM <= #{end}]]>
+		        ) 
+		        WHERE rn >= #{start}
+    </select>
+
+	<!-- 검색조건함수 -->
+    <sql id="searchCriteria">
+        <if test="status != null and status != ''">
+            <![CDATA[ AND CRNT_SIGN_STAT = #{status} ]]>
+        </if>
+        <if test="formCd != null and formCd != ''">
+            <![CDATA[ AND FORM_CD = #{formCd} ]]>
+        </if>
+        <if test="keyword != null and keyword != ''">
+            <![CDATA[ AND DOC_TITLE LIKE '%' || #{keyword} || '%' ]]>
+        </if>
+    </sql>
+</mapper>
