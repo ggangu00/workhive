@@ -11,6 +11,6 @@ public interface ProjectMapper {
 	int insert(ProjectDTO projectDTO);
 	int update(ProjectDTO projectDTO);
 	int delete(String prCd);
-	ProjectDTO read(String prCd);
-	List<ProjectDTO> getList();
+	ProjectDTO projectSelect(String prCd);
+	List<ProjectDTO> projectSelectAll();
 }

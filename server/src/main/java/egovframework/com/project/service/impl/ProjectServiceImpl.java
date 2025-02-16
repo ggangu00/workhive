@@ -18,8 +18,7 @@ public class ProjectServiceImpl implements ProjectService{
 
 	@Override
 	public void projectInsert(ProjectDTO project) {
-		projectMapper.insert(project);
-		
+		projectMapper.insert(project);		
 	}
 
 	@Override
@@ -33,13 +32,13 @@ public class ProjectServiceImpl implements ProjectService{
 	}
 
 	@Override
-	public ProjectDTO get(String prCd) {
-		return projectMapper.read(prCd);
+	public ProjectDTO projectSelect(String prCd) {
+		return projectMapper.projectSelect(prCd);
 	}
 
 	@Override
-	public List<ProjectDTO> getList() {
-		return projectMapper.getList();
+	public List<ProjectDTO> projectSelectAll() {
+		return projectMapper.projectSelectAll();
 	}
 
 }

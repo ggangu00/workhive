@@ -1,5 +1,5 @@
 <template>
-  <div class="content" @keydown.esc="modalCloseFunc">
+  <div class="content" @keydown.esc="modalClose">
     <div class="container-fluid">
       <card>
         <h4 class="card-title float-left">프로젝트 조회</h4>
@@ -113,7 +113,8 @@
                   <td>진행중</td>
                   <td>
                     <div class="category">{{ project.entrprsMberId }}</div>
-                    <div class="subject"><a href="#" @click="openModal" class="mrp5">{{ project.prNm }}</a>
+                    <div class="subject"><a href="#" @click="modalOpen(project.prCd)" class="mrp5">{{ project.prNm
+                        }}</a>
                       <span class="badge badge-danger">D-10</span>
                     </div>
                   </td>
@@ -186,8 +187,7 @@
       </card>
 
       <!--프로젝트 상세보기 모달[s]-->
-      <Modal :isShowModal="isShowModal" :modalTitle="'프로젝트 상세보기'" @click.self="closeModal">
-        <!-- 모달 바디 -->
+      <Modal :isShowModal="isShowModal" :modalTitle="'프로젝트 상세보기'" @click.self="modalClose">
         <template v-slot:body>
           <card>
             <p class="card-title mb-2">프로젝트 정보</p>
@@ -197,15 +197,16 @@
                 <tbody>
                   <tr>
                     <th class="table-secondary">프로젝트명</th>
-                    <td class="text-start">아동복지 홈페이지 구축 용역</td>
+                    <td class="text-start">{{ projectInfo.prNm }}</td>
                     <th class="table-secondary">거래처명</th>
-                    <td class="text-start">대구사람이좋다 협회</td>
+                    <td class="text-start">{{ projectInfo.entrprs_mber_id }}</td>
                   </tr>
                   <tr>
                     <th class="table-secondary">프로젝트 기간</th>
-                    <td class="text-start">2025-01 ~ 2025-03-31</td>
+                    <td class="text-start">{{ dateFormat(projectInfo.startDt) }} ~ {{ dateFormat(projectInfo.endDt) }}
+                    </td>
                     <th class="table-secondary">금액</th>
-                    <td class="text-start">30,000,000</td>
+                    <td class="text-start">{{ Number(projectInfo.price).toLocaleString() }}</td>
                   </tr>
                   <tr>
                     <th class="table-secondary">참여자</th>
@@ -249,10 +250,8 @@
           </card>
         </template>
 
-        <!-- 모달 푸터 -->
         <template v-slot:footer>
-          <button type="button" class="btn btn-secondary btn-fill" @click="closeModal">닫기</button>
-          <button type="button" class="btn btn-primary btn-fill" @click="confirm">등록</button>
+          <button type="button" class="btn btn-secondary btn-fill" @click="modalClose">닫기</button>
         </template>
       </Modal>
       <!--프로젝트 상세보기 모달[e]-->
@@ -268,6 +267,7 @@ import Card from '../../components/Cards/Card.vue'
 import Modal from '../../components/Modal.vue';
 
 const projectList = ref([]);
+const projectInfo = ref([]);
 const isShowModal = ref(false);
 const projectCount = ref(0);
 
@@ -275,33 +275,9 @@ onBeforeMount(() => {
   projectGetList();
 });
 
-const modalCloseFunc = (e) => {
-  if (e.key === "Escape") {
-    if (isShowModal.value) {
-      isShowModal.value = !isShowModal.value
-    }
-  }
-}
-const openModal = () => {
-  isShowModal.value = true;
-}
-const closeModal = () => {
-  isShowModal.value = false;
-}
+//---------------공통함수--------------
 
-const projectGetList = async () => {
-  try {
-    const result = await axios.get('/api/project');
-
-    projectList.value = result.data;
-    projectCount.value = result.data.length;
-    console.log(result.data);
-  } catch (err) {
-    projectList.value = [];
-  }
-}
-
-const dateFormat = (value) => {
+const dateFormat = (value) => { //날짜포맷 (yyyy-mm-dd)
   let date = value == null ? new Date() : new Date(value);
 
   let year = date.getFullYear();
@@ -311,5 +287,45 @@ const dateFormat = (value) => {
   let result = year + '-' + month + '-' + day;
   return result;
 };
+
+//---------------모달--------------
+
+const modalOpen = (prCd) => { //프로젝트 정보 모달 열기
+  isShowModal.value = true;
+  projectGetInfo(prCd);
+}
+
+const modalClose = (e) => { //프로젝트 정보 모달 닫기
+  if (e.key === "Escape") {
+    if (isShowModal.value) {
+      isShowModal.value = !isShowModal.value
+    }
+  } else {
+    isShowModal.value = false;
+  }
+}
+
+//---------------axios--------------
+
+const projectGetList = async () => { //프로젝트 전체조회
+  try {
+    const result = await axios.get('/api/project/list');
+
+    projectList.value = result.data;
+    projectCount.value = result.data.length;
+  } catch (err) {
+    projectList.value = [];
+  }
+}
+
+const projectGetInfo = async (prCd) => { //프로젝트 단건조회
+  try {
+    const result = await axios.get(`/api/project/info?pr=${prCd}`);
+
+    projectInfo.value = result.data;
+  } catch (err) {
+    projectInfo.value = [];
+  }
+}
 
 </script>
