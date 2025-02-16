@@ -1,3 +1,10 @@
+
+
+// 180도 뒤집기
+.rotated {
+   transform: rotate(180deg);
+}
+
 // MemberManage
 .bottom-line {
    border-bottom: 1px solid #dee2e6;
@@ -175,21 +182,30 @@
 // AuthorityManage
 .options {
    cursor: pointer;
-   position: relative; /* 부모 역할을 명확하게 지정 */
-   display: inline-block; /* 필요하면 추가 */
+   position: relative;
 }
 
-.dropdown {
+/* 드롭다운 스타일 */
+.editing-dropdown-menu {
    position: absolute;
    background: white;
-   box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+   box-shadow: 0 0 2px #626267;
    border-radius: 3px;
    padding: 10px;
-   min-width: 100px; /* 최소 너비 설정 */
-   top: 100%; /* `options` 요소 바로 아래 배치 */
-   left: 0;
-   z-index: 10; /* 다른 요소 위로 오도록 설정 */
-   white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+   min-width: 100px;
+   min-height: 50px;
+   top: 100;
+   left: 20%;
+   z-index: 10;
+
+   div {
+      cursor: pointer;
+   }
+}
+
+.editing-dropdown-menu div:hover {
+   background: #f0f0f0;
+   border-radius: 3px;
 }
 
 .role-item {
@@ -197,4 +213,20 @@
    justify-content: space-between;
    padding: 8px;
    cursor: pointer;
+}
+
+.menu-title {
+   cursor: pointer;
+   display: flex;
+   justify-content: space-between;
+   padding: 13px 15px;
+}
+
+.submenu {
+   background: #f4f4f4;
+}
+
+.menu-item {
+   border-bottom: 1px solid #ccc;
+   padding: 10px;
 }
