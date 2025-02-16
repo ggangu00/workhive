@@ -9,8 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -65,6 +68,7 @@ import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
  *
  */
 
+//@Controller
 @RestController
 @RequestMapping("/deptstore")
 public class EgovDeptJobController {
@@ -573,8 +577,9 @@ public class EgovDeptJobController {
 	 *
 	 * @param deptJobVO
 	 */
-	@RequestMapping("/cop/smt/djm/selectDeptJob.do")
-	public String selectDeptJob(@ModelAttribute("deptJobVO") DeptJobVO deptJobVO, ModelMap model) throws Exception{
+//	@RequestMapping("/cop/smt/djm/selectDeptJob.do")
+	@GetMapping("/jobinfo")
+	public DeptJob selectDeptJob(@ModelAttribute("deptJobVO") DeptJobVO deptJobVO, ModelMap model) throws Exception{
 		DeptJob deptJob = deptJobService.selectDeptJob(deptJobVO);
 		model.addAttribute("deptJob", deptJob);
 
@@ -587,7 +592,8 @@ public class EgovDeptJobController {
     	List<CmmnDetailCode> listComCode = cmmUseService.selectCmmCodeDetail(voComCode);
     	model.addAttribute("priort", listComCode);
 
-		return "egovframework/com/cop/smt/djm/EgovDeptJobDetail";
+//		return "egovframework/com/cop/smt/djm/EgovDeptJobDetail";
+    	return deptJob;
 	}
 
 
@@ -598,22 +604,31 @@ public class EgovDeptJobController {
 	 *
 	 * @param deptJob
 	 */
-	@RequestMapping("/cop/smt/djm/updateDeptJob.do")
+//	@RequestMapping("/cop/smt/djm/updateDeptJob.do")
+	@PostMapping("/jobupdate")
 	public String updateDeptJob(final MultipartHttpServletRequest multiRequest, @RequestParam Map<String, Object> commandMap, @ModelAttribute("deptJobVO") DeptJobVO deptJobVO, BindingResult bindingResult, ModelMap model) throws Exception{
 		LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
 		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
    	 	// KISA 보안취약점 조치 (2018-12-10, 신용호)
 
-        if(!isAuthenticated) {
-            return "redirect:/uat/uia/egovLoginUsr.do";
-        }
+//        if(!isAuthenticated) {
+//            return "redirect:/uat/uia/egovLoginUsr.do";
+//        }
+
+		System.out.println("-------------------------------------------------------------------------------------------------------");
+		System.out.println("check1");
+		System.out.println("-------------------------------------------------------------------------------------------------------");
 
 		beanValidator.validate(deptJobVO, bindingResult);
 		if (bindingResult.hasErrors()) {
 			DeptJob deptJob = deptJobService.selectDeptJob(deptJobVO);
 		    model.addAttribute("deptJob", deptJob);
-		    return "egovframework/com/cop/smt/djm/EgovDeptJobUpdt";
+//		    return "egovframework/com/cop/smt/djm/EgovDeptJobUpdt";
 		}
+
+		System.out.println("-------------------------------------------------------------------------------------------------------");
+		System.out.println("check2");
+		System.out.println("-------------------------------------------------------------------------------------------------------");
 
 		/* *****************************************************************
     	// 첨부파일 관련 ID 생성 start....
@@ -640,9 +655,14 @@ public class EgovDeptJobController {
 				fileMngService.updateFileInfs(_result);
 			}
 
-			deptJobVO.setLastUpdusrId(user == null ? "" : EgovStringUtil.isNullToString(user.getUniqId()));
-			deptJobService.updateDeptJob(deptJobVO);
 		}
+		
+		System.out.println("-------------------------------------------------------------------------------------------------------");
+		System.out.println("check3 : " + deptJobVO);
+		System.out.println("-------------------------------------------------------------------------------------------------------");
+		
+		deptJobVO.setLastUpdusrId(user == null ? "" : EgovStringUtil.isNullToString(user.getUniqId()));
+		deptJobService.updateDeptJob(deptJobVO);
 
 		return "forward:/cop/smt/djm/selectDeptJobList.do";
 	}
@@ -654,15 +674,16 @@ public class EgovDeptJobController {
 	 *
 	 * @param deptJob
 	 */
-	@RequestMapping("/cop/smt/djm/insertDeptJob.do")
+//	@RequestMapping("/cop/smt/djm/insertDeptJob.do")
+	@PostMapping("/jobadd")
 	public String insertDeptJob(final MultipartHttpServletRequest multiRequest, @ModelAttribute("deptJobVO") DeptJobVO deptJobVO, BindingResult bindingResult, ModelMap model) throws Exception{
 		// 0. Spring Security 사용자권한 처리
     	Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-    	if(!isAuthenticated) {
-    		model.addAttribute("message", egovMessageSource.getMessage("fail.common.login"));
-        	return "redirect:/uat/uia/egovLoginUsr.do";
-    	}
-
+//    	if(!isAuthenticated) {
+//    		model.addAttribute("message", egovMessageSource.getMessage("fail.common.login"));
+//        	return "redirect:/uat/uia/egovLoginUsr.do";
+//    	}
+		
 		//로그인 객체 선언
 		LoginVO loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
 
@@ -679,7 +700,7 @@ public class EgovDeptJobController {
 	        model.addAttribute("fileUploadExtensions", whiteListFileUploadExtensions);
 	        model.addAttribute("fileUploadMaxSize", fileUploadMaxSize);
 
-			return sLocationUrl;
+//			return sLocationUrl;
 		}
 
 		// 첨부파일 관련 첨부파일ID 생성
@@ -698,9 +719,15 @@ public class EgovDeptJobController {
 		deptJobVO.setAtchFileId(_atchFileId);			// 첨부파일 ID
 
 		//아이디 설정
-		deptJobVO.setFrstRegisterId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
+		deptJobVO.setFrstRegisterId("USRCNFRM_00000000001");
+//		deptJobVO.setFrstRegisterId(loginVO == null ? "USRCNFRM_00000000001" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
 		deptJobVO.setLastUpdusrId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
 
+		System.out.println("---------------------------------------------------------------------------------------------------");
+		System.out.println("입력 값 : " + deptJobVO);
+		System.out.println("아이디 : " + loginVO);
+		System.out.println("---------------------------------------------------------------------------------------------------");
+		
 		deptJobService.insertDeptJob(deptJobVO);
     	sLocationUrl = "forward:/cop/smt/djm/selectDeptJobList.do";
 
@@ -714,13 +741,14 @@ public class EgovDeptJobController {
 	 *
 	 * @param deptJob
 	 */
-	@RequestMapping("/cop/smt/djm/deleteDeptJob.do")
+//	@RequestMapping("/cop/smt/djm/deleteDeptJob.do")
+	@DeleteMapping("/jobremove")
 	public String deleteDeptJob(@ModelAttribute("deptJobVO") DeptJob deptJob, ModelMap model) throws Exception{
 		// 0. Spring Security 사용자권한 처리
     	Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
     	if(!isAuthenticated) {
     		model.addAttribute("message", egovMessageSource.getMessage("fail.common.login"));
-        	return "redirect:/uat/uia/egovLoginUsr.do";
+//        	return "redirect:/uat/uia/egovLoginUsr.do";
     	}
 
     	// 첨부파일 삭제를 위한 ID 생성 start....
