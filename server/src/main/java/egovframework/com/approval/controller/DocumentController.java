@@ -1,5 +1,6 @@
 package egovframework.com.approval.controller;
 
+import java.lang.System.Logger;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,9 +36,13 @@ public class DocumentController {
     }
 	
 	@GetMapping("/list")
-	public List<DocumentDTO> getCompletedDocuments(@RequestParam(required = false) String status) {
+	public List<DocumentDTO> getCompletedDocuments(@RequestParam(required = false) String status,
+													@RequestParam(required = false) String delYn,
+													@RequestParam(required = false) int page) {
 	    SearchDTO searchDTO = new SearchDTO();
 	    searchDTO.setStatus(status); // SearchDTO 객체에 값 설정
+	    searchDTO.setDelYn(delYn);
+	    searchDTO.setPage(page);
 	    return documentService.getList(searchDTO);
 	}
 	 

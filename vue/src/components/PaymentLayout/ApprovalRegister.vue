@@ -5,18 +5,20 @@
             <div class='col-8'>
                 <div class="card left-card">
                   <!-- head -->
-                    <div class="button-collection d-flex justify-content-end align-items-center flex-wrap" style='padding: 5px ;'>
-                        <div class='d-flex'>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
                             <h4 class="card-title me-auto" >문서기안</h4>
                         </div>
-                        <button 
-                        v-for="(btn, index) in headButtons" 
-                        :key="index"
-                        :class="['btn', btn.class, 'btn-fill']"
-                        @click="$emit('button-click', btn.action)">
-                        <!-- 자식컴포넌트 클릭이벤트 -->
-                        {{ btn.label }}
-                        </button>
+                        <div>
+                          <button 
+                            v-for="(btn, index) in headButtons" 
+                            :key="index"
+                            :class="['btn', btn.class, 'btn-fill']"
+                            @click="$emit('button-click', btn.action)">
+                            <!-- 자식컴포넌트 클릭이벤트 -->
+                            {{ btn.label }}
+                          </button>
+                        </div>
                     </div>
                     <!-- 제목구분선 -->
                     <div class="divid_line"></div>
