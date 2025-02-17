@@ -8,9 +8,9 @@ import egovframework.rte.psl.dataaccess.mapper.Mapper;
 @Mapper("projectMapper")
 public interface ProjectMapper {
 	
-	int insert(ProjectDTO projectDTO);
-	int update(ProjectDTO projectDTO);
-	int delete(String prCd);
+	int projectInsert(ProjectDTO projectDTO);
+	int projectUpdate(ProjectDTO projectDTO);
+	int projectDelete(String prCd);
 	ProjectDTO projectSelect(String prCd);
 	List<ProjectDTO> projectSelectAll();
 }

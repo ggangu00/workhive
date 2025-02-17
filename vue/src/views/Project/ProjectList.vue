@@ -206,7 +206,7 @@
                     <td class="text-start">{{ dateFormat(projectInfo.startDt) }} ~ {{ dateFormat(projectInfo.endDt) }}
                     </td>
                     <th class="table-secondary">금액</th>
-                    <td class="text-start">{{ Number(projectInfo.price).toLocaleString() }}</td>
+                    <td class="text-start">{{ numberFormat(projectInfo.price) }}</td>
                   </tr>
                   <tr>
                     <th class="table-secondary">참여자</th>
@@ -265,6 +265,7 @@ import axios from "axios";
 import { onBeforeMount, ref } from 'vue';
 import Card from '../../components/Cards/Card.vue'
 import Modal from '../../components/Modal.vue';
+import { dateFormat, numberFormat } from '../../assets/js/common.js'
 
 const projectList = ref([]);
 const projectInfo = ref([]);
@@ -277,16 +278,6 @@ onBeforeMount(() => {
 
 //---------------공통함수--------------
 
-const dateFormat = (value) => { //날짜포맷 (yyyy-mm-dd)
-  let date = value == null ? new Date() : new Date(value);
-
-  let year = date.getFullYear();
-  let month = ('0' + (date.getMonth() + 1)).slice(-2);
-  let day = ('0' + date.getDate()).slice(-2);
-
-  let result = year + '-' + month + '-' + day;
-  return result;
-};
 
 //---------------모달--------------
 
