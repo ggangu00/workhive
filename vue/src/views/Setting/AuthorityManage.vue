@@ -13,7 +13,7 @@
 
                   <div class="col-3 treeview">
                      <div class="bottom-line p-2">
-                        <button class="btn btn-success btn-sm" @click="btnAuthorityAdd"><i class="fa-solid fa-plus"></i> 권한 추가</button>
+                        <button class="btn btn-success btn-sm" @click="modalOpen"><i class="fa-solid fa-plus"></i> 권한 추가</button>
                      </div>
                      <div class="p-2">
                         <div v-for="(role, idx) in roles" :key="idx">
@@ -70,6 +70,31 @@
 
                </div>
 
+               <!-- [s]-->
+               <Modal :isShowModal="isShowModal" :modalTitle="'권한 등록'" @click.self="modalClose">
+                  <!-- 모달 바디 -->
+                  <template v-slot:body>
+                     <card class="mb-0">
+                        <div class="mb-3">
+                           <label class="form-label">권한명 <i class="fa-solid fa-asterisk point-red"></i></label>
+                           <input type="text" v-model="authorityNm" class="form-control w30">
+                        </div>
+                        <div class="mb-3">
+                           <div class="form-group has-label">
+                              <label>권한에 대한 설명</label>
+                           </div>
+                           <textarea type="text" v-model="description" class="form-control" placeholder="부서에 대한 설명을 입력하세요." style="height: 130px;"></textarea>
+                        </div>
+                     </card>
+                  </template>
+
+                  <!-- 모달 푸터 -->
+                  <template v-slot:footer>
+                     <button type="button" class="btn btn-secondary btn-fill" @click="modalClose">닫기</button>
+                     <button type="button" class="btn btn-primary btn-fill" @click="btnAuthorityAdd">등록</button>
+                  </template>
+               </Modal>
+
             </div>
          </div>
       </div>
@@ -80,6 +105,8 @@
    import { ref, onMounted, onBeforeMount } from 'vue';
    import axios from "axios";
    import Swal from 'sweetalert2';
+   import Card from '../../components/Cards/Card.vue'
+   import Modal from '../../components/Modal.vue';
 
    onBeforeMount(() => {
       // 권한 목록 조회
@@ -89,6 +116,27 @@
    onMounted(() => {
       document.addEventListener("click", outsideClickHandler);
    });
+// ================================================== Modal ==================================================
+   const isShowModal = ref(false);
+
+   const modalOpen = () => {
+      isShowModal.value = true;
+   }
+
+   const modalClose = (e) => {
+      if (e.key === "Escape") {
+         if(isShowModal.value) {
+            isShowModal.value = !isShowModal.value
+         }
+      } else {
+         isShowModal.value = false;
+      }
+   }
+
+   const modalReset = () => {
+      authorityNm.value = '';
+      description.value = '';
+   }
 
    const roles = ref([]);
    const selectedRole = ref(null);
@@ -109,18 +157,29 @@
       }
    };
 
+   let authorityNm = ref('');
+   let description = ref('');
    const btnAuthorityAdd = async () => {
-      console.log("add Ready !");
+      const requestData = { authorityNm: authorityNm.value, description : description.value, createId : "admin" };  // 요청 본문에 보낼 데이터
 
       try {
-         const result = await axios.get('/api/authority/list');
-         roles.value = result.data;
+         const response = await axios.post('/api/authority/add', requestData);
+
+         if(response.data.result === true) {
+            Swal.fire({
+               icon: "success",
+               title: "등록 성공",
+            });
+            roles.value = response.data.list;
+            modalReset();
+            isShowModal.value = !isShowModal.value
+         }
       } catch (err) {
          roles.value = [];
-         
+
          Swal.fire({
             icon: "error",
-            title: "API 조회 오류",
+            title: "등록 실패",
             text:  "Error : " + err
          });
       }

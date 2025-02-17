@@ -14,9 +14,10 @@ local.properties
 .loadpath
 .recommenders
 
-.project
+*.project
 .classpath
 target/
+package-lock.json
 
 # External tool builders
 .externalToolBuilders/

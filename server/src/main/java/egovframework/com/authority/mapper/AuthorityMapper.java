@@ -5,7 +5,7 @@ import java.util.List;
 import egovframework.com.authority.service.AuthorityDTO;
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 
-@Mapper
+@Mapper("authorityMapper")
 public interface AuthorityMapper {
 	
 	// 권한 전체조회
