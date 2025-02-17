@@ -205,8 +205,6 @@
 </script>
 
 <style scoped>
-
-
    .menu-container {
       display: flex;
       justify-content: space-between;

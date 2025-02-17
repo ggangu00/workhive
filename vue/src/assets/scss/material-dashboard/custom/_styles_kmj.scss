@@ -183,6 +183,11 @@
 .options {
    cursor: pointer;
    position: relative;
+
+   i {
+      color: #919191;
+      font-weight: 600;
+   }
 }
 
 /* 드롭다운 스타일 */
