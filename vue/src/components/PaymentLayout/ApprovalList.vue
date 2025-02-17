@@ -10,7 +10,7 @@
                 <button 
                   v-for="(btn, index) in buttons" 
                   :key="index"
-                  :class="['btn', btn.class, 'btn-fill']"
+                  :class="['btn', btn.class]"
                   @click="$emit('button-click', btn.action)">
                   {{ btn.label }}
                 </button>
@@ -22,12 +22,12 @@
                   <option value="">일반결재</option>
                   <option value="">수신결재</option>
                 </select>
-                <select class="form-select w10" name="doc_kind">
+                <select class="form-select w10" name="dept_nm">
                   <option disabled selected>부서</option>
                   <option value="">기획팀</option>
                   <option value="">영업팀</option>
                 </select>
-                <select class="form-select w10" name="doc_kind">
+                <select class="form-select w10" name="form_cd">
                   <option disabled selected>양식</option>
                   <option value="">구입신청서</option>
                   <option value="">외부지출서</option>
@@ -53,7 +53,8 @@
 
         <!-- Toast UI Grid 영역 -->
         <div class="col-12">
-          <div id="tableGrid" class="toastuiContainer"></div>
+          <div id="tableGrid" class="toastui"></div>
+          <div id="pagination" class="tui-pagination"></div>
         </div>
       </div>
     </div>
@@ -75,23 +76,46 @@ export default {
   },
   mounted() {
     this.toastGrid();
+    this.clickInfo();
+    this.clickLink();
   },
   methods: {
     toastGrid() {
       this.grid = new Grid({
         el: document.getElementById("tableGrid"),
-        data: this.rowData, // 데이터 적용
+        data: this.rowData,
         scrollX: true,
         scrollY: true,
         columns: this.columnDefs, // 컬럼 정의 적용
-        
+        rowHeaders: ['checkbox'],
         pageOptions: {
-          useClient: true, // 클라이언트 사이드 페이지네이션
-          perPage: 10 // 한 페이지에 5개 항목 표시
-        }
+          useClient: true, // 사이드 페이지네이션
+          perPage: 5 // 한 페이지에 5개 항목 표시
+        },
+
       });
     },
+    //행클릭 정보 가져오기
+    clickInfo(){
+      this.grid.on('click', ev=>{
+        let dataRow = this.grid.getRow(ev.rowKey);
+        console.log(dataRow);
+      })
+    },
+
+    clickLink() {
+      this.grid.on('click', (ev) => {
+        let dataRow = this.grid.getRow(ev.rowKey);
+        if (dataRow.crntSignStat == '반려') {
+          this.$router.push({ path: "/approval/rejectedInfo" });
+        };
+        
+
+      })
+    },
+    
   },
+  
   watch: {
     rowData(document) {
         if (this.grid) {
@@ -110,7 +134,7 @@ export default {
 .selectbox select {
   margin-right: 10px;
 }
-.toastuiContainer {
+.toastui {
   width: 100%;
   height: 500px;
 }

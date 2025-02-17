@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.authority.mapper.AuthorityMapper">
+
+	<!-- 권한 전체조회 -->
+	<select id="authoritySelectAll" resultType="authorityDTO">
+		SELECT 
+		   authority_cd,
+		   authority_nm,
+		   description,
+		   create_dt,
+		   create_id,
+		   update_dt,
+		   update_id
+		FROM 
+		   authority
+		WHERE 
+		   UPPER(del_yn) = UPPER('N')
+		AND
+		   authority_cd > 0
+	</select>
+	
+	<!-- 권한 단건조회 -->
+	<select id="authoritySelect" resultType="authorityDTO">
+		SELECT 
+		   authority_cd,
+		   authority_nm,
+		   description,
+		   del_yn,
+		   create_dt,
+		   create_id,
+		   update_dt,
+		   update_id
+		FROM 
+		   authority
+		WHERE 
+		   authority_cd = #{authorityCd}
+		AND
+		   UPPER(del_yn) = UPPER('N')
+		AND
+		   authority_cd > 0
+	</select>
+	
+	<!-- 권한 등록 -->
+	<insert id="authorityInsert" parameterType="authorityDTO">
+		INSERT
+		   INTO
+		   authority(
+		      authority_cd,
+		      authority_nm,
+		      description,
+		      create_dt,
+		      create_id,
+		      update_dt,
+		      update_id
+		   )
+		VALUES (
+		      seq_authority_cd.NEXTVAL,
+		      #{authorityNm},
+		      #{description},
+		      SYSDATE,
+		      #{createId},
+		      #{updateDt},
+		      #{updateId}
+		);
+	</insert>
+	
+	<!-- 권한 수정 -->
+	<update id="authorityUpdate" parameterType="authorityDTO">
+		UPDATE 
+		   authority
+		SET
+		   authority_nm = #{authorityNm},
+		   <if test="description != null and !description.equals('')">
+		   		description = #{description},
+		   </if>
+		   UPDATE_DT = SYSDATE,
+		   UPDATE_ID = #{updateId}
+		WHERE
+		   authority_cd = #{authorityCd}
+	</update>
+	
+	<!-- 권한 삭제 -->
+	<update id="authorityDelete" parameterType="authorityDTO">
+		UPDATE 
+		   authority
+		SET
+		   authority_nm = #{authorityNm},
+		   <if test="description != null and !description.equals('')">
+		   		description = #{description},
+		   </if>
+		   UPDATE_DT = SYSDATE,
+		   UPDATE_ID = #{updateId}
+		WHERE
+		   authority_cd = #{authorityCd}
+	</update>
+
+</mapper>

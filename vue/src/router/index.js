@@ -24,9 +24,13 @@ import ApprovalRegister from "../components/PaymentLayout/ApprovalRegister.vue";
 //skh
 import Test from "../views/Approval/test.vue";
 import RegisterTest from "../views/Approval/RegisterTest.vue";
-import Completed from "../views/Approval/Completed.vue";
+import CompletedList from "../views/Approval/CompletedList.vue";
 import Register from "../views/Approval/Register.vue";
 import Calendar from "../views/schedule/Calendar.vue";
+import PendingList from "../views/Approval/PendingList.vue";
+import ProceedList from "../views/Approval/ProceedList.vue";
+import RejectedList from "../views/Approval/RejectedList.vue";
+import RejectedInfo from "../views/Approval/RejectedInfo.vue";
 
 
 // pjh
@@ -151,6 +155,7 @@ const routes = [
       component: ApprovalRegister
    },
    //skh
+   
    { //
       path: '/schdule/test',
       name: 'Test',
@@ -166,10 +171,30 @@ const routes = [
       name: 'Calendar',
       component: Calendar
    },
+   { // 미결함
+      path: '/approval/pendingList',
+      name: 'PendingList',
+      component : PendingList
+   },
    { // 완료함
-      path: '/approval/completed',
-      name: 'Completed',
-      component : Completed
+      path: '/approval/completedList',
+      name: 'CompletedList',
+      component : CompletedList
+   },
+   { // 진행함
+      path: '/approval/proceedList',
+      name: 'ProceedList',
+      component : ProceedList
+   },
+   { // 반려함
+      path: '/approval/rejectedList',
+      name: 'RejectedList',
+      component : RejectedList
+   },
+   {//반려문서 상세보기
+      path: '/approval/rejectedInfo',
+      name: 'RejectedInfo',
+      component:RejectedInfo
    },
    { // 문서 기안
       path: '/approval/register',

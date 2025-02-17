@@ -95,7 +95,10 @@
             </template>
             <template v-slot:list>
                <li class="sub-item" @click="movePage('Register')">문서기안</li>
-               <li class="sub-item" @click="movePage('Completed')">완료함</li>
+               <li class="sub-item" @click="movePage('CompletedList')">완료함</li>
+               <li class="sub-item" @click="movePage('PendingList')">미결함</li>
+               <li class="sub-item" @click="movePage('ProceedList')">진행함</li>
+               <li class="sub-item" @click="movePage('RejectedList')">반려함</li>
                <li class="sub-item" @click="movePage('Test')">컴포넌트테스트</li>
                <li class="sub-item" @click="movePage('RegisterTest')">등록테스트</li>
             </template>
@@ -388,6 +391,10 @@
       border-left: 3px solid;
       padding: 2px 1px 2px 4px;
       margin: 7px 6px 11px 32px;
+   }
+
+   li {
+      cursor: pointer;
    }
 
 </style>

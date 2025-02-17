@@ -19,5 +19,7 @@ public class DocumentDTO {
     private String completeDt;  
     private String docKind;         
     private String atchFileId;     
-    private String formCd;        
+    private String formCd;
+    private String deptNm;
+    private String delYn;
 }

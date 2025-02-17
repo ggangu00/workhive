@@ -3,7 +3,7 @@
 <mapper namespace="egovframework.com.project.mapper.ProjectMapper">
 
 	<!-- 등록 -->
-	<insert id="insert" parameterType="projectDTO">
+	<insert id="projectInsert" parameterType="projectDTO">
 		INSERT INTO project (
 			pr_cd,
 			type_cd,
@@ -30,7 +30,7 @@
 	</insert>
 	
 	<!-- 수정 -->
-	<update id="update" parameterType="projectDTO">
+	<update id="projectUpdate" parameterType="projectDTO">
 		update project
 		set	type_cd = #{typeCd}, 
 			pr_nm = #{prNm},
@@ -44,7 +44,7 @@
 	</update>
 	
 	<!-- 삭제 -->
-	<delete id="delete" parameterType="Long">
+	<delete id="projectDelete" parameterType="Long">
 		delete from project
 		where pr_cd = #{prCd}
 	</delete>
@@ -78,6 +78,7 @@
 			   create_dt,
 			   entrprs_mber_id
 		from project
+		order by create_dt desc
 	</select>
 
 </mapper>
