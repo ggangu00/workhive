@@ -25,14 +25,17 @@
             <div class="row justify-content-between align-items-center">
               <div class="col-auto">
                 <button class="btn btn-danger btn-fill me-2">선택 삭제</button>
-                <button class="btn btn-primary btn-fill" @click="modalOpenJob">업무 등록</button>
+                <button class="btn btn-primary btn-fill" @click="modalAddJob">업무 등록</button>
     
                 <!-- 업무 등록 모달 -->
                 <JobManage
                   :isShowJobModal="isShowJobModal"
+                  :isUpdate="isUpdate"
                   @modalCloseJob="modalCloseJob"
                   @modalConfirmJob="modalConfirmJob"
                   :jobbxSelected="jobbxSelected"
+                  :jobbxList="jobbxList"
+                  :selectedRowData="selectedRowData"
                 />
               </div>
               <div class="col d-flex justify-content-end align-items-center">
@@ -72,8 +75,9 @@ import JobManage from "./JobManage.vue";
 let gridInstance = ref();
 let rowData = ref([]);
 
+let jobbxList = [];
 let jobbxSelected = {
-  searchDeptId: '',
+  searchDeptId: 'ORGNZT_0000000000000',
   searchDeptJobBxId: 'DX_012'
 };
 
@@ -81,9 +85,8 @@ let jobbxSelected = {
 const getDeptData = (result) => {
   jobbxSelected.searchDeptId = result.deptId;
   jobbxSelected.searchDeptJobBxId = result.jobbxId;
+  jobbxList = result.jobbxList;
 
-  console.log('부서 정보:', jobbxSelected.searchDeptId);
-  console.log('업무함 정보:', jobbxSelected.searchDeptJobBxId);
   jobGetList(jobbxSelected);
 }
 
@@ -102,7 +105,7 @@ onMounted(() => {
       { header: '작성일', name: 'frstRegisterPnttm', sortable: true},
       {
         header: '관리', name: 'action', align: 'center',
-        renderer: btnRenderer,
+        renderer: BtnRenderer,
       }
 
     ]
@@ -112,57 +115,56 @@ onMounted(() => {
 })
 
 // 그리드 버튼 -> 적용 안됨, 렌더러 다시 공부
-const btnRenderer = {
-  renderer({ rowKey }) {
-    const btnDiv = document.createElement("div");
-    btnDiv.className = "btn-group";
+class BtnRenderer {
+  constructor(props) {
+    const el = document.createElement("div");
+    el.className = "btn-group";
 
-    const udtBtn = document.createElement("button");
-    udtBtn.className = "btn btn-success btn-fill me-2";
-    udtBtn.textContent = "수정";
-    udtBtn.addEventListener("click", () => udtEvent(rowKey));
-
-    const delBtn = document.createElement("button");
-    delBtn.className = "btn btn-danger btn-fill";
-    delBtn.textContent = "삭제";
-    delBtn.addEventListener("click", () => delEvent(rowKey));
-
-    btnDiv.appendChild(udtBtn);
-    btnDiv.appendChild(delBtn);
-
-    return btnDiv;
-  }
-};
-const udtEvent = (rowKey) => {
-  console.log(`수정 버튼 클릭됨, 행 번호: ${rowKey}`);
-};
-const delEvent = (rowKey) => {
-  console.log(`삭제 버튼 클릭됨, 행 번호: ${rowKey}`);
-  // 삭제 로직 추가
-};
-
-/*
-이벤트 위임 방식 생각해보기
-const btnRenderer = {
-  render({ rowKey }) {
-    const container = document.createElement("div");
-    container.className = "btn-group";
-
-    container.innerHTML = `
+    el.innerHTML = `
       <button class="btn btn-success btn-fill me-2" data-type="edit">수정</button>
       <button class="btn btn-danger btn-fill" data-type="delete">삭제</button>
     `;
 
-    container.addEventListener("click", (event) => {
-      const type = event.target.getAttribute("data-type");
-      if (type === "edit") udtEvent(rowKey);
-      else if (type === "delete") delEvent(rowKey);
+    el.addEventListener("click", (event) => {
+      const type = event.target.dataset.type;
+
+      // ✅ props.row가 없을 경우 grid에서 데이터 가져오기
+      const rowKey = props.row?.rowKey ?? props.grid.getRow(props.rowKey)?.rowKey;
+
+      if (rowKey === undefined) {
+        console.error("BtnRenderer: rowKey를 가져올 수 없습니다.", props);
+        return;
+      }
+
+      if (type === "edit") {
+        udtEvent(rowKey);
+      } else if (type === "delete") {
+        delEvent(rowKey);
+      }
     });
 
-    return container;
+    this.el = el;
   }
+
+  getElement() {
+    return this.el;
+  }
+}
+
+const udtEvent = (rowKey) => {
+  selectedRowData = gridInstance.value.getRow(rowKey);
+  console.log(`수정 버튼 클릭됨, 행 번호: ${rowKey}`, selectedRowData);
+  modalUpdateJob(); // 모달 열기
 };
-*/
+
+const delEvent = async (rowKey) => {
+  selectedRowData = gridInstance.value.getRow(rowKey);
+  console.log(`삭제 버튼 클릭됨, 행 번호: ${rowKey}`, selectedRowData.deptJobId);
+
+  await axios.delete('/api/deptstore/jobremove', { params: { deptJobId: selectedRowData.deptJobId } });
+  
+  jobGetList(jobbxSelected);
+};
 
 // 업무 목록 조회 업무함 아이디로 검색
 const jobGetList = async (jobbxSelected) => {
@@ -177,23 +179,33 @@ const jobGetList = async (jobbxSelected) => {
     rowNum: index + 1, // 1부터 시작하는 행번호
     ...item
   }));
-  console.log(rowData.value);
 
   gridInstance.value.resetData(rowData.value);
 };
 
 // 모달
-const isShowJobModal = ref(false);
-const modalOpenJob = () => {
+let isShowJobModal = ref(false);
+let isUpdate = ref(false);
+
+// 업무 등록
+const modalAddJob = () => { 
+  isUpdate.value = false;
   isShowJobModal.value = true;
 }
-
 const modalCloseJob = () => {
   isShowJobModal.value = false;
 }
 const modalConfirmJob = () => {
   console.log('job modal confirm click');
   isShowJobModal.value = false;
+  jobGetList(jobbxSelected);
+}
+
+// 업무 수정
+let selectedRowData = {};
+const modalUpdateJob = () => {
+  isUpdate.value = true;
+  isShowJobModal.value = true;
 }
 
 const modalCloseFunc = (e) => {
@@ -203,7 +215,6 @@ const modalCloseFunc = (e) => {
       }
   }
 }
-
 
 </script>
 
@@ -227,6 +238,7 @@ div::v-deep .cell-btn-custom {
 div::v-deep .nav-link {
   display: flex !important;
 }
+
 </style>
   
   

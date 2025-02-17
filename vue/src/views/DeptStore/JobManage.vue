@@ -7,11 +7,9 @@
     <template v-slot:body>
       <div class="content">
         <div class="container-fluid">
-
-          <!--등록폼 [S]-->
+          <!-- 등록폼 [S] -->
           <div class="card">
             <div class="card-body">
-
               <div class="mb-3">
                 <label>부서명</label>
                 <div class="row">
@@ -32,28 +30,29 @@
                 </div>
                 <div class="row align-items-center">
                   <div class="col-6">
-                    <input type="text"  v-model="localJobbxSelected.searchDeptJobBxId" readonly>
-                    <!-- <select class="form-select" aria-label="Default select example"  v-model="localJobbxSelected.searchDeptJobBxId">
-                      <option selected>Open this select menu</option>
-                      <option value="1">One</option>
-                      <option value="2">Two</option>
-                      <option value="3">Three</option>
-                    </select> -->
+                    <select class="form-select" v-model="formValues.deptJobBxId">
+                      <option disabled value="">업무함을 선택하세요</option>
+                      <option v-for="job in localJobbxList" :key="job.deptJobBxId" :value="job.deptJobBxId">
+                        {{ job.deptJobBxNm }}
+                      </option>
+                    </select>
                   </div>
                   <div class="col-6">
                     <div class="form-check form-check-inline d-flex align-items-center">
                       <input class="form-check-input my-0" type="radio" name="inlineRadioOptions" id="inlineRadio1"
-                        value="option1">
+                        value="1" v-model="formValues.priort">
+                      <!-- <input class="form-check-input my-0" type="radio" name="inlineRadioOptions" id="inlineRadio1"
+                        value="option1"> -->
                       <label class="form-check-label my-0" for="inlineRadio1">높음</label>
                     </div>
                     <div class="form-check form-check-inline d-flex align-items-center">
                       <input class="form-check-input my-0" type="radio" name="inlineRadioOptions" id="inlineRadio2"
-                        value="option2">
+                        value="2" v-model="formValues.priort">
                       <label class="form-check-label my-0" for="inlineRadio2">보통</label>
                     </div>
                     <div class="form-check form-check-inline d-flex align-items-center">
                       <input class="form-check-input my-0" type="radio" name="inlineRadioOptions" id="inlineRadio3"
-                        value="option3">
+                        value="3" v-model="formValues.priort">
                       <label class="form-check-label my-0" for="inlineRadio3">낮음</label>
                     </div>
                   </div>
@@ -62,17 +61,17 @@
 
               <div class="mb-3">
                 <label>업무명<em class="point-red">*</em></label>
-                <input type="text" class="form-control" placeholder="업무명을 입력해주세요">
+                <input type="text" class="form-control" placeholder="업무명을 입력해주세요" v-model="formValues.deptJobNm">
               </div>
 
               <div class="mb-3">
                 <label>업무내용<em class="point-red">*</em></label>
-                <textarea class="form-control" placeholder="업무내용을 입력해주세요" style="height: 86px;"></textarea>
+                <textarea class="form-control" placeholder="업무내용을 입력해주세요" style="height: 86px;" v-model="formValues.deptJobCn"></textarea>
               </div>
 
               <div class="mb-3">
                 <label>업무담당자<em class="point-red">*</em></label>
-                <input type="text" class="form-control" placeholder="담당자명을 입력해주세요">
+                <input type="text" class="form-control" placeholder="담당자명을 입력해주세요" v-model="formValues.chargerId">
               </div>
 
               <div class="mb-3">
@@ -82,7 +81,7 @@
 
             </div>
           </div>
-          <!--등록폼 [E]-->
+          <!-- 등록폼 [E] -->
         </div>
       </div>
     </template>
@@ -93,39 +92,106 @@
   </Modal>
 </template>
 
-
 <script setup>
-import { ref, defineProps, watch } from 'vue';
+import { ref, watch } from 'vue';
 import Modal from '../../components/Modal.vue';
+import axios from 'axios';
 
 const props = defineProps({
   isShowJobModal: Boolean,
+  isUpdate: Boolean,
   jobbxSelected: Object,
-});
-console.log('props : ', props);
-// jobbxSelected를 로컬 데이터로 복사
-let localJobbxSelected = ref({ ...props.jobbxSelected });
-
-watch(() => props.jobbxSelected, (newVal) => {
-  console.log('props 변경 감지', newVal);
+  jobbxList: Array,
+  selectedRowData: Object,
 });
 
+let localJobbxSelected = ref(props.jobbxSelected);
+let localJobbxList = ref(props.jobbxList);
+
+// 입력값 저장
+let formValues = ref({
+  selectedData: localJobbxSelected,
+  deptJobBxId: '',
+  deptJobId: '',
+  priort: '',
+  deptJobNm: '',
+  deptJobCn: '',
+  chargerId: '',
+});
+
+// 업무함 리스트 변경시 모달에서도 변경
+watch(() => props.jobbxList, (newVal) => {
+  localJobbxList.value = newVal;
+}, { immediate: true });
+
+// 업무 수정으로 열린 경우
+watch(() => props.selectedRowData, async (newVal) => {
+  if (props.isUpdate) {
+    // 업무 상세 정보 가져오기
+    const result = await axios.get('/api/deptstore/jobinfo', { params: {deptJobId: newVal.deptJobId} });
+    
+    formValues.value.deptJobBxId = result.data.deptJobBxId;
+    formValues.value.deptJobId = result.data.deptJobId;
+    formValues.value.priort = result.data.priort;
+    formValues.value.deptJobNm = result.data.deptJobNm;
+    formValues.value.deptJobCn = result.data.deptJobCn;
+    formValues.value.chargerId = result.data.chargerId;
+  };
+}, { immediate: true });
 
 const emit = defineEmits(['modalCloseJob', 'modalConfirmJob']);
 const modalCloseJob = () => {
   emit('modalCloseJob');
 }
 const modalConfirmJob = () => {
+  if(!props.isUpdate) {
+    jobAdd();
+  } else {
+    jobUpdate();
+  }
   emit('modalConfirmJob');
 }
-</script>
 
+// 등록
+const jobAdd = async () => {
+  const addData = new FormData();
+  addData.append("deptId", formValues.value.selectedData.searchDeptId);
+  addData.append("deptJobBxId", formValues.value.deptJobBxId);
+  addData.append("priort", formValues.value.priort);
+  addData.append("deptJobNm", formValues.value.deptJobNm);
+  addData.append("deptJobCn", formValues.value.deptJobCn);
+  addData.append("chargerId", formValues.value.chargerId);
+  // addData.append("", formValues.); 파일
+  
+  const result = await axios.post('/api/deptstore/jobadd', addData);
+  //서버응답 찍어보기
+  console.log("서버 응답:", result.data);
+}
+
+// 수정
+const jobUpdate = async () => {
+  const modifyData = new FormData();
+  modifyData.append("deptId", formValues.value.selectedData.searchDeptId);
+  modifyData.append("deptJobBxId", formValues.value.deptJobBxId);
+  modifyData.append("deptJobId", formValues.value.deptJobId);
+  modifyData.append("priort", formValues.value.priort);
+  modifyData.append("deptJobNm", formValues.value.deptJobNm);
+  modifyData.append("deptJobCn", formValues.value.deptJobCn);
+  modifyData.append("chargerId", formValues.value.chargerId);
+  // modifyData.append("", formValues.); 파일
+
+  console.log("update data : ", formValues.value);
+  
+  const result = await axios.post('/api/deptstore/jobupdate', modifyData);
+  //서버응답 찍어보기
+  console.log("서버 응답:", result.data);
+}
+</script>
 
 <style>
 .col-6 {
   display: flex;
   align-items: center;
-  height: 100%; /* 높이 설정 */
+  height: 100%;
 }
 </style>
-
