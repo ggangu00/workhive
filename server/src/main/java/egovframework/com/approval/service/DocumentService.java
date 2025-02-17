@@ -6,4 +6,6 @@ public interface DocumentService {
 	public int documentInsert(DocumentDTO documentDTO);
 	
 	public List<DocumentDTO> getList(SearchDTO searchDTO);
+	
+	int getCount(SearchDTO searchDTO);
 }

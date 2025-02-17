@@ -30,7 +30,13 @@
 		   #{atchFileId}, 
 		   #{formCd})
     </insert>
-    
+    <!-- 문서카운트 -->
+    <select id="getCount" resultType="int">
+	  SELECT COUNT(*) FROM DOCUMENT
+	  <where>
+	  <include refid="searchCriteria"></include>
+	  </where>
+	</select>
     <!-- 문서조회 -->
     <select id="getList" resultType="egovframework.com.approval.service.DocumentDTO" parameterType="egovframework.com.approval.service.SearchDTO">
 		 SELECT * FROM (

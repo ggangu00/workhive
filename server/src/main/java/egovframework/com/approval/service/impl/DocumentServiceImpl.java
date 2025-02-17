@@ -27,4 +27,9 @@ public class DocumentServiceImpl implements DocumentService{
 		return documentMapper.getList(searchDTO);
 	}
 
+	@Override
+	public int getCount(SearchDTO searchDTO) {
+		return documentMapper.getCount(searchDTO);
+	}
+
 }
