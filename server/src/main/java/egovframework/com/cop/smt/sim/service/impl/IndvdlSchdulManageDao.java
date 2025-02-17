@@ -116,7 +116,7 @@ public class IndvdlSchdulManageDao extends EgovComAbstractDAO {
 	 */
 	public void deleteIndvdlSchdulManage(IndvdlSchdulManageVO indvdlSchdulManageVO) throws Exception{
 		// 일지 삭제
-		delete("IndvdlSchdulManage.deleteDiaryManage", indvdlSchdulManageVO);
+		//delete("IndvdlSchdulManage.deleteDiaryManage", indvdlSchdulManageVO);
 		// 일정관리 삭제
 		delete("IndvdlSchdulManage.deleteIndvdlSchdulManage", indvdlSchdulManageVO);
 	}

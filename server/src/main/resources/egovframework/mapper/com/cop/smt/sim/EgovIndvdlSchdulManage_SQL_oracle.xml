@@ -46,6 +46,7 @@
 			TO_CHAR(sysdate, 'YYYY-MM-DD') TO_DAY,
 			A.SCHDUL_ID,
 			A.SCHDUL_SE,
+			A.fn_get_codename(SCHDUL_SE) as SCHDUL_SE,
 			A.DEPT_CD,
 			A.SCHDUL_KND_CODE SCHDUL_KIND_CODE,
 			A.SCHDUL_BGNDE,
@@ -106,7 +107,7 @@
 		WHERE 1=1 
 		
 	 
-	 <if test='searchMode != null and searchMode != ""'>
+	 <if test='searchMode != null and searchMode != ""'> 
 	 <if test='searchMode == "MONTH"'>
  
 		 <if test='searchMonth != null and searchMonth != ""'>
@@ -233,7 +234,7 @@
 
 	
 	<!-- 개인일정정보::삭제  -->
-	<delete id="deleteDiaryManage" >
+	<delete id="deleteDiaryManage" parameterType="egovframework.com.cop.smt.sim.service.IndvdlSchdulManageVO">
 			DELETE FROM COMTNDIARYINFO WHERE SCHDUL_ID = #{schdulId}
 	</delete>
 	<delete id="deleteIndvdlSchdulManage">

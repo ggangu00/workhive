@@ -5,7 +5,7 @@
 
 <form-validation>
 
-    <formset>
+    <!-- <formset>
 		<form name="indvdlSchdulManageVO">
 			<field property="schdulSe" depends="required">
         		<arg0 key="일정구분" resource="true"/>
@@ -14,11 +14,11 @@
 			<field property="schdulIpcrCode" depends="required">
         		<arg0 key="중요도" resource="true"/>
 			</field>
-			<!-- 
+			
 			<field property="schdulDeptName" depends="required">
         		<arg0 key="부서" resource="true"/>
 			</field>
-			 -->
+			
 			<field property="schdulNm" depends="required, maxlength">
         		<arg0 key="일정명" resource="true"/>
 				<var>
@@ -57,12 +57,12 @@
 			<field property="schdulEnddeMM" depends="required">
         		<arg0 key="일정종료(분)" resource="true"/>
 			</field>
-			<!-- 
+			
 			<field property="schdulChargerName" depends="required">
         		<arg0 key="담당자" resource="true"/>
 			</field>
-			 -->
+			
 		</form>
-    </formset>
+    </formset> -->
 
 </form-validation>
