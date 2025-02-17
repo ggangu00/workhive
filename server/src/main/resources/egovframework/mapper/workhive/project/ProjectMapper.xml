@@ -13,7 +13,7 @@
 			end_dt,
 			price,
 			create_id,
-			entrprs_mber
+			entrprs_mber_id
 		)
 		VALUES (
 			seq_pr_cd.nextval,
@@ -24,7 +24,7 @@
 			#{endDt},
 			#{price},
 			#{createId},
-			#{entrprsMber}
+			#{entrprsMberId}
 		)
 		
 	</insert>
@@ -50,7 +50,7 @@
 	</delete>
 	
 	<!-- 단건조회 -->
-	<select id="read" parameterType="Long">
+	<select id="projectSelect" parameterType="String">
 		select pr_cd,
 			   fn_get_codename(type_cd) as ACT_TYPE,
 			   pr_nm,
@@ -66,7 +66,7 @@
 	</select>
 	
 	<!-- 전체조회 -->
-	<select id="getList" parameterType="int" resultType="projectDTO">
+	<select id="projectSelectAll" parameterType="int" resultType="projectDTO">
 		select pr_cd,
 			   fn_get_codename(type_cd) as ACT_TYPE,
 			   pr_nm,

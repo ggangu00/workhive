@@ -1,78 +1,78 @@
 <template>
   <div class="content">
     <div class="container-fluid">
-      <div>
+      <card>
+        <h4 class="card-title float-left mt-1">프로젝트 등록</h4>
+        <button class="btn btn-primary btn-sm btn-fill float-right"
+          onclick="location.href ='#/admin/project/add'">등록</button>
+        <button class="btn btn-secondary btn-sm btn-fill float-right">초기화</button>
+      </card>
+      <form action="/api/project/add" method="post" id="addForm" name="addForm">
+        <input type="hidden" name="createId" value="admin">
         <div class="card">
+          <div class="card-header">
+            <h5 class="card-title">1. 프로젝트 정보</h5>
+          </div>
           <div class="card-body">
-            <h4 class="card-title float-left mt-1">프로젝트 등록</h4>
-            <button class="btn btn-primary btn-sm btn-fill float-right"
-              onclick="location.href ='#/admin/project/add'">등록</button>
-            <button class="btn btn-secondary btn-sm btn-fill float-right">초기화</button>
+            <div class="mb-3">
+              <div class="form-group has-label">
+                <label>프로젝트명 <em class="point-red">*</em></label>
+              </div>
+              <input type="text" name="prNm" v-model="prNm" class="form-control" placeholder="프로젝트명을 입력해주세요">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">프로젝트 구분 <em class="point-red">*</em></label>
+              <select class="form-select w30" name="typeCd" v-model="typeCd" aria-label="Default select example">
+                <option value="A03">내부프로젝트</option>
+                <option value="A04">외부프로젝트</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">프로젝트 기간 <em class="point-red">*</em></label>
+              <div class="row">
+                <div class="col-auto">
+                  <input type="date" name="startDt" v-model="startDt" class="form-control">
+                </div>
+                <div class="col-auto">~</div>
+                <div class="col-auto">
+                  <input type="date" name="endDt" v-model="endDt" class="form-control">
+                </div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">프로젝트 금액</label>
+              <div class="row">
+                <div class="col-auto">
+                  <input type="number" name="price" v-model="price" class="form-control" placeholder="0"
+                    style="text-align: right;">
+                </div>
+                <div class="col-auto">
+                  <span class="form-text">
+                    원
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">내부완료일</label>
+              <input type="date" name="aheadDt" v-model="aheadDt" class="form-control w30">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">거래처</label>
+              <div class="row">
+                <div class="col-auto">
+                  <input type="text" name="entrprsMberId" v-model="entrprsMberId" class="form-control"
+                    placeholder="제목을 입력해주세요">
+                </div>
+                <div class="col-auto">
+                  <button class="btn btn-info btn-fill">검색</button>
+                </div>
+              </div>
+            </div>
           </div>
+
         </div>
-        <form action="BoardAdd" method="post">
-          <div class="card">
-            <div class="card-header">
-              <h5 class="card-title">1. 프로젝트 정보</h5>
-            </div>
-            <div class="card-body">
-              <div class="mb-3">
-                <div class="form-group has-label">
-                  <label>프로젝트명 <em class="point-red">*</em></label>
-                </div>
-                <input type="text" name="project_nm" class="form-control" placeholder="프로젝트명을 입력해주세요">
-              </div>
-              <div class="mb-3">
-                <label class="form-label">프로젝트 구분 <em class="point-red">*</em></label>
-                <select class="form-select w30" aria-label="Default select example">
-                  <option value="A03">내부프로젝트</option>
-                  <option value="A04">외부프로젝트</option>
-                </select>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">프로젝트 기간 <em class="point-red">*</em></label>
-                <div class="row">
-                  <div class="col-auto">
-                    <input type="date" name="start_dt" class="form-control">
-                  </div>
-                  <div class="col-auto">~</div>
-                  <div class="col-auto">
-                    <input type="date" name="end_dt" class="form-control">
-                  </div>
-                </div>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">프로젝트 금액</label>
-                <div class="row">
-                  <div class="col-auto">
-                    <input type="number" name="price" class="form-control" placeholder="0" style="text-align: right;">
-                  </div>
-                  <div class="col-auto">
-                    <span class="form-text">
-                      원
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">내부완료일</label>
-                <input type="date" name="ahead_dt" class="form-control w30">
-              </div>
-              <div class="mb-3">
-                <label class="form-label">거래처</label>
-                <div class="row">
-                  <div class="col-auto">
-                    <input type="text" class="form-control" placeholder="제목을 입력해주세요">
-                  </div>
-                  <div class="col-auto">
-                    <button class="btn btn-info btn-fill">검색</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
+        <!--
           <div class="card">
             <div class="card-body">
             <h5 class="card-title float-left mt-1">2. 프로젝트 과업</h5>
@@ -115,16 +115,77 @@
               </table>
             </div>
           </div>
-          <div class="text-center">
-            <button type="submit" class="btn btn-primary btn-fill">
-              등록
-            </button>
-            <button class="btn btn-secondary btn-fill">
-              초기화
-            </button>
-          </div>
-        </form>
-      </div>
+        -->
+        <div class="text-center">
+          <button type="submit" class="btn btn-primary btn-fill" @click="projectAdd">
+            등록
+          </button>
+          <button class="btn btn-secondary btn-fill">
+            초기화
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </template>
+
+<script setup>
+import axios from "axios";
+import Card from '../../components/Cards/Card.vue'
+
+//---------------공통함수--------------
+
+function inputNumberAutoComma(obj) {
+
+  // 콤마( , )의 경우도 문자로 인식되기때문에 콤마를 따로 제거한다.
+  var deleteComma = obj.value.replace(/\,/g, "");
+
+  // 콤마( , )를 제외하고 문자가 입력되었는지를 확인한다.
+  if (isFinite(deleteComma) == false) {
+    alert("문자는 입력하실 수 없습니다.");
+    obj.value = "";
+    return false;
+  }
+
+  // 기존에 들어가있던 콤마( , )를 제거한 이 후의 입력값에 다시 콤마( , )를 삽입한다.
+  obj.value = inputNumberWithComma(inputNumberRemoveComma(obj.value));
+}
+
+// 천단위 이상의 숫자에 콤마( , )를 삽입하는 함수
+function inputNumberWithComma(str) {
+
+  str = String(str);
+  return str.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, "$1,");
+}
+
+// 콤마( , )가 들어간 값에 콤마를 제거하는 함수
+function inputNumberRemoveComma(str) {
+
+  str = String(str);
+  return str.replace(/[^\d]+/g, "");
+}
+
+//---------------axios--------------
+
+const projectAdd = async () => { //프로젝트 전체조회
+  const form = document.getElementById('addForm');
+  const formData = new FormData(form);
+
+  try {
+    const result = await axios.post('/api/project/add', formData);
+    this.$swal({
+      icon: "success",
+      title: "등록완료",
+      text: "등록한 지시서는 목록에서 확인 해주세요.",
+    })
+    return result;
+
+  } catch (err) {
+    this.$swal({
+      icon: "error",
+      title: "오류",
+      text: "정상적으로 처리하지 못했습니다.",
+    })
+  }
+}
+</script>
