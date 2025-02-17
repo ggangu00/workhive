@@ -139,7 +139,7 @@
                url="#"
                :aria-controls="''"
                v-bind:collapse="false"
-               collapseRef="/commute/cmtlist"
+               collapseRef="/commute/cmtList"
                navText="출퇴근 관리"
          >
             <template v-slot:icon>
@@ -158,7 +158,7 @@
                url="#"
                :aria-controls="''"
                v-bind:collapse="false"
-               collapseRef="/vacation/vclist"
+               collapseRef="/vacation/vcList"
                navText="휴가 관리"
          >
             <template v-slot:icon>

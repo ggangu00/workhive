@@ -20,6 +20,12 @@
         </div>
         <ul class="navbar-nav justify-content-end">
           
+          <!-- 출퇴근 버튼 추가 - 토글식으로 변경 예정 -->
+          <li class="px-3 nav-item d-flex align-items-center">
+            <button class="btn btn-primary" @click="btnCommuteAdd">출근</button>
+            <button class="btn btn-danger" @click="btnCommuteModify">퇴근</button>
+          </li>
+
           <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
             <a
               href="#"
@@ -177,6 +183,9 @@
 import Breadcrumbs from "../Breadcrumbs.vue";
 import { mapMutations, mapState } from "vuex";
 
+// ksy 추가
+import axios from 'axios';
+
 export default {
   name: "navbar",
   data() {
@@ -204,6 +213,49 @@ export default {
     currentRouteName() {
       return this.$route.name;
     },
+  },
+
+  // 출퇴근 기능 추가
+  setup() {
+    let loginUser = "user01";
+    const btnCommuteAdd = async () => {
+      const addData = new FormData();
+      addData.append("memCd", loginUser); // 로그인 유저 정보로 변경 예정
+      addData.append("goState", "F01"); // 버튼 동작 시간 체크 후 지각여부 체크 후 입력
+      
+      await axios.post('/api/commute/cmtAdd', addData);
+    }
+
+    const btnCommuteModify = async () => {
+      await lastCmtGetInfo();
+
+      if(lastCmt == '') { // 출근 안한 상황
+        console.log("null");
+      }
+      else {
+        console.log("not null");
+        const modifyData = new FormData();
+        modifyData.append("commuteCd", lastCmt.commuteCd);
+        modifyData.append("leaveState", 'G01');
+        modifyData.append("workTime", 8);
+        modifyData.append("overWorkTime", 0);
+        await axios.post(`/api/commute/cmtModify`, modifyData);
+      }
+    }
+    
+    // 마지막 출퇴근 기록
+    let lastCmt;
+    const lastCmtGetInfo = async () => {
+      let result = await axios.get(`/api/commute/lastCmtInfo?memCd=${loginUser}`);
+
+      lastCmt = result.data;
+    }
+
+    return {
+      btnCommuteAdd,
+      btnCommuteModify,
+      lastCmtGetInfo,
+    }
   },
 };
 </script>

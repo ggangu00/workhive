@@ -79,20 +79,20 @@
 
 
   let deptList = [];
-  let jobbxList = [];
+  let jobBxList = [];
   // 부서 목록 조회  
   const deptGetList = async () => {
-    let result = await axios.get('/api/deptstore/deptlist')
+    let result = await axios.get('/api/deptstore/deptList')
                             .catch(error => console.error("에러 :", error));
     
     deptList = result.data.resultList;
   };
   // 업무함 목록 조회
-  const jobbxGetList = async () => {
-    let result = await axios.get('/api/deptstore/jobbxlist')
+  const jobBxGetList = async () => {
+    let result = await axios.get('/api/deptstore/jobBxList')
                             .catch(error => console.error("에러 :", error));
     
-    jobbxList = result.data;
+    jobBxList = result.data;
   };
 
   const departments = ref([
@@ -146,13 +146,13 @@
     })
 
     deptGetList();
-    jobbxGetList();
+    jobBxGetList();
   })
 
   // 업무함 클릭시 부서/업무함 정보 전달
   const emit = defineEmits(['datareturn']);
   const datareturn = () => {
-    emit('datareturn', { deptId: deptList[0].orgnztId, jobbxId: jobbxList[0].deptJobBxId, jobbxList: jobbxList });
+    emit('datareturn', { deptId: deptList[0].orgnztId, jobBxId: jobBxList[0].deptjobBxId, jobBxList: jobBxList });
   };
 
 </script>

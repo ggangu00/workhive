@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.commute.mapper.CommuteMapper">
+
+<!-- 출퇴근 commute -->
+	<!-- 출퇴근 등록 : 출근 -->
+	<insert id="cmtInsert" parameterType="commuteDTO">
+		insert into commute (
+			   commute_cd
+			 , mem_cd
+			 , commute_dt
+			 , go_time
+			 , go_state
+		)
+		values (
+			   seq_commute_cd.nextval
+			 , #{memCd}
+			 , sysdate
+			 , sysdate
+			 , #{goState}
+		)
+	</insert>
+	
+	<!-- 출퇴근 수정 : 퇴근, 출퇴근 정정 승인 -->
+	<update id="cmtUpdate" parameterType="commuteDTO">
+		update commute
+		set leave_time = sysdate
+		  , leave_state = #{leaveState}
+		  , work_time = #{workTime}
+		  , over_work_time = #{overWorkTime}
+		where commute_cd = #{commuteCd}
+	</update>
+	
+	<!-- 출퇴근 삭제 -->
+	<delete id="cmtDelete" parameterType="String">
+	
+	</delete>
+	
+	<!-- 출퇴근 단건 조회 -->
+	<select id="cmtSelect" parameterType="String">
+		select commute_cd
+			 , mem_cd
+			 , commute_dt
+			 , go_time
+			 , go_state
+			 , leave_time
+			 , leave_state
+			 , work_time
+			 , over_work_time
+		from commute
+		where commute_cd = #{commuteCd}
+	</select>
+	
+	<!-- 출퇴근 전체 조회 : 사용자별 -->
+	<select id="cmtSelectAll" parameterType="String" resultType="commuteDTO">
+		select commute_cd
+			 , mem_cd
+			 , commute_dt
+			 , TO_CHAR(go_time, 'YYYY-MM-DD HH24:MI:SS') go_time
+			 , go_state
+			 , TO_CHAR(leave_time, 'YYYY-MM-DD HH24:MI:SS') leave_time
+			 , leave_state
+			 , work_time
+			 , over_work_time
+		from commute
+		where mem_cd = #{memCd}
+	</select>
+	
+	<!-- 마지막 출퇴근 기록 체크 -->
+	<select id="lastCmtSelect" parameterType="String">
+		select *
+		from (
+			select commute_cd
+				 , mem_cd
+				 , commute_dt
+				 , TO_CHAR(go_time, 'YYYY-MM-DD HH24:MI:SS') go_time
+				 , go_state
+				 , TO_CHAR(leave_time, 'YYYY-MM-DD HH24:MI:SS') leave_time
+				 , leave_state
+				 , work_time
+				 , over_work_time
+			from commute
+			where mem_cd = #{memCd}
+			and leave_time is null
+			order by go_time desc
+		)
+		where rownum = 1
+	</select>
+	
+<!-- 출퇴근 정정 commute_correction -->
+	<!-- 출퇴근 정정 등록 -->
+	
+	<!-- 출퇴근 정정 수정 -->
+	
+	<!-- 출퇴근 정정 삭제 -->
+	
+	<!-- 출퇴근 정정 단건 조회 -->
+	
+	<!-- 출퇴근 정정 전체 조회 -->
+
+</mapper>

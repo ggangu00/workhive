@@ -14,7 +14,7 @@
                 <label>부서명</label>
                 <div class="row">
                   <div class="col-6">
-                    <input type="text" class="form-control" placeholder="부서명" v-model="localJobbxSelected.searchDeptId" readonly />
+                    <input type="text" class="form-control" placeholder="부서명" v-model="localJobBxSelected.searchDeptId" readonly />
                   </div>
                 </div>
               </div>
@@ -32,7 +32,7 @@
                   <div class="col-6">
                     <select class="form-select" v-model="formValues.deptJobBxId">
                       <option disabled value="">업무함을 선택하세요</option>
-                      <option v-for="job in localJobbxList" :key="job.deptJobBxId" :value="job.deptJobBxId">
+                      <option v-for="job in localJobBxList" :key="job.deptJobBxId" :value="job.deptJobBxId">
                         {{ job.deptJobBxNm }}
                       </option>
                     </select>
@@ -100,17 +100,17 @@ import axios from 'axios';
 const props = defineProps({
   isShowJobModal: Boolean,
   isUpdate: Boolean,
-  jobbxSelected: Object,
-  jobbxList: Array,
+  jobBxSelected: Object,
+  jobBxList: Array,
   selectedRowData: Object,
 });
 
-let localJobbxSelected = ref(props.jobbxSelected);
-let localJobbxList = ref(props.jobbxList);
+let localJobBxSelected = ref(props.jobBxSelected);
+let localJobBxList = ref(props.jobBxList);
 
 // 입력값 저장
 let formValues = ref({
-  selectedData: localJobbxSelected,
+  selectedData: localJobBxSelected,
   deptJobBxId: '',
   deptJobId: '',
   priort: '',
@@ -120,15 +120,15 @@ let formValues = ref({
 });
 
 // 업무함 리스트 변경시 모달에서도 변경
-watch(() => props.jobbxList, (newVal) => {
-  localJobbxList.value = newVal;
+watch(() => props.jobBxList, (newVal) => {
+  localJobBxList.value = newVal;
 }, { immediate: true });
 
 // 업무 수정으로 열린 경우
 watch(() => props.selectedRowData, async (newVal) => {
   if (props.isUpdate) {
     // 업무 상세 정보 가져오기
-    const result = await axios.get('/api/deptstore/jobinfo', { params: {deptJobId: newVal.deptJobId} });
+    const result = await axios.get('/api/deptstore/jobInfo', { params: {deptJobId: newVal.deptJobId} });
     
     formValues.value.deptJobBxId = result.data.deptJobBxId;
     formValues.value.deptJobId = result.data.deptJobId;
@@ -143,11 +143,11 @@ const emit = defineEmits(['modalCloseJob', 'modalConfirmJob']);
 const modalCloseJob = () => {
   emit('modalCloseJob');
 }
-const modalConfirmJob = () => {
+const modalConfirmJob = async () => {
   if(!props.isUpdate) {
-    jobAdd();
+    await jobAdd();
   } else {
-    jobUpdate();
+    await jobUpdate();
   }
   emit('modalConfirmJob');
 }
@@ -163,7 +163,7 @@ const jobAdd = async () => {
   addData.append("chargerId", formValues.value.chargerId);
   // addData.append("", formValues.); 파일
   
-  const result = await axios.post('/api/deptstore/jobadd', addData);
+  const result = await axios.post('/api/deptstore/jobAdd', addData);
   //서버응답 찍어보기
   console.log("서버 응답:", result.data);
 }
@@ -182,7 +182,7 @@ const jobUpdate = async () => {
 
   console.log("update data : ", formValues.value);
   
-  const result = await axios.post('/api/deptstore/jobupdate', modifyData);
+  const result = await axios.post('/api/deptstore/jobModify', modifyData);
   //서버응답 찍어보기
   console.log("서버 응답:", result.data);
 }
