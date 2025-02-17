@@ -31,6 +31,10 @@ public class AuthorityServiceImpl implements AuthorityService {
 	// 권한 등록
 	@Override
 	public boolean authorityInsert(AuthorityDTO dto) {
+		if (dto.getAuthorityNm() == null) {
+            throw new IllegalArgumentException("권한명은 필수입니다.");
+        }
+		
 		return authMapper.authorityInsert(dto) == 1 ? true : false;
 	}
 
