@@ -11,6 +11,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,6 +33,8 @@ import egovframework.com.cop.bbs.service.BoardMaster;
 import egovframework.com.cop.bbs.service.BoardMasterVO;
 import egovframework.com.cop.bbs.service.EgovBBSMasterService;
 import egovframework.com.utl.fcc.service.EgovStringUtil;
+import oracle.jdbc.proxy.annotation.Post;
+
 import org.egovframe.rte.fdl.idgnr.EgovIdGnrService;
 import org.egovframe.rte.fdl.property.EgovPropertyService;
 import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
@@ -60,7 +63,7 @@ import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
  */
 
 @RestController
-@RequestMapping("/board/")
+@RequestMapping("/board")
 public class EgovBBSMasterController {
 
     @Resource(name = "EgovBBSMasterService")
@@ -98,7 +101,7 @@ public class EgovBBSMasterController {
      * @throws Exception
      */
     //@RequestMapping("/cop/bbs/insertBBSMasterView.do")
-    @GetMapping("/boardadd")
+    @PostMapping("/boardAdd")
     public List<CmmnDetailCode> insertBBSMasterView(@ModelAttribute("searchVO") BoardMasterVO boardMasterVO, ModelMap model) throws Exception {
 		BoardMasterVO boardMaster = new BoardMasterVO();
 		//공통코드(게시판유형)
@@ -178,8 +181,9 @@ public class EgovBBSMasterController {
      * @throws Exception
      */
     @IncludedInfo(name="게시판관리",order = 180 ,gid = 40)
-    @RequestMapping("/cop/bbs/selectBBSMasterInfs.do")
-    public String selectBBSMasterInfs(@ModelAttribute("searchVO") BoardMasterVO boardMasterVO, ModelMap model) throws Exception {
+    //@RequestMapping("/cop/bbs/selectBBSMasterInfs.do")
+    @GetMapping("/boardList")
+    public Map<String, Object> selectBBSMasterInfs(@ModelAttribute("searchVO") BoardMasterVO boardMasterVO, ModelMap model) throws Exception {
 		boardMasterVO.setPageUnit(propertyService.getInt("pageUnit"));
 		boardMasterVO.setPageSize(propertyService.getInt("pageSize"));
 	
@@ -202,7 +206,9 @@ public class EgovBBSMasterController {
 		model.addAttribute("resultCnt", map.get("resultCnt"));	
 		model.addAttribute("paginationInfo", paginationInfo);
 
-		return "egovframework/com/cop/bbs/EgovBBSMasterList";
+		//return "egovframework/com/cop/bbs/EgovBBSMasterList";
+		return map;
+		
     }
     
     /**
