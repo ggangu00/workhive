@@ -46,9 +46,5 @@ public class DocumentController {
 	    return documentService.getList(searchDTO);
 	}
 	 
-//	//문서조회
-//    @GetMapping("/list")
-//    public List<DocumentDTO> getCompletedDocuments(@RequestBody SearchDTO searchDTO) {
-//        return documentService.getList(searchDTO);
-//    }
+
 }

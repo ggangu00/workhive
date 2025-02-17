@@ -13,4 +13,7 @@ public interface DocumentMapper {
 	
 	//전체조회
 	List<DocumentDTO> getList(SearchDTO searchDTO);
+	
+	//페이징
+	int getCount(SearchDTO searchDTO);
 }
