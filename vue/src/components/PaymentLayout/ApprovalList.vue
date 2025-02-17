@@ -68,7 +68,10 @@ export default {
   props: {
     buttons: { type: Array, required: true },
     columnDefs: { type: Array, required: true }, // Column 정의
-    rowData: { type: Array, required: true } // 데이터
+    rowData: { type: Array, required: true }, // 데이터
+    status: { type: String, required: true } // 현재진행상태
+  },
+  data(){
   },
   mounted() {
     this.toastGrid();
@@ -84,11 +87,19 @@ export default {
         
         pageOptions: {
           useClient: true, // 클라이언트 사이드 페이지네이션
-          perPage: 5 // 한 페이지에 5개 항목 표시
+          perPage: 10 // 한 페이지에 5개 항목 표시
         }
       });
-    }
-  }
+    },
+  },
+  watch: {
+    rowData(document) {
+        if (this.grid) {
+            this.grid.resetData(document);
+        }
+    },
+
+}
 };
 </script>
 
