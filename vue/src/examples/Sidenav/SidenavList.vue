@@ -390,4 +390,8 @@
       margin: 7px 6px 11px 32px;
    }
 
+   li {
+      cursor: pointer;
+   }
+
 </style>
