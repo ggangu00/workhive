@@ -24,7 +24,7 @@
                 <div class="col-auto">
                   <input type="text" class="form-control" placeholder="제목을 입력해주세요">
                 </div>
-                <div class="col-auto">
+                <div class="col-auto p-none">
                   <button class="btn btn-info btn-fill">검색</button>
                 </div>
               </div>

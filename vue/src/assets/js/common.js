@@ -1,5 +1,14 @@
+import axios from "axios";
+
+//공통함수 
+export async function getComm(cd){ // comm_cd
+    let result = await axios.get(`/api/comm/codeList?cd=${cd}`)
+        .catch(err => console.log(err));
+    return result.data;
+};
+
 // 날짜포맷 (yyyy-mm-dd 형식)
-const dateFormat = (value) => {
+export function dateFormat(value) {
     let date = value == null ? new Date() : new Date(value);
 
     let year = date.getFullYear();
@@ -11,14 +20,7 @@ const dateFormat = (value) => {
 };
 
 // 숫자포맷 (천단위 콤마)
-const numberFormat = (value) => {
+export function numberFormat(value) {
     if (!value) return '0';
     return Number(value).toLocaleString();
 };
-
-console.log(dateFormat("2025-02-11 00:00:00"));
-
-export {
-    dateFormat,
-    numberFormat
-}
