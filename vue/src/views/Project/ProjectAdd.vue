@@ -29,11 +29,11 @@
             <label class="form-label">프로젝트 기간 <em class="point-red">*</em></label>
             <div class="row">
               <div class="col-auto">
-                <input type="date" :name="startDt" v-model="startDt" class="form-control">
+                <input type="date" :name="startDt" v-model="startDt" :max="endDt" class="form-control">
               </div>
               <div class="col-auto p-none">~</div>
               <div class="col-auto">
-                <input type="date" :ame="endDt" v-model="endDt" class="form-control">
+                <input type="date" :name="endDt" v-model="endDt" :min="startDt" class="form-control">
               </div>
             </div>
           </div>
@@ -41,8 +41,8 @@
             <label class="form-label">프로젝트 금액</label>
             <div class="row">
               <div class="col-auto">
-                <input type="number" :name="price" v-model="price" class="form-control" placeholder="0"
-                  style="text-align: right;">
+                <input type="text" :name="price" v-model="price" class="form-control" placeholder="0"
+                  style="text-align: right;" @keyup="numberAutoFormat()">
               </div>
               <div class="col-auto p-none">
                 <span class="form-text">
@@ -124,15 +124,13 @@ import Swal from 'sweetalert2';
 import { ref } from 'vue';
 import Card from '../../components/Cards/Card.vue'
 import { useRouter } from 'vue-router';
-import { getComm } from '../../assets/js/common.js'
-console.log(getComm('YN'));  
 
 //---------------데이터-------------- 
 
 const router = useRouter()
 
 const prNm = ref('');
-const typeCd = ref('');
+const typeCd = ref('A03');
 const startDt = ref('');
 const endDt = ref('');
 const price = ref('');
@@ -142,34 +140,40 @@ const createId = ref('admin');
 
 //--------------공통함수------------- 
 
-
-
-
+const numberAutoFormat = () => { //입력 시 콤마 자동입력
+  if (!price.value) {
+    price.value = "";
+    return;
+  }
+  
+  let strValue = price.value.replace(/[^0-9]/g, ""); // 숫자만 남기기 (문자 제거)
+  price.value = strValue.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,'); // 천 단위 콤마 추가하여 표시
+}
 
 //---------------axios--------------
 
 const projectAdd = async () => { //프로젝트 등록
   if (!prNm.value) {
     Swal.fire({
-      icon: "error",
+      icon: "info",
       title: "프로젝트명을 입력하세요"
     });
     return;
   } else if (!typeCd.value) {
     Swal.fire({
-      icon: "error",
+      icon: "info",
       title: "프로젝트 구분을 선택하세요"
     });
     return;
   } else if (!startDt.value) {
     Swal.fire({
-      icon: "error",
+      icon: "info",
       title: "프로젝트 시작일을 선택하세요"
     });
     return;
   } else if (!endDt.value) {
     Swal.fire({
-      icon: "error",
+      icon: "info",
       title: "프로젝트 종료일을 선택하세요"
     });
     return;
@@ -187,7 +191,7 @@ const projectAdd = async () => { //프로젝트 등록
 
   try {
     const result = await axios.post('/api/project/add', formData);
-    console.log(result);
+
     if (result.data == 'success') {
       Swal.fire({
         icon: "success",
@@ -196,12 +200,6 @@ const projectAdd = async () => { //프로젝트 등록
       }).then(() => {
         router.replace({ name: 'ProjectList' }) //프로젝트 조회페이지로 이동
       });
-    } else {
-      Swal.fire({
-        icon: "error",
-        title: "등록실패",
-        text: "프로젝트 등록 실패",
-      })
     }
   } catch (err) {
     Swal.fire({
@@ -212,7 +210,7 @@ const projectAdd = async () => { //프로젝트 등록
   }
 }
 
-const formReset = () => { //프로젝트 정보 모달 열기
+const formReset = () => { //입력정보 초기화
   Swal.fire({
     icon: "question",
     title: "작성내용을 초기화하시겠습니까?",
@@ -224,7 +222,7 @@ const formReset = () => { //프로젝트 정보 모달 열기
   }).then(result => {
     if (result.isConfirmed) {
       prNm.value = '';
-      typeCd.value = '';
+      typeCd.value = 'A03';
       startDt.value = '';
       endDt.value = '';
       price.value = '';

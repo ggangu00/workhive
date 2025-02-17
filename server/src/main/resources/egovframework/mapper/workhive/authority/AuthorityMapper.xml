@@ -81,7 +81,7 @@
 	</update>
 	
 	<!-- 권한 삭제 -->
-	<update id="authorityUpdate" parameterType="authorityDTO">
+	<update id="authorityDelete" parameterType="authorityDTO">
 		UPDATE 
 		   authority
 		SET
