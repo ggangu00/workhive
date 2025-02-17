@@ -18,7 +18,7 @@ public interface AuthorityMapper {
 	public int authorityInsert(AuthorityDTO dto);
 
 	// 권한 수정
-	public int authorityUpdate(String authorityCd);
+	public int authorityUpdate(AuthorityDTO dto);
 
 	// 권한 삭제
 	public int authorityDelete(String authorityCd);

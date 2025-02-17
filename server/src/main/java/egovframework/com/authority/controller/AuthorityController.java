@@ -27,14 +27,16 @@ public class AuthorityController {
 	@Resource
 	private AuthorityService authService;
 	
-	@GetMapping("/list")
+	// 권한 조회 처리
+	@GetMapping("")
 	public List<AuthorityDTO> authorityList() {
 		log.info(authService.authoritySelectAll().toString());
 		
 		return authService.authoritySelectAll();
 	}
 	
-	@PostMapping("/add")
+	// 권한 등록 처리
+	@PostMapping("")
 	public Map<String, Object> authorityAdd(@RequestBody AuthorityDTO dto) {
 		log.info("response Data", dto.toString());
 		
@@ -47,21 +49,33 @@ public class AuthorityController {
 		return map;
 	}
 	
-	@PutMapping("/modify")
-	public boolean authorityModify(@RequestBody String authorityCd) {
-		log.info("수정 권한 코드 출력 => " + authorityCd);
+	// 권한 수정 처리
+	@PutMapping("")
+	public Map<String, Object> authorityModify(@RequestBody AuthorityDTO dto) {
+		log.info("수정 권한 코드 출력 => " + dto.toString());
 		
-		boolean result = authService.authorityUpdate(authorityCd);
+		boolean result = authService.authorityUpdate(dto);
 		
-		return result;
+		Map<String, Object> map = new HashMap<>();
+		map.put("result", result);
+		map.put("list", authService.authoritySelectAll());
+		
+		return map;
 	}
 	
-	@DeleteMapping("/remove")
-	public boolean authorityRemove(@RequestParam(name="authorityCd") String authorityCd) {
+	// 권한 삭제 처리
+	@DeleteMapping("")
+	public Map<String, Object> authorityRemove(@RequestParam(name="authorityCd") String authorityCd) {
 		log.info("삭제 권한 코드 출력 => " + authorityCd);
 	    
 	    // 서비스 로직 실행
-	    return authService.authorityDelete(authorityCd);
+		boolean result = authService.authorityDelete(authorityCd);
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("result", result);
+		map.put("list", authService.authoritySelectAll());
+		
+		return map;
 	}
 	
 }

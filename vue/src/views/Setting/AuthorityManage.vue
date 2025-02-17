@@ -144,7 +144,7 @@
    // ======================================== Axios 서버통신 ========================================
    const authorityGetList = async () => {
       try {
-         const result = await axios.get('/api/authority/list');
+         const result = await axios.get('/api/authority');
          roles.value = result.data;
       } catch (err) {
          roles.value = [];
@@ -163,7 +163,7 @@
       const requestData = { authorityNm: authorityNm.value, description : description.value, createId : "admin" };  // 요청 본문에 보낼 데이터
 
       try {
-         const response = await axios.post('/api/authority/add', requestData);
+         const response = await axios.post('/api/authority', requestData);
 
          if(response.data.result === true) {
             Swal.fire({
