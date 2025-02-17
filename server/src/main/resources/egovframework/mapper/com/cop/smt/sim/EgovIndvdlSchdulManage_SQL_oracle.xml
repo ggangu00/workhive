@@ -243,7 +243,7 @@
 	</delete>
 
 	<!-- 개인일정정보::수정  -->
-	<update id="updateIndvdlSchdulManage"> 
+	<update id="updateIndvdlSchdulManage" parameterType="egovframework.com.cop.smt.sim.service.IndvdlSchdulManageVO"> 
 		UPDATE COMTNSCHDULINFO 
 		SET  
 			SCHDUL_SE=#{schdulSe},

@@ -12,11 +12,7 @@
 
         <!-- 모달 바디 -->
         <div class="modal-body">
-          <div class="card">
-            <div class="card-body">
-              <slot name="body">slot</slot>
-            </div>
-          </div>
+          <slot name="body">slot</slot>
         </div>
 
         <!-- 모달 푸터 -->

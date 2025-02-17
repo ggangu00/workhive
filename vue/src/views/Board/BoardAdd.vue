@@ -59,19 +59,24 @@
 </template>
 
 <script>
+import axios from "axios";
+
+
 export default {
-  name: '',
+  name: 'BoardComponent',
   data() {
     return {
-      boardName: '',
-      boardType: '',
-      fileAttach: '',
-      commentUsage: ''
+     RowData: {} 
     };
   },
-  methods: {
+  methods: {   
     goToList() {
-      this.$router.push({ name: 'bbsList' });
+      this.$router.push({ name: 'boardAdd' });
+    },
+    async boardGetAdd(){
+      let result = await axios.post('/api/board/boardadd')
+                              .catch(err=>console.log(err));
+      this.RowData = result.data;
     },
   },
 };
@@ -81,3 +86,4 @@ export default {
 
 
 </style>
+       

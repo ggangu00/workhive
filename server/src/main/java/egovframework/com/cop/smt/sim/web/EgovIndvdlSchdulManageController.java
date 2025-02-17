@@ -16,6 +16,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,6 +40,8 @@ import egovframework.com.cmm.util.EgovUserDetailsHelper;
 import egovframework.com.cop.smt.sim.service.EgovIndvdlSchdulManageService;
 import egovframework.com.cop.smt.sim.service.IndvdlSchdulManageVO;
 import egovframework.com.utl.fcc.service.EgovStringUtil;
+import lombok.extern.slf4j.XSlf4j;
+
 import org.egovframe.rte.fdl.property.EgovPropertyService;
 import org.egovframe.rte.psl.dataaccess.util.EgovMap;
 /**
@@ -554,28 +557,27 @@ public class EgovIndvdlSchdulManageController {
 	 * @return "egovframework/com/cop/smt/sim/EgovIndvdlSchdulManageModifyActor"
 	 * @throws Exception
 	 */
-	@RequestMapping(value="/cop/smt/sim/EgovIndvdlSchdulManageModifyActor.do")
-	public String indvdlSchdulManageModifyActor(
+	@PostMapping("/modify")
+	public Map<String, String> indvdlSchdulManageModifyActor(
 			final MultipartHttpServletRequest multiRequest,
 			ComDefaultVO searchVO,
-			@RequestParam Map<?, ?> commandMap,
+			@RequestParam Map<String, String> commandMap,
 			@ModelAttribute("indvdlSchdulManageVO") IndvdlSchdulManageVO indvdlSchdulManageVO,
 			BindingResult bindingResult,
     		ModelMap model)
     throws Exception {
-
-
+		LOGGER.info("✅ [DB 업데이트 완료]", commandMap);
     	// 0. Spring Security 사용자권한 처리
     	Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-    	if(!isAuthenticated) {
-    		model.addAttribute("message", egovMessageSource.getMessage("fail.common.login"));
-        	return "redirect:/uat/uia/egovLoginUsr.do";
-    	}
+//    	if(!isAuthenticated) {
+//    		model.addAttribute("message", egovMessageSource.getMessage("fail.common.login"));
+//        	return "redirect:/uat/uia/egovLoginUsr.do";
+//    	}
 
 		//로그인 객체 선언
 		LoginVO loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
 
-		String sLocationUrl = "egovframework/com/cop/smt/sim/EgovIndvdlSchdulManageModify";
+		//String sLocationUrl = "egovframework/com/cop/smt/sim/EgovIndvdlSchdulManageModify";
 
 		String sCmd = commandMap.get("cmd") == null ? "" : (String)commandMap.get("cmd");
 
@@ -611,7 +613,7 @@ public class EgovIndvdlSchdulManageController {
     	    	//일정정료일자(분)
     	    	model.addAttribute("schdulEnddeMM", getTimeMM());
 
-    			return sLocationUrl;
+    			return commandMap;
     		}
     		/* *****************************************************************
         	// 아이디 설정
@@ -649,10 +651,11 @@ public class EgovIndvdlSchdulManageController {
         	// 일정관리정보 업데이트 처리
 			****************************************************************** */
         	egovIndvdlSchdulManageService.updateIndvdlSchdulManage(indvdlSchdulManageVO);
-        	sLocationUrl = "redirect:/cop/smt/sim/EgovIndvdlSchdulManageList.do";
+        	 LOGGER.info("✅ [DB 업데이트 완료]");
+        	//sLocationUrl = "redirect:/cop/smt/sim/EgovIndvdlSchdulManageList.do";
 		}
 
-		return sLocationUrl;
+		return commandMap;
 	}
 
 	/**
@@ -727,15 +730,6 @@ public class EgovIndvdlSchdulManageController {
 	
 	
 	   /** 일정 등록 */
-//	@PostMapping("/register")
-//	public Map<String, String> registerSchedule(@RequestParam Map<String, String> commandMap) {
-//	    LOGGER.info("🔹 받은 데이터: {}", commandMap);  // 받은 데이터 로그 확인
-//
-//	    // 서버가 받은 데이터 즉시 반환
-//	    return commandMap;
-//	}
-
-    
 	@PostMapping(value="/register")
 	public Map<String, String> indvdlSchdulManageRegistActor(
 			final MultipartHttpServletRequest multiRequest,

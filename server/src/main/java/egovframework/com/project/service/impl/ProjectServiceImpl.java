@@ -18,8 +18,7 @@ public class ProjectServiceImpl implements ProjectService{
 
 	@Override
 	public void projectInsert(ProjectDTO project) {
-		projectMapper.insert(project);
-		
+		projectMapper.insert(project);		
 	}
 
 	@Override
@@ -28,18 +27,18 @@ public class ProjectServiceImpl implements ProjectService{
 	}
 
 	@Override
-	public boolean projectDelete(Long prCd) {
+	public boolean projectDelete(String prCd) {
 		return projectMapper.delete(prCd) == 1 ? true : false;
 	}
 
 	@Override
-	public ProjectDTO projectSelect(Long prCd) {
-		return projectMapper.read(prCd);
+	public ProjectDTO projectSelect(String prCd) {
+		return projectMapper.projectSelect(prCd);
 	}
 
 	@Override
-	public List<ProjectDTO> selectProjectList() {
-		return projectMapper.selectProjectList();
+	public List<ProjectDTO> projectSelectAll() {
+		return projectMapper.projectSelectAll();
 	}
 
 }

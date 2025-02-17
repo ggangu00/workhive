@@ -8,10 +8,10 @@ public interface ProjectService {
 	
 	public boolean projectUpdate(ProjectDTO project);
 	
-	public boolean projectDelete(Long prCd);
+	public boolean projectDelete(String prCd);
 	
-	public ProjectDTO projectSelect(Long prCd);
+	public ProjectDTO projectSelect(String prCd);
 	
-	public List<ProjectDTO> selectProjectList();
+	public List<ProjectDTO> projectSelectAll();
 	
 }
