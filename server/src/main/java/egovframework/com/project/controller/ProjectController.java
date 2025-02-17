@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.github.javaparser.utils.Log;
-
 import egovframework.com.project.service.ProjectDTO;
 import egovframework.com.project.service.ProjectService;
 import lombok.extern.slf4j.Slf4j;
@@ -54,15 +52,13 @@ public class ProjectController {
 						   RedirectAttributes rttr) {
 		
 		if(bindingResult.hasErrors()) {
-			return "project/add";
+			return "fail";
 		}
 		
 		 log.info("register: " + project);	  
 		
 	  service.projectInsert(project);
-	  
-	  rttr.addFlashAttribute("result", true);
-	  return "redirect:/project/list"; //redirect라고 적어줘야 list함수 데이터 조회해서 값 뿌림
+	  return "success";
 	}
 	
 		
