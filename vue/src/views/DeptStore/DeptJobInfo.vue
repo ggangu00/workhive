@@ -15,7 +15,7 @@
         <div class="row">
           <!-- 업무함 사이드바 -->
           <div class="col-3">
-            <div class="jobbx">
+            <div class="jobBx">
               <DeptJobBx @datareturn="getDeptData"></DeptJobBx>
             </div>
           </div>
@@ -33,8 +33,8 @@
                   :isUpdate="isUpdate"
                   @modalCloseJob="modalCloseJob"
                   @modalConfirmJob="modalConfirmJob"
-                  :jobbxSelected="jobbxSelected"
-                  :jobbxList="jobbxList"
+                  :jobBxSelected="jobBxSelected"
+                  :jobBxList="jobBxList"
                   :selectedRowData="selectedRowData"
                 />
               </div>
@@ -75,19 +75,19 @@ import JobManage from "./JobManage.vue";
 let gridInstance = ref();
 let rowData = ref([]);
 
-let jobbxList = [];
-let jobbxSelected = {
+let jobBxList = [];
+let jobBxSelected = {
   searchDeptId: 'ORGNZT_0000000000000',
-  searchDeptJobBxId: 'DX_012'
+  searchDeptjobBxId: 'DX_012'
 };
 
 // 부서 정보 받아오기
 const getDeptData = (result) => {
-  jobbxSelected.searchDeptId = result.deptId;
-  jobbxSelected.searchDeptJobBxId = result.jobbxId;
-  jobbxList = result.jobbxList;
+  jobBxSelected.searchDeptId = result.deptId;
+  jobBxSelected.searchDeptjobBxId = result.jobBxId;
+  jobBxList = result.jobBxList;
 
-  jobGetList(jobbxSelected);
+  jobGetList(jobBxSelected);
 }
 
 // Toast UI Grid 초기화
@@ -111,10 +111,10 @@ onMounted(() => {
     ]
   })
   
-  jobGetList(jobbxSelected);
+  jobGetList(jobBxSelected);
 })
 
-// 그리드 버튼 -> 적용 안됨, 렌더러 다시 공부
+// 그리드 버튼
 class BtnRenderer {
   constructor(props) {
     const el = document.createElement("div");
@@ -161,19 +161,19 @@ const delEvent = async (rowKey) => {
   selectedRowData = gridInstance.value.getRow(rowKey);
   console.log(`삭제 버튼 클릭됨, 행 번호: ${rowKey}`, selectedRowData.deptJobId);
 
-  await axios.delete('/api/deptstore/jobremove', { params: { deptJobId: selectedRowData.deptJobId } });
+  await axios.delete('/api/deptstore/jobRemove', { params: { deptJobId: selectedRowData.deptJobId } });
   
-  jobGetList(jobbxSelected);
+  jobGetList(jobBxSelected);
 };
 
 // 업무 목록 조회 업무함 아이디로 검색
-const jobGetList = async (jobbxSelected) => {
-  let joblist = await axios.get('/api/deptstore/joblist', {
-    params: jobbxSelected
+const jobGetList = async (jobBxSelected) => {
+  let jobList = await axios.get('/api/deptstore/jobList', {
+    params: jobBxSelected
   })
   .catch(error => console.error("에러 :", error));
 
-  rowData.value = [...joblist.data.resultList];
+  rowData.value = [...jobList.data.resultList];
   
   rowData.value = rowData.value.map((item, index) => ({
     rowNum: index + 1, // 1부터 시작하는 행번호
@@ -198,7 +198,7 @@ const modalCloseJob = () => {
 const modalConfirmJob = () => {
   console.log('job modal confirm click');
   isShowJobModal.value = false;
-  jobGetList(jobbxSelected);
+  jobGetList(jobBxSelected);
 }
 
 // 업무 수정
@@ -220,7 +220,7 @@ const modalCloseFunc = (e) => {
 
 
 <style scoped>
-.jobbx {
+.jobBx {
   background-color: gray;
   border-radius: 5px;
   color: white;

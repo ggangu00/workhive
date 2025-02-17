@@ -165,7 +165,7 @@ public class EgovDeptJobController {
 	 * @param deptVO
 	 */
 //	@RequestMapping("/cop/smt/djm/selectDeptList.do")
-	@GetMapping("/deptlist")
+	@GetMapping("/deptList")
 	public Map<String, Object> selectDeptList(@ModelAttribute("searchVO") DeptVO deptVO, ModelMap model) throws Exception{
 		//LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
 
@@ -216,7 +216,7 @@ public class EgovDeptJobController {
 	@SuppressWarnings("unchecked")
 	@IncludedInfo(name="부서업무함관리", order = 400 ,gid = 40)
 //	@RequestMapping("/cop/smt/djm/selectDeptJobBxList.do")
-	@GetMapping("/jobbxlist")
+	@GetMapping("/jobBxList")
 	public List<DeptJobBxVO> selectDeptJobBxList(@ModelAttribute("searchVO") DeptJobBxVO deptJobBxVO, ModelMap model) throws Exception{
 		//LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
 		String sLocationUrl = "egovframework/com/cop/smt/djm/EgovDeptJobBxList";
@@ -471,7 +471,7 @@ public class EgovDeptJobController {
 	 */
 	@IncludedInfo(name="부서업무정보", order = 401 ,gid = 40)
 //	@RequestMapping("/cop/smt/djm/selectDeptJobList.do")
-	@GetMapping("/joblist")
+	@GetMapping("/jobList")
 	public Map<String, Object> selectDeptJobList(@ModelAttribute("searchVO") DeptJobVO deptJobVO, ModelMap model) throws Exception{
 		//로그인 객체 선언
 		LoginVO loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
@@ -578,7 +578,7 @@ public class EgovDeptJobController {
 	 * @param deptJobVO
 	 */
 //	@RequestMapping("/cop/smt/djm/selectDeptJob.do")
-	@GetMapping("/jobinfo")
+	@GetMapping("/jobInfo")
 	public DeptJob selectDeptJob(@ModelAttribute("deptJobVO") DeptJobVO deptJobVO, ModelMap model) throws Exception{
 		DeptJob deptJob = deptJobService.selectDeptJob(deptJobVO);
 		model.addAttribute("deptJob", deptJob);
@@ -605,7 +605,7 @@ public class EgovDeptJobController {
 	 * @param deptJob
 	 */
 //	@RequestMapping("/cop/smt/djm/updateDeptJob.do")
-	@PostMapping("/jobupdate")
+	@PostMapping("/jobModify")
 	public String updateDeptJob(final MultipartHttpServletRequest multiRequest, @RequestParam Map<String, Object> commandMap, @ModelAttribute("deptJobVO") DeptJobVO deptJobVO, BindingResult bindingResult, ModelMap model) throws Exception{
 		LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
 		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
@@ -675,7 +675,7 @@ public class EgovDeptJobController {
 	 * @param deptJob
 	 */
 //	@RequestMapping("/cop/smt/djm/insertDeptJob.do")
-	@PostMapping("/jobadd")
+	@PostMapping("/jobAdd")
 	public String insertDeptJob(final MultipartHttpServletRequest multiRequest, @ModelAttribute("deptJobVO") DeptJobVO deptJobVO, BindingResult bindingResult, ModelMap model) throws Exception{
 		// 0. Spring Security 사용자권한 처리
     	Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
@@ -742,7 +742,7 @@ public class EgovDeptJobController {
 	 * @param deptJob
 	 */
 //	@RequestMapping("/cop/smt/djm/deleteDeptJob.do")
-	@DeleteMapping("/jobremove")
+	@DeleteMapping("/jobRemove")
 	public String deleteDeptJob(@ModelAttribute("deptJobVO") DeptJob deptJob, ModelMap model) throws Exception{
 		// 0. Spring Security 사용자권한 처리
     	Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
