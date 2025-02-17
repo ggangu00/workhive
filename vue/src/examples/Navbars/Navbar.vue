@@ -219,18 +219,25 @@ export default {
   setup() {
     let loginUser = "user01";
     const btnCommuteAdd = async () => {
-      const addData = new FormData();
-      addData.append("memCd", loginUser); // 로그인 유저 정보로 변경 예정
-      addData.append("goState", "F01"); // 버튼 동작 시간 체크 후 지각여부 체크 후 입력
-      
-      await axios.post('/api/commute/cmtAdd', addData);
+      await lastCmtGetInfo();
+
+      if(lastCmt == '') {
+        const addData = new FormData();
+        addData.append("memCd", loginUser); // 로그인 유저 정보로 변경 예정
+        addData.append("goState", "F01"); // 버튼 동작 시간 체크 후 지각여부 체크 후 입력
+        
+        await axios.post('/api/commute/cmtAdd', addData);
+      }
+      else {
+        console.log("출근 기록 있음"); // 차후 출퇴근 버튼 토글로 변경 예정
+      }
     }
 
     const btnCommuteModify = async () => {
       await lastCmtGetInfo();
 
       if(lastCmt == '') { // 출근 안한 상황
-        console.log("null");
+        console.log("출근 필요"); // swal로 변경 예정
       }
       else {
         console.log("not null");
