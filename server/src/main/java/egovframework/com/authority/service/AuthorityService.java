@@ -14,7 +14,7 @@ public interface AuthorityService {
 	public boolean authorityInsert(AuthorityDTO dto);
 	
 	// 권한 수정
-	public boolean authorityUpdate(String authorityCd);
+	public boolean authorityUpdate(AuthorityDTO dto);
 	
 	// 권한 삭제
 	public boolean authorityDelete(String authorityCd);

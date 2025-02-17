@@ -40,8 +40,8 @@ public class AuthorityServiceImpl implements AuthorityService {
 
 	// 권한 수정
 	@Override
-	public boolean authorityUpdate(String authorityCd) {
-		return authMapper.authorityUpdate(authorityCd) == 1 ? true : false;
+	public boolean authorityUpdate(AuthorityDTO dto) {
+		return authMapper.authorityUpdate(dto) == 1 ? true : false;
 	}
 
 	// 권한 삭제
