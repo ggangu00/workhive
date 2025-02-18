@@ -22,8 +22,8 @@
           
           <!-- 출퇴근 버튼 추가 - 토글식으로 변경 예정 -->
           <li class="px-3 nav-item d-flex align-items-center">
-            <button class="btn btn-primary" @click="btnCommuteAdd">출근</button>
-            <button class="btn btn-danger" @click="btnCommuteModify">퇴근</button>
+            <button class="btn btn-primary" @click="btnCommuteAdd" v-if="!lastCmt">출근</button>
+            <button class="btn btn-danger" @click="btnCommuteModify" v-else>퇴근</button>
           </li>
 
           <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
@@ -185,6 +185,8 @@ import { mapMutations, mapState } from "vuex";
 
 // ksy 추가
 import axios from 'axios';
+import { useStore } from "vuex";
+import { ref } from "vue";
 
 export default {
   name: "navbar",
@@ -217,51 +219,53 @@ export default {
 
   // 출퇴근 기능 추가
   setup() {
+    const store = useStore();
+
     let loginUser = "user01";
     const btnCommuteAdd = async () => {
-      await lastCmtGetInfo();
+      const addData = new FormData();
+      addData.append("memCd", loginUser); // 로그인 유저 정보로 변경 예정
+      addData.append("goState", "F01"); // 버튼 동작 시간 체크 후 지각여부 체크 후 입력
+      
+      await axios.post('/api/commute/cmtAdd', addData);
+      await store.dispatch("commuteGetList"); // Vuex에서 출퇴근 목록 갱신
 
-      if(lastCmt == '') {
-        const addData = new FormData();
-        addData.append("memCd", loginUser); // 로그인 유저 정보로 변경 예정
-        addData.append("goState", "F01"); // 버튼 동작 시간 체크 후 지각여부 체크 후 입력
-        
-        await axios.post('/api/commute/cmtAdd', addData);
-      }
-      else {
-        console.log("출근 기록 있음"); // 차후 출퇴근 버튼 토글로 변경 예정
-      }
+      // 출퇴근 버튼 클릭 후 날짜 초기화
+      store.commit("setStartDate", "");
+      store.commit("setEndDate", "");
+
+      lastCmtGetInfo(); // 출근 후 마지막 기록 갱신
     }
 
     const btnCommuteModify = async () => {
-      await lastCmtGetInfo();
+      const modifyData = new FormData();
+      modifyData.append("commuteCd", lastCmt.value.commuteCd);
+      modifyData.append("leaveState", 'G01');
+      modifyData.append("workTime", 8);
+      modifyData.append("overWorkTime", 0);
+      await axios.post(`/api/commute/cmtModify`, modifyData);
+      await store.dispatch("commuteGetList"); // Vuex에서 출퇴근 목록 갱신
 
-      if(lastCmt == '') { // 출근 안한 상황
-        console.log("출근 필요"); // swal로 변경 예정
-      }
-      else {
-        console.log("not null");
-        const modifyData = new FormData();
-        modifyData.append("commuteCd", lastCmt.commuteCd);
-        modifyData.append("leaveState", 'G01');
-        modifyData.append("workTime", 8);
-        modifyData.append("overWorkTime", 0);
-        await axios.post(`/api/commute/cmtModify`, modifyData);
-      }
+      // 출퇴근 버튼 클릭 후 날짜 초기화
+      store.commit("setStartDate", "");
+      store.commit("setEndDate", "");
+      
+      lastCmtGetInfo(); // 출근 후 마지막 기록 갱신
     }
     
     // 마지막 출퇴근 기록
-    let lastCmt;
+    const lastCmt = ref(null);
     const lastCmtGetInfo = async () => {
-      let result = await axios.get(`/api/commute/lastCmtInfo?memCd=${loginUser}`);
-
-      lastCmt = result.data;
+      const result = await axios.get('/api/commute/lastCmtInfo?memCd=user01');
+      lastCmt.value = result.data ? result.data : null;
+      console.log(lastCmt.value);
     }
 
     return {
       btnCommuteAdd,
       btnCommuteModify,
       lastCmtGetInfo,
+      lastCmt,
     }
   },
 };

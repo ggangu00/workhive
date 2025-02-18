@@ -30,13 +30,7 @@ export function dateTimeFormat(value) {
     let min = ('0' + date.getMinutes()).slice(-2);
     let sec = ('0' + date.getSeconds()).slice(-2);
 
-    let result = value.replace('yyyy', year)
-        .replace('MM', month)
-        .replace('dd', day)
-        .replace('hh', hour)
-        .replace('mm', min)
-        .replace('ss', sec);
-    return result;
+    return `${year}-${month}-${day} ${hour}:${min}:${sec}`;
 }
 
 // 숫자포맷 (천단위 콤마)
