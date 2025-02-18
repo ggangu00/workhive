@@ -38,7 +38,7 @@ public class DocumentController {
 	@GetMapping("/list")
 	public List<DocumentDTO> getCompletedDocuments(@RequestParam(required = false) String status,
 													@RequestParam(required = false) String delYn,
-													@RequestParam(required = false) int page) {
+													@RequestParam(required = false,defaultValue = "1") int page) {
 	    SearchDTO searchDTO = new SearchDTO();
 	    searchDTO.setStatus(status); // SearchDTO 객체에 값 설정
 	    searchDTO.setDelYn(delYn);
