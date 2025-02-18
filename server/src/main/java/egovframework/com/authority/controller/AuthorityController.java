@@ -90,7 +90,6 @@ public class AuthorityController {
 	public Map<String, Object> authorityRemove(@PathVariable(name="authorityCd") String authorityCd) {
 		log.info("삭제 권한 코드 출력 => " + authorityCd);
 	    
-	    // 서비스 로직 실행
 		boolean result = authService.authorityDelete(authorityCd);
 		
 		Map<String, Object> map = new HashMap<>();

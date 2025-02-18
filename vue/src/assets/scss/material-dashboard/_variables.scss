@@ -4,7 +4,7 @@
 // consistent naming. Ex: $nav-link-disabled-color and $modal-content-box-shadow-xs.
 
 * {
-  font-family: 'Noto Sans KR', serif;
+   font-family: 'Noto Sans KR', serif;
 }
 
 body{
@@ -570,10 +570,10 @@ $aspect-ratios: (
 // Font, line-height, and color for body text, headings, and more.
 
 // stylelint-disable value-keyword-case
-$font-family-sans-serif: "Roboto", Helvetica, Arial, sans-serif !default;
+$font-family-sans-serif: 'Noto Sans KR', serif !default;
 $font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas,
   "Liberation Mono", "Courier New", monospace !default;
-$font-family-roboto-slab: "Roboto Slab", sans-serif !default;
+$font-family-roboto-slab: 'Noto Sans KR', serif !default;
 
 // stylelint-enable value-keyword-case
 $font-family-base: var(--bs-font-sans-serif) !default;

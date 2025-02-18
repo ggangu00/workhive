@@ -116,8 +116,7 @@
    import Modal from '../../components/Modal.vue';
 
    onBeforeMount(() => {
-      // 권한 목록 조회
-      authorityGetList();
+      authorityGetList();  // 권한 목록 조회
    });
 
    onMounted(() => {
@@ -146,14 +145,14 @@
          modalReset();
          isShowModal.value = false;
       }
-   }
+   };
 
    // 모달 input 초기화
    const modalReset = () => {
       authorityCd.value = '';
       authorityNm.value = '';
       description.value = '';
-   }
+   };
 
    const roles = ref([]);
    const selectedRole = ref(null);
@@ -162,13 +161,13 @@
    // 권한추가 버튼
    const btnAuthorityAdd = () => {
       modalOpen(false, "권한 등록")
-   }
+   };
 
    // 권한수정 버튼
    const btnAuthorityModify = (role) => {
       modalOpen(true, "권한 수정");
       authorityGet(role);
-   }
+   };
 
    // 권한삭제 버튼
    const btnAuthorityRemove = (name, code) => {
@@ -193,7 +192,7 @@
             });
          }
       });
-   }
+   };
 
 // ============================================= Axios 통신 =============================================
    // 권한 전체 조회
@@ -262,7 +261,7 @@
             text:  "Error : " + err
          });
       }
-   }
+   };
 
    //권한 수정
    const authorityModify = async (code) => {
@@ -290,7 +289,7 @@
             text:  "Error : " + err
          });
       }
-   }
+   };
 
    // 권한 삭제
    const authorityRemove = async (code) => {
@@ -310,6 +309,8 @@
          });
       }
    };
+
+
 // ======================================== Menu ========================================
    const menus = ref([
       {
@@ -356,6 +357,5 @@
          selectedRole.value = null;
       }
    };
-
 
 </script>
