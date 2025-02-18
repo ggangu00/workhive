@@ -82,37 +82,16 @@
 
 	<insert id="insertBBSMaster" parameterType="egovframework.com.cop.bbs.service.BoardMasterVO">
 		
-			INSERT INTO COMTNBBSMASTER
-			(
-			BBS_ID,
-			BBS_TY_CODE,
-			BBS_NM,
-			BBS_INTRCN, 
-			REPLY_POSBL_AT, 
-			FILE_ATCH_POSBL_AT,
-			ATCH_POSBL_FILE_NUMBER,
-			TMPLAT_ID, USE_AT, 
-			FRST_REGISTER_ID,
-			FRST_REGISTER_PNTTM,
-			ANSWER_AT,
-			BBS_ATTRB_CODE
-			)
+		INSERT INTO COMTNBBSMASTER
+			(BBS_ID, BBS_TY_CODE, BBS_NM, BBS_INTRCN, 
+			 REPLY_POSBL_AT, FILE_ATCH_POSBL_AT, ATCH_POSBL_FILE_NUMBER,
+			 USE_AT,
+			 FRST_REGISTER_ID, FRST_REGIST_PNTTM )
 			VALUES
-			(
-			#{bbsId},
-			#{bbsTyCode},
-			#{bbsNm},
-			#{bbsIntrcn}, 
-			#{replyPosblAt},
-			#{fileAtchPosblAt},
-			#{atchPosblFileNumber}, 
-			#{tmplatId},
-			#{useAt},
-			#{frstRegisterId},
-			#{frstRegisterPnttm},		
-			#{answerAt},
-			#{bbsAttrbCode} 
-			)			
+			( #{bbsId}, #{bbsTyCode}, #{bbsNm}, #{bbsIntrcn}, 
+			  #{replyPosblAt}, #{fileAtchPosblAt}, #{atchPosblFileNumber}, 
+			  #{useAt}, #{frstRegisterId}, SYSDATE
+			 )		
 		
 	</insert>
 	
@@ -221,6 +200,11 @@
 			WHERE BBS_ID = #{bbsId}
  		
  	</update>
+ 	
+ 	<!--  <delete id="deleteBBSMaster" parameterType="egovframework.com.cop.bbs.service.BoardMasterVO">
+ 			DELETE FROM COMTNBBSMASTER
+ 			WHERE BBS_ID = #{bbsId}
+ 	</delete> -->
  	
  	<select id="selectBlogMasterList" parameterType="egovframework.com.cop.bbs.service.BlogVO" resultMap="BlogList">
 		SELECT * FROM ( SELECT rownum rn, TB.* FROM (
