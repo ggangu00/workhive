@@ -133,6 +133,7 @@ public class EgovBBSMasterController {
      * @param boardMasterVO
      * @param boardMaster
      * @param status
+     * @return 
      * @throws Exception
      */
     //@RequestMapping("/cop/bbs/insertBBSMaster.do")
@@ -142,7 +143,7 @@ public class EgovBBSMasterController {
     	
 		LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
 		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-		
+		System.out.println("체크1");
 		beanValidator.validate(boardMaster, bindingResult);
 		if (bindingResult.hasErrors()) {
 		    ComDefaultCodeVO vo = new ComDefaultCodeVO();
@@ -153,10 +154,11 @@ public class EgovBBSMasterController {
 		    model.addAttribute("bbsTyCode", codeResult);
 	
 		    //return "egovframework/com/cop/bbs/EgovBBSMasterRegist";
-
 		    
 		}
-		
+		System.out.println(boardMaster.getBbsNm());
+		egovBBSMasterService.insertBBSMasterInf(boardMaster);
+		System.out.println("체크2");
 //		if (isAuthenticated) {
 //		    boardMaster.setFrstRegisterId(user == null ? "" : EgovStringUtil.isNullToString(user.getUniqId()));
 //		    if((boardMasterVO == null ? "" : EgovStringUtil.isNullToString(boardMasterVO.getBlogAt())).equals("Y")){
@@ -164,7 +166,7 @@ public class EgovBBSMasterController {
 //		    }else{
 //		    	boardMaster.setBlogAt("N");
 //		    }
-//		    egovBBSMasterService.insertBBSMasterInf(boardMaster);
+//		    System.out.println("체크3");
 //		}
 //		if(boardMaster.getBlogAt().equals("Y")){
 //			return "forward:/cop/bbs/selectArticleBlogList.do";
