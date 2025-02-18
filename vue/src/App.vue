@@ -76,5 +76,12 @@ export default {
       sidenav.classList.add("g-sidenav-pinned");
     }
   },
+  
 };
 </script>
+
+<style>
+body { 
+  background-color: white !important;
+}
+</style>
