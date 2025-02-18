@@ -23,9 +23,18 @@ public class CommonController {
 	
 	//공통함수 조회
 	@GetMapping("/codeList")
-	public List<CommonDTO> list(@RequestParam(name="cd") String commCd) {
+	public List<CommonDTO> commonlist(@RequestParam(name="cd") String commCd) {
 	  
 	  List<CommonDTO> result = service.commonSelectAll(commCd);
+	  
+	  return result;
+	}	
+	
+	//거래처 조회
+	@GetMapping("/comList")
+	public List<CommonDTO> comlist() {
+	  
+	  List<CommonDTO> result = service.comSelectAll();
 	  
 	  return result;
 	}	

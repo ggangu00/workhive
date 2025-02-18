@@ -13,7 +13,8 @@
 			end_dt,
 			price,
 			create_id,
-			entrprs_mber_id
+			entrprs_mber_id,
+			del_yn
 		)
 		VALUES (
 			seq_pr_cd.nextval,
@@ -24,7 +25,8 @@
 			#{endDt},
 			#{price},
 			#{createId},
-			#{entrprsMberId}
+			#{entrprsMberId},
+			#{delYn}
 		)
 		
 	</insert>
@@ -32,22 +34,34 @@
 	<!-- 수정 -->
 	<update id="projectUpdate" parameterType="projectDTO">
 		update project
-		set	type_cd = #{typeCd}, 
+		set	
+			<if test="typeCd != null and !typeCd.equals('')">
+			type_cd = #{typeCd}, 
+			</if>
+			<if test="prNm != null and !prNm.equals('')">
 			pr_nm = #{prNm},
+			</if>
 			ahead_dt = #{aheadDt},
+			<if test="(startDt != null and !startDt.equals('')) and endDt != null and !endDt.equals(''))">
 			start_dt = #{startDt},
 			end_dt = #{endDt},
+			</if>
 			price = #{price},
 			update_id = #{updateId},
-			update_dt = sysdate
+			update_dt = sysdate,
+			del_yn = #{delYn}
 		where pr_cd = ${prCd}				
 	</update>
 	
 	<!-- 삭제 -->
-	<delete id="projectDelete" parameterType="Long">
-		delete from project
-		where pr_cd = #{prCd}
-	</delete>
+	<update id="projectDelete" parameterType="String">
+		UPDATE 
+		   project
+		SET
+		   del_yn = UPPER('Y')
+		WHERE
+		   pr_cd = ${prCd}	
+	</update>
 	
 	<!-- 단건조회 -->
 	<select id="projectSelect" parameterType="String">
@@ -60,9 +74,10 @@
 			   price,
 			   create_id,
 			   create_dt,
-			   entrprs_mber_id
+			   entrprs_mber_id,
+			   del_yn
 		from project
-		where pr_cd = #{prCd}
+		where pr_cd = #{prCd} and del_yn='N'
 	</select>
 	
 	<!-- 전체조회 -->
@@ -76,8 +91,10 @@
 			   price,
 			   create_id,
 			   create_dt,
-			   entrprs_mber_id
+			   entrprs_mber_id,
+			   del_yn
 		from project
+		where del_yn='N'
 		order by create_dt desc
 	</select>
 

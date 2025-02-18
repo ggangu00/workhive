@@ -3,7 +3,7 @@
     <div class="container-fluid">
       <div class="card">
         <div class="card-body">
-          <h4 class="card-title float-left">업무일지 관리</h4>
+          <h4 class="card-title float-left">업무일지 관리</h4>        
         </div>
       </div>
 
