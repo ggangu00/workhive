@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface ProjectService {
 	
-	public void projectInsert(ProjectDTO project);
+	public boolean projectInsert(ProjectDTO project);
 	
 	public boolean projectUpdate(ProjectDTO project);
 	

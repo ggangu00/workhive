@@ -4,4 +4,5 @@ import java.util.List;
 
 public interface CommonService {
 	public List<CommonDTO> commonSelectAll(String commCd);
+	public List<CommonDTO> comSelectAll();
 }

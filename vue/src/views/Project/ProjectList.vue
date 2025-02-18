@@ -114,7 +114,7 @@
                   <td>
                     <div class="category">{{ project.entrprsMberId }}</div>
                     <div class="subject"><a href="#" @click="modalOpen(project.prCd)" class="mrp5">{{ project.prNm
-                        }}</a>
+                    }}</a>
                       <span class="badge badge-danger">D-10</span>
                     </div>
                   </td>
@@ -125,7 +125,7 @@
                   <td>{{ dateFormat(project.createDt) }}</td>
                   <td>
                     <button class="btn btn-success btn-fill btn-sm mr-1">수정</button>
-                    <button class="btn btn-danger btn-fill btn-sm mr-1">삭제</button>
+                    <button class="btn btn-danger btn-fill btn-sm mr-1" @click="projectRemove(project.prCd)">삭제</button>
                   </td>
                 </tr>
               </template>
@@ -262,25 +262,21 @@
 
 <script setup>
 import axios from "axios";
+import Swal from 'sweetalert2';
 import { onBeforeMount, ref } from 'vue';
 import Card from '../../components/Cards/Card.vue'
 import Modal from '../../components/Modal.vue';
 import { dateFormat, numberFormat } from '../../assets/js/common.js'
 
-const projectList = ref([]);
-const projectInfo = ref([]);
-const isShowModal = ref(false);
-const projectCount = ref(0);
+//---------------데이터-------------- 
 
 onBeforeMount(() => {
   projectGetList();
 });
 
-//---------------공통함수--------------
-
-
 //---------------모달--------------
 
+const isShowModal = ref(false);
 const modalOpen = (prCd) => { //프로젝트 정보 모달 열기
   isShowModal.value = true;
   projectGetInfo(prCd);
@@ -298,6 +294,8 @@ const modalClose = (e) => { //프로젝트 정보 모달 닫기
 
 //---------------axios--------------
 
+const projectList = ref([]);
+const projectCount = ref(0);
 const projectGetList = async () => { //프로젝트 전체조회
   try {
     const result = await axios.get('/api/project/list');
@@ -309,6 +307,7 @@ const projectGetList = async () => { //프로젝트 전체조회
   }
 }
 
+const projectInfo = ref([]);
 const projectGetInfo = async (prCd) => { //프로젝트 단건조회
   try {
     const result = await axios.get(`/api/project/info?pr=${prCd}`);
@@ -317,6 +316,43 @@ const projectGetInfo = async (prCd) => { //프로젝트 단건조회
   } catch (err) {
     projectInfo.value = [];
   }
+}
+
+const projectRemove = async (prCd) => { //프로젝트 단건조회
+
+  Swal.fire({
+    icon: "question",
+    title: "해당 프로젝트를 삭제하시겠습니까?",
+    showCancelButton: true,
+    confirmButtonColor: "#83a2e9",
+    cancelButtonColor: "#ff9097",
+    confirmButtonText: "예",
+    cancelButtonText: "아니요"
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        const response = await axios.delete(`/api/project?pr=${prCd}`);
+console.log(response.data.result);
+        if (response.data.result === true) {
+          Swal.fire({
+            icon: "success",
+            title: "삭제완료",
+            text: "선택한 프로젝트를 삭제하였습니다",
+          }).then(() => {
+            projectGetList();
+          });
+        }
+      } catch (err) {
+        Swal.fire({
+          icon: "error",
+          title: "삭제실패",
+          text: "프로젝트 삭제 실패",
+        })
+      }
+    }
+  })
+
+
 }
 
 </script>

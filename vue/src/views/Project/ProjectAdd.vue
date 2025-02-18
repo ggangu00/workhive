@@ -2,7 +2,7 @@
   <div class="content">
     <div class="container-fluid">
       <card>
-        <h4 class="card-title float-left mt-1">프로젝트 등록</h4>
+        <h4 class="card-title float-left">프로젝트 등록</h4>
         <button class="btn btn-primary btn-sm btn-fill float-right" @click="projectAdd">등록</button>
         <button class="btn btn-secondary btn-sm btn-fill float-right" @click="formReset">초기화</button>
       </card>
@@ -59,11 +59,12 @@
             <label class="form-label">거래처</label>
             <div class="row">
               <div class="col-auto">
-                <input type="text" :name="entrprsMberId" v-model="entrprsMberId" class="form-control"
-                  placeholder="제목을 입력해주세요">
+                <input type="hidden" :name="entrprsMberId" v-model="entrprsMberId">
+                <input type="text" :name="cmpnyNm" v-model="cmpnyNm" class="form-control"
+                  placeholder="거래처를 선택해주세요" readonly>
               </div>
               <div class="col-auto p-none">
-                <button class="btn btn-info btn-fill">검색</button>
+                <button class="btn btn-info btn-fill" @click="modalOpen">검색</button>
               </div>
             </div>
           </div>
@@ -116,6 +117,57 @@
         -->
     </div>
   </div>
+
+  <!--프로젝트 상세보기 모달[s]-->
+  <Modal :isShowModal="isShowModal" :modalTitle="'거래처 선택'" @click.self="modalClose">
+    <template v-slot:body>
+      <card>
+        <p class="card-title mb-2">거래처 목록</p>
+
+        <div class="table-responsive">
+          <table class="table table-hover project">
+            <thead class="table-light">
+              <tr>
+                <th>번호</th>
+                <th>업체명</th>
+                <th>사업자등록번호</th>
+                <th>대표자</th>
+                <th>연락처</th>
+                <th>팩스</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <template v-if="companyCount > 0">
+                <tr :key="i" v-for="(company, i) in companyList">
+                  <td>{{ i + 1 }}</td>
+                  <td>{{ company.cmpnyNm }}</td>
+                  <td>{{ company.bizrno ? company.bizrno:"-" }}</td>
+                  <td>{{ company.cxfc ? company.cxfc:"-" }}</td>
+                  <td>{{ company.areaNo + "-" + company.entrprsMiddleTelno + "-" + company.entrprsEndTelno }}</td>
+                  <td>{{ company.fxnum ? company.fxnum:"-" }}</td>
+                  <td>
+                    <button class="btn btn-info btn-fill btn-sm mr-1" @click="comSelect(company)">선택</button>
+                  </td>
+                </tr>
+              </template>
+              <tr v-else>
+                <td colspan="10">
+                  <div class="list-nodata">등록된 거래처가 없습니다.</div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </card>
+    </template>
+
+    <template v-slot:footer>
+      <button type="button" class="btn btn-secondary btn-fill" @click="modalClose">닫기</button>
+    </template>
+  </Modal>
+  <!--프로젝트 상세보기 모달[e]-->
+
 </template>
 
 <script setup>
@@ -123,12 +175,14 @@ import axios from "axios";
 import Swal from 'sweetalert2';
 import { ref } from 'vue';
 import Card from '../../components/Cards/Card.vue'
+import Modal from '../../components/Modal.vue';
 import { useRouter } from 'vue-router';
 
 //---------------데이터-------------- 
 
 const router = useRouter()
 
+//프로젝트 정보
 const prNm = ref('');
 const typeCd = ref('A03');
 const startDt = ref('');
@@ -136,6 +190,7 @@ const endDt = ref('');
 const price = ref('');
 const aheadDt = ref('');
 const entrprsMberId = ref('');
+const cmpnyNm = ref('');
 const createId = ref('admin');
 
 //--------------공통함수------------- 
@@ -145,14 +200,52 @@ const numberAutoFormat = () => { //입력 시 콤마 자동입력
     price.value = "";
     return;
   }
-  
+
   let strValue = price.value.replace(/[^0-9]/g, ""); // 숫자만 남기기 (문자 제거)
   price.value = strValue.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,'); // 천 단위 콤마 추가하여 표시
 }
 
+//---------------모달--------------
+
+const isShowModal = ref(false);
+const modalOpen = () => { //프로젝트 정보 모달 열기
+  isShowModal.value = true;
+  comGetList();
+}
+
+const modalClose = (e) => { //프로젝트 정보 모달 닫기
+  if (e.key === "Escape") {
+    if (isShowModal.value) {
+      isShowModal.value = !isShowModal.value
+    }
+  } else {
+    isShowModal.value = false;
+  }
+}
+
 //---------------axios--------------
 
+const companyList = ref([]);
+const companyCount = ref(0);
+const comGetList = async () => { //프로젝트 단건조회
+  try {
+    const result = await axios.get('/api/comm/comList');
+
+    companyList.value = result.data;
+    companyCount.value = result.data.length;
+  } catch (err) {
+    companyList.value = [];
+  }
+}
+
+const comSelect = (params) => {
+  entrprsMberId.value = params.entrprsMberId;
+  cmpnyNm.value = params.cmpnyNm;
+  isShowModal.value = false;
+}
+
 const projectAdd = async () => { //프로젝트 등록
+  
   if (!prNm.value) {
     Swal.fire({
       icon: "info",
@@ -190,9 +283,9 @@ const projectAdd = async () => { //프로젝트 등록
   formData.append("createId", createId.value);
 
   try {
-    const result = await axios.post('/api/project/add', formData);
+    const response = await axios.post('/api/project', formData);
 
-    if (result.data == 'success') {
+    if(response.data.result === true) {
       Swal.fire({
         icon: "success",
         title: "등록완료",

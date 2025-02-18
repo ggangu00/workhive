@@ -5,10 +5,10 @@
       <!--등록폼 [S]-->
       <div class="card">
         <div class="card-body">
-          <h4 class="card-title float-left mt-1">뭐시기 등록</h4>
-          <button class="btn btn-primary btn-sm btn-fill float-right"
-            onclick="location.href ='#/admin/project/add'">등록</button>
+          <h4 class="card-title float-left">뭐시기 등록</h4>
           <button class="btn btn-secondary btn-sm btn-fill float-right">초기화</button>
+          <button class="btn btn-primary btn-sm btn-fill float-right"
+            onclick="location.href ='#/admin/project/add'">등록</button>          
         </div>
       </div>
       <div class="card">

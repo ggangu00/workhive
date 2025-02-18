@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="egovframework.com.common.mapper.CommonMapper">
-	<!-- 전체조회 -->
+	<!-- 공통함수 전체조회 -->
 	<select id="commonSelectAll" parameterType="String" resultType="commonDTO">
 		SELECT
 		    comm_dtl_nm,
@@ -16,5 +16,26 @@
 		    ]]>
 		  ORDER BY
 		    comm_dtl_cd
+	</select>
+	
+	<!-- 거래처 전체조회 -->
+	<select id="comSelectAll" parameterType="String" resultType="commonDTO">
+		SELECT
+		    entrprs_mber_id,
+		    cmpny_nm,
+		    bizrno,
+		    cxfc,
+		    zip,
+		    area_no,
+		    entrprs_middle_telno,
+		    entrprs_end_telno,
+		    fxnum,
+		    update_id,
+		    update_dt,
+		    create_id,
+		    create_dt,
+		    del_yn
+		  FROM comtnentrprsmber
+		  ORDER BY create_dt desc
 	</select>
 </mapper>

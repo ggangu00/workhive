@@ -20,4 +20,9 @@ public class CommonServiceImpl implements CommonService{
 	public List<CommonDTO> commonSelectAll(String commCd) {
 		return commonMapper.commonSelectAll(commCd);
 	}
+
+	@Override
+	public List<CommonDTO> comSelectAll() {
+		return commonMapper.comSelectAll();
+	}
 }

@@ -17,9 +17,9 @@ public class ProjectServiceImpl implements ProjectService{
 	private ProjectMapper projectMapper;
 
 	@Override
-	public void projectInsert(ProjectDTO project) {
-		projectMapper.projectInsert(project);		
-	}
+	public boolean projectInsert(ProjectDTO project) {
+		return projectMapper.projectInsert(project) == 1 ? true : false;
+	}	
 
 	@Override
 	public boolean projectUpdate(ProjectDTO project) {
