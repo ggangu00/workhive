@@ -99,9 +99,9 @@ public class EgovBBSMasterController {
      * @param model
      * @return
      * @throws Exception
-     */
+    */
     //@RequestMapping("/cop/bbs/insertBBSMasterView.do")
-    @PostMapping("/boardAdd")
+    //@PostMapping("/boardAdd")
     public List<CmmnDetailCode> insertBBSMasterView(@ModelAttribute("searchVO") BoardMasterVO boardMasterVO, ModelMap model) throws Exception {
 		BoardMasterVO boardMaster = new BoardMasterVO();
 		//공통코드(게시판유형)
@@ -133,11 +133,11 @@ public class EgovBBSMasterController {
      * @param boardMasterVO
      * @param boardMaster
      * @param status
-     * @return
      * @throws Exception
      */
-    @RequestMapping("/cop/bbs/insertBBSMaster.do")
-    public String insertBBSMaster(@ModelAttribute("searchVO") BoardMasterVO boardMasterVO, @ModelAttribute("boardMaster") BoardMaster boardMaster,
+    //@RequestMapping("/cop/bbs/insertBBSMaster.do")
+    @PostMapping("/boardAdd")
+    public void insertBBSMaster(@ModelAttribute("searchVO") BoardMasterVO boardMasterVO, @ModelAttribute("boardMaster") BoardMaster boardMaster,
 	    BindingResult bindingResult, ModelMap model) throws Exception {
     	
 		LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
@@ -152,23 +152,25 @@ public class EgovBBSMasterController {
 		    List<CmmnDetailCode> codeResult = cmmUseService.selectCmmCodeDetail(vo);
 		    model.addAttribute("bbsTyCode", codeResult);
 	
-		    return "egovframework/com/cop/bbs/EgovBBSMasterRegist";
+		    //return "egovframework/com/cop/bbs/EgovBBSMasterRegist";
+		    return codeResult;
+		    
 		}
 		
-		if (isAuthenticated) {
-		    boardMaster.setFrstRegisterId(user == null ? "" : EgovStringUtil.isNullToString(user.getUniqId()));
-		    if((boardMasterVO == null ? "" : EgovStringUtil.isNullToString(boardMasterVO.getBlogAt())).equals("Y")){
-		    	boardMaster.setBlogAt("Y");
-		    }else{
-		    	boardMaster.setBlogAt("N");
-		    }
-		    egovBBSMasterService.insertBBSMasterInf(boardMaster);
-		}
-		if(boardMaster.getBlogAt().equals("Y")){
-			return "forward:/cop/bbs/selectArticleBlogList.do";
-		}else{
-			return "forward:/cop/bbs/selectBBSMasterInfs.do";
-		}
+//		if (isAuthenticated) {
+//		    boardMaster.setFrstRegisterId(user == null ? "" : EgovStringUtil.isNullToString(user.getUniqId()));
+//		    if((boardMasterVO == null ? "" : EgovStringUtil.isNullToString(boardMasterVO.getBlogAt())).equals("Y")){
+//		    	boardMaster.setBlogAt("Y");
+//		    }else{
+//		    	boardMaster.setBlogAt("N");
+//		    }
+//		    egovBBSMasterService.insertBBSMasterInf(boardMaster);
+//		}
+//		if(boardMaster.getBlogAt().equals("Y")){
+//			return "forward:/cop/bbs/selectArticleBlogList.do";
+//		}else{
+//			return "forward:/cop/bbs/selectBBSMasterInfs.do";
+//		}
 		
     }
 
