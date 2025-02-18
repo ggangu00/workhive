@@ -21,7 +21,7 @@ public class CommonController {
 	@Resource
 	private  CommonService service;
 	
-	//공통함수 조회
+	// 공통코드 디테일 전체조회
 	@GetMapping("/codeList")
 	public List<CommonDTO> commonlist(@RequestParam(name="cd") String commCd) {
 	  
@@ -30,7 +30,7 @@ public class CommonController {
 	  return result;
 	}	
 	
-	//거래처 조회
+	// 거래처 전체조회
 	@GetMapping("/comList")
 	public List<CommonDTO> comlist() {
 	  

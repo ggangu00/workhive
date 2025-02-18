@@ -8,11 +8,12 @@ import Guide from "../views/Guide.vue";
 import Layout from '../views/Layout.vue';
 
 // kmj
+import Login from "../views/Login/Login.vue";
 import PersonalManage from '../views/Setting/PersonalManage.vue';
 import MemberManage from '../views/Setting/MemberManage.vue'
 import DepartmentManage from "../views/Setting/DepartmentManage.vue";
 import AuthorityManage from "../views/Setting/AuthorityManage.vue";
-
+import SignIn from "../views/Login/SignIn.vue";
 
 
 
@@ -112,6 +113,16 @@ const routes = [
    },
 
    // kmj
+   {  // 로그인
+      path: '/signIn',
+      name: 'SignIn',
+      component: SignIn,
+   },
+   {  // 로그인
+      path: '/login',
+      name: 'Login',
+      component: Login,
+   },
    { // 개인정보 설정
       path: '/setting/personalInfo',
       name: 'PersonalManage',
@@ -155,7 +166,7 @@ const routes = [
       component: ApprovalRegister
    },
    //skh
-   
+
    { //
       path: '/schdule/test',
       name: 'Test',

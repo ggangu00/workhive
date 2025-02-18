@@ -16,11 +16,13 @@ public class CommonServiceImpl implements CommonService{
 	@Resource
 	private CommonMapper commonMapper;
 	
+	// 공통코드 디테일 전체조회
 	@Override
 	public List<CommonDTO> commonSelectAll(String commCd) {
 		return commonMapper.commonSelectAll(commCd);
 	}
-
+	
+	// 거래처 전체조회
 	@Override
 	public List<CommonDTO> comSelectAll() {
 		return commonMapper.comSelectAll();

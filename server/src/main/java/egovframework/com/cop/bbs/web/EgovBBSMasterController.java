@@ -153,7 +153,7 @@ public class EgovBBSMasterController {
 		    model.addAttribute("bbsTyCode", codeResult);
 	
 		    //return "egovframework/com/cop/bbs/EgovBBSMasterRegist";
-		    return codeResult;
+		    //return codeResult;
 		    
 		}
 		
