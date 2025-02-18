@@ -1,4 +1,5 @@
 import { createStore } from "vuex";
+import axios from "axios";
 
 export default createStore({
   state: {
@@ -19,6 +20,11 @@ export default createStore({
     navbarFixed:
       "position-sticky blur shadow-blur left-auto top-1 z-index-sticky px-0 mx-4",
     absolute: "position-absolute px-4 mx-0 w-100 z-index-2",
+
+    // ksy 출퇴근 데이터
+    commuteList: [],
+    startDate: "",
+    endDate: "",
   },
   mutations: {
     toggleConfigurator(state) {
@@ -53,10 +59,31 @@ export default createStore({
     color(state, payload) {
       state.color = payload;
     },
+
+    // ksy 출퇴근 관리
+    commuteSetList(state, data) {
+      state.commuteList = data;
+    },
+    setStartDate(state, value) {
+      state.startDate = value;
+    },
+    setEndDate(state, value) {
+      state.endDate = value;
+    },
   },
   actions: {
     setColor({ commit }, payload) {
       commit("color", payload);
+    },
+    
+    async commuteGetList({ commit, state }) {
+      const params = {
+        memCd: "user01",
+        startDate: state.startDate,
+        endDate: state.endDate
+      };
+      let result = await axios.get(`/api/commute/cmtList`, { params });
+      commit("commuteSetList", result.data);
     },
   },
   getters: {},

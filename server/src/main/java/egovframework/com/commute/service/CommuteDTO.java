@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor //Builder, All, No 세투세투
+@NoArgsConstructor
 public class CommuteDTO {
 	private String commuteCd;
 	private String memCd;
@@ -19,4 +19,7 @@ public class CommuteDTO {
 	private String leaveState;
 	private long workTime;
 	private long overWorkTime;
+	
+	private String startDate;
+	private String endDate;
 }

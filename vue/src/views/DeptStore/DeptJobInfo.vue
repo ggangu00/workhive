@@ -68,6 +68,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import Grid from 'tui-grid';
 
 import DeptJobBx from "./DeptJobBx.vue";
 import JobManage from "./JobManage.vue";
@@ -92,7 +93,7 @@ const getDeptData = (result) => {
 
 // Toast UI Grid 초기화
 onMounted(() => {
-  gridInstance.value = new window.tui.Grid({
+  gridInstance.value = new Grid({
     el: document.getElementById('jobGrid'),
     data: rowData.value,
     scrollX: false,
@@ -121,14 +122,14 @@ class BtnRenderer {
     el.className = "btn-group";
 
     el.innerHTML = `
-      <button class="btn btn-success btn-fill me-2" data-type="edit">수정</button>
-      <button class="btn btn-danger btn-fill" data-type="delete">삭제</button>
+      <button class="btn btn-success btn-fill cell-btn-custom me-2" data-type="edit">수정</button>
+      <button class="btn btn-danger btn-fill cell-btn-custom" data-type="delete">삭제</button>
     `;
 
     el.addEventListener("click", (event) => {
       const type = event.target.dataset.type;
 
-      // ✅ props.row가 없을 경우 grid에서 데이터 가져오기
+      // props.row가 없을 경우 grid에서 데이터 가져오기
       const rowKey = props.row?.rowKey ?? props.grid.getRow(props.rowKey)?.rowKey;
 
       if (rowKey === undefined) {
@@ -227,12 +228,6 @@ const modalCloseFunc = (e) => {
   height: 600px;
   margin: 5px 0;
   /* padding: 5px; */
-}
-
-div::v-deep .cell-btn-custom {
-  width: 30px;
-  height: 25px;
-  padding: 0;
 }
 
 div::v-deep .nav-link {

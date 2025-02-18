@@ -35,7 +35,8 @@
       
               <!-- 목록 -->
               <div class="row mt-3">
-                <div class="col" style="height: 300px; width: 800px;">
+                <div class="col">
+                  <div id="crctGrid"></div>
 
                 </div>
               </div>
@@ -51,6 +52,35 @@
 </template>
 
 <script setup>
+// import axios from 'axios';
+// import Grid from 'tui-grid';
+// import { ref } from 'vue';
+
+// let rowData = ref([]);
+
+// const crctGetList = async () => {
+//   const params = {
+//     createId: "user01",
+//     startDate: state.startDate,
+//     endDate: state.endDate
+//   };
+//   const result = await axios.get('/api/commute/crctList', { params });
+//   rowData.value = result.data;
+// }
+
+// // Toast UI Grid 초기화
+// onMounted(() => {
+//   gridInstance.value = new Grid({
+//     el: document.getElementById('crctGrid'),
+//     data: rowData.value,
+//     scrollX: false,
+//     scrollY: true,
+//     columns: [ //
+//       { header: '번호', name: 'rowNum', sortable: true, align: 'center' },
+//     ]
+//   })
+  
+// })
 
 </script>
 
