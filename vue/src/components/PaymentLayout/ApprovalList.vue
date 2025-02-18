@@ -17,10 +17,13 @@
               </div>
 
               <div class="selectbox d-flex">
-                <select class="form-select w10" name="doc_kind">
-                  <option disabled selected>전체</option>
-                  <option value="">일반결재</option>
-                  <option value="">수신결재</option>
+                <select class="form-select w10" name="doc_kind" v-model="deptNm">
+                  <option v-for="(data, idx) in selectedData" 
+                  :key="idx"
+                  :value="data.commDtlNm">
+                  {{ data.commDtlNm }}
+                  </option>
+
                 </select>
                 <select class="form-select w10" name="dept_nm">
                   <option disabled selected>부서</option>
@@ -56,75 +59,107 @@
           <div id="tableGrid" class="toastui"></div>
           <div id="pagination" class="tui-pagination"></div>
         </div>
+
       </div>
     </div>
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted, watch } from "vue";
+import { useRouter } from "vue-router";
 import "tui-grid/dist/tui-grid.css";
-import Grid from "tui-grid";
+import axios from "axios";
 
-export default {
-  props: {
-    buttons: { type: Array, required: true },
-    columnDefs: { type: Array, required: true }, // Column 정의
-    rowData: { type: Array, required: true }, // 데이터
-    status: { type: String, required: true } // 현재진행상태
-  },
-  data(){
-  },
-  mounted() {
-    this.toastGrid();
-    this.clickInfo();
-    this.clickLink();
-  },
-  methods: {
-    toastGrid() {
-      this.grid = new Grid({
-        el: document.getElementById("tableGrid"),
-        data: this.rowData,
-        scrollX: true,
-        scrollY: true,
-        columns: this.columnDefs, // 컬럼 정의 적용
-        rowHeaders: ['checkbox'],
-        pageOptions: {
-          useClient: true, // 사이드 페이지네이션
-          perPage: 5 // 한 페이지에 5개 항목 표시
-        },
+// Props 정의
+const props = defineProps({
+  buttons: { type: Array, required: true },
+  columnDefs: { type: Array, required: true }, // Column 정의
+  status: { type: String, required: true }, // 현재 진행 상태
+});
 
-      });
+// Vue Router 사용
+const router = useRouter();
+let deptNm = ref('');
+
+// Grid 및 필터 설정
+const grid = ref(null);
+const filters = ref({
+  deptNm: deptNm.value
+});
+//셀렉트박스
+const selectedData = ref([]);
+
+//공통코드 가져오기
+const commonDtlList = async () =>{
+  const docKind = await axios.get(`/api/comm/codeList`, {
+    params: {cd:'DK'}
+  });
+  selectedData.value = [...docKind.data]
+}
+// API 요청 파라미터
+const getParams = ({
+  status: props.status,
+  deptNm: filters.value.deptNm,
+  docKind: filters.value.docKind,
+  formCd: filters.value.formCd,
+  startDate: filters.value.startDate,
+  endDate: filters.value.endDate,
+});
+
+const dataSource = {
+  api: {
+    readData: {
+      url: "/api/document/list",
+      method: "GET",
+      initParams: getParams, // 페이지, 상태코드(미결, 반려, 진행완료)
     },
-    //행클릭 정보 가져오기
-    clickInfo(){
-      this.grid.on('click', ev=>{
-        let dataRow = this.grid.getRow(ev.rowKey);
-        console.log(dataRow);
-      })
-    },
-
-    clickLink() {
-      this.grid.on('click', (ev) => {
-        let dataRow = this.grid.getRow(ev.rowKey);
-        if (dataRow.crntSignStat == '반려') {
-          this.$router.push({ path: "/approval/rejectedInfo" });
-        };
-        
-
-      })
-    },
-    
   },
   
-  watch: {
-    rowData(document) {
-        if (this.grid) {
-            this.grid.resetData(document);
-        }
-    },
-
 }
+
+// Toast Grid 초기화
+const TueGrid = () => {
+
+  console.log(filters.value);
+
+  grid.value = new window.tui.Grid({
+    el: document.getElementById("tableGrid"),
+    scrollX: true,
+    scrollY: true,
+    columns: props.columnDefs,
+    rowHeaders: ["checkbox"],
+    pageOptions: {
+      useClient: false, // 서버 사이드 페이지네이션 사용
+      perPage: 5,
+    },
+    data: dataSource,
+  });
+
+  // 행 클릭 이벤트 추가
+  grid.value.on("click", handleRowClick);
 };
+
+// 행 클릭 이벤트 핸들러
+const handleRowClick = (ev) => {
+  if (!grid.value) return;
+  const dataRow = grid.value.getRow(ev.rowKey);
+
+  // 특정 조건일 때 페이지 이동
+  if (dataRow?.crntSignStat == "반려") {
+    router.push({ path: "/approval/rejectedInfo" });
+  }
+};
+
+onMounted(() => {
+  TueGrid(); // Grid 초기화 실행
+  commonDtlList();
+});
+
+watch(getParams.value ,()=>{
+  if(getParams){
+  alert("asasdasdadadsdas")}
+})
 </script>
 
 <style scoped>
