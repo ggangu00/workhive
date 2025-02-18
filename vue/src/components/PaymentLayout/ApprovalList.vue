@@ -56,76 +56,101 @@
           <div id="tableGrid" class="toastui"></div>
           <div id="pagination" class="tui-pagination"></div>
         </div>
+
       </div>
     </div>
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import "tui-grid/dist/tui-grid.css";
-import Grid from "tui-grid";
 
-export default {
-  props: {
-    buttons: { type: Array, required: true },
-    columnDefs: { type: Array, required: true }, // Column 정의
-    rowData: { type: Array, required: true }, // 데이터
-    status: { type: String, required: true } // 현재진행상태
-  },
-  data(){
-  },
-  mounted() {
-    this.toastGrid();
-    this.clickInfo();
-    this.clickLink();
-  },
-  methods: {
-    toastGrid() {
-      this.grid = new Grid({
-        el: document.getElementById("tableGrid"),
-        data: this.rowData,
-        scrollX: true,
-        scrollY: true,
-        columns: this.columnDefs, // 컬럼 정의 적용
-        rowHeaders: ['checkbox'],
-        pageOptions: {
-          useClient: true, // 사이드 페이지네이션
-          perPage: 5 // 한 페이지에 5개 항목 표시
-        },
+// Props 정의
+const props = defineProps({
+  buttons: { type: Array, required: true },
+  columnDefs: { type: Array, required: true }, // Column 정의
+  status: { type: String, required: true }, // 현재 진행 상태
+});
 
-      });
+// Vue Router 사용
+const router = useRouter();
+
+// Grid 및 필터 설정
+const grid = ref(null);
+const filters = ref({
+  dept_nm: "",
+  form_cd: "",
+});
+
+// API 요청 파라미터
+const getParams = ({
+  status: props.status,
+  deptNm: filters.value.dept_nm,
+  formCd: filters.value.form_cd,
+  startDate: filters.value.startDate,
+  endDate: filters.value.endDate,
+  page: 1,
+});
+
+const dataSource = {
+  api: {
+    readData: {
+      url: "/api/document/list",
+      method: "GET",
+      initParams: getParams.value, // 페이지, 상태코드(미결, 반려, 진행완료)
     },
-    //행클릭 정보 가져오기
-    clickInfo(){
-      this.grid.on('click', ev=>{
-        let dataRow = this.grid.getRow(ev.rowKey);
-        console.log(dataRow);
-      })
-    },
-
-    clickLink() {
-      this.grid.on('click', (ev) => {
-        let dataRow = this.grid.getRow(ev.rowKey);
-        if (dataRow.crntSignStat == '반려') {
-          this.$router.push({ path: "/approval/rejectedInfo" });
-        };
-        
-
-      })
-    },
-    
   },
   
-  watch: {
-    rowData(document) {
-        if (this.grid) {
-            this.grid.resetData(document);
-        }
-    },
-
 }
+
+// Toast Grid 초기화
+const initializeGrid = () => {
+  console.log("서버로 보낼 데이터:", getParams.value);
+
+  grid.value = new window.tui.Grid({
+    el: document.getElementById("tableGrid"),
+    scrollX: true,
+    scrollY: true,
+    columns: props.columnDefs,
+    rowHeaders: ["checkbox"],
+    pageOptions: {
+      useClient: false, // 서버 사이드 페이지네이션 사용
+      perPage: 1,
+    },
+    
+    data: dataSource,
+  });
+
+  // 서버 응답 데이터를 콘솔에 출력
+  grid.value.on("response", (ev) => {
+    console.log("서버 응답 데이터:", ev.responseData);
+  });
+
+  // 행 클릭 이벤트 추가
+  grid.value.on("click", handleRowClick);
 };
+
+// 행 클릭 이벤트 핸들러
+const handleRowClick = (ev) => {
+  console.log("click ! ", ev)
+  if (!grid.value) return;
+  const dataRow = grid.value.getRow(ev.rowKey);
+  console.log("선택된 행 데이터:", dataRow);
+
+  // 특정 조건일 때 페이지 이동
+  if (dataRow?.crntSignStat === "반려") {
+    router.push({ path: "/approval/rejectedInfo" });
+  }
+};
+
+onMounted(() => {
+  initializeGrid(); // Grid 초기화 실행
+});
+
 </script>
+
 
 <style scoped>
 .button-collection button {
