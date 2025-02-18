@@ -224,7 +224,7 @@ onMounted(() => {
 const appendedData = {
   prWorkNm: '',
   progress: '',
-  state: 'A02'
+  state: '',
 };
 
 const btnWorkAdd = () => {

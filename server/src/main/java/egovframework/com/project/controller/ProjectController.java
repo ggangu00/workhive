@@ -104,7 +104,7 @@ public class ProjectController {
 	  return proejctService.projectWorkSelect(prCd);
 	}	
 	
-	//프로젝트 과업 등록
+	//프로젝트 과업등록
 	@PostMapping("/work")
 	public Map<String, Object> proejectWorkAdd(@Validated ProjectDTO project) {
 		
@@ -123,11 +123,13 @@ public class ProjectController {
 	  return proejctService.projectPlanSelect(prCd);
 	}	
 	
-	//프로젝트 과업 등록
+	//프로젝트 과업등록
 	@PostMapping("/plan")
 	public Map<String, Object> proejectPlanAdd(@Validated ProjectDTO project) {
 		
 	  boolean result = proejctService.projectPlanInsert(project);
+	  
+	  log.info("12312312312312 => " + result);
 	  	  
 	  Map<String, Object> map = new HashMap<>();
 	  map.put("result", result);

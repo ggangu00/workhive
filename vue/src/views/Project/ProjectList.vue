@@ -121,10 +121,10 @@
                   <td>{{ dateFormat(project.startDt) }} ~ {{ dateFormat(project.endDt) }}</td>
                   <td>{{ project.price ? project.price : "-" }}</td>
                   <td>김지환</td>
-                  <td><button class="btn btn-primary btn-sm" onclick="location.href ='/project/plan'">일정등록</button></td>
+                  <td><button class="btn btn-primary btn-sm" @click="btnPagePlan(project.prCd)">일정등록</button></td>
                   <td>{{ dateFormat(project.createDt) }}</td>
                   <td>
-                    <button class="btn btn-success btn-fill btn-sm mr-1" @click="btnPageMove(project.prCd)">수정</button>
+                    <button class="btn btn-success btn-fill btn-sm mr-1" @click="btnPageEdit(project.prCd)">수정</button>
                     <button class="btn btn-danger btn-fill btn-sm mr-1"
                       @click="btnProjectRemove(project.prCd)">삭제</button>
                   </td>
@@ -297,8 +297,12 @@ const modalClose = (e) => { //프로젝트 정보 모달 닫기
 //-------------버튼이벤트------------
 
 const router = useRouter();
-const btnPageMove = (code) => {
+const btnPageEdit = (code) => {
   router.push({ path : '/project/add' , query : { prCd : code }});
+}
+
+const btnPagePlan = (code) => {
+  router.push({ path : '/project/plan' , query : { prCd : code }});
 }
 
 // 프로젝트 삭제 버튼

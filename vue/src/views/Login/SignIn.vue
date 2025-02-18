@@ -63,9 +63,3 @@
       toggleHideConfig();
    });
 </script>
-
-<style>
-   body {
-      background-color: white !important;
-   }
-</style>
