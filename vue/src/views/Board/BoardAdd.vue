@@ -4,37 +4,58 @@ import axios from 'axios';
 
 // 게시판 데이터 변수
 const formValues = ref({
-  bbsId:'abc',
-  bbsNm: '',   // 게시판명
-  bbsAttrbCode:'abc',      
+  bbsId: 'abc',
+  bbsNm: '', // 게시판명
+  bbsAttrbCode: 'abc',
   bbsTyCode: '', // 게시판 유형
   fileAtchPosblAt: '', // 파일 첨부 가능 여부
-  useAt:'abc',    
-  frstRegisterId:'abbc',
-  frstRegisterPnttm:'abc',
-  answerAt: '',      // 댓글 가능 여부
+  useAt: 'abc',
+  frstRegisterId: 'abbc',
+  frstRegisterPnttm: 'abc',
+  answerAt: '', // 댓글 가능 여부
 });
+
+// 응답 메시지와 성공 여부 변수
+const responseMessage = ref('');
+const isSuccess = ref(false);
+
+// 폼 입력값 검증
+const validateForm = () => {
+  if (!formValues.value.bbsNm || !formValues.value.bbsTyCode || !formValues.value.fileAtchPosblAt || !formValues.value.answerAt) {
+    responseMessage.value = "모든 필수 항목을 입력해주세요.";
+    isSuccess.value = false;
+    return false;
+  }
+  return true;
+};
 
 // 게시판 등록 (FormData 방식)
 const BoardSave = async () => {
-    const addData = new FormData();   
-    addData.append("bbsId", formValues.value.bbsId);
-    addData.append("bbsNm", formValues.value.bbsNm);
-    addData.append("bbsAttrbCode", formValues.value.bbsAttrbCode);
-    addData.append("bbsTyCode", formValues.value.bbsTyCode);
-    addData.append("fileAtchPosblAt", formValues.value.fileAtchPosblAt);
-    addData.append("useAt", formValues.value.useAt);
-    addData.append("frstRegisterId", formValues.value.frstRegisterId);
-    addData.append("frstRegisterPnttm", formValues.value.frstRegisterPnttm);
-    addData.append("answerAt", formValues.value.answerAt);
+  if (!validateForm()) return; // 폼 검증 실패 시 실행하지 않음
 
+  const addData = new FormData();
+  addData.append("bbsId", formValues.value.bbsId);
+  addData.append("bbsNm", formValues.value.bbsNm);
+  addData.append("bbsAttrbCode", formValues.value.bbsAttrbCode);
+  addData.append("bbsTyCode", formValues.value.bbsTyCode);
+  addData.append("fileAtchPosblAt", formValues.value.fileAtchPosblAt);
+  addData.append("useAt", formValues.value.useAt);
+  addData.append("frstRegisterId", formValues.value.frstRegisterId);
+  addData.append("frstRegisterPnttm", formValues.value.frstRegisterPnttm);
+  addData.append("answerAt", formValues.value.answerAt);
+
+  try {
     const result = await axios.post('/api/board/boardAdd', addData);
-     console.log("서버 응답:", result.data)
-    };
+    // 서버 응답을 이용해 메시지 설정
+    responseMessage.value = result.data.message || "게시판이 성공적으로 등록되었습니다!";
+    isSuccess.value = true;
+  } catch (error) {
+    responseMessage.value = "게시판 등록에 실패했습니다. 다시 시도해주세요.";
+    isSuccess.value = false;
+  }
+};
 
-  
-
-// 📌 입력 폼 초기화
+// 폼 초기화
 const resetForm = () => {
   formValues.value.bbsNm = '';
   formValues.value.bbsTyCode = '';
@@ -47,7 +68,7 @@ const resetForm = () => {
   formValues.value.useAt = '';
 };
 
-// 📌 페이지 로드 시 초기화
+// 페이지 로드 시 초기화
 onMounted(() => {
   resetForm();
 });
@@ -67,7 +88,7 @@ onMounted(() => {
       </div>
 
       <!-- 입력 폼 -->
-      <div class="card">            
+      <div class="card">
         <div class="card-body">
           <form>
             <div class="mb-3">
@@ -105,10 +126,14 @@ onMounted(() => {
         </div>
       </div>
 
+      <!-- 응답 메시지 -->
+      <div v-if="responseMessage" class="alert" :class="isSuccess ? 'alert-success' : 'alert-danger'">
+        {{ responseMessage }}
+      </div>
     </div>
   </div>
 </template>
 
-<style>
+<style scoped>
 /* 필요한 스타일을 여기에 추가하세요 */
 </style>
