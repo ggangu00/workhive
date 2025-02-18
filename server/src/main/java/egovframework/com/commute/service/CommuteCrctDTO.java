@@ -21,6 +21,10 @@ public class CommuteCrctDTO {
 	private String signId;
 	private String signDt;
 	private String signState;
+
+	private String commuteDt;
+	private String goTime;
+	private String leave_time;
 	
 	private String startDate;
 	private String endDate;

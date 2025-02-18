@@ -115,7 +115,7 @@ onMounted(() => {
 // 저장/취소
 const btnCrctManage = async () => {
   const addData = new FormData();
-  addData.append("commuteCd", crctData.value.commuteDt);
+  addData.append("commuteCd", crctData.value.commuteCd);
   addData.append("crctGoTime", dateTimeFormat(crctData.value.crctGoTime, 'yyyy-MM-dd hh:mm:ss'));
   addData.append("crctLeaveTime", dateTimeFormat(crctData.value.crctLeaveTime, 'yyyy-MM-dd hh:mm:ss'));
   addData.append("crctReason", crctData.value.crctReason);

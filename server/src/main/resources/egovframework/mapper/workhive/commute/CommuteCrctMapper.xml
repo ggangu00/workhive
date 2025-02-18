@@ -57,8 +57,12 @@
 	
 	<!-- 출퇴근 정정 전체 조회 -->
 	<select id="crctSelectAll" parameterType="commuteCrctDTO" resultType="commuteCrctDTO">
+	//근무일자 / 출근시간 / 퇴근시간 / 정정출근시간 / 정정퇴근시간 / 신청일 / 결재자
 		select crct_cd
-			 , commute_cd
+			 , crct.commute_cd
+			 , cmt.commute_dt
+			 , cmt.go_time
+			 , cmt.leave_time
 			 , crct_go_time
 			 , crct_leave_time
 			 , crct_reason
@@ -68,7 +72,7 @@
 			 , sign_id
 			 , sign_dt
 			 , sign_state
-		from commute_correction
+		from commute_correction crct join commute cmt on (crct.commute_cd = cmt.commute_cd)
 		where create_id = #{createId}
 		<if test='!startDate.isEmpty()'>
 			<![CDATA[
