@@ -38,8 +38,8 @@ public class CommuteServiceImpl implements CommuteService {
 	}
 
 	@Override
-	public List<CommuteDTO> cmtSelectAll(String memCd) {
-		return commuteMapper.cmtSelectAll(memCd);
+	public List<CommuteDTO> cmtSelectAll(CommuteDTO commuteDTO) {
+		return commuteMapper.cmtSelectAll(commuteDTO);
 	}
 
 	@Override
@@ -47,7 +47,4 @@ public class CommuteServiceImpl implements CommuteService {
 		return commuteMapper.lastCmtSelect(memCd);
 	}
 	
-	
-	// 출퇴근 정정
-
 }

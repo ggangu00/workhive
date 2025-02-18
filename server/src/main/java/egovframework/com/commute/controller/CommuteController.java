@@ -48,32 +48,30 @@ public class CommuteController {
 
 		return service.cmtUpdate(commuteDTO);
 	}
-//
-//	//수정
-//	@GetMapping({"/modify","get"})
-//	public void modify(@RequestParam(name="bno") Long bno, Model model) {
-//		BoardDTO board = service.get(bno);
-//		model.addAttribute("board", board);
-//	}
-//	
-//	//수정
-//	@PostMapping("/modify")
-//	public String modify(BoardDTO board, RedirectAttributes rttr) {
-//		log.info("modify:" + board);
-//		service.modify(board); // -> mapper -> insert 
-//		
-//		rttr.addFlashAttribute("result", true); //addFlashAttribute 딱한번 어럴트 보임
-//		return "redirect:/board/list";
-//	}
 	
 	// 출퇴근 삭제
 	
 	// 출퇴근 단건 조회
+	@GetMapping("/cmtInfo")
+	public CommuteDTO cmtInfo(@RequestParam(name="commuteCd") String commuteCd) {
+		System.out.println("cmtCd : " + commuteCd);
+		CommuteDTO result = service.cmtSelect(commuteCd);
+		System.out.println(result.getCommuteCd());
+		return result;
+	}
 	
 	// 출퇴근 전체 조회
 	@GetMapping("/cmtList")
-	public List<CommuteDTO> cmtList(@RequestParam(name="memCd") String memCd) {
-		List<CommuteDTO> result = service.cmtSelectAll(memCd);
+	public List<CommuteDTO> cmtList(@RequestParam(name="memCd") String memCd, 
+									@RequestParam(name="startDate") String startDate,
+									@RequestParam(name="endDate") String endDate) {
+		
+		CommuteDTO searchDTO = new CommuteDTO();
+		searchDTO.setMemCd(memCd);
+		searchDTO.setStartDate(startDate);
+		searchDTO.setEndDate(endDate);
+		
+		List<CommuteDTO> result = service.cmtSelectAll(searchDTO);
 		
 		return result;
 	}
@@ -83,22 +81,8 @@ public class CommuteController {
 	public CommuteDTO lastCmtInfo(@RequestParam(name="memCd") String memCd) {
 		CommuteDTO result = service.lastCmtSelect(memCd);
 		
-		System.out.println("------------------------------------------------------------------");
-		System.out.println("last cmt : " + result);
 		return result;
 	}
-	
-	
-	// 출퇴근 정정
-	// 출퇴근 정정 등록
-	
-	// 출퇴근 정정 수정
-	
-	// 출퇴근 정정 삭제
-	
-	// 출퇴근 정정 단건 조회
-	
-	// 출퇴근 정정 전체 조회
 	
 
 }

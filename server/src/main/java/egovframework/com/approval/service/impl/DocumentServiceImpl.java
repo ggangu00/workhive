@@ -21,10 +21,11 @@ public class DocumentServiceImpl implements DocumentService{
 	public int documentInsert(DocumentDTO documentDTO) {
 		return documentMapper.insert(documentDTO);
 	}
-
+	
+	// 전체 조회
 	@Override
-	public List<DocumentDTO> getList(SearchDTO searchDTO) {
-		return documentMapper.getList(searchDTO);
+	public List<DocumentDTO> documentSelectAll(SearchDTO searchDTO) {
+		return documentMapper.documentSelectAll(searchDTO);
 	}
 
 	@Override

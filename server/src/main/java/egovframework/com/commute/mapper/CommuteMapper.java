@@ -13,9 +13,7 @@ public interface CommuteMapper {
 	int cmtUpdate(CommuteDTO commuteDTO);
 	int cmtDelete(String commuteCd);
 	CommuteDTO cmtSelect(String commuteCd);
-	List<CommuteDTO> cmtSelectAll(String memCd);
+	List<CommuteDTO> cmtSelectAll(CommuteDTO commuteDTO);
 	CommuteDTO lastCmtSelect(String memCd);
 	
-	
-	// 출퇴근 정정
 }

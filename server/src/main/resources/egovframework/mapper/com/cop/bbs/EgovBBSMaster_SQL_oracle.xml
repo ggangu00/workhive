@@ -83,15 +83,36 @@
 	<insert id="insertBBSMaster" parameterType="egovframework.com.cop.bbs.service.BoardMasterVO">
 		
 			INSERT INTO COMTNBBSMASTER
-			(BBS_ID, BBS_TY_CODE, BBS_NM, BBS_INTRCN, 
-			 REPLY_POSBL_AT, FILE_ATCH_POSBL_AT, ATCH_POSBL_FILE_NUMBER,
-			 TMPLAT_ID, USE_AT, CMMNTY_ID,
-			 FRST_REGISTER_ID, FRST_REGIST_PNTTM, BLOG_ID, BLOG_AT )
+			(
+			BBS_ID,
+			BBS_TY_CODE,
+			BBS_NM,
+			BBS_INTRCN, 
+			REPLY_POSBL_AT, 
+			FILE_ATCH_POSBL_AT,
+			ATCH_POSBL_FILE_NUMBER,
+			TMPLAT_ID, USE_AT, 
+			FRST_REGISTER_ID,
+			FRST_REGISTER_PNTTM,
+			ANSWER_AT,
+			BBS_ATTRB_CODE
+			)
 			VALUES
-			( #{bbsId}, #{bbsTyCode}, #{bbsNm}, #{bbsIntrcn}, 
-			  #{replyPosblAt}, #{fileAtchPosblAt}, #{atchPosblFileNumber}, 
-			  #{tmplatId}, #{useAt}, #{cmmntyId}, #{frstRegisterId}, SYSDATE, #{blogId}, #{blogAt}  
-			 )			
+			(
+			#{bbsId},
+			#{bbsTyCode},
+			#{bbsNm},
+			#{bbsIntrcn}, 
+			#{replyPosblAt},
+			#{fileAtchPosblAt},
+			#{atchPosblFileNumber}, 
+			#{tmplatId},
+			#{useAt},
+			#{frstRegisterId},
+			#{frstRegisterPnttm},		
+			#{answerAt},
+			#{bbsAttrbCode} 
+			)			
 		
 	</insert>
 	
@@ -178,6 +199,7 @@
 				BBS_NM = #{bbsNm},
 				BBS_INTRCN = #{bbsIntrcn}, 
 				BBS_TY_CODE = #{bbsTyCode},
+				BBS_ATTRB_CODE = #{bbsAttrbCode}
 				FILE_ATCH_POSBL_AT = #{fileAtchPosblAt},
 				ATCH_POSBL_FILE_NUMBER = #{atchPosblFileNumber},
 				ATCH_POSBL_FILE_SIZE = #{atchPosblFileSize},
@@ -185,6 +207,7 @@
 				LAST_UPDUSR_ID = #{lastUpdusrId},
 				LAST_UPDT_PNTTM = SYSDATE,
 				USE_AT = #{useAt}
+				ANSWER_AT = #{answerAt}
 			WHERE BBS_ID = #{bbsId}
  		
  	</update>

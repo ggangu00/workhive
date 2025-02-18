@@ -85,12 +85,23 @@ public class BoardMaster implements Serializable {
     private String cmmntyId;
     
     /** 블로그 ID */
-    private String blogId;
+   // private String blogId;
     
     /** 블로그 사용 유무 */
-    private String blogAt;
+   // private String blogAt;
     
-    //---------------------------------
+    private String answerAt;
+    
+    private String bbsAttrbCode;
+    public String getBbsAttrbCode() {
+		return bbsAttrbCode;
+	}
+
+	public void setBbsAttrbCode(String bbsAttrbCode) {
+		this.bbsAttrbCode = bbsAttrbCode;
+	}
+
+	//---------------------------------
     // 2009.06.26 : 2단계 기능 추가
     //---------------------------------
     /** 추가 option (댓글-comment, 만족도조사-stsfdg) */
@@ -528,21 +539,21 @@ public class BoardMaster implements Serializable {
     	this.cmmntyId = cmmntyId;
     }
 
-    public String getBlogId() {
-		return blogId;
-	}
-
-	public void setBlogId(String blogId) {
-		this.blogId = blogId;
-	}
-
-	public String getBlogAt() {
-		return blogAt;
-	}
-
-	public void setBlogAt(String blogAt) {
-		this.blogAt = blogAt;
-	}
+//    public String getBlogId() {
+//		return blogId;
+//	}
+//
+//	public void setBlogId(String blogId) {
+//		this.blogId = blogId;
+//	}
+//
+//	public String getBlogAt() {
+//		return blogAt;
+//	}
+//
+//	public void setBlogAt(String blogAt) {
+//		this.blogAt = blogAt;
+//	}
 
 	/**
      * toString 메소드를 대치한다.

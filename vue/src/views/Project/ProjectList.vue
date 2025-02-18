@@ -114,18 +114,19 @@
                   <td>
                     <div class="category">{{ project.entrprsMberId }}</div>
                     <div class="subject"><a href="#" @click="modalOpen(project.prCd)" class="mrp5">{{ project.prNm
-                    }}</a>
+                        }}</a>
                       <span class="badge badge-danger">D-10</span>
                     </div>
                   </td>
                   <td>{{ dateFormat(project.startDt) }} ~ {{ dateFormat(project.endDt) }}</td>
-                  <td>{{ Number(project.price).toLocaleString() }}</td>
+                  <td>{{ project.price ? project.price : "-" }}</td>
                   <td>김지환</td>
                   <td><button class="btn btn-primary btn-sm" onclick="location.href ='/project/plan'">일정등록</button></td>
                   <td>{{ dateFormat(project.createDt) }}</td>
                   <td>
-                    <button class="btn btn-success btn-fill btn-sm mr-1">수정</button>
-                    <button class="btn btn-danger btn-fill btn-sm mr-1" @click="projectRemove(project.prCd)">삭제</button>
+                    <button class="btn btn-success btn-fill btn-sm mr-1" @click="btnPageMove(project.prCd)">수정</button>
+                    <button class="btn btn-danger btn-fill btn-sm mr-1"
+                      @click="btnProjectRemove(project.prCd)">삭제</button>
                   </td>
                 </tr>
               </template>
@@ -199,14 +200,14 @@
                     <th class="table-secondary">프로젝트명</th>
                     <td class="text-start">{{ projectInfo.prNm }}</td>
                     <th class="table-secondary">거래처명</th>
-                    <td class="text-start">{{ projectInfo.entrprs_mber_id }}</td>
+                    <td class="text-start">{{ projectInfo.entrprsMberId }}</td>
                   </tr>
                   <tr>
                     <th class="table-secondary">프로젝트 기간</th>
                     <td class="text-start">{{ dateFormat(projectInfo.startDt) }} ~ {{ dateFormat(projectInfo.endDt) }}
                     </td>
                     <th class="table-secondary">금액</th>
-                    <td class="text-start">{{ numberFormat(projectInfo.price) }}</td>
+                    <td class="text-start">{{ projectInfo.price ? projectInfo.price : "-" }}</td>
                   </tr>
                   <tr>
                     <th class="table-secondary">참여자</th>
@@ -266,7 +267,8 @@ import Swal from 'sweetalert2';
 import { onBeforeMount, ref } from 'vue';
 import Card from '../../components/Cards/Card.vue'
 import Modal from '../../components/Modal.vue';
-import { dateFormat, numberFormat } from '../../assets/js/common.js'
+import { dateFormat } from '../../assets/js/common.js'
+import { useRouter } from "vue-router";
 
 //---------------데이터-------------- 
 
@@ -292,67 +294,92 @@ const modalClose = (e) => { //프로젝트 정보 모달 닫기
   }
 }
 
+//-------------버튼이벤트------------
+
+const router = useRouter();
+const btnPageMove = (code) => {
+  router.push({ path : '/project/add' , query : { prCd : code }});
+}
+
+// 프로젝트 삭제 버튼
+const btnProjectRemove = (code) => {
+  Swal.fire({
+    title: "해당 프로젝트를 삭제 하시겠습니까?",
+    icon: "question",
+    showCancelButton: true,
+    customClass: {
+      confirmButton: "btn btn-danger btn-fill",
+      cancelButton: "btn btn-secondary btn-fill"
+    },
+    cancelButtonText: "닫기",
+    confirmButtonText: "삭제",
+  }).then((result) => {
+    if (result.isConfirmed) {
+
+      // 프로젝트 삭제
+      projectRemove(code);
+
+      Swal.fire({
+        icon: "success",
+        title: "삭제완료",
+        text: "선택한 프로젝트를 삭제하였습니다",
+      })
+    }
+  });
+}
+
 //---------------axios--------------
 
 const projectList = ref([]);
 const projectCount = ref(0);
 const projectGetList = async () => { //프로젝트 전체조회
   try {
-    const result = await axios.get('/api/project/list');
+    const result = await axios.get('/api/project');
 
     projectList.value = result.data;
     projectCount.value = result.data.length;
   } catch (err) {
     projectList.value = [];
+
+    Swal.fire({
+      icon: "error",
+      title: "API 조회 오류",
+      text: "Error : " + err
+    });
   }
 }
 
 const projectInfo = ref([]);
 const projectGetInfo = async (prCd) => { //프로젝트 단건조회
   try {
-    const result = await axios.get(`/api/project/info?pr=${prCd}`);
-
-    projectInfo.value = result.data;
+    const result = await axios.get(`/api/project/info?prCd=${prCd}`);
+    projectInfo.value = result.data.info;
   } catch (err) {
     projectInfo.value = [];
+
+    Swal.fire({
+      icon: "error",
+      title: "API 조회 오류",
+      text: "Error : " + err
+    });
   }
 }
 
-const projectRemove = async (prCd) => { //프로젝트 단건조회
+const projectRemove = async (code) => { //프로젝트 단건조회
 
-  Swal.fire({
-    icon: "question",
-    title: "해당 프로젝트를 삭제하시겠습니까?",
-    showCancelButton: true,
-    confirmButtonColor: "#83a2e9",
-    cancelButtonColor: "#ff9097",
-    confirmButtonText: "예",
-    cancelButtonText: "아니요"
-  }).then(async (result) => {
-    if (result.isConfirmed) {
-      try {
-        const response = await axios.delete(`/api/project?pr=${prCd}`);
-console.log(response.data.result);
-        if (response.data.result === true) {
-          Swal.fire({
-            icon: "success",
-            title: "삭제완료",
-            text: "선택한 프로젝트를 삭제하였습니다",
-          }).then(() => {
-            projectGetList();
-          });
-        }
-      } catch (err) {
-        Swal.fire({
-          icon: "error",
-          title: "삭제실패",
-          text: "프로젝트 삭제 실패",
-        })
-      }
+  try {
+    const response = await axios.delete(`/api/project/${code}`);
+
+    if (response.data.result === true) {
+      projectList.value = response.data.list;
     }
-  })
-
-
+  } catch (err) {
+    Swal.fire({
+      icon: "error",
+      title: "삭제 실패",
+      text: "Error : " + err
+    });
+  }
 }
 
 </script>

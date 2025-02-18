@@ -5,7 +5,8 @@ import java.util.List;
 public interface DocumentService {
 	public int documentInsert(DocumentDTO documentDTO);
 	
-	public List<DocumentDTO> getList(SearchDTO searchDTO);
+	// 전체조회
+	public List<DocumentDTO> documentSelectAll(SearchDTO searchDTO);
 	
 	int getCount(SearchDTO searchDTO);
 }

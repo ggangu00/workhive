@@ -9,10 +9,6 @@ public interface CommuteService {
 	public boolean cmtUpdate(CommuteDTO commuteDTO);
 	public boolean cmtDelete(String commuteCd);
 	public CommuteDTO cmtSelect(String commuteCd);
-	public List<CommuteDTO> cmtSelectAll(String memCd);
+	public List<CommuteDTO> cmtSelectAll(CommuteDTO commuteDTO);
 	public CommuteDTO lastCmtSelect(String memCd);
-	
-	
-	// 출퇴근 정정
-	
 }

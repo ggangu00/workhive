@@ -1,8 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="egovframework.com.project.mapper.ProjectMapper">
-
-	<!-- 등록 -->
+<mapper namespace="egovframework.com.project.mapper.ProjectMapper">	
+	
+	<!-- 프로젝트 전체조회 -->
+	<select id="projectSelectAll" parameterType="int" resultType="projectDTO">
+		select pr_cd,
+			   type_cd,
+			   pr_nm,
+			   ahead_dt,
+			   start_dt,
+			   end_dt,
+			   price,
+			   create_id,
+			   create_dt,
+			   entrprs_mber_id
+		from project
+		where 
+			UPPER(del_yn) = UPPER('N')
+		order by 
+			create_dt desc
+	</select>
+	
+	<!-- 프로젝트 단건조회 -->
+	<select id="projectSelect" parameterType="String">
+		select pr_cd,
+			   type_cd,
+			   pr_nm,
+			   ahead_dt,
+			   start_dt,
+			   end_dt,
+			   price,
+			   create_id,
+			   create_dt,
+			   entrprs_mber_id
+		from project
+		where 
+			pr_cd = #{prCd} 
+		and 
+			UPPER(del_yn) = UPPER('N')
+	</select>
+	
+	<!-- 프로젝트 등록 -->
 	<insert id="projectInsert" parameterType="projectDTO">
 		INSERT INTO project (
 			pr_cd,
@@ -13,8 +51,7 @@
 			end_dt,
 			price,
 			create_id,
-			entrprs_mber_id,
-			del_yn
+			entrprs_mber_id
 		)
 		VALUES (
 			seq_pr_cd.nextval,
@@ -25,13 +62,12 @@
 			#{endDt},
 			#{price},
 			#{createId},
-			#{entrprsMberId},
-			#{delYn}
+			#{entrprsMberId}
 		)
 		
 	</insert>
 	
-	<!-- 수정 -->
+	<!-- 프로젝트 수정 -->
 	<update id="projectUpdate" parameterType="projectDTO">
 		update project
 		set	
@@ -48,54 +84,83 @@
 			</if>
 			price = #{price},
 			update_id = #{updateId},
-			update_dt = sysdate,
-			del_yn = #{delYn}
-		where pr_cd = ${prCd}				
+			update_dt = sysdate
+		where 
+			pr_cd = ${prCd}				
 	</update>
 	
-	<!-- 삭제 -->
+	<!-- 프로젝트 삭제 -->
 	<update id="projectDelete" parameterType="String">
 		UPDATE 
 		   project
 		SET
 		   del_yn = UPPER('Y')
 		WHERE
-		   pr_cd = ${prCd}	
+		   pr_cd = #{prCd}
 	</update>
 	
-	<!-- 단건조회 -->
-	<select id="projectSelect" parameterType="String">
-		select pr_cd,
-			   fn_get_codename(type_cd) as ACT_TYPE,
-			   pr_nm,
-			   ahead_dt,
-			   start_dt,
-			   end_dt,
-			   price,
+	<!-- 프로젝트 과업조회 -->
+	<select id="projectWorkSelect" parameterType="int" resultType="projectDTO">
+		select pr_work_cd,
+			   pr_cd,
+			   pr_work_nm,
+			   progress,
+			   state
+		from project_work
+		where 
+			pr_cd = #{prCd}
+	</select>	
+	
+	<!-- 프로젝트 과업 등록 -->
+	<insert id="projectWorkInsert" parameterType="projectDTO">
+		INSERT INTO project_work (
+			pr_work_cd,
+			pr_cd,
+			pr_work_nm,
+			progress,
+			state
+		)
+		VALUES (
+			pr_work_cd_seq.nextval,
+			#{prCd},
+			#{prWorkNm},			
+			#{progress},
+			#{state}
+		)		
+	</insert>
+	
+	<!-- 프로젝트 일정조회 -->
+	<select id="projectPlanSelect" parameterType="int" resultType="projectDTO">
+		select pr_plan_cd,
+			   pr_cd,
+			   plan_nm,
+			   start_week,
+			   end_week,
 			   create_id,
-			   create_dt,
-			   entrprs_mber_id,
-			   del_yn
-		from project
-		where pr_cd = #{prCd} and del_yn='N'
+			   create_dt
+		from project_plan
+		where 
+			pr_cd = #{prCd}
 	</select>
 	
-	<!-- 전체조회 -->
-	<select id="projectSelectAll" parameterType="int" resultType="projectDTO">
-		select pr_cd,
-			   fn_get_codename(type_cd) as ACT_TYPE,
-			   pr_nm,
-			   ahead_dt,
-			   start_dt,
-			   end_dt,
-			   price,
-			   create_id,
-			   create_dt,
-			   entrprs_mber_id,
-			   del_yn
-		from project
-		where del_yn='N'
-		order by create_dt desc
-	</select>
+	<!-- 프로젝트 일정 등록 -->
+	<insert id="projectPlanInsert" parameterType="projectDTO">
+		INSERT INTO project_plan (
+			pr_plan_cd,
+			pr_cd,
+			plan_nm,
+			start_week,
+			end_week,
+			create_id,
+		)
+		VALUES (
+			pr_plan_cd_seq.nextval,
+			#{prCd},
+			#{planNm},
+			#{startWeek},
+			#{endWeek},
+			#{createId}
+		)		
+	</insert>
 
 </mapper>

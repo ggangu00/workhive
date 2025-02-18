@@ -30,6 +30,7 @@
 		   #{atchFileId}, 
 		   #{formCd})
     </insert>
+    
     <!-- 문서카운트 -->
     <select id="getCount" resultType="int">
 	  SELECT COUNT(*) FROM DOCUMENT
@@ -37,31 +38,33 @@
 	  <include refid="searchCriteria"></include>
 	  </where>
 	</select>
+	
     <!-- 문서조회 -->
-    <select id="getList" resultType="egovframework.com.approval.service.DocumentDTO" parameterType="egovframework.com.approval.service.SearchDTO">
+    <select id="documentSelectAll" resultType="egovframework.com.approval.service.DocumentDTO" parameterType="egovframework.com.approval.service.SearchDTO">
 		 SELECT * FROM (
 		            SELECT 
 		                ROWNUM AS rn,
-		                DOC_CD,
-		                DOC_TITLE,
-		                DOC_CN,
-		                DOC_CN_EDITOR,
-		                fn_get_memnm(MEM_CD) as MEM_CD,
-		                fn_get_deptNm(MEM_CD) as DEPT_NM,
-		                fn_get_codename(CRNT_SIGN_STAT) as CRNT_SIGN_STAT,
-		                DRAFT_DT,
-		                COMPLETE_DT,
-		                fn_get_codename(DOC_KIND) as DOC_KIND,
-		                ATCH_FILE_ID,
-		                FORM_CD,
-		                DEL_YN
+		                doc_cd,
+		                doc_title,
+		                doc_cn,
+		                doc_cn_editor,
+		                fn_get_memnm(MEM_CD) as mem_cd,
+		                fn_get_deptNm(MEM_CD) as dept_nm,
+		                fn_get_codename(CRNT_SIGN_STAT) as crnt_sign_stat,
+		                draft_dt,
+		                complete_dt,
+		                fn_get_codename(DOC_KIND) as doc_kind,
+		                atch_file_id,
+		                form_cd,
+		                del_yn
 		            FROM DOCUMENT
 		                WHERE 1=1
+		                AND del_yn = UPPER('N')
 		                <include refid="searchCriteria"/>
 		            <![CDATA[AND ROWNUM <= #{end}]]>
 		        ) 
 		        WHERE rn >= #{start}
-		        ORDER BY DRAFT_DT DESC
+		        ORDER BY draft_dt DESC
     </select>
 
 	<!-- 검색조건함수 -->
@@ -75,8 +78,8 @@
         <if test="formCd != null and formCd != ''">
             AND FORM_CD = #{formCd}
         </if>
-        <if test="keyword != null and keyword != ''">
-            AND DOC_TITLE LIKE '%' || #{keyword} || '%'
+		<if test="docKind != null and docKind != ''">
+            AND DOC_KIND = #{docKind}
         </if>
 
     </sql>
