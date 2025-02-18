@@ -35,7 +35,6 @@ export default {
         { header: '기안자', name: 'memCd' },
         { header: '기안일시', name: 'draftDt' },
         { header: 'ASD', name: 'delYn' },
-        //{ header: '내용', name:'docCnEditor'}
       ],
       status: "H03",
     }

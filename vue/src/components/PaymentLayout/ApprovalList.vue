@@ -17,10 +17,13 @@
               </div>
 
               <div class="selectbox d-flex">
-                <select class="form-select w10" name="doc_kind">
-                  <option disabled selected>전체</option>
-                  <option value="">일반결재</option>
-                  <option value="">수신결재</option>
+                <select class="form-select w10" name="doc_kind" v-model="deptNm">
+                  <option v-for="(data, idx) in selectedData" 
+                  :key="idx"
+                  :value="data.commDtlNm">
+                  {{ data.commDtlNm }}
+                  </option>
+
                 </select>
                 <select class="form-select w10" name="dept_nm">
                   <option disabled selected>부서</option>
@@ -63,9 +66,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import "tui-grid/dist/tui-grid.css";
+import axios from "axios";
 
 // Props 정의
 const props = defineProps({
@@ -76,22 +80,31 @@ const props = defineProps({
 
 // Vue Router 사용
 const router = useRouter();
+let deptNm = ref('');
 
 // Grid 및 필터 설정
 const grid = ref(null);
 const filters = ref({
-  dept_nm: "",
-  form_cd: "",
+  deptNm: deptNm.value
 });
+//셀렉트박스
+const selectedData = ref([]);
 
+//공통코드 가져오기
+const commonDtlList = async () =>{
+  const docKind = await axios.get(`/api/comm/codeList`, {
+    params: {cd:'DK'}
+  });
+  selectedData.value = [...docKind.data]
+}
 // API 요청 파라미터
 const getParams = ({
   status: props.status,
-  deptNm: filters.value.dept_nm,
-  formCd: filters.value.form_cd,
+  deptNm: filters.value.deptNm,
+  docKind: filters.value.docKind,
+  formCd: filters.value.formCd,
   startDate: filters.value.startDate,
   endDate: filters.value.endDate,
-  page: 1,
 });
 
 const dataSource = {
@@ -99,15 +112,16 @@ const dataSource = {
     readData: {
       url: "/api/document/list",
       method: "GET",
-      initParams: getParams.value, // 페이지, 상태코드(미결, 반려, 진행완료)
+      initParams: getParams, // 페이지, 상태코드(미결, 반려, 진행완료)
     },
   },
   
 }
 
 // Toast Grid 초기화
-const initializeGrid = () => {
-  console.log("서버로 보낼 데이터:", getParams.value);
+const TueGrid = () => {
+
+  console.log(filters.value);
 
   grid.value = new window.tui.Grid({
     el: document.getElementById("tableGrid"),
@@ -117,15 +131,9 @@ const initializeGrid = () => {
     rowHeaders: ["checkbox"],
     pageOptions: {
       useClient: false, // 서버 사이드 페이지네이션 사용
-      perPage: 1,
+      perPage: 5,
     },
-    
     data: dataSource,
-  });
-
-  // 서버 응답 데이터를 콘솔에 출력
-  grid.value.on("response", (ev) => {
-    console.log("서버 응답 데이터:", ev.responseData);
   });
 
   // 행 클릭 이벤트 추가
@@ -134,23 +142,25 @@ const initializeGrid = () => {
 
 // 행 클릭 이벤트 핸들러
 const handleRowClick = (ev) => {
-  console.log("click ! ", ev)
   if (!grid.value) return;
   const dataRow = grid.value.getRow(ev.rowKey);
-  console.log("선택된 행 데이터:", dataRow);
 
   // 특정 조건일 때 페이지 이동
-  if (dataRow?.crntSignStat === "반려") {
+  if (dataRow?.crntSignStat == "반려") {
     router.push({ path: "/approval/rejectedInfo" });
   }
 };
 
 onMounted(() => {
-  initializeGrid(); // Grid 초기화 실행
+  TueGrid(); // Grid 초기화 실행
+  commonDtlList();
 });
 
+watch(getParams.value ,()=>{
+  if(getParams){
+  alert("asasdasdadadsdas")}
+})
 </script>
-
 
 <style scoped>
 .button-collection button {

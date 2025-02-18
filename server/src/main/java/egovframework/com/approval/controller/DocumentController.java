@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,12 +41,22 @@ public class DocumentController {
 	
 	@GetMapping("/list")
 	public Map<String, Object> getCompletedDocuments(@RequestParam(required = false) String status,
-												   @RequestParam(required = false, defaultValue = "1") int page) throws JsonMappingException, JsonProcessingException {
+												     @RequestParam(required = false) int page,
+												     @RequestParam(required = false) int perPage,
+												     @ModelAttribute SearchDTO searchDTO) throws JsonMappingException, JsonProcessingException {
+		
+		searchDTO.setPageUnit(perPage);
+
+		// 페이징 조건
+		searchDTO.setStartPage(searchDTO.getFirst());
+		searchDTO.setEndPage(searchDTO.getLast());
+		searchDTO.setStatus(status);
+
+		// 페이징처리
+		searchDTO.setTotalRecord(documentService.getCount(searchDTO));
 		
 		System.out.println("request DATA => " +  status + " page => " +  page);
-	    SearchDTO searchDTO = new SearchDTO();
-	    searchDTO.setStatus(status); // SearchDTO 객체에 값 설정
-	    searchDTO.setPage(page);
+		
 	    
 	    String str = """
 						{
@@ -60,13 +71,15 @@ public class DocumentController {
 						}
 										""";
 		ObjectMapper objectMapper = new ObjectMapper();
+		
 		Map<String, Object> map = objectMapper.readValue(str, Map.class);
+		
 		Map<String, Object> data = (Map) map.get("data");
 		Map<String, Object> pagination = (Map) data.get("pagination");
 		
 		// 페이징처리
-		pagination.put("page", 1);
-		pagination.put("totalCount", 100);
+		pagination.put("page", searchDTO.getPage());
+		pagination.put("totalCount", documentService.getCount(searchDTO));
 		
 		data.put("contents", documentService.documentSelectAll(searchDTO));
 		

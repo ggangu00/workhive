@@ -78,8 +78,8 @@
         <if test="formCd != null and formCd != ''">
             AND FORM_CD = #{formCd}
         </if>
-        <if test="keyword != null and keyword != ''">
-            AND DOC_TITLE LIKE '%' || #{keyword} || '%'
+		<if test="docKind != null and docKind != ''">
+            AND DOC_KIND = #{docKind}
         </if>
 
     </sql>
