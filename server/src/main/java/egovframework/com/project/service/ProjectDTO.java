@@ -1,5 +1,11 @@
 package egovframework.com.project.service;
 
+import java.util.Date;
+
+import javax.validation.constraints.NotBlank;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,19 +14,45 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor //Builder, All, No 세투세투
+@NoArgsConstructor
 public class ProjectDTO {
+	
+	//프로젝트 
 	private String prCd;
+	
+	@NotBlank
 	private String typeCd;
+	
+	@NotBlank
 	private String prNm;
-	private String aheadDt;
-	private String startDt;
-	private String endDt;
+	private Date aheadDt;
+	
+	@NotBlank
+	private Date startDt;
+	
+	@NotBlank
+	private Date endDt;
 	private String price;
 	private String state;
 	private String updateId;
-	private String updateDt;
+	
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private Date updateDt;
 	private String createId;
-	private String createDt;
+	
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private Date createDt;
 	private String entrprsMberId;
+	private String delYn;
+	
+	//프로젝트 과업
+	private String prWorkCd;
+	private String prWorkNm;
+	private String progress;
+	
+	//프로젝트 일정
+	private String prPlanCd;
+	private String planNm;
+	private String startWeek;
+	private String endWeek;
 }

@@ -119,13 +119,14 @@
                     </div>
                   </td>
                   <td>{{ dateFormat(project.startDt) }} ~ {{ dateFormat(project.endDt) }}</td>
-                  <td>{{ Number(project.price).toLocaleString() }}</td>
+                  <td>{{ project.price ? project.price : "-" }}</td>
                   <td>김지환</td>
-                  <td><button class="btn btn-primary btn-sm" onclick="location.href ='/project/plan'">일정등록</button></td>
+                  <td><button class="btn btn-primary btn-sm" @click="btnPagePlan(project.prCd)">일정등록</button></td>
                   <td>{{ dateFormat(project.createDt) }}</td>
                   <td>
-                    <button class="btn btn-success btn-fill btn-sm mr-1">수정</button>
-                    <button class="btn btn-danger btn-fill btn-sm mr-1">삭제</button>
+                    <button class="btn btn-success btn-fill btn-sm mr-1" @click="btnPageEdit(project.prCd)">수정</button>
+                    <button class="btn btn-danger btn-fill btn-sm mr-1"
+                      @click="btnProjectRemove(project.prCd)">삭제</button>
                   </td>
                 </tr>
               </template>
@@ -199,14 +200,14 @@
                     <th class="table-secondary">프로젝트명</th>
                     <td class="text-start">{{ projectInfo.prNm }}</td>
                     <th class="table-secondary">거래처명</th>
-                    <td class="text-start">{{ projectInfo.entrprs_mber_id }}</td>
+                    <td class="text-start">{{ projectInfo.entrprsMberId }}</td>
                   </tr>
                   <tr>
                     <th class="table-secondary">프로젝트 기간</th>
                     <td class="text-start">{{ dateFormat(projectInfo.startDt) }} ~ {{ dateFormat(projectInfo.endDt) }}
                     </td>
                     <th class="table-secondary">금액</th>
-                    <td class="text-start">{{ Number(projectInfo.price).toLocaleString() }}</td>
+                    <td class="text-start">{{ projectInfo.price ? projectInfo.price : "-" }}</td>
                   </tr>
                   <tr>
                     <th class="table-secondary">참여자</th>
@@ -262,34 +263,22 @@
 
 <script setup>
 import axios from "axios";
+import Swal from 'sweetalert2';
 import { onBeforeMount, ref } from 'vue';
 import Card from '../../components/Cards/Card.vue'
 import Modal from '../../components/Modal.vue';
+import { dateFormat } from '../../assets/js/common.js'
+import { useRouter } from "vue-router";
 
-const projectList = ref([]);
-const projectInfo = ref([]);
-const isShowModal = ref(false);
-const projectCount = ref(0);
+//---------------데이터-------------- 
 
 onBeforeMount(() => {
   projectGetList();
 });
 
-//---------------공통함수--------------
-
-const dateFormat = (value) => { //날짜포맷 (yyyy-mm-dd)
-  let date = value == null ? new Date() : new Date(value);
-
-  let year = date.getFullYear();
-  let month = ('0' + (date.getMonth() + 1)).slice(-2);
-  let day = ('0' + date.getDate()).slice(-2);
-
-  let result = year + '-' + month + '-' + day;
-  return result;
-};
-
 //---------------모달--------------
 
+const isShowModal = ref(false);
 const modalOpen = (prCd) => { //프로젝트 정보 모달 열기
   isShowModal.value = true;
   projectGetInfo(prCd);
@@ -305,26 +294,95 @@ const modalClose = (e) => { //프로젝트 정보 모달 닫기
   }
 }
 
+//-------------버튼이벤트------------
+
+const router = useRouter();
+const btnPageEdit = (code) => {
+  router.push({ path : '/project/add' , query : { prCd : code }});
+}
+
+const btnPagePlan = (code) => {
+  router.push({ path : '/project/plan' , query : { prCd : code }});
+}
+
+// 프로젝트 삭제 버튼
+const btnProjectRemove = (code) => {
+  Swal.fire({
+    title: "해당 프로젝트를 삭제 하시겠습니까?",
+    icon: "question",
+    showCancelButton: true,
+    customClass: {
+      confirmButton: "btn btn-danger btn-fill",
+      cancelButton: "btn btn-secondary btn-fill"
+    },
+    cancelButtonText: "닫기",
+    confirmButtonText: "삭제",
+  }).then((result) => {
+    if (result.isConfirmed) {
+
+      // 프로젝트 삭제
+      projectRemove(code);
+
+      Swal.fire({
+        icon: "success",
+        title: "삭제완료",
+        text: "선택한 프로젝트를 삭제하였습니다",
+      })
+    }
+  });
+}
+
 //---------------axios--------------
 
+const projectList = ref([]);
+const projectCount = ref(0);
 const projectGetList = async () => { //프로젝트 전체조회
   try {
-    const result = await axios.get('/api/project/list');
+    const result = await axios.get('/api/project');
 
     projectList.value = result.data;
     projectCount.value = result.data.length;
   } catch (err) {
     projectList.value = [];
+
+    Swal.fire({
+      icon: "error",
+      title: "API 조회 오류",
+      text: "Error : " + err
+    });
   }
 }
 
+const projectInfo = ref([]);
 const projectGetInfo = async (prCd) => { //프로젝트 단건조회
   try {
-    const result = await axios.get(`/api/project/info?pr=${prCd}`);
-
-    projectInfo.value = result.data;
+    const result = await axios.get(`/api/project/info?prCd=${prCd}`);
+    projectInfo.value = result.data.info;
   } catch (err) {
     projectInfo.value = [];
+
+    Swal.fire({
+      icon: "error",
+      title: "API 조회 오류",
+      text: "Error : " + err
+    });
+  }
+}
+
+const projectRemove = async (code) => { //프로젝트 단건조회
+
+  try {
+    const response = await axios.delete(`/api/project/${code}`);
+
+    if (response.data.result === true) {
+      projectList.value = response.data.list;
+    }
+  } catch (err) {
+    Swal.fire({
+      icon: "error",
+      title: "삭제 실패",
+      text: "Error : " + err
+    });
   }
 }
 

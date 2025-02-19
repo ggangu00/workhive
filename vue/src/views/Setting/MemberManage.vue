@@ -27,7 +27,7 @@
 
                   <!-- 구성원 테이블 (오른쪽) -->
                   <div class="col-9 m-group">
-                     <div class="table-line">
+                     <div class="bottom-line">
                         <div class="d-flex justify-content-between align-items-center p-2">
                            <div class="button-group justify-content-between">
                               <button class="btn btn-secondary btn-fill">이동</button>
@@ -205,8 +205,6 @@
 </script>
 
 <style scoped>
-   
-   
    .menu-container {
       display: flex;
       justify-content: space-between;

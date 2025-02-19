@@ -78,21 +78,21 @@
   import Modal from '../../components/Modal.vue';
 
 
-  let deptlist = [];
-  let jobbxlist = [];
+  let deptList = [];
+  let jobBxList = [];
   // 부서 목록 조회  
   const deptGetList = async () => {
-    let result = await axios.get('/api/deptstore/deptlist')
+    let result = await axios.get('/api/deptstore/deptList')
                             .catch(error => console.error("에러 :", error));
     
-    deptlist.value = result.data.resultList;
+    deptList = result.data.resultList;
   };
   // 업무함 목록 조회
-  const jobbxGetList = async () => {
-    let result = await axios.get('/api/deptstore/jobbxlist')
+  const jobBxGetList = async () => {
+    let result = await axios.get('/api/deptstore/jobBxList')
                             .catch(error => console.error("에러 :", error));
     
-    jobbxlist.value = result.data;
+    jobBxList = result.data;
   };
 
   const departments = ref([
@@ -141,20 +141,19 @@
       if (e.target.classList.contains('fa-plus')) {
         deptName.value = e.target.previousElementSibling.dataset.id;
         
-        console.log("클릭한 부서 ID:", deptName.value);
         modalOpen();
       }
     })
 
     deptGetList();
-    jobbxGetList();
+    jobBxGetList();
   })
 
   // 업무함 클릭시 부서/업무함 정보 전달
-  const emit = defineEmits('datareturn');
+  const emit = defineEmits(['datareturn']);
   const datareturn = () => {
-  emit('datareturn', { deptId: deptlist.value[0].orgnztId, jobbxId: jobbxlist.value[0].deptJobBxId });
-};
+    emit('datareturn', { deptId: deptList[0].orgnztId, jobBxId: jobBxList[0].deptjobBxId, jobBxList: jobBxList });
+  };
 
 </script>
   

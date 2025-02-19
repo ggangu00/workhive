@@ -1,0 +1,30 @@
+package egovframework.com.common.service.impl;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import egovframework.com.common.mapper.CommonMapper;
+import egovframework.com.common.service.CommonDTO;
+import egovframework.com.common.service.CommonService;
+
+@Service("CommonService")
+public class CommonServiceImpl implements CommonService{
+	
+	@Resource
+	private CommonMapper commonMapper;
+	
+	// 공통코드 디테일 전체조회
+	@Override
+	public List<CommonDTO> commonSelectAll(String commCd) {
+		return commonMapper.commonSelectAll(commCd);
+	}
+	
+	// 거래처 전체조회
+	@Override
+	public List<CommonDTO> comSelectAll() {
+		return commonMapper.comSelectAll();
+	}
+}

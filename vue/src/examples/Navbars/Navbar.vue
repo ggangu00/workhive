@@ -20,6 +20,12 @@
         </div>
         <ul class="navbar-nav justify-content-end">
           
+          <!-- 출퇴근 버튼 추가 - 토글식으로 변경 예정 -->
+          <li class="px-3 nav-item d-flex align-items-center">
+            <button class="btn btn-primary" @click="btnCommuteAdd" v-if="!lastCmt">출근</button>
+            <button class="btn btn-danger" @click="btnCommuteModify" v-else>퇴근</button>
+          </li>
+
           <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
             <a
               href="#"
@@ -177,6 +183,11 @@
 import Breadcrumbs from "../Breadcrumbs.vue";
 import { mapMutations, mapState } from "vuex";
 
+// ksy 추가
+import axios from 'axios';
+import { useStore } from "vuex";
+import { ref } from "vue";
+
 export default {
   name: "navbar",
   data() {
@@ -204,6 +215,58 @@ export default {
     currentRouteName() {
       return this.$route.name;
     },
+  },
+
+  // 출퇴근 기능 추가
+  setup() {
+    const store = useStore();
+
+    let loginUser = "user01";
+    const btnCommuteAdd = async () => {
+      const addData = new FormData();
+      addData.append("memCd", loginUser); // 로그인 유저 정보로 변경 예정
+      addData.append("goState", "F01"); // 버튼 동작 시간 체크 후 지각여부 체크 후 입력
+      
+      await axios.post('/api/commute/cmtAdd', addData);
+      await store.dispatch("commuteGetList"); // Vuex에서 출퇴근 목록 갱신
+
+      // 출퇴근 버튼 클릭 후 날짜 초기화
+      store.commit("setStartDate", "");
+      store.commit("setEndDate", "");
+
+      lastCmtGetInfo(); // 출근 후 마지막 기록 갱신
+    }
+
+    const btnCommuteModify = async () => {
+      const modifyData = new FormData();
+      modifyData.append("commuteCd", lastCmt.value.commuteCd);
+      modifyData.append("leaveState", 'G01');
+      modifyData.append("workTime", 8);
+      modifyData.append("overWorkTime", 0);
+      await axios.post(`/api/commute/cmtModify`, modifyData);
+      await store.dispatch("commuteGetList"); // Vuex에서 출퇴근 목록 갱신
+
+      // 출퇴근 버튼 클릭 후 날짜 초기화
+      store.commit("setStartDate", "");
+      store.commit("setEndDate", "");
+      
+      lastCmtGetInfo(); // 출근 후 마지막 기록 갱신
+    }
+    
+    // 마지막 출퇴근 기록
+    const lastCmt = ref(null);
+    const lastCmtGetInfo = async () => {
+      const result = await axios.get('/api/commute/lastCmtInfo?memCd=user01');
+      lastCmt.value = result.data ? result.data : null;
+      console.log(lastCmt.value);
+    }
+
+    return {
+      btnCommuteAdd,
+      btnCommuteModify,
+      lastCmtGetInfo,
+      lastCmt,
+    }
   },
 };
 </script>

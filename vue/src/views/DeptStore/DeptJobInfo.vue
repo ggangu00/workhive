@@ -15,7 +15,7 @@
         <div class="row">
           <!-- 업무함 사이드바 -->
           <div class="col-3">
-            <div class="jobbx">
+            <div class="jobBx">
               <DeptJobBx @datareturn="getDeptData"></DeptJobBx>
             </div>
           </div>
@@ -25,14 +25,17 @@
             <div class="row justify-content-between align-items-center">
               <div class="col-auto">
                 <button class="btn btn-danger btn-fill me-2">선택 삭제</button>
-                <button class="btn btn-primary btn-fill" @click="modalOpenJob">업무 등록</button>
+                <button class="btn btn-primary btn-fill" @click="modalAddJob">업무 등록</button>
     
                 <!-- 업무 등록 모달 -->
                 <JobManage
                   :isShowJobModal="isShowJobModal"
+                  :isUpdate="isUpdate"
                   @modalCloseJob="modalCloseJob"
                   @modalConfirmJob="modalConfirmJob"
-                  :jobbxSelected="jobbxSelected"
+                  :jobBxSelected="jobBxSelected"
+                  :jobBxList="jobBxList"
+                  :selectedRowData="selectedRowData"
                 />
               </div>
               <div class="col d-flex justify-content-end align-items-center">
@@ -65,6 +68,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import Grid from 'tui-grid';
 
 import DeptJobBx from "./DeptJobBx.vue";
 import JobManage from "./JobManage.vue";
@@ -72,24 +76,24 @@ import JobManage from "./JobManage.vue";
 let gridInstance = ref();
 let rowData = ref([]);
 
-let jobbxSelected = {
-  searchDeptId: '',
-  searchDeptJobBxId: 'DX_012'
+let jobBxList = [];
+let jobBxSelected = {
+  searchDeptId: 'ORGNZT_0000000000000',
+  searchDeptjobBxId: 'DX_012'
 };
 
 // 부서 정보 받아오기
 const getDeptData = (result) => {
-  jobbxSelected.searchDeptId = result.deptId;
-  jobbxSelected.searchDeptJobBxId = result.jobbxId;
+  jobBxSelected.searchDeptId = result.deptId;
+  jobBxSelected.searchDeptjobBxId = result.jobBxId;
+  jobBxList = result.jobBxList;
 
-  console.log('부서 정보:', jobbxSelected.searchDeptId);
-  console.log('업무함 정보:', jobbxSelected.searchDeptJobBxId);
-  jobGetList(jobbxSelected);
+  jobGetList(jobBxSelected);
 }
 
 // Toast UI Grid 초기화
 onMounted(() => {
-  gridInstance.value = new window.tui.Grid({
+  gridInstance.value = new Grid({
     el: document.getElementById('jobGrid'),
     data: rowData.value,
     scrollX: false,
@@ -102,98 +106,107 @@ onMounted(() => {
       { header: '작성일', name: 'frstRegisterPnttm', sortable: true},
       {
         header: '관리', name: 'action', align: 'center',
-        renderer: btnRenderer,
+        renderer: BtnRenderer,
       }
 
     ]
   })
   
-  jobGetList(jobbxSelected);
+  jobGetList(jobBxSelected);
 })
 
-// 그리드 버튼 -> 적용 안됨, 렌더러 다시 공부
-const btnRenderer = {
-  renderer({ rowKey }) {
-    const btnDiv = document.createElement("div");
-    btnDiv.className = "btn-group";
+// 그리드 버튼
+class BtnRenderer {
+  constructor(props) {
+    const el = document.createElement("div");
+    el.className = "btn-group";
 
-    const udtBtn = document.createElement("button");
-    udtBtn.className = "btn btn-success btn-fill me-2";
-    udtBtn.textContent = "수정";
-    udtBtn.addEventListener("click", () => udtEvent(rowKey));
-
-    const delBtn = document.createElement("button");
-    delBtn.className = "btn btn-danger btn-fill";
-    delBtn.textContent = "삭제";
-    delBtn.addEventListener("click", () => delEvent(rowKey));
-
-    btnDiv.appendChild(udtBtn);
-    btnDiv.appendChild(delBtn);
-
-    return btnDiv;
-  }
-};
-const udtEvent = (rowKey) => {
-  console.log(`수정 버튼 클릭됨, 행 번호: ${rowKey}`);
-};
-const delEvent = (rowKey) => {
-  console.log(`삭제 버튼 클릭됨, 행 번호: ${rowKey}`);
-  // 삭제 로직 추가
-};
-
-/*
-이벤트 위임 방식 생각해보기
-const btnRenderer = {
-  render({ rowKey }) {
-    const container = document.createElement("div");
-    container.className = "btn-group";
-
-    container.innerHTML = `
-      <button class="btn btn-success btn-fill me-2" data-type="edit">수정</button>
-      <button class="btn btn-danger btn-fill" data-type="delete">삭제</button>
+    el.innerHTML = `
+      <button class="btn btn-success btn-fill cell-btn-custom me-2" data-type="edit">수정</button>
+      <button class="btn btn-danger btn-fill cell-btn-custom" data-type="delete">삭제</button>
     `;
 
-    container.addEventListener("click", (event) => {
-      const type = event.target.getAttribute("data-type");
-      if (type === "edit") udtEvent(rowKey);
-      else if (type === "delete") delEvent(rowKey);
+    el.addEventListener("click", (event) => {
+      const type = event.target.dataset.type;
+
+      // props.row가 없을 경우 grid에서 데이터 가져오기
+      const rowKey = props.row?.rowKey ?? props.grid.getRow(props.rowKey)?.rowKey;
+
+      if (rowKey === undefined) {
+        console.error("BtnRenderer: rowKey를 가져올 수 없습니다.", props);
+        return;
+      }
+
+      if (type === "edit") {
+        udtEvent(rowKey);
+      } else if (type === "delete") {
+        delEvent(rowKey);
+      }
     });
 
-    return container;
+    this.el = el;
   }
+
+  getElement() {
+    return this.el;
+  }
+}
+
+const udtEvent = (rowKey) => {
+  selectedRowData = gridInstance.value.getRow(rowKey);
+  console.log(`수정 버튼 클릭됨, 행 번호: ${rowKey}`, selectedRowData);
+  modalUpdateJob(); // 모달 열기
 };
-*/
+
+const delEvent = async (rowKey) => {
+  selectedRowData = gridInstance.value.getRow(rowKey);
+  console.log(`삭제 버튼 클릭됨, 행 번호: ${rowKey}`, selectedRowData.deptJobId);
+
+  await axios.delete('/api/deptstore/jobRemove', { params: { deptJobId: selectedRowData.deptJobId } });
+  
+  jobGetList(jobBxSelected);
+};
 
 // 업무 목록 조회 업무함 아이디로 검색
-const jobGetList = async (jobbxSelected) => {
-  let joblist = await axios.get('/api/deptstore/joblist', {
-    params: jobbxSelected
+const jobGetList = async (jobBxSelected) => {
+  let jobList = await axios.get('/api/deptstore/jobList', {
+    params: jobBxSelected
   })
   .catch(error => console.error("에러 :", error));
 
-  rowData.value = [...joblist.data.resultList];
+  rowData.value = [...jobList.data.resultList];
   
   rowData.value = rowData.value.map((item, index) => ({
     rowNum: index + 1, // 1부터 시작하는 행번호
     ...item
   }));
-  console.log(rowData.value);
 
   gridInstance.value.resetData(rowData.value);
 };
 
 // 모달
-const isShowJobModal = ref(false);
-const modalOpenJob = () => {
+let isShowJobModal = ref(false);
+let isUpdate = ref(false);
+
+// 업무 등록
+const modalAddJob = () => { 
+  isUpdate.value = false;
   isShowJobModal.value = true;
 }
-
 const modalCloseJob = () => {
   isShowJobModal.value = false;
 }
 const modalConfirmJob = () => {
   console.log('job modal confirm click');
   isShowJobModal.value = false;
+  jobGetList(jobBxSelected);
+}
+
+// 업무 수정
+let selectedRowData = {};
+const modalUpdateJob = () => {
+  isUpdate.value = true;
+  isShowJobModal.value = true;
 }
 
 const modalCloseFunc = (e) => {
@@ -204,12 +217,11 @@ const modalCloseFunc = (e) => {
   }
 }
 
-
 </script>
 
 
 <style scoped>
-.jobbx {
+.jobBx {
   background-color: gray;
   border-radius: 5px;
   color: white;
@@ -218,15 +230,10 @@ const modalCloseFunc = (e) => {
   /* padding: 5px; */
 }
 
-div::v-deep .cell-btn-custom {
-  width: 30px;
-  height: 25px;
-  padding: 0;
-}
-
 div::v-deep .nav-link {
   display: flex !important;
 }
+
 </style>
   
   

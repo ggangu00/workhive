@@ -1,6 +1,13 @@
+
+
+// 180도 뒤집기
+.rotated {
+   transform: rotate(180deg);
+}
+
 // MemberManage
-.table-line {
-   border-bottom: 1px solid #c7c7c7;
+.bottom-line {
+   border-bottom: 1px solid #dee2e6;
 }
 
 .treeview ul {
@@ -22,7 +29,7 @@
    min-height: 700px;
    padding: 0%;
    border-radius: 3px;
-   
+
 }
 
 .m-table {
@@ -170,4 +177,61 @@
    line-height: 20px;
    padding: 2px 8px;
    white-space: nowrap;
+}
+
+// AuthorityManage
+.options {
+   cursor: pointer;
+   position: relative;
+
+   i {
+      color: #919191;
+      font-weight: 600;
+   }
+}
+
+/* 드롭다운 스타일 */
+.editing-dropdown-menu {
+   position: absolute;
+   background: white;
+   box-shadow: 0 0 2px #626267;
+   border-radius: 3px;
+   padding: 10px;
+   min-width: 100px;
+   min-height: 50px;
+   top: 100;
+   left: 20%;
+   z-index: 10;
+
+   div {
+      cursor: pointer;
+   }
+}
+
+.editing-dropdown-menu div:hover {
+   background: #f0f0f0;
+   border-radius: 3px;
+}
+
+.role-item {
+   display: flex;
+   justify-content: space-between;
+   padding: 8px;
+   cursor: pointer;
+}
+
+.menu-title {
+   cursor: pointer;
+   display: flex;
+   justify-content: space-between;
+   padding: 13px 15px;
+}
+
+.submenu {
+   background: #f4f4f4;
+}
+
+.menu-item {
+   border-bottom: 1px solid #ccc;
+   padding: 10px;
 }

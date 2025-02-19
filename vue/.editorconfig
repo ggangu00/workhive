@@ -1,0 +1,26 @@
+# 최상위 설정 파일로 지정
+root = true
+
+# 모든 파일 공통 설정
+[*]
+charset = utf-8                # UTF-8 인코딩
+end_of_line = lf               # 줄바꿈 LF (Mac/Linux 스타일, Windows도 자동 변환)
+insert_final_newline = true    # 파일 끝에 빈 줄 추가
+trim_trailing_whitespace = true # 불필요한 공백 제거
+
+# 공통 들여쓰기 설정 (스페이스 3칸 사용)
+indent_style = space
+indent_size = 3
+
+# Markdown, JSON 등 특수 파일은 2칸 들여쓰기 적용
+[*.{md,json,yml,}]
+indent_size = 2
+
+# JavaScript, Vue, Java, html, css, scss 파일 설정
+[*.{js,vue,java,html,css,scss}]
+indent_style = space
+indent_size = 3
+
+# Makefile은 탭 사용
+[Makefile]
+indent_style = tab

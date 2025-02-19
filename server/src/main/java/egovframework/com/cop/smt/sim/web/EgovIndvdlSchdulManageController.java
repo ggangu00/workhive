@@ -14,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -69,6 +71,7 @@ import org.egovframe.rte.psl.dataaccess.util.EgovMap;
 public class EgovIndvdlSchdulManageController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EgovIndvdlSchdulManageController.class);
+	
 
 	@Autowired
 	private DefaultBeanValidator beanValidator;
@@ -476,6 +479,19 @@ public class EgovIndvdlSchdulManageController {
 
 
 		return sLocationUrl;
+	}
+
+	//삭제컨트롤러
+	@DeleteMapping("/delete/{schdulId}") 
+	public String remove(@PathVariable("schdulId") String schdulId) throws Exception { 
+
+	        // 서비스에서 삭제 실행
+	        IndvdlSchdulManageVO indvdlSchdulManageVO = new IndvdlSchdulManageVO();
+	        indvdlSchdulManageVO.setSchdulId(schdulId);
+	        egovIndvdlSchdulManageService.deleteIndvdlSchdulManage(indvdlSchdulManageVO);
+
+	        return "success"; 
+
 	}
 
 	/**
