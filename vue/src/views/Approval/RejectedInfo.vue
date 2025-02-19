@@ -1,6 +1,6 @@
 <template>
     <div class="content">
-      <ApprovalRegister
+      <ApprovalInfo
         :headButtons="headButtons"
         :ApprovalButtons="true"
         :showFile="true"
@@ -11,11 +11,11 @@
   </template>
   
   <script>
-  import ApprovalRegister from '@/components/PaymentLayout/ApprovalRegister.vue';
+  import ApprovalInfo from '@/components/PaymentLayout/ApprovalInfo.vue';
   
   export default {
     components: {
-        ApprovalRegister
+      ApprovalInfo
     },
     data() {
       return {

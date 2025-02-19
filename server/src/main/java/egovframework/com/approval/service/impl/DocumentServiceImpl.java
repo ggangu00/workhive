@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import egovframework.com.approval.mapper.DocumentMapper;
 import egovframework.com.approval.service.DocumentDTO;
 import egovframework.com.approval.service.DocumentService;
+import egovframework.com.approval.service.FormDTO;
 import egovframework.com.approval.service.SearchDTO;
 
 @Service
@@ -31,6 +32,11 @@ public class DocumentServiceImpl implements DocumentService{
 	@Override
 	public int getCount(SearchDTO searchDTO) {
 		return documentMapper.getCount(searchDTO);
+	}
+
+	@Override
+	public List<FormDTO> formSelectAll() {
+		return documentMapper.formSelectAll();
 	}
 
 }

@@ -1,11 +1,9 @@
 <template>
   <div class="content">
-    <div class="container-fluid">
-      
-      <!-- 🔹 1행: 부서 선택 & 수신 목록 -->
+    <div class="container-fluid">     
+      <!-- 부서 선택-->
       <div class="row">
-        
-        <!-- 왼쪽: 부서 트리 구조 -->
+        <!-- 부서 트리 구조 -->
         <div class="col-5">
           <div class="box">
             <h5>부서 선택</h5>
@@ -24,12 +22,12 @@
           </div>
         </div>
 
-        <!-- 가운데: 화살표 버튼 -->
+        <!-- 화살표 버튼 -->
         <div class="col-1 d-flex align-items-center justify-content-center">
           <button class="btn btn-warning mt-2 w-100" @click="addReceiver">수신 추가 ➡</button>
         </div>
 
-        <!-- 오른쪽: 수신 목록 -->
+        <!-- 수신 목록 -->
         <div class="col-5">
           <div class="box">
             <h5>수신 목록</h5>
@@ -43,22 +41,22 @@
 
       </div>
 
-      <!-- 🔹 2행: 직원 목록 & 결재 추가 -->
+      <!-- 결재 추가 -->
       <div class="row mt-4">
-        <!-- 왼쪽: 직원 목록 (Toast UI Grid 적용) -->
+        <!-- 직원 목록 -->
         <div class="col-5">
           <div class="box">
             <h5>직원 목록</h5>
-            <div id="employeeGrid"></div> <!-- ✅ Toast UI Grid -->
+            <div id="employeeGrid"></div>
           </div>
         </div>
 
-        <!-- 가운데: 결재 버튼 -->
+        <!-- 결재 버튼 -->
         <div class="col-1 d-flex align-items-center justify-content-center">
           <button class="btn btn-primary" @click="addApproval">결재 ➡</button>
         </div>
 
-        <!-- 오른쪽: 결재 목록 -->
+        <!-- 결재 목록 -->
         <div class="col-5">
           <div class="box">
             <h5>결재 목록</h5>
@@ -149,7 +147,7 @@ import Grid from "tui-grid";
       });
     };
 
-    // ✅ 모달이 열릴 때 Toast UI Grid를 다시 초기화
+    //  모달이 열릴 때 Toast UI Grid를 다시 초기화
     const onModalOpen = () => {
       setTimeout(() => {  // 💡 모달 애니메이션이 끝난 뒤 실행되도록 setTimeout 추가
         if (!gridInstance) {
@@ -159,7 +157,7 @@ import Grid from "tui-grid";
         }
       },); // Bootstrap 모달 애니메이션 시간 고려
     };
-    // ✅ 부서 선택 시 직원 목록 갱신
+    //  부서 선택 시 직원 목록 갱신
     const updateGridData = () => {
       if (gridInstance) {
       gridInstance.resetData(filteredEmployees.value); //토스트유아이 내장메서드 데이터 업데이트나 새로 교체
