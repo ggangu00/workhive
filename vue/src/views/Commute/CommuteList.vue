@@ -176,36 +176,6 @@ const btnCrctAdd = (rowKey) => {
   router.push({ name: 'CrctManage', query: { cmtCd: selectedRowData.commuteCd, isUpdate: false } });
 }
 
-
-/*
-statusRenderer(params) {
-  let status = params.value;
-
-  let btnTag;
-  if (status === "보완") {
-    btnTag = `<button class="btn btn-warning btn-fill cell-btn-custom">
-                ${status}
-              </button>
-              <button class="btn btn-danger btn-fill cell-btn-custom">
-                삭제
-              </button>`;
-  }
-  else if (status === "대기") {
-    btnTag = `<button class="btn btn-success btn-fill cell-btn-custom">
-                ${status}
-              </button>
-              <button class="btn btn-danger btn-fill cell-btn-custom">
-                삭제
-              </button>`;
-  }
-  else if (status === "승인") {
-    btnTag = `<a>${status}</a>`;
-  }
-
-  return btnTag;
-}
-*/
-
 </script>
 
 

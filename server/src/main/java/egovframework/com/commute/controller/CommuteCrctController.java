@@ -92,7 +92,7 @@ public class CommuteCrctController {
 		searchDTO.setStartDate(startDate);
 		searchDTO.setEndDate(endDate);
 		
-		List<CommuteCrctDTO> result = service.crctSelectAll(searchDTO);
+		List<CommuteCrctDTO> result = service.crctSelectSigner(searchDTO);
 		
 		return result;
 	}
@@ -108,7 +108,7 @@ public class CommuteCrctController {
 		searchDTO.setStartDate(startDate);
 		searchDTO.setEndDate(endDate);
 		
-		List<CommuteCrctDTO> result = service.crctSelectAll(searchDTO);
+		List<CommuteCrctDTO> result = service.crctSelectSigned(searchDTO);
 		
 		return result;
 	}
