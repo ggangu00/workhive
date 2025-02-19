@@ -41,12 +41,14 @@
                             <div class="col-12" style='padding-left: 0;'><strong>제목</strong></div>
                         </div>
                         <div class="d-flex justify-content-between mb-1">
+                            <div title-box>
                             <div class="col-12 input-box">{{$route.query.docTitle}}</div>
+                        </div>
                         </div>
                       </div>
                       <!-- 에디터 -->
                       <div class='col-12'>
-                        <div>{{$route.query.docCnEditor}}</div>
+                        <div v-html="$route.query.docCnEditor"></div>
                           <!-- <div id="editor"></div> -->
                       </div>
                       <div class="d-flex" style='margin-top: 20px;'>
@@ -241,6 +243,7 @@
     }
     .left-card, .right-card {
       height: 100%;
+      padding: 10px;
     }
   </style>
   
