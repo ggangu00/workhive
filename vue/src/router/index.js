@@ -65,6 +65,7 @@ import PaymentAdd from '../views/Payment/PaymentAdd.vue';
 import PaymentManage from '../views/Payment/PaymentManage.vue';
 import BoardList from '../views/Board/BoardList.vue';
 import BoardAdd from '../views/Board/BoardAdd.vue';
+import BoardUpdate from "../views/Board/BoardUpdate.vue";
 import BulletinList from "../views/Bulletin/BulletinList.vue";
 import BulletinAdd from "../views/Bulletin/BulletinAdd.vue";
 import BulletinInfo from "../views/Bulletin/BulletinInfo.vue";
@@ -292,6 +293,11 @@ const routes = [
       path:'/board/boardAdd',
       name: 'BoardAdd',
       component : BoardAdd,
+   },
+    {//게시판 수정
+      path:'/board/boardUpdate',
+      name: 'BoardUpdate',
+      component : BoardUpdate,
    },
    {//게시글 목록
       path:'/bulletin/bulletinList',

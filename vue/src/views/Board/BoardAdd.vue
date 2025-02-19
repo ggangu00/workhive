@@ -1,79 +1,3 @@
-<script setup>
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
-
-// 게시판 데이터 변수
-const formValues = ref({
-  bbsId: 'abc',
-  bbsNm: '', // 게시판명
-  bbsAttrbCode: 'abc',
-  bbsTyCode: '', // 게시판 유형
-  fileAtchPosblAt: '', // 파일 첨부 가능 여부
-  useAt: 'abc',
-  frstRegisterId: 'abbc',
-  frstRegisterPnttm: 'abc',
-  answerAt: '', // 댓글 가능 여부
-});
-
-// 응답 메시지와 성공 여부 변수
-const responseMessage = ref('');
-const isSuccess = ref(false);
-
-// 폼 입력값 검증
-const validateForm = () => {
-  if (!formValues.value.bbsNm || !formValues.value.bbsTyCode || !formValues.value.fileAtchPosblAt || !formValues.value.answerAt) {
-    responseMessage.value = "모든 필수 항목을 입력해주세요.";
-    isSuccess.value = false;
-    return false;
-  }
-  return true;
-};
-
-// 게시판 등록 (FormData 방식)
-const BoardSave = async () => {
-  if (!validateForm()) return; // 폼 검증 실패 시 실행하지 않음
-
-  const addData = new FormData();
-  addData.append("bbsId", formValues.value.bbsId);
-  addData.append("bbsNm", formValues.value.bbsNm);
-  addData.append("bbsAttrbCode", formValues.value.bbsAttrbCode);
-  addData.append("bbsTyCode", formValues.value.bbsTyCode);
-  addData.append("fileAtchPosblAt", formValues.value.fileAtchPosblAt);
-  addData.append("useAt", formValues.value.useAt);
-  addData.append("frstRegisterId", formValues.value.frstRegisterId);
-  addData.append("frstRegisterPnttm", formValues.value.frstRegisterPnttm);
-  addData.append("answerAt", formValues.value.answerAt);
-
-  try {
-    const result = await axios.post('/api/board/boardAdd', addData);
-    // 서버 응답을 이용해 메시지 설정
-    responseMessage.value = result.data.message || "게시판이 성공적으로 등록되었습니다!";
-    isSuccess.value = true;
-  } catch (error) {
-    responseMessage.value = "게시판 등록에 실패했습니다. 다시 시도해주세요.";
-    isSuccess.value = false;
-  }
-};
-
-// 폼 초기화
-const resetForm = () => {
-  formValues.value.bbsNm = '';
-  formValues.value.bbsTyCode = '';
-  formValues.value.fileAtchPosblAt = '';
-  formValues.value.answerAt = '';
-  formValues.value.bbsId = '';
-  formValues.value.bbsAttrbCode = '';
-  formValues.value.frstRegisterId = '';
-  formValues.value.frstRegisterPnttm = '';
-  formValues.value.useAt = '';
-};
-
-// 페이지 로드 시 초기화
-onMounted(() => {
-  resetForm();
-});
-</script>
-
 <template>
   <div class="content">
     <div class="container-fluid">
@@ -109,8 +33,8 @@ onMounted(() => {
               <label class="form-label">파일첨부 가능여부</label>
               <select v-model="formValues.fileAtchPosblAt" class="form-select w30">
                 <option selected>선택하세요</option>
-                <option value="Y">예</option>
-                <option value="N">아니오</option>
+                <option value="A01">예</option>
+                <option value="A02">아니오</option>
               </select>
             </div>
 
@@ -118,8 +42,8 @@ onMounted(() => {
               <label class="form-label">댓글 가능여부</label>
               <select v-model="formValues.answerAt" class="form-select w30">
                 <option selected>선택하세요</option>
-                <option value="Y">예</option>
-                <option value="N">아니오</option>
+                <option value="A01">예</option>
+                <option value="A02">아니오</option>
               </select>
             </div>
           </form>
@@ -133,6 +57,113 @@ onMounted(() => {
     </div>
   </div>
 </template>
+
+<script setup>
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+import { useRoute, useRouter } from 'vue-router';
+
+const route = useRoute(); 
+const router = useRouter(); 
+
+//  쿼리 파라미터에서 데이터 추출 (쿼리 파라미터 이름과 일치시킴)
+let boardData = ref({
+  bbsNm: route.query.bbsNm || '',
+  bbsTyCode: route.query.bbsTyCode || '',          //  게시판 유형
+  fileAtchPosblAt: route.query.fileAtchPosblAt || '', //  파일 첨부 여부
+  answerAt: route.query.answerAt || ''             //  댓글 여부
+});
+console.log(' route.query:', route.query);
+console.log('받은 데이터:', boardData.value);
+
+// 게시판 데이터 변수
+const formValues = ref({
+  bbsId: 'abc',
+  bbsNm: '', 
+  bbsAttrbCode: 'abc',
+  bbsTyCode: '', 
+  fileAtchPosblAt: '', 
+  useAt: 'abc',
+  frstRegisterId: 'abbc',
+  frstRegisterPnttm: 'abc',
+  answerAt: '', 
+});
+
+// 응답 메시지와 성공 여부 변수
+const responseMessage = ref('');
+const isSuccess = ref(false);
+
+const setFormValuesFromQuery = () => {
+  const query = route.query;
+
+  formValues.value.bbsNm = query.bbsNm ?? '';
+  formValues.value.bbsTyCode = query.bbsTyCode ?? '';
+  formValues.value.fileAtchPosblAt = query.fileAtchPosblAt ?? '';
+  formValues.value.answerAt = query.answerAt ?? '';
+
+  console.log('✅ 적용된 formValues:', formValues.value);
+};
+
+
+// 폼 입력값 검증
+const validateForm = () => {
+  if (!formValues.value.bbsNm || !formValues.value.bbsTyCode || !formValues.value.fileAtchPosblAt || !formValues.value.answerAt) {
+    responseMessage.value = "모든 필수 항목을 입력해주세요.";
+    isSuccess.value = false;
+    return false;
+  }
+  return true;
+};
+
+// 게시판 등록 (FormData 방식)
+const BoardSave = async () => {
+  if (!validateForm()) return; 
+
+  const addData = new FormData();
+  Object.entries(formValues.value).forEach(([key, value]) => {
+    addData.append(key, value);
+  });
+
+  try {
+    const result = await axios.post('/api/board/boardAdd', addData);
+    responseMessage.value = result.data.message || "게시판이 성공적으로 등록되었습니다!";
+    isSuccess.value = true;
+
+    setTimeout(() => {
+      router.push('/board/boardList');
+    }, 1000); 
+  } catch (error) {
+    responseMessage.value = "게시판 등록에 실패했습니다. 다시 시도해주세요.";
+    isSuccess.value = false;
+  }
+};
+
+// 폼 초기화
+const resetForm = () => {
+  formValues.value = {
+    bbsId: '',
+    bbsNm: '',
+    bbsAttrbCode: '',
+    bbsTyCode: '',
+    fileAtchPosblAt: '',
+    useAt: '',
+    frstRegisterId: '',
+    frstRegisterPnttm: '',
+    answerAt: '',
+  };
+};
+
+// ✅ 페이지 로드 시 초기화 및 쿼리 데이터 적용
+onMounted(() => {
+  resetForm();             
+  setFormValuesFromQuery(); 
+});
+</script>
+
+
+
+
+
 
 <style scoped>
 /* 필요한 스타일을 여기에 추가하세요 */
