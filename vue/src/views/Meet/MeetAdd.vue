@@ -38,9 +38,11 @@
                         <label class="form-label">회의실 구분 <em class="point-red">*</em></label>
                         <select class="form-select w30" aria-label="Default select example" :name="mtgPlace"
                             v-model="mtgPlace">
-                            <option value="A03">회의실A</option>
-                            <option value="A04">회의실B</option>
-                            <option value="A04">회의실C</option>
+                            <option value="M01">회의실1</option>
+                            <option value="M02">회의실2</option>
+                            <option value="M03">회의실3</option>
+                            <option value="M04">회의실4</option>
+                            <option value="M05">회의실5</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -124,17 +126,15 @@ const meetAdd = async () => { //회의 등록
     formData.append("createId", 'admin');
 
     try {
-        const response = await axios.post('/api/meet', formData);
+        await axios.post('/api/meet', formData);
 
-        if (response.data.result === true) {
-            Swal.fire({
-                icon: "success",
-                title: "등록완료",
-                text: "등록한 회의는 목록에서 확인할 수 있습니다",
-            }).then(() => {
-                router.replace({ name: 'ProjectList' }) //프로젝트 조회페이지로 이동
-            });
-        }
+        Swal.fire({
+            icon: "success",
+            title: "등록완료",
+            text: "등록한 회의는 목록에서 확인할 수 있습니다",
+        }).then(() => {
+            router.replace({ name: 'MeetList' }) //프로젝트 조회페이지로 이동
+        });
     } catch (err) {
         Swal.fire({
             icon: "error",
