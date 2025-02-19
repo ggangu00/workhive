@@ -37,24 +37,31 @@ export function dateTimeFormat(value) {
 export function numberFormat(num) {
     if (!num) return '0';
     return Number(num).toLocaleString();
-}; 
+};
 
 // 날짜차이 계산
 export function dateTermCalc(date) {
     const endDate = new Date(date);
     const today = new Date();
-    
+
     const diff = endDate - today;
 
-    let diffDay = Math.floor(diff / (1000*60*60*24))+1;
-    
-    if(diffDay == 0){
+    let diffDay = Math.floor(diff / (1000 * 60 * 60 * 24)) + 1;
+
+    if (diffDay == 0) {
         diffDay = "-day";
-    }else if(diffDay < 0){
-        diffDay = "+" + (diffDay*(-1));
-    }else{
+    } else if (diffDay < 0) {
+        diffDay = "+" + (diffDay * (-1));
+    } else {
         diffDay = "-" + diffDay;
     }
 
     return diffDay;
 }
+
+//날짜 요일계산
+export function dateGetDay(dateString){
+    const days = ['일', '월', '화', '수', '목', '금', '토'];
+    const date = new Date(dateString);
+    return days[date.getDay()]; // 0: 일요일, 1: 월요일, ...
+};

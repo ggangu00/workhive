@@ -5,12 +5,15 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.egovframe.rte.fdl.property.EgovPropertyService;
+import org.egovframe.rte.psl.dataaccess.util.EgovMap;
+import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,9 +29,6 @@ import egovframework.com.cmm.util.EgovUserDetailsHelper;
 import egovframework.com.uss.olp.mgt.service.EgovMeetingManageService;
 import egovframework.com.uss.olp.mgt.service.MeetingManageVO;
 import egovframework.com.utl.fcc.service.EgovStringUtil;
-import org.egovframe.rte.fdl.property.EgovPropertyService;
-import org.egovframe.rte.psl.dataaccess.util.EgovMap;
-import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 /**
  * 회의관리를 처리하기 위한 Controller 구현 Class
  * @author 공통서비스 장동한
@@ -155,8 +155,8 @@ public class EgovMeetingManageController {
 	 * @throws Exception
 	 */
     @IncludedInfo(name="회의관리", order = 650 ,gid = 50)
-	@RequestMapping(value="/uss/olp/mgt/EgovMeetingManageList.do")
-	public String egovMeetingManageList(
+	@GetMapping("/list")
+	public List<EgovMap> egovMeetingManageList(
 			@ModelAttribute("searchVO") ComDefaultVO searchVO,
 			@RequestParam Map<?, ?> commandMap,
 			MeetingManageVO meetingManageVO,
@@ -187,7 +187,7 @@ public class EgovMeetingManageController {
 		paginationInfo.setTotalRecordCount(totCnt);
         model.addAttribute("paginationInfo", paginationInfo);
 
-		return "egovframework/com/uss/olp/mgt/EgovMeetingManageList";
+		return sampleList;
 
 	}
 
@@ -200,7 +200,7 @@ public class EgovMeetingManageController {
 	 * @return "egovframework/com/uss/olp/mgt/EgovMeetingManageDetail"
 	 * @throws Exception
 	 */
-	@RequestMapping(value="/uss/olp/mgt/EgovMeetingManageDetail.do")
+    @GetMapping("/info/{mtgId}")
 	public String egovMeetingManageDetail(
 			@ModelAttribute("searchVO") ComDefaultVO searchVO,
 			MeetingManageVO meetingManageVO,
@@ -263,8 +263,8 @@ public class EgovMeetingManageController {
     			return sLocationUrl;
     		}
     		//아이디 설정
-        	meetingManageVO.setFrstRegisterId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
-        	meetingManageVO.setLastUpdusrId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
+        	meetingManageVO.setCreateId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
+        	meetingManageVO.setUpdateId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
 
         	egovMeetingManageService.updateMeetingManage(meetingManageVO);
         	sLocationUrl = "redirect:/uss/olp/mgt/EgovMeetingManageList.do";
@@ -307,6 +307,7 @@ public class EgovMeetingManageController {
 		String sLocationUrl = "egovframework/com/uss/olp/mgt/EgovMeetingManageRegist";
 
 		String sCmd = commandMap.get("cmd") == null ? "" : (String)commandMap.get("cmd");
+		LOGGER.info("🔹 받은 데이터: {}", commandMap);
 		LOGGER.info("cmd => {}", sCmd);
 
         if(sCmd.equals("save")){
@@ -316,13 +317,13 @@ public class EgovMeetingManageController {
 //    			return sLocationUrl;
 //    		}
     		//아이디 설정
-        	meetingManageVO.setFrstRegisterId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
-        	meetingManageVO.setLastUpdusrId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
+        	meetingManageVO.setCreateId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
+        	meetingManageVO.setUpdateId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
 
         	egovMeetingManageService.insertMeetingManage(meetingManageVO);
         	sLocationUrl = "redirect:/uss/olp/mgt/EgovMeetingManageList.do";
         	
-        	LOGGER.info("🔹 받은 데이터: {}", commandMap);
+        	
         }
 
 		return sLocationUrl;

@@ -98,48 +98,17 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>1</td>
+                            <tr :key="i" v-for="(meet, i) in meetList">
+                                <td>{{ i + 1 }}</td>
                                 <td>진행예정</td>
                                 <td>내부</td>
                                 <td>
-                                    <div class="subject">세미나 일정관련 회의</div>
+                                    <div class="subject"><a href="#" @click="modalOpen(meet.mtgId)">{{ meet.mtgNm }}</a></div>
                                 </td>
-                                <td>2025-02-04(화) 13:00 ~ 13:30</td>
-                                <td>회의실A</td>
+                                <td>{{ dateFormat(meet.mtgDe) }}({{ dateGetDay(meet.mtgDe) }}) {{ meet.mtgBeginTm }} ~ {{
+                                    meet.mtgEndTm }}</td>
+                                <td>{{ meet.mtgPlace }}</td>
                                 <td>김민진, 신강현, 박주현 외 3명</td>
-                                <td>
-                                    <button class="btn btn-success btn-fill btn-sm mr-1">수정</button>
-                                    <button class="btn btn-danger btn-fill btn-sm mr-1">삭제</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>진행예정</td>
-                                <td>프로젝트</td>
-                                <td>
-                                    <div class="subject">'빵돌2 빵순2 MES 시스템' 현황 보고</div>
-                                </td>
-                                <td>2025-02-04(화) 13:00 ~ 13:30</td>
-                                <td>회의실A</td>
-                                <td>김민진, 신강현</td>
-                                <td>
-                                    <button class="btn btn-success btn-fill btn-sm mr-1">수정</button>
-                                    <button class="btn btn-danger btn-fill btn-sm mr-1">삭제</button>
-                                </td>
-                            </tr>
-                            <tr class="table-secondary">
-                                <td>2</td>
-                                <td>완료</td>
-                                <td>프로젝트</td>
-                                <td>
-                                    <div class="subject">'빵돌2 빵순2 MES 시스템' 현황 보고</div>
-                                </td>
-                                <td>2025-02-04(화) 13:00 ~ 13:30</td>
-                                <td>회의실A</td>
-                                <td>
-                                    <div class="subject">김민진, 신강현</div>
-                                </td>
                                 <td>
                                     <button class="btn btn-success btn-fill btn-sm mr-1">수정</button>
                                     <button class="btn btn-danger btn-fill btn-sm mr-1">삭제</button>
@@ -153,35 +122,41 @@
     </div>
 </template>
 
-<script>
-import Card from '@/components/Cards/Card.vue'
+<script setup>
+import axios from "axios";
+import Swal from 'sweetalert2';
+import { onBeforeMount, ref } from 'vue';
+import Card from '../../components/Cards/Card.vue'
+import { dateFormat, dateGetDay } from '../../assets/js/common.js'
 
-export default {
-    components: {
-        Card
-    },
-    data() {
-        return {
-            user: {
-                company: 'Light dashboard',
-                username: 'michael23',
-                email: '',
-                firstName: 'Mike',
-                lastName: 'Andrew',
-                address: 'Melbourne, Australia',
-                city: 'melbourne',
-                country: 'Australia',
-                postalCode: '',
-                aboutMe: `Lamborghini Mercy, Your chick she so thirsty, I'm in that two seat Lambo.`
-            }
-        }
-    },
-    methods: {
-        updateProfile() {
-            alert('Your data: ' + JSON.stringify(this.user))
-        }
+//---------------데이터-------------- 
+
+onBeforeMount(() => {
+    meetGetList();
+});
+
+//---------------모달--------------
+//-------------버튼이벤트------------
+
+
+//---------------axios--------------
+
+const meetList = ref([]);
+const meetCount = ref(0);
+const meetGetList = async () => { //회의 전체조회
+    try {
+        const result = await axios.get('/api/meet/list');
+
+        meetList.value = result.data;
+        meetCount.value = result.data.length;
+    } catch (err) {
+        meetList.value = [];
+
+        Swal.fire({
+            icon: "error",
+            title: "API 조회 오류",
+            text: "Error : " + err
+        });
     }
 }
-
 </script>
-<style></style>

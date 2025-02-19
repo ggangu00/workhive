@@ -228,29 +228,29 @@ public class MeetingManageVO implements Serializable {
 	 * mtgBeginTime attribute 를 리턴한다.
 	 * @return the String
 	 */
-	public String getMtgBeginTime() {
+	public String getMtgBeginTm() {
 		return mtgBeginTm;
 	}
 	/**
 	 * mtgBeginTime attribute 값을 설정한다.
 	 * @return mtgBeginTime String
 	 */
-	public void setMtgBeginTime(String mtgBeginTime) {
-		this.mtgBeginTm = mtgBeginTime;
+	public void setMtgBeginTm(String mtgBeginTm) {
+		this.mtgBeginTm = mtgBeginTm;
 	}
 	/**
 	 * mtgEndTime attribute 를 리턴한다.
 	 * @return the String
 	 */
-	public String getMtgEndTime() {
+	public String getMtgEndTm() {
 		return mtgEndTm;
 	}
 	/**
 	 * mtgEndTime attribute 값을 설정한다.
 	 * @return mtgEndTime String
 	 */
-	public void setMtgEndTime(String mtgEndTime) {
-		this.mtgEndTm = mtgEndTime;
+	public void setMtgEndTm(String mtgEndTm) {
+		this.mtgEndTm = mtgEndTm;
 	}
 	/**
 	 * clsdrMtgAt attribute 를 리턴한다.
@@ -536,57 +536,57 @@ public class MeetingManageVO implements Serializable {
 	 * frstRegisterPnttm attribute 를 리턴한다.
 	 * @return the String
 	 */
-	public String getFrstRegisterPnttm() {
+	public String getCreateDt() {
 		return createDt;
 	}
 	/**
 	 * frstRegisterPnttm attribute 값을 설정한다.
 	 * @return frstRegisterPnttm String
 	 */
-	public void setFrstRegisterPnttm(String frstRegisterPnttm) {
-		this.createDt = frstRegisterPnttm;
+	public void setCreateDt(String createDt) {
+		this.createDt = createDt;
 	}
 	/**
 	 * frstRegisterId attribute 를 리턴한다.
 	 * @return the String
 	 */
-	public String getFrstRegisterId() {
+	public String getCreateId() {
 		return createId;
 	}
 	/**
 	 * frstRegisterId attribute 값을 설정한다.
 	 * @return frstRegisterId String
 	 */
-	public void setFrstRegisterId(String frstRegisterId) {
-		this.createId = frstRegisterId;
+	public void setCreateId(String createId) {
+		this.createId = createId;
 	}
 	/**
 	 * lastUpdusrPnttm attribute 를 리턴한다.
 	 * @return the String
 	 */
-	public String getLastUpdusrPnttm() {
+	public String getUpdateDt() {
 		return updateDt;
 	}
 	/**
 	 * lastUpdusrPnttm attribute 값을 설정한다.
 	 * @return lastUpdusrPnttm String
 	 */
-	public void setLastUpdusrPnttm(String lastUpdusrPnttm) {
-		this.updateDt = lastUpdusrPnttm;
+	public void setUpdateDt(String updateDt) {
+		this.updateDt = updateDt;
 	}
 	/**
 	 * lastUpdusrId attribute 를 리턴한다.
 	 * @return the String
 	 */
-	public String getLastUpdusrId() {
+	public String getUpdateId() {
 		return updateId;
 	}
 	/**
 	 * lastUpdusrId attribute 값을 설정한다.
 	 * @return lastUpdusrId String
 	 */
-	public void setLastUpdusrId(String lastUpdusrId) {
-		this.updateId = lastUpdusrId;
+	public void setUpdateId(String updateId) {
+		this.updateId = updateId;
 	}
 	/**
 	 * cmd attribute 를 리턴한다.
@@ -601,6 +601,12 @@ public class MeetingManageVO implements Serializable {
 	 */
 	public void setCmd(String cmd) {
 		this.cmd = cmd;
+	}
+	public String getTypeCd() {
+		return typeCd;
+	}
+	public void setTypeCd(String typeCd) {
+		this.typeCd = typeCd;
 	}
 
 }
