@@ -1,6 +1,7 @@
 package egovframework.com.cmm;
 
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.SQLSyntaxErrorException;
 import java.util.Collections;
 import java.util.Map;
 
@@ -28,7 +29,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@RestControllerAdvice
+@RestControllerAdvice // json
 public class GlobalRestControllerExceptionHandler {
 
 	// Java 예외
@@ -120,6 +121,17 @@ public class GlobalRestControllerExceptionHandler {
 			throws JsonProcessingException {
 
 		Map<String, Object> map = Collections.singletonMap("error", " Null값 오류 : " + ex.getMessage());
+		ObjectMapper objMap = new ObjectMapper(); // json 형태
+
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON)
+				.body(objMap.writeValueAsString(map));
+	}
+	
+	@ExceptionHandler(SQLSyntaxErrorException.class) // SQL Syntax Error
+	public ResponseEntity<String> SQLSyntaxErrorException(SQLSyntaxErrorException ex)
+			throws JsonProcessingException {
+
+		Map<String, Object> map = Collections.singletonMap("error", " SQL 문법 오류 : " + ex.getMessage());
 		ObjectMapper objMap = new ObjectMapper(); // json 형태
 
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON)

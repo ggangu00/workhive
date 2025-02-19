@@ -50,12 +50,8 @@
 		logoutSuccessUrl="/EgovContent.do"
 		loginFailureUrl="/uat/uia/egovLoginUsr.do?login_error=1"
 		accessDeniedUrl="/sec/ram/accessDenied.do"
-
 		dataSource="egov.dataSource"
-		jdbcUsersByUsernameQuery="SELECT USER_ID, ESNTL_ID AS PASSWORD, 1 ENABLED, USER_NM, USER_ZIP,
-                                                              USER_ADRES, USER_EMAIL, ORGNZT_ID, ESNTL_ID,
-                                                              (select a.ORGNZT_NM from COMTNORGNZTINFO a where a.ORGNZT_ID = m.ORGNZT_ID) ORGNZT_NM
-                                                       FROM COMVNUSERMASTER m WHERE USER_ID =?"
+		jdbcUsersByUsernameQuery="SELECT mem_id, pass, mem_nm FROM member WHERE mem_id = ?"
 		jdbcMapClass="egovframework.com.sec.security.common.EgovSessionMapping"
 
 		requestMatcherType="regex"

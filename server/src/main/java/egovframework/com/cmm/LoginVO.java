@@ -3,6 +3,8 @@ package egovframework.com.cmm;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import egovframework.com.common.service.CommonDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,10 +31,10 @@ import lombok.NoArgsConstructor;
  *  @see
  *  
  */
-//@Data
-//@Builder
-//@AllArgsConstructor
-//@NoArgsConstructor //Builder, All, No 세투세투
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor //Builder, All, No 세투세투
 public class LoginVO implements Serializable{
 	
 	private static final long serialVersionUID = -8274004534207618049L;
@@ -44,7 +46,7 @@ public class LoginVO implements Serializable{
 	/** 주민등록번호 */
 	private String ihidNum;
 	/** 이메일주소 */
-	private String email;
+	//private String email;
 	/** 비밀번호 */
 	private String password;
 	/** 비밀번호 힌트 */
@@ -70,32 +72,41 @@ public class LoginVO implements Serializable{
 	/** 디지털원패스 사용자세션값 */
 	private String onepassIntfToken;
 	
-//	
-//	private String memCd; 	// 사번코드
-//	private String memId;	// 회원ID
-//	private String pass;	// 비밀번호
-//	private String wrnCnt;	// 로그인 실패 횟수
-//	private String lockYn;	// 계정 잠금 여부
-//	private String memNm;	// 회원명
-//	private String post;	// 우편번호
-//	private String addr;	// 주소
-//	private String addrDtl;	// 상세주소
-//	private String status;	// 회원상태
-//	private String areaTel;	// 지역번호
-//	private String midTel;	// 중간 전화번호
-//	private String endTel;	// ㄲ
-//	private String phone;
-//	private String email;
-//	private String hireDt;
-//	private String quitDt;
-//	private String createDt;
-//	private String createId;
-//	private String updateDt;
-//	private String updateId;
-//	private String delYn;
-//	private String gradeCd;
-//	private String respCd;
-//	private String deptCd;
+	
+	private String memCd; 	// 사번코드
+	private String memId;	// 회원ID
+	private String pass;	// 비밀번호
+	private int wrnCnt;	// 로그인 실패 횟수
+	private String lockYn;	// 계정 잠금 여부
+	private String memNm;	// 회원명
+	private String post;	// 우편번호
+	private String addr;	// 주소
+	private String addrDtl;	// 상세주소
+	private String status;	// 회원상태
+	private String areaTel;	// 지역번호
+	private int midTel;	// 중간 전화번호
+	private int endTel;	// 끝 전화번호
+	private String phone;	// 휴대폰
+	private String email;	// 이메일
+	
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private String hireDt;	// 입사일
+	
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private String quitDt;	// 퇴사일
+	
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private String createDt;// 등록일
+	private String createId;// 등록자
+	
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private String updateDt;// 수정일
+	private String updateId;// 수정자
+	
+	private String delYn;	// 삭제여부
+	private String gradeCd;	// 직급
+	private String respCd;	// 직책
+	private String deptCd;	// 부서
 	
 	
 	/**
