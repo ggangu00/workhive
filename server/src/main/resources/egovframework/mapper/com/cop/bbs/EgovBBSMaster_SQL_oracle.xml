@@ -101,7 +101,7 @@
 			SELECT 
 				a.BBS_ID, a.BBS_TY_CODE, b.CODE_NM as BBS_TY_CODE_NM,
 				a.BBS_NM, 
-				a.TMPLAT_ID, a.USE_AT, 
+				a.TMPLAT_ID, a.USE_AT,a.ANSWER_AT,a.FILE_ATCH_POSBL_AT,
 				TO_CHAR(a.FRST_REGIST_PNTTM, 'YYYY-MM-DD') as FRST_REGIST_PNTTM
 			FROM
 				COMTNBBSMASTER a
@@ -178,14 +178,14 @@
 				BBS_NM = #{bbsNm},
 				BBS_INTRCN = #{bbsIntrcn}, 
 				BBS_TY_CODE = #{bbsTyCode},
-				BBS_ATTRB_CODE = #{bbsAttrbCode}
+				BBS_ATTRB_CODE = #{bbsAttrbCode},
 				FILE_ATCH_POSBL_AT = #{fileAtchPosblAt},
 				ATCH_POSBL_FILE_NUMBER = #{atchPosblFileNumber},
 				ATCH_POSBL_FILE_SIZE = #{atchPosblFileSize},
 				TMPLAT_ID = #{tmplatId},		
 				LAST_UPDUSR_ID = #{lastUpdusrId},
 				LAST_UPDT_PNTTM = SYSDATE,
-				USE_AT = #{useAt}
+				USE_AT = #{useAt},
 				ANSWER_AT = #{answerAt}
 			WHERE BBS_ID = #{bbsId}
  		
