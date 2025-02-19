@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DocumentDTO {
+	//문서
     private String docCd;           
     private String docTitle;                 
     private String docCnEditor;     
@@ -22,4 +23,5 @@ public class DocumentDTO {
     private String formCd;
     private String deptNm;
     private String delYn;
+    private String formNm;
 }

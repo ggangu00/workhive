@@ -31,12 +31,22 @@
 		   #{formCd})
     </insert>
     
+    <!-- 문서양식 -->
+    <select id="formSelectAll" resultType = "egovframework.com.approval.service.FormDTO">
+    	SELECT
+    		form_cd,
+    		form_type,
+    		form_file
+    	FROM FORM_TYPE
+    </select>
+    
     <!-- 문서카운트 -->
     <select id="getCount" resultType="int">
-	  SELECT COUNT(*) FROM DOCUMENT
-	  <where>
-	  <include refid="searchCriteria"></include>
-	  </where>
+	  SELECT 
+	  COUNT(*) 
+	  FROM document
+	  where 1=1
+	  <include refid="searchCriteria" />
 	</select>
 	
     <!-- 문서조회 -->
@@ -56,6 +66,7 @@
 		                fn_get_codename(DOC_KIND) as doc_kind,
 		                atch_file_id,
 		                form_cd,
+		                fn_get_formnm(form_cd) as form_nm,
 		                del_yn
 		            FROM DOCUMENT
 		                WHERE 1=1
@@ -70,17 +81,29 @@
 	<!-- 검색조건함수 -->
     <sql id="searchCriteria">
         <if test="status != null and status != ''">
-            AND CRNT_SIGN_STAT = #{status}
+            AND crnt_sign_stat = #{status}
         </if>
         <if test="delYn != null and delYn != ''">
-            AND DEL_YN = #{delYn}
+            AND del_yn = #{delYn}
         </if>
         <if test="formCd != null and formCd != ''">
-            AND FORM_CD = #{formCd}
+            AND form_cd = #{formCd}
         </if>
 		<if test="docKind != null and docKind != ''">
-            AND DOC_KIND = #{docKind}
+            AND doc_kind = #{docKind}
         </if>
-
+        <if test="deptNm != null and deptNm != ''">
+            AND fn_get_deptNm(MEM_CD) = #{deptNm}
+        </if>
+		<if test='!startDate.isEmpty()'>
+			<![CDATA[
+			and to_char(draft_dt, 'yyyy-mm-dd') >= #{startDate}
+			]]>
+		</if>
+		<if test='!endDate.isEmpty()'>
+			<![CDATA[
+			and to_char(draft_dt, 'yyyy-mm-dd') <= #{endDate}
+			]]>
+		</if>
     </sql>
 </mapper>

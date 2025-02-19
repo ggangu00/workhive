@@ -1,5 +1,6 @@
 package egovframework.com.approval.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -18,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import egovframework.com.approval.service.DocumentDTO;
 import egovframework.com.approval.service.DocumentService;
+import egovframework.com.approval.service.FormDTO;
 import egovframework.com.approval.service.SearchDTO;
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,6 +41,7 @@ public class DocumentController {
 		}
     }
 	
+	//리스트조회(조건별)
 	@GetMapping("/list")
 	public Map<String, Object> getCompletedDocuments(@RequestParam(required = false) String status,
 												     @RequestParam(required = false) int page,
@@ -84,6 +87,13 @@ public class DocumentController {
 		data.put("contents", documentService.documentSelectAll(searchDTO));
 		
 		return map;
+	}
+	
+	//문서양식조회
+	// 부서 전체조회
+	@GetMapping("/form")
+	public List<FormDTO> formList() {
+		return documentService.formSelectAll();
 	}
 	 
 

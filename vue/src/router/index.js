@@ -22,6 +22,7 @@ import SignIn from "../views/Login/SignIn.vue";
 import ApprovalList from "../components/PaymentLayout/ApprovalList.vue";
 import ApprovalLine from "../components/PaymentLayout/ApprovalLine.vue";
 import ApprovalRegister from "../components/PaymentLayout/ApprovalRegister.vue";
+import ApprovalInfo from "../components/PaymentLayout/ApprovalInfo.vue";
 //skh
 import Test from "../views/Approval/test.vue";
 import RegisterTest from "../views/Approval/RegisterTest.vue";
@@ -164,6 +165,11 @@ const routes = [
       path: '/approvalRegister',
       name: 'ApprovalRegister',
       component: ApprovalRegister
+   },
+   {
+      path: '/approvalInfo',
+      name: 'ApprovalInfo',
+      component: ApprovalInfo
    },
    //skh
 

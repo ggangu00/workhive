@@ -23,32 +23,35 @@
                   :value="data.commDtlCd">
                   {{ data.commDtlNm }}
                   </option>
+                </select>
 
+                <select class="form-select w10" name="dept_nm" v-model="deptNm">
+                  <option v-for="(data, idx) in selectedDeptData" 
+                  :key="idx"
+                  :value="data.deptNm">
+                  {{ data.deptNm }}
+                  </option>
                 </select>
-                <select class="form-select w10" name="dept_nm">
-                  <option disabled selected>부서</option>
-                  <option value="">기획팀</option>
-                  <option value="">영업팀</option>
-                </select>
-                <select class="form-select w10" name="form_cd">
-                  <option disabled selected>양식</option>
-                  <option value="">구입신청서</option>
-                  <option value="">외부지출서</option>
-                  <option value="">증명서</option>
+                <select class="form-select w10" name="form_cd" v-model="formType">
+                  <option v-for="(data, idx) in selectedFormData" 
+                  :key="idx"
+                  :value="data.formCd">
+                  {{ data.formType }}
+                  </option>
                 </select>
                 <div class="d-flex">
                   <div class="input-group">
                     <span class="input-group-text fw-bold">기안일(시작)</span>
-                    <input type="date" class="form-control">
+                    <input type="date" class="form-control" v-model="startDate">
                   </div>
                   <span class="fw-bold">~</span>
                   <div class="input-group">
                     <span class="input-group-text fw-bold">기안일(종료)</span>
-                    <input type="date" class="form-control">
+                    <input type="date" class="form-control" v-model="endDate">
                   </div>
                 </div>
                 
-                <button class="btn btn-secondary btn-fill">초기화</button>
+                <button class="btn btn-secondary btn-fill" @click="resetBtn">초기화</button>
               </div>
             </div>
           </div>
@@ -85,17 +88,43 @@ const page = ref(1);
 // Grid 및 필터 설정
 const grid = ref(null);
 const docKind = ref('');
+const deptNm = ref('전체');
+const formType = ref('');
 const rowData = ref([]);
+const startDate = ref('');
+const endDate = ref('');
+
 //셀렉트박스
-const selectedData = ref([]);
+const selectedData = ref([]); //문서종류 셀렉트박스
+const selectedDeptData =ref([]); //부서종류 셀렉트박스
+const selectedFormData =ref([]); //문서양식종류 셀렉트박스
 
 //공통코드 가져오기
 const commonDtlList = async () =>{
   const docKind = await axios.get(`/api/comm/codeList`, {
     params: {cd:'DK'}
   });
-  selectedData.value = [...docKind.data]
+  selectedData.value = [{ commDtlCd: "", commDtlNm: "전체" } ,...docKind.data]
 }
+//부서명 가져오기
+const deptList = async () =>{
+  const deptNm = await axios.get('/api/department')
+  selectedDeptData.value=[{ deptNm: "전체" } , ...deptNm.data]
+}
+//양식유형 가져오기
+const formList = async () =>{
+  const formType = await axios.get('/api/document/form')
+  selectedFormData.value=[{ formCd:'', formType: "전체"}, ...formType.data]
+}
+//초기화 버튼
+const resetBtn = () =>{
+  deptNm.value = "전체";  // 부서 선택 초기화
+  docKind.value = "";       // 문서 종류 초기화
+  startDate.value = "";     // 날짜 초기화
+  endDate.value = "";       // 날짜 초기화
+  formType.value = "";
+  }
+
 // API 요청 파라미터
 const getParams = ({
   status: props.status,
@@ -114,12 +143,10 @@ const dataSource = {
       initParams: getParams, // 페이지, 상태코드(미결, 반려, 진행완료)
     },
   },
-  
 }
 
 // Toast Grid 초기화
 const TueGrid = () => {
-
   grid.value = new window.tui.Grid({
     el: document.getElementById("tableGrid"),
     scrollX: true,
@@ -142,27 +169,52 @@ const handleRowClick = (ev) => {
   if (!grid.value) return;
   const dataRow = grid.value.getRow(ev.rowKey);
 
+  let routePath ='';
+
   // 특정 조건일 때 페이지 이동
   if (dataRow?.crntSignStat == "반려") {
-    router.push({ path: "/approval/rejectedInfo" });
+    routePath = "/approval/rejectedInfo"
+  }else if (dataRow?.crntSignStat == "완료") {
+    routePath = "/approval/completedInfo";
+  }else if (dataRow?.crntSignStat == "미결") {
+    routePath = "/approval/pendingInfo"
+  }else if (dataRow?.crntSignStat == "진행중") {
+    routePath = "/approval/proceedInfo"
   }
+
+  console.log(dataRow)
+  router.push({
+    path: routePath,
+    query :{
+      docKind : dataRow.docKind,
+      formNm : dataRow.formNm,
+      deptNm : dataRow.deptNm,
+      docTitle : dataRow.docTitle,
+      docCnEditor : dataRow.docCnEditor
+    }
+  });
 };
 
 onMounted(() => {
   TueGrid(); // Grid 초기화 실행
-  commonDtlList();
+  commonDtlList(); //공통코드
+  deptList(); //부서코드 
+  formList(); //문서유형
 });
 
-//셀렉트박스 변경시 필터 감지하여 재로딩
-watch(docKind, async (newVal) => {
+//문서 유형 셀렉트박스 변경시 필터 감지하여 재로딩
+watch([docKind, deptNm, formType, startDate, endDate], async ([newDodKind, newDeptNm, newFormType, newStartDate, newEndDate]) => {
     const response = await axios.get("/api/document/list", { params: {
-      docKind : newVal,
+      docKind : newDodKind,
+      deptNm : newDeptNm === "전체" ? "" : newDeptNm,
+      formCd : newFormType,
+      startDate : newStartDate,
+      endDate : newEndDate,
       perPage: 5,
       page: page.value
     } });
 
-    console.log(response)
-    rowData.value = [...response.data.data.contents];
+    rowData.value = [...response.data?.data?.contents ?? [], {...response.data?.data?.pagination ?? []}];
     if (grid.value) {
       grid.value.resetData(rowData.value);
     }

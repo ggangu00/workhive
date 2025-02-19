@@ -7,7 +7,7 @@
       />
       <!--  이벤트추가-->
     </div>
-  </template>
+  </template> 
   
   <script>
   import ApprovalRegister from '@/components/PaymentLayout/ApprovalRegister.vue';
