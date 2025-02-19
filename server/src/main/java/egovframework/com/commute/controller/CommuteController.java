@@ -83,6 +83,13 @@ public class CommuteController {
 		
 		return result;
 	}
-	
+
+	// 날짜 기준 출퇴근 단건 조회
+	@GetMapping("/dateCmtInfo")
+	public CommuteDTO dateCmtInfo(@RequestParam(name="commuteDt") String commuteDt) {
+		CommuteDTO result = service.dateCmtSelect(commuteDt);
+		
+		return result;
+	}
 
 }

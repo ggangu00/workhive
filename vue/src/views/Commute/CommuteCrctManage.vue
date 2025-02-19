@@ -30,11 +30,11 @@
                   <tbody>
                     <tr>
                       <th>근무 일자</th>
-                      <td><input type="date" id="wordDate" class="form-control" v-model="crctData.commuteDt"></td>
+                      <td><input type="date" id="wordDate" class="form-control" v-model="crctData.commuteDt" v-bind:readonly="isUpdate"></td>
                       <th>출근 시간</th>
-                      <td><input type="datetime-local" class="form-control" v-model="crctData.goTime"></td>
+                      <td><input type="datetime-local" class="form-control" v-model="crctData.goTime" readonly></td>
                       <th>퇴근 시간</th>
-                      <td><input type="datetime-local" class="form-control" v-model="crctData.leaveTime"></td>
+                      <td><input type="datetime-local" class="form-control" v-model="crctData.leaveTime" readonly></td>
                     </tr>
                     <tr>
                       <th>정정 출근 시간</th>
@@ -75,16 +75,16 @@
 </template>
 
 <script setup>
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
-import { ref, onMounted } from 'vue';
-import { dateFormat, dateTimeFormat } from '../../assets/js/common.js';
+import { ref, onBeforeMount , onMounted, watch } from 'vue';
+import { dateTimeFormat } from '../../assets/js/common.js';
 
 const route = useRoute();
-// 넘겨받은 출퇴근 코드
-let cmtCd = route.query.cmtCd;
+let isUpdate;
+let cmtCd;
+let crctCd;
 
-// 등록 화면 데이터
 let crctData = ref({
   commuteCd: '',
   commuteDt: '',
@@ -96,25 +96,65 @@ let crctData = ref({
   atchFileId: '',
   signId: '',
 });
+
+// 날짜 변경 감지(등록용 데이터 가져오기)
+watch (() => crctData.value.commuteDt, async () => {
+  console.log("날짜 감지");
+  let result = await axios.get(`/api/commute/dateCmtInfo`, {params: {commuteDt: crctData.value.commuteDt}});
+  
+  crctData.value.commuteCd = result.data.commuteCd;
+  crctData.value.goTime = result.data.goTime;
+  crctData.value.leaveTime = result.data.leaveTime;
+  crctData.value.crctGoTime = result.data.goTime;
+  crctData.value.crctLeaveTime = result.data.leaveTime;
+}, {deep:true});
+// 등록 화면 데이터 가져오기
 const cmtGetInfo = async () => {
   let result = await axios.get(`/api/commute/cmtInfo?commuteCd=${cmtCd}`);
 
-  console.log("cmtCd : ", result);
   crctData.value.commuteCd = result.data.commuteCd;
-  crctData.value.commuteDt = dateFormat(result.data.commuteDt, 'yyyy-MM-dd hh:mm:ss');
+  crctData.value.commuteDt = dateTimeFormat(result.data.commuteDt, 'yyyy-MM-dd');
   crctData.value.goTime = result.data.goTime;
   crctData.value.leaveTime = result.data.leaveTime;
   crctData.value.crctGoTime = result.data.goTime;
   crctData.value.crctLeaveTime = result.data.leaveTime;
 }
+// 수정 화면 데이터 가져오기
+const crctGetInfo = async () => {
+  let result = await axios.get(`/api/commute/crctInfo?crctCd=${crctCd}`);
 
+  crctData.value = result.data;
+  crctData.value.commuteDt = dateTimeFormat(result.data.commuteDt, 'yyyy-MM-dd');
+}
+
+onBeforeMount(() => {
+  let test = route.query;
+  console.log("전체 테스트 : ", test);
+  let pageState = route.query.isUpdate;
+  if(pageState == 'true')
+    isUpdate = true;
+  else
+    isUpdate = false;
+  
+})
 onMounted(() => {
-  cmtGetInfo();
+  if(!isUpdate) {
+    console.log('등록 페이지 동작');
+    cmtCd = route.query.cmtCd;
+    cmtGetInfo();
+  } else {
+    console.log('수정 페이지 동작');
+    crctCd = route.query.crctCd;
+    crctGetInfo();
+  }
 });
 
 // 저장/취소
+const router = useRouter();
 const btnCrctManage = async () => {
   const addData = new FormData();
+
+  addData.append("crctCd", crctData.value.crctCd);
   addData.append("commuteCd", crctData.value.commuteCd);
   addData.append("crctGoTime", dateTimeFormat(crctData.value.crctGoTime, 'yyyy-MM-dd hh:mm:ss'));
   addData.append("crctLeaveTime", dateTimeFormat(crctData.value.crctLeaveTime, 'yyyy-MM-dd hh:mm:ss'));
@@ -123,11 +163,15 @@ const btnCrctManage = async () => {
   addData.append("createId", 'user01');
   addData.append("signId", crctData.value.signId);
   
-  await axios.post('/api/commute/crctAdd', addData);
+  if(!isUpdate)
+    await axios.post('/api/commute/crctAdd', addData);
+  else
+    await axios.post('/api/commute/crctModify', addData);
 
+  router.push({ name: 'CrctList' });
 }
-const btnCrctCancle = () => {
-
+const btnCrctCancle = () => { // 뒤로가기
+  router.go(-1);
 }
 
 </script>

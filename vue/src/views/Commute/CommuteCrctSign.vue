@@ -24,8 +24,8 @@
 
           <div class="row">
             <div class="col">
-                <!-- grid -->
-
+              <!-- grid -->
+              <div id="crctGrid"></div>
 
             </div>
           </div>
@@ -54,7 +54,8 @@
 
           <div class="row">
             <div class="col">
-                <!-- grid -->
+              <!-- grid -->
+              <div id="signGrid"></div>
 
 
             </div>
@@ -69,7 +70,61 @@
 </template>
 
 <script setup>
+// import axios from 'axios';
+import Grid from 'tui-grid';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 
+let crctGridInstance = ref();
+let crctList = ref();
+let crctCol = [
+  { header: '체크박스', name: ''},
+  { header: '근무일자', name: ''},
+  { header: '출근시간', name: ''},
+  { header: '퇴근시간', name: ''},
+  { header: '정정출근시간', name: ''},
+  { header: '정정퇴근시간', name: ''},
+  { header: '신청일', name: ''},
+  { header: '신청자', name: ''},
+];
+let signGridInstance = ref();
+let signList = ref();
+let signCol = [
+  { header: '체크박스', name: ''},
+  { header: '근무일자', name: ''},
+  { header: '출근시간', name: ''},
+  { header: '퇴근시간', name: ''},
+  { header: '정정출근시간', name: ''},
+  { header: '정정퇴근시간', name: ''},
+  { header: '신청일', name: ''},
+  { header: '신청자', name: ''},
+  { header: '결재일', name: ''},
+  { header: '결재상태', name: ''},
+];
+
+// Grid 초기화
+const initGrid = (gridInstance, gridDiv, rowData, colData) => {
+  gridInstance.value = new Grid({
+    el: document.getElementById(gridDiv),
+    data: rowData.value,
+    scrollX: false,
+    scrollY: true,
+    columns: colData,
+  });
+};
+
+// Toast Grid 초기화
+onMounted(() => {
+  initGrid(crctGridInstance, 'crctGrid', crctList, crctCol);
+  initGrid(signGridInstance, 'signGrid', signList, signCol);
+  
+});
+
+
+// 컴포넌트가 파괴될 때 기존 Grid 삭제
+onBeforeUnmount(() => {
+  if (crctGridInstance.value) crctGridInstance.value.destroy();
+  if (signGridInstance.value) signGridInstance.value.destroy();
+});
 </script>
 
 
