@@ -13,7 +13,7 @@ import PersonalManage from '../views/Setting/PersonalManage.vue';
 import MemberManage from '../views/Setting/MemberManage.vue'
 import DepartmentManage from "../views/Setting/DepartmentManage.vue";
 import AuthorityManage from "../views/Setting/AuthorityManage.vue";
-import SignIn from "../views/Login/SignIn.vue";
+import FindPw from '../views/Login/findPassword.vue';
 
 
 
@@ -115,14 +115,14 @@ const routes = [
 
    // kmj
    {  // 로그인
-      path: '/signIn',
-      name: 'SignIn',
-      component: SignIn,
-   },
-   {  // 로그인
       path: '/login',
       name: 'Login',
       component: Login,
+   },
+   {  // 패스워드 찾기
+      path: '/findPw',
+      name: 'FindPw',
+      component: FindPw,
    },
    { // 개인정보 설정
       path: '/setting/personalInfo',
