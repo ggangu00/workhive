@@ -19,7 +19,7 @@ export function dateFormat(value) {
    return result;
 };
 
-export function dateTimeFormat(value) {
+export function dateTimeFormat(value, format) {
    let date = value == null ? new Date() : new Date(value);
 
    let year = date.getFullYear();
