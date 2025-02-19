@@ -165,9 +165,9 @@ const TueGrid = () => {
 };
 
 // 행 클릭 이벤트 핸들러
-const handleRowClick = (ev) => {
+const handleRowClick = (e) => {
   if (!grid.value) return;
-  const dataRow = grid.value.getRow(ev.rowKey);
+  const dataRow = grid.value.getRow(e.rowKey);
 
   let routePath ='';
 
