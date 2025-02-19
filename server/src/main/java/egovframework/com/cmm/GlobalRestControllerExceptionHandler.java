@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@RestControllerAdvice
+@RestControllerAdvice // json
 public class GlobalRestControllerExceptionHandler {
 
 	// Java 예외

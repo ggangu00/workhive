@@ -18,6 +18,8 @@ import egovframework.com.cmm.LoginVO;
 import egovframework.com.cmm.config.EgovLoginConfig;
 import egovframework.com.cmm.util.EgovUserDetailsHelper;
 import egovframework.com.uat.uia.service.EgovLoginService;
+import egovframework.com.utl.sim.service.EgovClntInfo;
+import org.egovframe.rte.psl.dataaccess.util.EgovMap;
 
 /**
  * Spring Security 기반 로그인 필터
@@ -46,18 +48,31 @@ public class EgovSpringSecurityLoginFilter implements Filter {
     private FilterConfig config;
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovSpringSecurityLoginFilter.class);
 
+    /**
+     * 필터 초기화 메서드
+     * @param filterConfig 필터 설정
+     * @throws ServletException 서블릿 예외 발생 시
+     */
     @Override
-    public void destroy() {
-        // 필터 제거 시 호출되는 메서드 (현재 별도 처리 없음)
+    public void init(FilterConfig filterConfig) throws ServletException {
+        this.config = filterConfig;
     }
 
+    /**
+     * 필터 실행 메서드
+     * @param request  HTTP 요청
+     * @param response HTTP 응답
+     * @param chain    필터 체인
+     * @throws IOException      입출력 예외 발생 시
+     * @throws ServletException 서블릿 예외 발생 시
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
         LOGGER.info("EgovSpringSecurityLoginFilter 호출됨...");
 
-        // 로그인 URL 및 로그인 처리 URL 설정
+        // 로그인 URL 및 로그인 처리 URL 설정 (공백 문자 제거)
         String loginURL = config.getInitParameter("loginURL").replaceAll("\r", "").replaceAll("\n", "");
         String loginProcessURL = config.getInitParameter("loginProcessURL").replaceAll("\r", "").replaceAll("\n", "");
 
@@ -116,9 +131,12 @@ public class EgovSpringSecurityLoginFilter implements Filter {
         chain.doFilter(request, response);
     }
 
+    /**
+     * 필터 제거 메서드
+     */
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-        this.config = filterConfig;
+    public void destroy() {
+        // 필터 제거 시 호출되는 메서드 (현재 별도 처리 없음)
     }
 }
 
@@ -129,22 +147,41 @@ class RequestWrapperForSecurity extends HttpServletRequestWrapper {
     private final String username;
     private final String password;
 
+    /**
+     * 요청 래퍼 생성자
+     * @param request   원본 요청 객체
+     * @param username  사용자 아이디
+     * @param password  사용자 비밀번호
+     */
     public RequestWrapperForSecurity(HttpServletRequest request, String username, String password) {
         super(request);
         this.username = username;
         this.password = password;
     }
 
+    /**
+     * Spring Security 로그인 URL 반환
+     * @return 인증 요청 URI
+     */
     @Override
     public String getServletPath() {
         return ((HttpServletRequest) super.getRequest()).getContextPath() + "/egov_security_login";
     }
 
+    /**
+     * Spring Security 인증 요청 URI 반환
+     * @return 요청된 URI
+     */
     @Override
     public String getRequestURI() {
         return ((HttpServletRequest) super.getRequest()).getContextPath() + "/egov_security_login";
     }
 
+    /**
+     * 요청 파라미터 반환 (Spring Security 인증을 위해 사용자 정보 설정)
+     * @param name 파라미터 이름
+     * @return 사용자 정보 또는 기존 파라미터 값
+     */
     @Override
     public String getParameter(String name) {
         if ("egov_security_username".equals(name)) {
