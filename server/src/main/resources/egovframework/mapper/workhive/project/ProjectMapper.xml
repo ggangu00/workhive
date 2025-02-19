@@ -151,7 +151,7 @@
 			plan_nm,
 			start_week,
 			end_week,
-			create_id,
+			create_id
 		)
 		VALUES (
 			pr_plan_cd_seq.nextval,
