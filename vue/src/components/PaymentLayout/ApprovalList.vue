@@ -17,10 +17,10 @@
               </div>
 
               <div class="selectbox d-flex">
-                <select class="form-select w10" name="doc_kind" v-model="deptNm">
+                <select class="form-select w10" name="doc_kind" v-model="docKind">
                   <option v-for="(data, idx) in selectedData" 
                   :key="idx"
-                  :value="data.commDtlNm">
+                  :value="data.commDtlCd">
                   {{ data.commDtlNm }}
                   </option>
 
@@ -80,13 +80,12 @@ const props = defineProps({
 
 // Vue Router 사용
 const router = useRouter();
-let deptNm = ref('');
+const page = ref(1);
 
 // Grid 및 필터 설정
 const grid = ref(null);
-const filters = ref({
-  deptNm: deptNm.value
-});
+const docKind = ref('');
+const rowData = ref([]);
 //셀렉트박스
 const selectedData = ref([]);
 
@@ -100,11 +99,11 @@ const commonDtlList = async () =>{
 // API 요청 파라미터
 const getParams = ({
   status: props.status,
-  deptNm: filters.value.deptNm,
-  docKind: filters.value.docKind,
-  formCd: filters.value.formCd,
-  startDate: filters.value.startDate,
-  endDate: filters.value.endDate,
+  deptNm: '',
+  docKind: '',
+  formCd: '',
+  startDate: '',
+  endDate: '',
 });
 
 const dataSource = {
@@ -120,8 +119,6 @@ const dataSource = {
 
 // Toast Grid 초기화
 const TueGrid = () => {
-
-  console.log(filters.value);
 
   grid.value = new window.tui.Grid({
     el: document.getElementById("tableGrid"),
@@ -156,10 +153,24 @@ onMounted(() => {
   commonDtlList();
 });
 
-watch(getParams.value ,()=>{
-  if(getParams){
-  alert("asasdasdadadsdas")}
-})
+//셀렉트박스 변경시 필터 감지하여 재로딩
+watch(docKind, async (newVal) => {
+    const response = await axios.get("/api/document/list", { params: {
+      docKind : newVal,
+      perPage: 5,
+      page: page.value
+    } });
+
+    console.log(response)
+    rowData.value = [...response.data.data.contents];
+    if (grid.value) {
+      grid.value.resetData(rowData.value);
+    }
+});
+
+
+
+
 </script>
 
 <style scoped>
