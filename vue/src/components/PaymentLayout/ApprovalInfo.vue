@@ -14,7 +14,7 @@
                             v-for="(btn, index) in headButtons" 
                             :key="index"
                             :class="['btn', btn.class, 'btn-fill']"
-                            @click="$emit('button-click', btn.action)">
+                            @click="$emit('button-click', btn.label)">
                             <!-- 자식컴포넌트 클릭이벤트 -->
                             {{ btn.label }}
                           </button>
@@ -196,6 +196,7 @@
       initialEditType: 'wysiwyg',
       previewStyle: 'vertical'
     });
+
   };
 
 

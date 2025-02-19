@@ -33,6 +33,7 @@ import PendingList from "../views/Approval/PendingList.vue";
 import ProceedList from "../views/Approval/ProceedList.vue";
 import RejectedList from "../views/Approval/RejectedList.vue";
 import RejectedInfo from "../views/Approval/RejectedInfo.vue";
+import RestartDraft from "../views/Approval/RestartDraft.vue";
 
 
 // pjh
@@ -174,6 +175,11 @@ const routes = [
    },
    //skh
 
+   { //
+      path: '/approval/restartDraft',
+      name: 'RestartDraft',
+      component: RestartDraft
+   },
    { //
       path: '/schdule/test',
       name: 'Test',

@@ -32,13 +32,13 @@
                       </div>
                       <div class="d-flex justify-content-between mb-1">
                           <div class="col-3 input-box">
-                            <input type="text">
+                            <input type="text" v-model='docKind'>
                           </div>
                           <div class="col-3 input-box">
-                            <input type="text">
+                            <input type="text" v-model='formNm'>
                           </div>
                           <div class="col-3 input-box">
-                            <input type="text">
+                            <input type="text" v-model='deptNm'>
                           </div>
                       </div>
                     </div>
@@ -52,7 +52,7 @@
                     </div>
                     <!-- 에디터 -->
                     <div class='col-12'>
-                        <div id="editor"></div>
+                        <div id="editor" ref='editorElement'></div>
                     </div>
                     <div class="d-flex" style='margin-top: 20px;'>
                       <!-- 왼쪽 -->
@@ -148,9 +148,21 @@ import { ref, onMounted,onUnmounted, nextTick } from 'vue';
 import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor } from '@toast-ui/editor';
 import ApprovalLine from '../../components/PaymentLayout/ApprovalLine.vue';
-//import { useRoute } from 'vue-router';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+
+//에디터객체
+const editor = ref('');
+const editorElement = ref('');
 
 //데이터받기
+const docCd = ref("");
+const docKind = ref("");
+const formNm = ref("");
+const deptNm = ref("");
+const docTitle = ref("");
+const docCnEditor = ref("");
 
 defineProps({
   headButtons: { type: Array, required: true },
@@ -170,35 +182,55 @@ const handleModalOpen = () => {
 
 //  Bootstrap 모달 이벤트 리스너 추가
 onMounted(() => {
-  const modalElement = document.getElementById('approvalRegiModal');
-  if (modalElement) {
-    modalElement.addEventListener('shown.bs.modal', handleModalOpen);
-  }
-});
-
-//  컴포넌트 언마운트 시 이벤트 리스너 제거
-onUnmounted(() => {
-    nextTick(() => {
-    initEditor();
+  nextTick(() => {
     const modalElement = document.getElementById('approvalRegiModal');
     if (modalElement) {
-      modalElement.removeEventListener('shown.bs.modal', handleModalOpen);
+      modalElement.addEventListener('shown.bs.modal', handleModalOpen);
     }
+
+    //query값 가져오기
+    docCd.value = route.query.docCd || "";
+    docKind.value = route.query.docKind || "";
+    formNm.value = route.query.formNm || "";
+    deptNm.value = route.query.deptNm || "";
+    docTitle.value = route.query.docTitle || "";
+    docCnEditor.value = route.query.docCnEditor || "";
+
+    initEditor();
   });
 });
 
 const fileList = ref([]);
-const editor = ref('');
 
+//에디터
 const initEditor = () => {
-  editor.value = new Editor({
-    el: document.querySelector('#editor'),
-    height: '500px',
-    initialEditType: 'wysiwyg ' ,
-    previewStyle: 'vertical'
-  });
+  if (editorElement.value) {
+    editor.value = new Editor({
+      el: editorElement.value,
+      height: '500px',
+      initialEditType: 'wysiwyg',
+      previewStyle: 'vertical'
+    });
+
+  //   if (docCnEditor.value) {
+  //   editor.value.setMarkdown(docCnEditor.value);
+  // }else{
+  //   console.log('dssad')
+  // }
+  }
 };
 
+//  컴포넌트 언마운트 시 이벤트 리스너 제거 (페이지이동)
+onUnmounted(() => {
+    const modalElement = document.getElementById('approvalRegiModal');
+    if (modalElement) {
+      modalElement.removeEventListener('shown.bs.modal', handleModalOpen);
+    }
+    if (editor.value) {
+    editor.value.destroy();
+    editor.value = null;
+  }
+});
 
 
 </script>
