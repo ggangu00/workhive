@@ -9,6 +9,33 @@
                url="#"
                :aria-controls="''"
                v-bind:collapse="false"
+               collapseRef="/login"
+               navText="Login"
+            >
+               <template v-slot:icon>
+                  <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+               </template>
+            </sidenav-collapse>
+         </li>
+
+         <li class="nav-item">
+            <sidenav-collapse
+               url="#"
+               :aria-controls="''"
+               v-bind:collapse="false"
+               collapseRef="/home"
+               navText="Home"
+            >
+               <template v-slot:icon>
+                  <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+               </template>
+            </sidenav-collapse>
+         </li>
+         <li class="nav-item">
+            <sidenav-collapse
+               url="#"
+               :aria-controls="''"
+               v-bind:collapse="false"
                collapseRef="/guide"
                navText="레이아웃"
             >

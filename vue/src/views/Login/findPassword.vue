@@ -48,8 +48,8 @@
             <button type="button" class="btn_login">로그인</button>
          </div>
 
-         <ul class="find_wrap" id="find_wrap">
-            <li><a href="#" class="find_text">비밀번호 찾기</a></li>
+         <ul class="find_wrap">
+            <li><button onclick="location.href ='/project/add'">비밀번호 찾기</button></li>
             <li>|</li>
             <li><a href="#" class="find_text">아이디 찾기</a></li>
          </ul>
@@ -61,6 +61,7 @@
 <script setup>
    import { onBeforeMount, onBeforeUnmount, ref } from "vue";
    import { useStore } from "vuex";
+   //import { useRouter } from "vue-router";
 
 // ================================================== side, header 숨기기 ==================================================
    const store = useStore();
@@ -96,6 +97,13 @@
    const passwordReset = () => {
       password.value = "";
    };
+
+   // 비밀번호 찾기 페이지로 이동
+   // const router = useRouter();
+   // const goToFindPw = () => {
+   //    router.push({ path : '/findPw' });
+   // }
+
 </script>
 
 <style scoped>
