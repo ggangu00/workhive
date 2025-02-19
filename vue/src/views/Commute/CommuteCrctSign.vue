@@ -73,6 +73,7 @@
 import axios from 'axios';
 import Grid from 'tui-grid';
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
+import { dateTimeFormat } from '../../assets/js/common';
 
 // 그리드 인스턴스
 let crctGridInstance = ref();
@@ -84,26 +85,24 @@ let signList = ref();
 
 // 그리드 컬럼 데이터
 let crctCol = [
-  { header: '체크박스', name: ''},
-  { header: '근무일자', name: ''},
-  { header: '출근시간', name: ''},
-  { header: '퇴근시간', name: ''},
-  { header: '정정출근시간', name: ''},
-  { header: '정정퇴근시간', name: ''},
-  { header: '신청일', name: ''},
-  { header: '신청자', name: ''},
+  { header: '근무일자', name: 'commuteDt'},
+  { header: '출근시간', name: 'goTime'},
+  { header: '퇴근시간', name: 'leaveTime'},
+  { header: '정정출근시간', name: 'crctGoTime'},
+  { header: '정정퇴근시간', name: 'crctLeaveTime'},
+  { header: '신청일', name: 'createDt'},
+  { header: '신청자', name: 'createId'},
 ];
 let signCol = [
-  { header: '체크박스', name: ''},
-  { header: '근무일자', name: ''},
-  { header: '출근시간', name: ''},
-  { header: '퇴근시간', name: ''},
-  { header: '정정출근시간', name: ''},
-  { header: '정정퇴근시간', name: ''},
-  { header: '신청일', name: ''},
-  { header: '신청자', name: ''},
-  { header: '결재일', name: ''},
-  { header: '결재상태', name: ''},
+  { header: '근무일자', name: 'commuteDt'},
+  { header: '출근시간', name: 'goTime'},
+  { header: '퇴근시간', name: 'leaveTime'},
+  { header: '정정출근시간', name: 'crctGoTime'},
+  { header: '정정퇴근시간', name: 'crctLeaveTime'},
+  { header: '신청일', name: 'createDt'},
+  { header: '신청자', name: 'createId'},
+  { header: '결재일', name: 'signDt'},
+  { header: '결재상태', name: 'signState'},
 ];
 
 // 조회 조건
@@ -121,15 +120,31 @@ const signSrchData = ref({
 // 그리드 데이터 조회 메소드
 const crctGetList = async () => {
   const result = await axios.get('/api/commute/signerList', { params : crctSrchData.value });
-  crctList.value = result.data;
 
+  crctList.value = result.data;
+  listFormat(crctList.value);
+  
   crctGridInstance.value.resetData(crctList.value);
 }
 const signGetList = async () => {
   const result = await axios.get('/api/commute/signedList', { params : signSrchData.value });
+
   signList.value = result.data;
+  listFormat(signList.value);
 
   signGridInstance.value.resetData(signList.value);
+}
+// 그리드 데이터 형식 변경
+const listFormat = (list) => {
+  list.forEach(i => {
+    i.commuteDt = dateTimeFormat(i.commuteDt, 'yyyy-MM-dd');
+    i.goTime = dateTimeFormat(i.goTime, 'MM/dd hh:mm');
+    i.leaveTime = dateTimeFormat(i.leaveTime, 'MM/dd hh:mm');
+    i.crctGoTime = dateTimeFormat(i.crctGoTime, 'MM/dd hh:mm');
+    i.crctLeaveTime = dateTimeFormat(i.crctLeaveTime, 'MM/dd hh:mm');
+    i.createDt = dateTimeFormat(i.createDt, 'yyyy-MM-dd');
+    i.signDt = dateTimeFormat(i.signDt, 'yyyy-MM-dd');
+  });
 }
 
 // 실시간 조회 조건
@@ -147,6 +162,7 @@ const initGrid = (gridInstance, gridDiv, rowData, colData) => {
     data: rowData.value,
     scrollX: false,
     scrollY: true,
+    rowHeaders: ['checkbox'],
     columns: colData,
   });
 };
