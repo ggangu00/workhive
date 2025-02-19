@@ -70,12 +70,19 @@
 </template>
 
 <script setup>
-// import axios from 'axios';
+import axios from 'axios';
 import Grid from 'tui-grid';
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 
+// 그리드 인스턴스
 let crctGridInstance = ref();
+let signGridInstance = ref();
+
+// 그리드 로우 데이터
 let crctList = ref();
+let signList = ref();
+
+// 그리드 컬럼 데이터
 let crctCol = [
   { header: '체크박스', name: ''},
   { header: '근무일자', name: ''},
@@ -86,8 +93,6 @@ let crctCol = [
   { header: '신청일', name: ''},
   { header: '신청자', name: ''},
 ];
-let signGridInstance = ref();
-let signList = ref();
 let signCol = [
   { header: '체크박스', name: ''},
   { header: '근무일자', name: ''},
@@ -101,6 +106,40 @@ let signCol = [
   { header: '결재상태', name: ''},
 ];
 
+// 조회 조건
+const crctSrchData = ref({
+  signId: 'admin01',
+  startDate: '',
+  endDate: '',
+})
+const signSrchData = ref({
+  signId: 'admin01',
+  startDate: '',
+  endDate: '',
+})
+
+// 그리드 데이터 조회 메소드
+const crctGetList = async () => {
+  const result = await axios.get('/api/commute/signerList', { params : crctSrchData.value });
+  crctList.value = result.data;
+
+  crctGridInstance.value.resetData(crctList.value);
+}
+const signGetList = async () => {
+  const result = await axios.get('/api/commute/signedList', { params : signSrchData.value });
+  signList.value = result.data;
+
+  signGridInstance.value.resetData(signList.value);
+}
+
+// 실시간 조회 조건
+watch(() => crctSrchData, () => {
+  crctGetList();
+}, {deep:true});
+watch(() => signSrchData, () => {
+  signGetList();
+}, {deep:true});
+
 // Grid 초기화
 const initGrid = (gridInstance, gridDiv, rowData, colData) => {
   gridInstance.value = new Grid({
@@ -112,11 +151,14 @@ const initGrid = (gridInstance, gridDiv, rowData, colData) => {
   });
 };
 
+
 // Toast Grid 초기화
 onMounted(() => {
   initGrid(crctGridInstance, 'crctGrid', crctList, crctCol);
   initGrid(signGridInstance, 'signGrid', signList, signCol);
   
+  crctGetList();
+  signGetList();
 });
 
 
