@@ -39,4 +39,17 @@
 		  FROM comtnentrprsmber
 		  ORDER BY create_dt desc
 	</select>
+	
+	<!-- 홈 대시보드 건수 조회 (진행중인 프로젝트, 금일 예정 일정, 미완료 일지) -->
+	<select id="homeInfo" parameterType="String">
+	<![CDATA[
+	select
+	    NVL((select count(*) from project project join project_mem pm on project.pr_cd=pm.pr_cd where project.state='A02' and pm.mem_cd=m.mem_cd),0) as project_cnt,
+	    NVL((select count(*) from todo todo where todo.state='A02' and mem_cd=m.mem_cd),0) as todo_cnt,
+	    NVL((select count(*) from comtnschdulinfo sch WHERE TRUNC(TO_DATE(SCHDUL_BGNDE, 'YYYYMMDDHH24MI')) <= TRUNC(SYSDATE) and TRUNC(TO_DATE(SCHDUL_ENDDE, 'YYYYMMDDHH24MI')) >= TRUNC(SYSDATE)),0) as sch_cnt
+	from member m 
+	where mem_cd=#{memCd}
+	]]>
+	
+	</select>
 </mapper>

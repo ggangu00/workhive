@@ -20,17 +20,17 @@
             </div>
             <div class="status-box projects">
               <div class="status-title status-orange">진행중인 프로젝트</div>
-              <div class="status-content">2건</div>
+              <div class="status-content">{{homeInfo.project_cnt ? numberFormat(homeInfo.project_cnt) : 0 }}건</div>
             </div>
 
             <div class="status-box projects">
-              <div class="status-title status-green">진행중인 프로젝트</div>
-              <div class="status-content">2건</div>
+              <div class="status-title status-green">금일 예정 일정</div>
+              <div class="status-content">{{homeInfo.sch_cnt ? numberFormat(homeInfo.sch_cnt) : 0 }}건</div>
             </div>
 
             <div class="status-box projects">
-              <div class="status-title status-blue">진행중인 프로젝트</div>
-              <div class="status-content">2건</div>
+              <div class="status-title status-blue">미완료 일지</div>
+              <div class="status-content">{{homeInfo.todo_cnt ? numberFormat(homeInfo.todo_cnt) : 0 }}건</div>
             </div>
 
           </div>
@@ -182,3 +182,33 @@
     </div>
   </div>
 </template>
+
+<script setup>
+import axios from "axios";
+import Swal from 'sweetalert2';
+import { onBeforeMount, ref } from 'vue';
+import { numberFormat } from '../assets/js/common.js'
+
+//---------------데이터-------------- 
+
+onBeforeMount(() => {
+  homeGetInfo();
+});
+
+//---------------axios--------------
+const homeInfo = ref([]);
+const homeGetInfo = async () => { //프로젝트 단건조회
+  try {
+    const result = await axios.get(`/api/comm/homeInfo/2015001`);
+    homeInfo.value = result.data.info;
+  } catch (err) {
+    homeInfo.value = [];
+
+    Swal.fire({
+      icon: "error",
+      title: "API 조회 오류",
+      text: "Error : " + err
+    });
+  }
+}
+</script>
