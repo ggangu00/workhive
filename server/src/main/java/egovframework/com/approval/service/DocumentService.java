@@ -14,4 +14,7 @@ public interface DocumentService {
 	
 	//문서양식 이름 조회
 	public List<FormDTO> formSelectAll();
+	
+	//문서회수(상태값 회수로 변경)
+	public int documentUpdate(DocumentDTO documentDTO);
 }

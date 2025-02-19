@@ -20,5 +20,7 @@ public interface DocumentMapper {
 	
 	//양식조회
 	List<FormDTO> formSelectAll();
-
+	
+	//문서회수(상태값 회수로 변경)
+	int documentUpdate(DocumentDTO documentDTO);
 }

@@ -186,6 +186,7 @@ const handleRowClick = (ev) => {
   router.push({
     path: routePath,
     query :{
+      docCd : dataRow.docCd,
       docKind : dataRow.docKind,
       formNm : dataRow.formNm,
       deptNm : dataRow.deptNm,

@@ -144,7 +144,7 @@
 <!-- 모달 끝 -->
 </template>
 <script setup>
-import { ref, onMounted,onUnmounted } from 'vue';
+import { ref, onMounted,onUnmounted, nextTick } from 'vue';
 import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor } from '@toast-ui/editor';
 import ApprovalLine from '../../components/PaymentLayout/ApprovalLine.vue';
@@ -178,11 +178,13 @@ onMounted(() => {
 
 //  컴포넌트 언마운트 시 이벤트 리스너 제거
 onUnmounted(() => {
-  initEditor();
-  const modalElement = document.getElementById('approvalRegiModal');
-  if (modalElement) {
-    modalElement.removeEventListener('shown.bs.modal', handleModalOpen);
-  }
+    nextTick(() => {
+    initEditor();
+    const modalElement = document.getElementById('approvalRegiModal');
+    if (modalElement) {
+      modalElement.removeEventListener('shown.bs.modal', handleModalOpen);
+    }
+  });
 });
 
 const fileList = ref([]);
@@ -192,7 +194,7 @@ const initEditor = () => {
   editor.value = new Editor({
     el: document.querySelector('#editor'),
     height: '500px',
-    initialEditType: 'wysiwyg',
+    initialEditType: 'wysiwyg ' ,
     previewStyle: 'vertical'
   });
 };
@@ -200,7 +202,7 @@ const initEditor = () => {
 
 
 </script>
-<style>
+<style scoped>
   .modal-xl {
     max-width: 70vw !important; /* 모달 가로 크기 확장 */
   }
@@ -242,5 +244,6 @@ const initEditor = () => {
   }
   .left-card, .right-card {
     height: 100%;
+    
   }
 </style>

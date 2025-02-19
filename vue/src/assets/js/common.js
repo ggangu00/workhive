@@ -30,7 +30,13 @@ export function dateTimeFormat(value) {
    let min = ('0' + date.getMinutes()).slice(-2);
    let sec = ('0' + date.getSeconds()).slice(-2);
 
-   return `${year}-${month}-${day} ${hour}:${min}:${sec}`;
+    let result = format.replace('yyyy', year)
+                       .replace('MM', month)
+                       .replace('dd', day)
+                       .replace('hh', hour)
+                       .replace('mm', min)
+                       .replace('ss', sec);
+    return result;
 }
 
 // 숫자포맷 (천단위 콤마)
@@ -41,20 +47,27 @@ export function numberFormat(num) {
 
 // 날짜차이 계산
 export function dateTermCalc(date) {
-   const endDate = new Date(date);
-   const today = new Date();
+    const endDate = new Date(date);
+    const today = new Date();
 
-   const diff = endDate - today;
+    const diff = endDate - today;
 
-   let diffDay = Math.floor(diff / (1000*60*60*24))+1;
+    let diffDay = Math.floor(diff / (1000 * 60 * 60 * 24)) + 1;
 
-   if(diffDay == 0){
-      diffDay = "-day";
-   }else if(diffDay < 0){
-      diffDay = "+" + (diffDay*(-1));
-   }else{
-      diffDay = "-" + diffDay;
-   }
+    if (diffDay == 0) {
+        diffDay = "-day";
+    } else if (diffDay < 0) {
+        diffDay = "+" + (diffDay * (-1));
+    } else {
+        diffDay = "-" + diffDay;
+    }
 
-   return diffDay;
+    return diffDay;
 }
+
+//날짜 요일계산
+export function dateGetDay(dateString){
+    const days = ['일', '월', '화', '수', '목', '금', '토'];
+    const date = new Date(dateString);
+    return days[date.getDay()]; // 0: 일요일, 1: 월요일, ...
+};

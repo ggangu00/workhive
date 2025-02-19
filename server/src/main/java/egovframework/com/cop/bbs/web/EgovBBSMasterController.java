@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.persistence.PostUpdate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -400,7 +401,8 @@ public class EgovBBSMasterController {
      * @param model
      * @throws Exception
      */
-    @RequestMapping("/cop/bbs/updateBBSMasterView.do")
+    //@RequestMapping("/cop/bbs/updateBBSMasterView.do")
+    @PostMapping("/boardUpdate")
     public String updateBBSMasterView(@RequestParam("bbsId") String bbsId ,
             @ModelAttribute("searchVO") BoardMaster searchVO, ModelMap model)
             throws Exception {

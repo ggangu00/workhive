@@ -118,7 +118,7 @@
                url="#"
                :aria-controls="''"
                v-bind:collapse="false"
-               collapseRef="/approval/register"
+               collapseRef="/approval/"
                navText="전자결재"
             >
                <template v-slot:icon>
@@ -147,6 +147,7 @@
                <template v-slot:icon>
                   <i class="fa-regular fa-calendar-check"></i>
                </template>
+
                <template v-slot:list>
                   <li class="sub-item" @click="movePage('Calendar')">풀캘린더</li>
                </template>
@@ -245,6 +246,7 @@
                <template v-slot:list>
                   <li class="sub-item" @click="movePage('BoardList')">게시판 목록</li>
                   <li class="sub-item" @click="movePage('BoardAdd')">게시판 등록</li>
+                  <li class="sub-item" @click="movePage('BoardUpdate')">게시판 수정</li>
                </template>
             </sidenav-collapse>
          </li>

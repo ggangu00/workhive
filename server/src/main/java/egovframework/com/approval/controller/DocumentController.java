@@ -5,9 +5,13 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -90,11 +94,23 @@ public class DocumentController {
 	}
 	
 	//문서양식조회
-	// 부서 전체조회
 	@GetMapping("/form")
 	public List<FormDTO> formList() {
 		return documentService.formSelectAll();
 	}
 	 
-
+	//문서회수(상태변경회수 상태로)
+	// 권한 수정 처리
+	@PutMapping("/retrieve/{docCd}")
+		public ResponseEntity<String> documentUpdate(
+				@RequestBody DocumentDTO documentDTO,
+				@PathVariable(name="docCd") String docCd){
+		documentDTO.setDocCd(docCd);
+		return documentService.documentUpdate(documentDTO) == 1
+				? new ResponseEntity<>("success", HttpStatus.OK)
+				: new ResponseEntity<>( HttpStatus.INTERNAL_SERVER_ERROR);
+		
+	}
+	
+	
 }
