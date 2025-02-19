@@ -206,7 +206,7 @@
          Swal.fire({
             icon: "error",
             title: "API 조회 오류",
-            text:  "Error : " + err
+            text:  "Error : " + err.response.data.error
          });
       }
    };
@@ -225,7 +225,7 @@
          Swal.fire({
             icon: "error",
             title: "API 조회 오류",
-            text:  "Error : " + err
+            text:  "Error : " + err.response.data.error
          });
       }
    };
@@ -286,7 +286,7 @@
          Swal.fire({
             icon: "error",
             title: "수정 실패",
-            text:  "Error : " + err
+            text:  "Error : " + err.response.data.error
          });
       }
    };
@@ -305,7 +305,7 @@
          Swal.fire({
             icon: "error",
             title: "삭제 실패",
-            text:  "Error : " + err
+            text:  "Error : " + err.response.data.error
          });
       }
    };
