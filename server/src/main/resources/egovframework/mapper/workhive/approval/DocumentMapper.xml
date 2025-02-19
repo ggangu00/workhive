@@ -31,6 +31,15 @@
 		   #{formCd})
     </insert>
     
+    <!-- 문서회수(상태 회수로변경) -->
+    <update id="documentUpdate">
+    	update
+    		crnt_sign_stat='H05'
+    	from 
+    		document
+    	where doc_cd = #{docCd}
+    </update>
+    
     <!-- 문서양식 -->
     <select id="formSelectAll" resultType = "egovframework.com.approval.service.FormDTO">
     	SELECT

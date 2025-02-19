@@ -39,4 +39,9 @@ public class DocumentServiceImpl implements DocumentService{
 		return documentMapper.formSelectAll();
 	}
 
+	@Override
+	public int documentUpdate(DocumentDTO documentDTO) {
+		return documentMapper.documentUpdate(documentDTO);
+	}
+
 }

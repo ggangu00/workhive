@@ -118,7 +118,7 @@
                url="#"
                :aria-controls="''"
                v-bind:collapse="false"
-               collapseRef="/approval/register"
+               collapseRef="/approval/"
                navText="전자결재"
             >
                <template v-slot:icon>
@@ -147,6 +147,7 @@
                <template v-slot:icon>
                   <i class="fa-regular fa-calendar-check"></i>
                </template>
+
                <template v-slot:list>
                   <li class="sub-item" @click="movePage('Calendar')">풀캘린더</li>
                </template>
