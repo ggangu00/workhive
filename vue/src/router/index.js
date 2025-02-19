@@ -54,9 +54,9 @@ import DeptjobInfo from '../views/DeptStore/DeptJobInfo.vue';
 import VcList from '../views/Vacation/VacationInfo.vue';
 import VcManage from '../views/Vacation/VacationManage.vue';
 import VcSignManage from '../views/Vacation/VacationSign.vue';
-import CmtList from '../views/Commute/CommuteInfo.vue';
+import CmtList from '../views/Commute/CommuteList.vue';
 import CrctManage from '../views/Commute/CommuteCrctManage.vue';
-import CrctList from '../views/Commute/CommuteCrctInfo.vue';
+import CrctList from '../views/Commute/CommuteCrctList.vue';
 import CrctSignManage from '../views/Commute/CommuteCrctSign.vue';
 
 // kjg

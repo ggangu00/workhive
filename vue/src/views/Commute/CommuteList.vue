@@ -48,6 +48,7 @@ import { useStore } from "vuex";
 import axios from 'axios';
 import Grid from 'tui-grid';
 import { useRouter } from 'vue-router';
+import { dateTimeFormat } from '../../assets/js/common.js';
 
 const store = useStore();
 const rowData = computed(() => store.state.commuteList);
@@ -97,14 +98,14 @@ const initGrid = () => {
     scrollY: true,
     bodyHeight: 500,
     columns: [
-      { header: '근무일자', name: 'commuteDt' },
-      { header: '사원정보', name: 'memCd' },
-      { header: '출근시간', name: 'goTime' },
-      { header: '출근상태', name: 'goState' },
-      { header: '퇴근시간', name: 'leaveTime' },
-      { header: '퇴근상태', name: 'leaveState' },
-      { header: '근무시간', name: 'workTime' },
-      { header: '초과근무시간', name: 'overWorkTime' },
+      { header: '근무일자', name: 'commuteDt', align: 'center' },
+      { header: '사원정보', name: 'memCd', align: 'center' },
+      { header: '출근시간', name: 'goTime', align: 'center' },
+      { header: '출근상태', name: 'goState', align: 'center' },
+      { header: '퇴근시간', name: 'leaveTime', align: 'center' },
+      { header: '퇴근상태', name: 'leaveState', align: 'center' },
+      { header: '근무시간', name: 'workTime', align: 'center' },
+      { header: '초과근무시간', name: 'overWorkTime', align: 'center' },
       { header: '관리', name: 'action', align: 'center', renderer: BtnRenderer }
     ]
   });
@@ -118,6 +119,11 @@ onMounted(() => {
 
 // rowData가 변경될 때 Toast Grid 업데이트
 watch(rowData, (newData) => {
+  rowData.value.forEach(i => {
+    i.commuteDt = dateTimeFormat(i.commuteDt, 'yyyy-MM-dd');
+    i.goTime = dateTimeFormat(i.goTime, 'MM/dd hh:mm');
+    i.leaveTime = dateTimeFormat(i.leaveTime, 'MM/dd hh:mm');
+  });
   if (gridInstance.value) {
     gridInstance.value.resetData(newData);
   }
@@ -139,7 +145,7 @@ class BtnRenderer {
     el.className = "btn-group";
 
     el.innerHTML = `
-      <button class="btn btn-warning btn-fill cell-btn-custom me-2">정정요청</button>
+      <button class="btn btn-warning btn-fill cell-btn-custom">정정요청</button>
     `;
 
     el.addEventListener("click", () => {
@@ -167,7 +173,7 @@ const btnCrctAdd = (rowKey) => {
   let selectedRowData = gridInstance.value.getRow(rowKey);
   console.log("selectedRowData : ", selectedRowData.commuteCd);
 
-  router.push({ name: 'CrctManage', query: { cmtCd: selectedRowData.commuteCd } });
+  router.push({ name: 'CrctManage', query: { cmtCd: selectedRowData.commuteCd, isUpdate: false } });
 }
 
 

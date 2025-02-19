@@ -24,10 +24,11 @@ public class CommuteCrctDTO {
 
 	private String commuteDt;
 	private String goTime;
-	private String leave_time;
+	private String leaveTime;
 	
 	private String startDate;
 	private String endDate;
+	private String searchState;
 	
 	
 }

@@ -19,7 +19,7 @@ export function dateFormat(value) {
     return result;
 };
 
-export function dateTimeFormat(value) {
+export function dateTimeFormat(value, format) {
     let date = value == null ? new Date() : new Date(value);
 
     let year = date.getFullYear();
@@ -30,7 +30,13 @@ export function dateTimeFormat(value) {
     let min = ('0' + date.getMinutes()).slice(-2);
     let sec = ('0' + date.getSeconds()).slice(-2);
 
-    return `${year}-${month}-${day} ${hour}:${min}:${sec}`;
+    let result = format.replace('yyyy', year)
+                       .replace('MM', month)
+                       .replace('dd', day)
+                       .replace('hh', hour)
+                       .replace('mm', min)
+                       .replace('ss', sec);
+    return result;
 }
 
 // 숫자포맷 (천단위 콤마)

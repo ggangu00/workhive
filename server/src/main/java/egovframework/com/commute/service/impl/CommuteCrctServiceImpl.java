@@ -41,4 +41,14 @@ public class CommuteCrctServiceImpl implements CommuteCrctService {
 		return crctMapper.crctSelectAll(crctDTO);
 	}
 
+	@Override
+	public List<CommuteCrctDTO> crctSelectSigner(CommuteCrctDTO crctDTO) {
+		return crctMapper.crctSelectSigner(crctDTO);
+	}
+
+	@Override
+	public List<CommuteCrctDTO> crctSelectSigned(CommuteCrctDTO crctDTO) {
+		return crctMapper.crctSelectSigned(crctDTO);
+	}
+
 }

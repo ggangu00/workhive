@@ -46,5 +46,10 @@ public class CommuteServiceImpl implements CommuteService {
 	public CommuteDTO lastCmtSelect(String memCd) {
 		return commuteMapper.lastCmtSelect(memCd);
 	}
+
+	@Override
+	public CommuteDTO dateCmtSelect(String commuteDt) {
+		return commuteMapper.dateCmtSelect(commuteDt);
+	}
 	
 }

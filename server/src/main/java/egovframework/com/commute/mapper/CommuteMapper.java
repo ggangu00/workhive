@@ -15,5 +15,6 @@ public interface CommuteMapper {
 	CommuteDTO cmtSelect(String commuteCd);
 	List<CommuteDTO> cmtSelectAll(CommuteDTO commuteDTO);
 	CommuteDTO lastCmtSelect(String memCd);
+	CommuteDTO dateCmtSelect(String commuteDt);
 	
 }
