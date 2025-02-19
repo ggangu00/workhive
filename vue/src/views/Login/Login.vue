@@ -8,7 +8,7 @@
 
       <div class="mx-auto">
          <div class="login_box">
-            <div class="input_box mb20">
+            <div class="input_box mb10">
                <div class="input_item">
                   <!-- 아이디 입력 필드 -->
                   <input type="text" class="input_id" v-model="username">
@@ -38,7 +38,7 @@
             </div>
 
             <!-- 로그인 상태 유지 -->
-            <div class="form-check text-start">
+            <div class="form-check text-start m-0">
                <input class="form-check-input me-1" type="checkbox">
                <label class="form-check-label">로그인 상태 유지</label>
             </div>
@@ -48,8 +48,8 @@
             <button type="button" class="btn_login">로그인</button>
          </div>
 
-         <ul class="find_wrap" id="find_wrap">
-            <li><a href="#" class="find_text">비밀번호 찾기</a></li>
+         <ul class="find_wrap">
+            <li><a href="/findPw" class="find_text" @click="goToFindPw">비밀번호 찾기</a></li>
             <li>|</li>
             <li><a href="#" class="find_text">아이디 찾기</a></li>
          </ul>
@@ -61,6 +61,7 @@
 <script setup>
    import { onBeforeMount, onBeforeUnmount, ref } from "vue";
    import { useStore } from "vuex";
+   import { useRouter } from "vue-router";
 
 // ================================================== side, header 숨기기 ==================================================
    const store = useStore();
@@ -96,38 +97,10 @@
    const passwordReset = () => {
       password.value = "";
    };
+
+   // 비밀번호 찾기 페이지로 이동
+   const router = useRouter();
+   const goToFindPw = () => {
+      router.push({ path : '/findPw' });
+   }
 </script>
-
-<style scoped>
-
-.input_keep {
-   width: 15px;
-   height: 15px;
-}
-
-
-
-
-
-/* 아이디 / 비밀번호 찾기 */
-.find_wrap {
-   display: flex;
-   justify-content: center;
-   margin-top: 15px;
-   font-size: 14px;
-}
-
-.find_wrap li {
-   list-style: none;
-   margin: 0 10px;
-}
-
-.find_wrap a {
-   text-decoration: none;
-   color: #666;
-}
-
-.find_wrap a:hover {
-   text-decoration: underline;
-}
-</style>

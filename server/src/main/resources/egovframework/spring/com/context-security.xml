@@ -18,15 +18,35 @@
 2023.12.20   정진오                   표준프레임워크 v4.2 개선(SpEL(use-expressions) 설정 추가)
 -->
 
+	<!-- 특정 경로에 대해 Spring Security 적용 제외 (정적 리소스 허용) -->
 	<security:http pattern="/css/**" security="none"/>
 	<security:http pattern="/html/**" security="none"/>
     <security:http pattern="/images/**" security="none"/>
  	<security:http pattern="/js/**" security="none"/>
  	<security:http pattern="/resource/**" security="none"/>
  	<security:http pattern="\A/WEB-INF/jsp/.*\Z" request-matcher="regex" security="none"/>
-
+  	
+  	<!-- eGovFrame 보안 설정 -->
+  	<!-- 
+  		loginUrl : 로그인 URL
+  		logoutSuccessUr : 로그아웃 후 이동할 페이지
+  		loginFailureUrl : 로그인 실패 시 이동할 페이지
+  		accessDeniedUrl : 접근 거부 시 이동할 페이지
+  		dataSource : 데이터베이스 연결 설정
+  		jdbcUsersByUsernameQuery : 사용자 인증을 위한 SQL 쿼리
+  		requestMatcherType : 요청 매칭 방식 (정규식 사용)
+  		hash : 비밀번호 암호화 방식 (현재는 평문 저장) 
+  		concurrentMaxSessons : 동시 로그인 가능 개수 제한
+  		concurrentExpiredUrl : 동시 로그인 초과 시 이동할 페이지
+  		defaultTargetUrl : 로그인 성공 후 이동할 기본 URL
+  		sniff : X-Content-Type-Options 설정 (MIME 스니핑 방지)
+  		xframeOptions : X-Frame-Options 설정 (클릭재킹 방지)
+  		xssProtection : XSS 보호 활성화
+  		csrf : CSRF 보호 비활성화
+  		csrfAccessDeniedUrl : CSRF 차단 시 이동할 페이지
+  	 -->
     <egov-security:config id="securityConfig"
-		loginUrl="/uat/uia/egovLoginUsr.do"
+		loginUrl="/uat/uia/egovLoginUsr.do" 
 		logoutSuccessUrl="/EgovContent.do"
 		loginFailureUrl="/uat/uia/egovLoginUsr.do?login_error=1"
 		accessDeniedUrl="/sec/ram/accessDenied.do"
@@ -57,6 +77,7 @@
 		csrfAccessDeniedUrl="/egovCSRFAccessDenied.do"
 	/>
 
+	<!-- 보안 객체 설정 (역할 기반 접근 제어) -->
 	<egov-security:secured-object-config id="securedObjectConfig"
 		sqlHierarchicalRoles="
 			SELECT a.CHLDRN_ROLE as child, a.PARNTS_ROLE parent
@@ -83,7 +104,7 @@
 			AND a.ROLE_TY = 'regex'  
 			ORDER BY a.ROLE_SORT"
 	/>
-
+	<!-- 보안 초기화 설정 (Method 보안 활성화) -->
 	<egov-security:initializer id="initializer" supportMethod="true" supportPointcut="false" />
 
     <!-- URL에 세미콜론(semicolon)허용 여부(기본값/false) -->

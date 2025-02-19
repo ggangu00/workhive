@@ -6,9 +6,13 @@
          <h1>WorkHive</h1>
       </div>
 
+      <div class="mb20">
+         <h5>비밀번호를 찾고자 하는 아이디를 입력하세요</h5>
+      </div>
+
       <div class="mx-auto">
          <div class="login_box">
-            <div class="input_box mb20">
+            <div class="input_box">
                <div class="input_item">
                   <!-- 아이디 입력 필드 -->
                   <input type="text" class="input_id" v-model="username">
@@ -19,40 +23,13 @@
                      <i class="fa-solid fa-xmark"></i>
                   </button>
                </div>
-
-               <div class="input_item">
-                  <!-- 비밀번호 입력 필드 -->
-                  <input :type="isPasswordVisible ? 'text' : 'password'" class="input_pw" v-model="password">
-                  <label class="text_label">비밀번호</label>
-
-                  <!-- 비밀번호 보기/숨기기 버튼 -->
-                  <button v-if="password.length > 0" type="button" class="btn_view me-3" @click="togglePasswordVisibility">
-                     <i :class="['font-14', isPasswordVisible ? 'fa-solid fa-lock-open' : 'fa-solid fa-lock']"></i>
-                  </button>
-
-                  <!-- 비밀번호 입력 초기화 버튼 (한 글자 이상 입력 시 표시) -->
-                  <button v-if="password.length > 0" type="button" class="btn_delete" @click="passwordReset">
-                     <i class="fa-solid fa-xmark"></i>
-                  </button>
-               </div>
             </div>
 
-            <!-- 로그인 상태 유지 -->
-            <div class="form-check text-start">
-               <input class="form-check-input me-1" type="checkbox">
-               <label class="form-check-label">로그인 상태 유지</label>
-            </div>
          </div>
 
          <div class="btn_login_wrap">
-            <button type="button" class="btn_login">로그인</button>
+            <button type="button" class="btn_login">다음</button>
          </div>
-
-         <ul class="find_wrap">
-            <li><button onclick="location.href ='/project/add'">비밀번호 찾기</button></li>
-            <li>|</li>
-            <li><a href="#" class="find_text">아이디 찾기</a></li>
-         </ul>
       </div>
 
    </div>
@@ -80,22 +57,10 @@
    });
 
    const username = ref(""); // 아이디 입력값
-   const password = ref(""); // 비밀번호 입력값
-   const isPasswordVisible = ref(false); // 비밀번호 입력 체크
-
-   // 비밀번호 가리기/보이기 토글
-   const togglePasswordVisibility = () => {
-      isPasswordVisible.value = !isPasswordVisible.value;
-   };
 
    // 아이디 입력 초기화
    const usernameReset = () => {
       username.value = "";
-   };
-
-   // 비밀번호 입력 초기화
-   const passwordReset = () => {
-      password.value = "";
    };
 
    // 비밀번호 찾기 페이지로 이동

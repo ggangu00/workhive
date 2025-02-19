@@ -1,6 +1,13 @@
 package egovframework.com.cmm;
 
 import java.io.Serializable;
+import java.util.Date;
+
+import egovframework.com.common.service.CommonDTO;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @Class Name : LoginVO.java
@@ -22,11 +29,12 @@ import java.io.Serializable;
  *  @see
  *  
  */
+//@Data
+//@Builder
+//@AllArgsConstructor
+//@NoArgsConstructor //Builder, All, No 세투세투
 public class LoginVO implements Serializable{
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -8274004534207618049L;
 	
 	/** 아이디 */
@@ -61,7 +69,35 @@ public class LoginVO implements Serializable{
 	private String onepassUserkey;
 	/** 디지털원패스 사용자세션값 */
 	private String onepassIntfToken;
-
+	
+//	
+//	private String memCd; 	// 사번코드
+//	private String memId;	// 회원ID
+//	private String pass;	// 비밀번호
+//	private String wrnCnt;	// 로그인 실패 횟수
+//	private String lockYn;	// 계정 잠금 여부
+//	private String memNm;	// 회원명
+//	private String post;	// 우편번호
+//	private String addr;	// 주소
+//	private String addrDtl;	// 상세주소
+//	private String status;	// 회원상태
+//	private String areaTel;	// 지역번호
+//	private String midTel;	// 중간 전화번호
+//	private String endTel;	// ㄲ
+//	private String phone;
+//	private String email;
+//	private String hireDt;
+//	private String quitDt;
+//	private String createDt;
+//	private String createId;
+//	private String updateDt;
+//	private String updateId;
+//	private String delYn;
+//	private String gradeCd;
+//	private String respCd;
+//	private String deptCd;
+	
+	
 	/**
 	 * id attribute 를 리턴한다.
 	 * @return String

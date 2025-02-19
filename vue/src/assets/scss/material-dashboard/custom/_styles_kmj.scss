@@ -169,7 +169,7 @@
 .cst_tooltip {
    display: none;
    position: absolute;
-   border-radius: 2px;
+   border-radius: 3px;
    background-color: rgba(0, 0, 0, .6);
    color: #fff;
    font-size: 14px;
@@ -249,7 +249,7 @@
 /* 로그인 박스 */
 .login_box {
    border: 1px solid #e1e3e5;
-   border-radius: 5px;
+   border-radius: 3px;
    background-color: #fff;
    padding: 35px ;
    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
@@ -260,7 +260,7 @@
 
 .input_box {
    border: 1px solid #cfcfcf;
-   border-radius: 5px;
+   border-radius: 3px;
 }
 
 /* 입력 필드 */
@@ -270,19 +270,18 @@
    align-items: center;
    padding: 20px;
    background: #fff;
-
    padding: 27px 15px 8px;
-   border-radius: 5px;
+   border-radius: 3px;
    z-index: 1;
 }
 
 .input_item:first-child {
    border-bottom: 1px solid #cfcfcf;
-   border-radius: 5px 5px 0px 0px;
+   border-radius: 3px 3px 0px 0px;
 }
 
 .input_item:last-child {
-   border-radius: 0px 0px 5px 5px;
+   border-radius: 0px 0px 3px 3px;
 }
 
 /* 입력창 */
@@ -361,14 +360,36 @@
    background-color: #facc15;
    color: #fff;
    font-size: 18px;
-   font-weight: bold;
+   font-weight: 500;
    padding: 15px;
    border: none;
-   border-radius: 5px;
+   border-radius: 3px;
    cursor: pointer;
    transition: background 0.3s;
 }
 
 .btn_login:hover {
    background-color: #eab308;
+}
+
+/* 아이디 / 비밀번호 찾기 */
+.find_wrap {
+   display: flex;
+   justify-content: center;
+   margin-top: 15px;
+   font-size: 14px;
+}
+
+.find_wrap li {
+   list-style: none;
+   margin: 0 10px;
+}
+
+.find_wrap a {
+   text-decoration: none;
+   color: #666;
+}
+
+.find_wrap a:hover {
+   text-decoration: underline;
 }

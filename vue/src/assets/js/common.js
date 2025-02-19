@@ -1,34 +1,34 @@
 import axios from "axios";
 
-//공통함수 
+//공통함수
 export async function getComm(cd) { // comm_cd
-    let result = await axios.get(`/api/comm/codeList?cd=${cd}`)
-        .catch(err => console.log(err));
-    return result.data;
+   let result = await axios.get(`/api/comm/codeList?cd=${cd}`)
+      .catch(err => console.log(err));
+   return result.data;
 };
 
 // 날짜포맷 (yyyy-mm-dd 형식)
 export function dateFormat(value) {
-    let date = value == null ? new Date() : new Date(value);
+   let date = value == null ? new Date() : new Date(value);
 
-    let year = date.getFullYear();
-    let month = ('0' + (date.getMonth() + 1)).slice(-2);
-    let day = ('0' + date.getDate()).slice(-2);
+   let year = date.getFullYear();
+   let month = ('0' + (date.getMonth() + 1)).slice(-2);
+   let day = ('0' + date.getDate()).slice(-2);
 
-    let result = year + '-' + month + '-' + day;
-    return result;
+   let result = year + '-' + month + '-' + day;
+   return result;
 };
 
-export function dateTimeFormat(value, format) {
-    let date = value == null ? new Date() : new Date(value);
+export function dateTimeFormat(value) {
+   let date = value == null ? new Date() : new Date(value);
 
-    let year = date.getFullYear();
-    let month = ('0' + (date.getMonth() + 1)).slice(-2);
-    let day = ('0' + date.getDate()).slice(-2);
+   let year = date.getFullYear();
+   let month = ('0' + (date.getMonth() + 1)).slice(-2);
+   let day = ('0' + date.getDate()).slice(-2);
 
-    let hour = ('0' + date.getHours()).slice(-2);
-    let min = ('0' + date.getMinutes()).slice(-2);
-    let sec = ('0' + date.getSeconds()).slice(-2);
+   let hour = ('0' + date.getHours()).slice(-2);
+   let min = ('0' + date.getMinutes()).slice(-2);
+   let sec = ('0' + date.getSeconds()).slice(-2);
 
     let result = format.replace('yyyy', year)
                        .replace('MM', month)
@@ -41,8 +41,8 @@ export function dateTimeFormat(value, format) {
 
 // 숫자포맷 (천단위 콤마)
 export function numberFormat(num) {
-    if (!num) return '0';
-    return Number(num).toLocaleString();
+   if (!num) return '0';
+   return Number(num).toLocaleString();
 };
 
 // 날짜차이 계산
