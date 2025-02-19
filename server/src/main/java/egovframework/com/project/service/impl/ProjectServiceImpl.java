@@ -16,6 +16,8 @@ public class ProjectServiceImpl implements ProjectService{
 	@Resource
 	private ProjectMapper projectMapper;
 	
+	//======================프로젝트=====================
+	
 	//프로젝트 전체조회
 	@Override
 	public List<ProjectDTO> projectSelectAll() {
@@ -53,27 +55,55 @@ public class ProjectServiceImpl implements ProjectService{
 		return projectMapper.projectDelete(prCd) == 1 ? true : false;
 	}
 	
-	//프로젝트 과업조회
+	//======================프로젝트 과업=====================
+	
+	//프로젝트 과업 전체조회
 	@Override
-	public List<ProjectDTO> projectWorkSelect(String prCd) {
-		return projectMapper.projectWorkSelect(prCd);
+	public List<ProjectDTO> projectWorkSelectAll(String prCd) {
+		return projectMapper.projectWorkSelectAll(prCd);
+	}
+	
+	//프로젝트 과업 단건조회
+	@Override
+	public ProjectDTO projectWorkSelect(String prWorkCd) {
+		return projectMapper.projectWorkSelect(prWorkCd);
 	}
 
-	//프로젝트 과업 등록
+	//프로젝트 과업등록
 	@Override
 	public boolean projectWorkInsert(ProjectDTO project) {
 		return projectMapper.projectWorkInsert(project) == 1 ? true : false;
 	}
 	
-	//프로젝트 일정조회
+	//프로젝트 과업삭제
 	@Override
-	public List<ProjectDTO> projectPlanSelect(String prCd) {
-		return projectMapper.projectPlanSelect(prCd);
+	public boolean projectWorkDelete(String prWorkCd) {
+		return projectMapper.projectPlanDelete(prWorkCd) == 1 ? true : false;
+	}
+	
+	//======================프로젝트 일정=====================
+	
+	//프로젝트 일정 전체조회
+	@Override
+	public List<ProjectDTO> projectPlanSelectAll(String prCd) {
+		return projectMapper.projectPlanSelectAll(prCd);
+	}
+	
+	//프로젝트 일정 단건조회
+	@Override
+	public ProjectDTO projectPlanSelect(String prPlanCd) {
+		return projectMapper.projectPlanSelect(prPlanCd);
 	}
 
-	//프로젝트 일정 등록
+	//프로젝트 일정등록
 	@Override
 	public boolean projectPlanInsert(ProjectDTO project) {
 		return projectMapper.projectPlanInsert(project) == 1 ? true : false;
 	}	
+	
+	//프로젝트 일정삭제
+	@Override
+	public boolean projectPlanDelete(String prPlanCd) {
+		return projectMapper.projectPlanDelete(prPlanCd) == 1 ? true : false;
+	}
 }

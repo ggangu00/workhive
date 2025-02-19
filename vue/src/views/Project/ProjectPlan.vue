@@ -2,13 +2,14 @@
   <div class="content" @keydown.esc="modalClose">
     <div class="container-fluid schedule-container">
       <Card>
-        <h4 class="card-title float-left">프로젝트 조회</h4>
+        <h4 class="card-title float-left">프로젝트 일정관리</h4>
       </Card>
 
       <div class="card border-primary">
         <div class="card-body">
-          <p class="card-sub">대구사람이좋다협회</p>
-          <h5 class="card-title mb-3">{{ projectInfo.prNm }} <span class="badge badge-danger">D-10</span></h5>
+          <p class="card-sub">{{ projectInfo.comNm }}</p>
+          <h5 class="card-title mb-3">{{ projectInfo.prNm }} <span class="badge badge-danger">D{{
+            dateTermCalc(dateFormat(projectInfo.endDt)) }}</span></h5>
           <p class="card-sub"><b>기간 : </b> {{ dateFormat(projectInfo.startDt) }} ~ {{ dateFormat(projectInfo.endDt) }}
           </p>
           <p class="card-sub"><b>참여자 : </b> 박주현, 박지훈, 정수민, 박명식</p>
@@ -18,40 +19,30 @@
       <Card>
         <button class="btn btn-primary btn-fill float-right" @click="modalOpen">일정등록</button>
         <table class="table-responsive">
-          <tr>
-            <th>1주차</th>
-            <th>2주차</th>
-            <th>3주차</th>
-            <th>4주차</th>
-            <th>5주차</th>
-            <th>6주차</th>
-            <th>7주차</th>
-            <th>8주차</th>
-          </tr>
-          <tr>
-            <td>
-              <div class="task red" style="width:190%">화면설계 및 데이터베이스 정리 <span class="close">×</span></div>
-            </td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td>
-              <div class="task blue" style="width:290%">화면설계 및 데이터베이스 정리 <span class="close">×</span></div>
-            </td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
+          <thead>
+            <tr>
+              <th :key="j" v-for="j in 8"> {{ j + "주차" }}</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <template v-if="planCount > 0">
+              <tr :key="i" v-for="(plan, i) in planList">
+                <td :key="j" v-for="j in 8">
+                  <div class="task" v-if="j == plan.startWeek"
+                    :style="'width: ' + ((plan.endWeek - plan.startWeek + 1) * 100 - 10) + '%; background-color:' + plan.color">
+                    <span @click="btnProjectPlanUpdate(plan.prPlanCd)">{{ plan.planNm }}</span>
+                    <button class="close" @click="btnProjectPlanRemove(plan.prPlanCd)">×</button>
+                  </div>
+                </td>
+              </tr>
+            </template>
+            <tr v-else>
+              <td colspan="10">
+                <div class="list-nodata">등록된 일정이 없습니다.</div>
+              </td>
+            </tr>
+          </tbody>
         </table>
       </Card>
     </div>
@@ -66,8 +57,8 @@
           <div class="form-group has-label">
             <label>일정색상</label>
           </div>
-          <input type="color" class="form-control form-control-color" id="exampleColorInput" value="#563d7c"
-            title="Choose your color">
+          <input type="color" :name="color" v-model="color" class="form-control form-control-color"
+            id="exampleColorInput" title="Choose your color">
         </div>
         <div class="mb-3">
           <label class="form-label">기간 <em class="point-red">*</em></label>
@@ -114,7 +105,7 @@ import Swal from 'sweetalert2';
 import { onBeforeMount, ref } from 'vue';
 import Card from '../../components/Cards/Card.vue'
 import Modal from '../../components/Modal.vue';
-import { dateFormat } from '../../assets/js/common.js'
+import { dateFormat, dateTermCalc } from '../../assets/js/common.js'
 import { useRoute } from 'vue-router';
 
 //---------------데이터-------------- 
@@ -122,6 +113,7 @@ import { useRoute } from 'vue-router';
 const route = useRoute();
 const prCd = ref('');
 const planNm = ref('');
+const color = ref('#fd9b9b');
 const startWeek = ref('1');
 const endWeek = ref('1');
 
@@ -152,15 +144,77 @@ const confirm = () => {
   isShowModal.value = false;
 }
 
+//-------------버튼이벤트------------
+
+const btnProjectPlanUpdate = (code) => {
+  modalOpen();
+  projectPlanGetInfo(code);
+}
+
+// 프로젝트 일정 삭제 버튼
+const btnProjectPlanRemove = (code) => {
+  Swal.fire({
+    title: "해당 일정을 삭제 하시겠습니까?",
+    icon: "question",
+    showCancelButton: true,
+    customClass: {
+      confirmButton: "btn btn-danger btn-fill",
+      cancelButton: "btn btn-secondary btn-fill"
+    },
+    cancelButtonText: "닫기",
+    confirmButtonText: "삭제",
+  }).then((result) => {
+    if (result.isConfirmed) {
+
+      // 프로젝트 일정삭제
+      projectPlanRemove(code);
+    }
+  });
+}
+
 //---------------axois--------------
 
 const projectInfo = ref([]);
 const projectGetInfo = async (prCd) => { //프로젝트 단건조회
   try {
-    const result = await axios.get(`/api/project/info?prCd=${prCd}`);
+    const result = await axios.get(`/api/project/info/${prCd}`);
     projectInfo.value = result.data.info;
+    projectPlanGetList(prCd);
   } catch (err) {
     projectInfo.value = [];
+
+    Swal.fire({
+      icon: "error",
+      title: "API 조회 오류",
+      text: "Error : " + err
+    });
+  }
+}
+
+const planList = ref([]);
+const planCount = ref(0);
+const projectPlanGetList = async (prCd) => { //프로젝트 일정조회
+  try {
+    const result = await axios.get(`/api/project/plan/${prCd}`);
+
+    planList.value = result.data;
+    planCount.value = result.data.length;
+  } catch (err) {
+    planList.value = [];
+  }
+}
+
+const projectPlanInfo = ref([]);
+const projectPlanGetInfo = async (prPlanCd) => { //프로젝트 일정 단건조회
+  try {
+    const result = await axios.get(`/api/project/plan/info/${prPlanCd}`);
+    projectPlanInfo.value = result.data.info;
+    planNm.value = projectPlanInfo.value.planNm;
+    color.value = projectPlanInfo.value.color;
+    startWeek.value = projectPlanInfo.value.startWeek;
+    endWeek.value = projectPlanInfo.value.endWeek;
+  } catch (err) {
+    projectPlanInfo.value = [];
 
     Swal.fire({
       icon: "error",
@@ -186,18 +240,16 @@ const projectPlanAdd = async () => { //프로젝트 일정 등록
     return;
   }
 
-  const requestData = { // 요청 본문에 보낼 데이터
-    prCd: prCd.value,
-    planNm: planNm.value,
-    startWeek: startWeek.value,
-    endWeek: endWeek.value,
-    createId: "admin"
-  };
-
-  console.log(requestData);
+  const formData = new FormData();
+  formData.append("prCd", prCd.value);
+  formData.append("planNm", planNm.value);
+  formData.append("startWeek", startWeek.value);
+  formData.append("endWeek", endWeek.value);
+  formData.append("color", color.value);
+  formData.append("createId", 'admin');
 
   try {
-    const response = await axios.post('/api/project/plan', requestData);
+    const response = await axios.post('/api/project/plan', formData);
 
     if (response.data.result === true) {
       Swal.fire({
@@ -205,6 +257,11 @@ const projectPlanAdd = async () => { //프로젝트 일정 등록
         title: "등록완료",
         text: "등록한 일정은 목록에서 확인할 수 있습니다",
       })
+      planNm.value = '';
+      color.value = '';
+      startWeek.value = '';
+      endWeek.value = '';
+      projectPlanGetList(prCd.value);
     }
   } catch (err) {
     Swal.fire({
@@ -212,6 +269,30 @@ const projectPlanAdd = async () => { //프로젝트 일정 등록
       title: "등록실패",
       text: "프로젝트 등록 실패",
     })
+  }
+}
+
+const projectPlanRemove = async (prPlanCd) => { //프로젝트 일정삭제
+  console.log(prPlanCd);
+
+  try {
+    const response = await axios.delete(`/api/project/plan/${prPlanCd}`);
+
+    if (response.data.result === true) {
+      Swal.fire({
+        icon: "success",
+        title: "삭제완료",
+        text: "선택한 일정을 삭제하였습니다",
+      })
+
+      projectPlanGetList(prCd.value);
+    }
+  } catch (err) {
+    Swal.fire({
+      icon: "error",
+      title: "삭제 실패",
+      text: "Error : " + err
+    });
   }
 }
 </script>

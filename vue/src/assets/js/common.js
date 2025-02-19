@@ -38,3 +38,23 @@ export function numberFormat(num) {
     if (!num) return '0';
     return Number(num).toLocaleString();
 }; 
+
+// 날짜차이 계산
+export function dateTermCalc(date) {
+    const endDate = new Date(date);
+    const today = new Date();
+    
+    const diff = endDate - today;
+
+    let diffDay = Math.floor(diff / (1000*60*60*24))+1;
+    
+    if(diffDay == 0){
+        diffDay = "-day";
+    }else if(diffDay < 0){
+        diffDay = "+" + (diffDay*(-1));
+    }else{
+        diffDay = "-" + diffDay;
+    }
+
+    return diffDay;
+}

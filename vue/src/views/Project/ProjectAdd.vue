@@ -254,7 +254,7 @@ const modalClose = (e) => { //프로젝트 정보 모달 닫기
 const projectInfo = ref([]);
 const projectGetInfo = async (prCd) => { //프로젝트 단건조회
   try {
-    const result = await axios.get(`/api/project/info?prCd=${prCd}`);
+    const result = await axios.get(`/api/project/info/${prCd}`);
     projectInfo.value = result.data.info;
 
     prNm.value = projectInfo.value.prNm;

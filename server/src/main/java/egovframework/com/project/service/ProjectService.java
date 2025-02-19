@@ -4,6 +4,8 @@ import java.util.List;
 
 public interface ProjectService {
 	
+	//======================프로젝트=====================
+	
 	//프로젝트 전체조회
 	public List<ProjectDTO> projectSelectAll();
 	
@@ -19,15 +21,31 @@ public interface ProjectService {
 	//프로젝트 삭제
 	public boolean projectDelete(String prCd);
 	
-	//프로젝트 과업조회
-	public List<ProjectDTO> projectWorkSelect(String prCd);
+	//======================프로젝트 과업=====================
+	
+	//프로젝트 과업 전체조회
+	public List<ProjectDTO> projectWorkSelectAll(String prCd);
+	
+	//프로젝트 과업 단건조회
+	public ProjectDTO projectWorkSelect(String prWorkCd);	
 		
 	//프로젝트 과업 등록
 	public boolean projectWorkInsert(ProjectDTO project);
 	
-	//프로젝트 일정조회
-	public List<ProjectDTO> projectPlanSelect(String prCd);
+	//프로젝트 과업 삭제
+	public boolean projectWorkDelete(String prWorkCd);
+	
+	//======================프로젝트 일정=====================
+	
+	//프로젝트 일정 전체조회
+	public List<ProjectDTO> projectPlanSelectAll(String prCd);
+	
+	//프로젝트 일정 단건조회
+	public ProjectDTO projectPlanSelect(String prPlanCd);	
 	
 	//프로젝트 일정 등록
 	public boolean projectPlanInsert(ProjectDTO project);
+	
+	//프로젝트 삭제
+	public boolean projectPlanDelete(String prPlanCd);
 }

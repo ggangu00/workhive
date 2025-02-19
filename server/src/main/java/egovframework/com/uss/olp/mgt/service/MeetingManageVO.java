@@ -23,6 +23,9 @@ public class MeetingManageVO implements Serializable {
 
 	/** 회의ID */
 	private String mtgId = "";
+	
+	/** 회의구분 */
+	private String typeCd = "";
 
 	/** 회의명 */
 	private String mtgNm = "";
@@ -43,10 +46,10 @@ public class MeetingManageVO implements Serializable {
 	private String mtgPlace = "";
 
 	/** 회의시작시간 */
-	private String mtgBeginTime = "";
+	private String mtgBeginTm = "";
 
 	/** 회의종료시간 */
-	private String mtgEndTime = "";
+	private String mtgEndTm = "";
 
 	/** 비공개회의여부 */
 	private String clsdrMtgAt = "";
@@ -109,16 +112,16 @@ public class MeetingManageVO implements Serializable {
 	private String mtgEndMM = "";
 
 	/** 최초등록시점  */
-	private String frstRegisterPnttm = "";
+	private String createDt = "";
 
 	/** 최초등록아이디 */
-	private String frstRegisterId = "";
+	private String createId = "";
 
 	/** 최종수정일 */
-	private String lastUpdusrPnttm = "";
+	private String updateDt = "";
 
 	/** 최종수정자 아이디 */
-	private String lastUpdusrId = "";
+	private String updateId = "";
 
 	/** 화면 명령 처리 */
 	private String cmd = "";
@@ -226,28 +229,28 @@ public class MeetingManageVO implements Serializable {
 	 * @return the String
 	 */
 	public String getMtgBeginTime() {
-		return mtgBeginTime;
+		return mtgBeginTm;
 	}
 	/**
 	 * mtgBeginTime attribute 값을 설정한다.
 	 * @return mtgBeginTime String
 	 */
 	public void setMtgBeginTime(String mtgBeginTime) {
-		this.mtgBeginTime = mtgBeginTime;
+		this.mtgBeginTm = mtgBeginTime;
 	}
 	/**
 	 * mtgEndTime attribute 를 리턴한다.
 	 * @return the String
 	 */
 	public String getMtgEndTime() {
-		return mtgEndTime;
+		return mtgEndTm;
 	}
 	/**
 	 * mtgEndTime attribute 값을 설정한다.
 	 * @return mtgEndTime String
 	 */
 	public void setMtgEndTime(String mtgEndTime) {
-		this.mtgEndTime = mtgEndTime;
+		this.mtgEndTm = mtgEndTime;
 	}
 	/**
 	 * clsdrMtgAt attribute 를 리턴한다.
@@ -534,56 +537,56 @@ public class MeetingManageVO implements Serializable {
 	 * @return the String
 	 */
 	public String getFrstRegisterPnttm() {
-		return frstRegisterPnttm;
+		return createDt;
 	}
 	/**
 	 * frstRegisterPnttm attribute 값을 설정한다.
 	 * @return frstRegisterPnttm String
 	 */
 	public void setFrstRegisterPnttm(String frstRegisterPnttm) {
-		this.frstRegisterPnttm = frstRegisterPnttm;
+		this.createDt = frstRegisterPnttm;
 	}
 	/**
 	 * frstRegisterId attribute 를 리턴한다.
 	 * @return the String
 	 */
 	public String getFrstRegisterId() {
-		return frstRegisterId;
+		return createId;
 	}
 	/**
 	 * frstRegisterId attribute 값을 설정한다.
 	 * @return frstRegisterId String
 	 */
 	public void setFrstRegisterId(String frstRegisterId) {
-		this.frstRegisterId = frstRegisterId;
+		this.createId = frstRegisterId;
 	}
 	/**
 	 * lastUpdusrPnttm attribute 를 리턴한다.
 	 * @return the String
 	 */
 	public String getLastUpdusrPnttm() {
-		return lastUpdusrPnttm;
+		return updateDt;
 	}
 	/**
 	 * lastUpdusrPnttm attribute 값을 설정한다.
 	 * @return lastUpdusrPnttm String
 	 */
 	public void setLastUpdusrPnttm(String lastUpdusrPnttm) {
-		this.lastUpdusrPnttm = lastUpdusrPnttm;
+		this.updateDt = lastUpdusrPnttm;
 	}
 	/**
 	 * lastUpdusrId attribute 를 리턴한다.
 	 * @return the String
 	 */
 	public String getLastUpdusrId() {
-		return lastUpdusrId;
+		return updateId;
 	}
 	/**
 	 * lastUpdusrId attribute 값을 설정한다.
 	 * @return lastUpdusrId String
 	 */
 	public void setLastUpdusrId(String lastUpdusrId) {
-		this.lastUpdusrId = lastUpdusrId;
+		this.updateId = lastUpdusrId;
 	}
 	/**
 	 * cmd attribute 를 리턴한다.
