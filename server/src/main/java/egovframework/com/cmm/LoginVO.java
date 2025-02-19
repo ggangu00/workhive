@@ -1,6 +1,13 @@
 package egovframework.com.cmm;
 
 import java.io.Serializable;
+import java.util.Date;
+
+import egovframework.com.common.service.CommonDTO;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @Class Name : LoginVO.java
@@ -22,43 +29,75 @@ import java.io.Serializable;
  *  @see
  *  
  */
+//@Data
+//@Builder
+//@AllArgsConstructor
+//@NoArgsConstructor //Builder, All, No 세투세투
 public class LoginVO implements Serializable{
 	
 	private static final long serialVersionUID = -8274004534207618049L;
 	
-//	/** 아이디 */
-//	private String id;
-//	/** 이름 */
-//	private String name;
-//	/** 주민등록번호 */
-//	private String ihidNum;
-//	/** 이메일주소 */
+	/** 아이디 */
+	private String id;
+	/** 이름 */
+	private String name;
+	/** 주민등록번호 */
+	private String ihidNum;
+	/** 이메일주소 */
+	private String email;
+	/** 비밀번호 */
+	private String password;
+	/** 비밀번호 힌트 */
+	private String passwordHint;
+	/** 비밀번호 정답 */
+	private String passwordCnsr;
+	/** 사용자구분 */
+	private String userSe;
+	/** 조직(부서)ID */
+	private String orgnztId;
+	/** 조직(부서)명 */
+	private String orgnztNm;
+	/** 고유아이디 */
+	private String uniqId;
+	/** 로그인 후 이동할 페이지 */
+	private String url;
+	/** 사용자 IP정보 */
+	private String ip;
+	/** GPKI인증 DN */
+	private String dn;
+	/** 디지털원패스 사용자키 */
+	private String onepassUserkey;
+	/** 디지털원패스 사용자세션값 */
+	private String onepassIntfToken;
+	
+//	
+//	private String memCd; 	// 사번코드
+//	private String memId;	// 회원ID
+//	private String pass;	// 비밀번호
+//	private String wrnCnt;	// 로그인 실패 횟수
+//	private String lockYn;	// 계정 잠금 여부
+//	private String memNm;	// 회원명
+//	private String post;	// 우편번호
+//	private String addr;	// 주소
+//	private String addrDtl;	// 상세주소
+//	private String status;	// 회원상태
+//	private String areaTel;	// 지역번호
+//	private String midTel;	// 중간 전화번호
+//	private String endTel;	// ㄲ
+//	private String phone;
 //	private String email;
-//	/** 비밀번호 */
-//	private String password;
-//	/** 비밀번호 힌트 */
-//	private String passwordHint;
-//	/** 비밀번호 정답 */
-//	private String passwordCnsr;
-//	/** 사용자구분 */
-//	private String userSe;
-//	/** 조직(부서)ID */
-//	private String orgnztId;
-//	/** 조직(부서)명 */
-//	private String orgnztNm;
-//	/** 고유아이디 */
-//	private String uniqId;
-//	/** 로그인 후 이동할 페이지 */
-//	private String url;
-//	/** 사용자 IP정보 */
-//	private String ip;
-//	/** GPKI인증 DN */
-//	private String dn;
-//	/** 디지털원패스 사용자키 */
-//	private String onepassUserkey;
-//	/** 디지털원패스 사용자세션값 */
-//	private String onepassIntfToken;
-
+//	private String hireDt;
+//	private String quitDt;
+//	private String createDt;
+//	private String createId;
+//	private String updateDt;
+//	private String updateId;
+//	private String delYn;
+//	private String gradeCd;
+//	private String respCd;
+//	private String deptCd;
+	
+	
 	/**
 	 * id attribute 를 리턴한다.
 	 * @return String

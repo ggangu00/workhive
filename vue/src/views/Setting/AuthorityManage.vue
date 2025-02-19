@@ -258,7 +258,7 @@
          Swal.fire({
             icon: "error",
             title: "등록 실패",
-            text:  "Error : " + err
+            text:  "Error : " + err.response.data.error
          });
       }
    };
