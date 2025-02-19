@@ -2,6 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="egovframework.com.project.mapper.ProjectMapper">	
 	
+	<!-- ======================프로젝트=====================  -->
+	
 	<!-- 프로젝트 전체조회 -->
 	<select id="projectSelectAll" parameterType="int" resultType="projectDTO">
 		select pr_cd,
@@ -13,7 +15,8 @@
 			   price,
 			   create_id,
 			   create_dt,
-			   entrprs_mber_id
+			   entrprs_mber_id,
+               fn_get_comnm(entrprs_mber_id) as com_nm
 		from project
 		where 
 			UPPER(del_yn) = UPPER('N')
@@ -32,7 +35,8 @@
 			   price,
 			   create_id,
 			   create_dt,
-			   entrprs_mber_id
+			   entrprs_mber_id,
+               fn_get_comnm(entrprs_mber_id) as com_nm
 		from project
 		where 
 			pr_cd = #{prCd} 
@@ -99,11 +103,14 @@
 		   pr_cd = #{prCd}
 	</update>
 	
+	<!-- ======================프로젝트 과업=====================  -->
+	
 	<!-- 프로젝트 과업조회 -->
-	<select id="projectWorkSelect" parameterType="int" resultType="projectDTO">
+	<select id="projectWorkSelectAll" parameterType="String" resultType="projectDTO">
 		select pr_work_cd,
 			   pr_cd,
 			   pr_work_nm,
+			   seq,
 			   progress,
 			   state
 		from project_work
@@ -111,7 +118,7 @@
 			pr_cd = #{prCd}
 	</select>	
 	
-	<!-- 프로젝트 과업 등록 -->
+	<!-- 프로젝트 과업등록 -->
 	<insert id="projectWorkInsert" parameterType="projectDTO">
 		INSERT INTO project_work (
 			pr_work_cd,
@@ -129,21 +136,40 @@
 		)		
 	</insert>
 	
+	<!-- ======================프로젝트 일정=====================  -->
+	
 	<!-- 프로젝트 일정조회 -->
-	<select id="projectPlanSelect" parameterType="int" resultType="projectDTO">
+	<select id="projectPlanSelectAll" parameterType="String" resultType="projectDTO">
 		select pr_plan_cd,
 			   pr_cd,
 			   plan_nm,
 			   start_week,
 			   end_week,
+			   color,
 			   create_id,
 			   create_dt
 		from project_plan
 		where 
 			pr_cd = #{prCd}
+		order by start_week asc
 	</select>
 	
-	<!-- 프로젝트 일정 등록 -->
+	<!-- 프로젝트 일정 단건조회 -->
+	<select id="projectPlanSelect" parameterType="String">
+		select pr_plan_cd,
+			   pr_cd,
+			   plan_nm,
+			   start_week,
+			   end_week,
+			   color,
+			   create_id,
+			   create_dt
+		from project_plan
+		where 
+			pr_plan_cd = #{prPlanCd}
+	</select>
+	
+	<!-- 프로젝트 일정등록 -->
 	<insert id="projectPlanInsert" parameterType="projectDTO">
 		INSERT INTO project_plan (
 			pr_plan_cd,
@@ -151,6 +177,7 @@
 			plan_nm,
 			start_week,
 			end_week,
+			color,
 			create_id
 		)
 		VALUES (
@@ -159,8 +186,18 @@
 			#{planNm},
 			#{startWeek},
 			#{endWeek},
+			#{color},
 			#{createId}
 		)		
 	</insert>
+	
+	<!-- 프로젝트 일정삭제 -->
+	<delete id="projectPlanDelete" parameterType="String">
+		delete 
+		from
+		   project_plan
+		WHERE
+		   pr_plan_cd = #{prPlanCd}
+	</delete>
 
 </mapper>

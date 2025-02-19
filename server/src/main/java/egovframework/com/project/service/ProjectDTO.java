@@ -17,7 +17,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ProjectDTO {
 	
-	//프로젝트 
+	//======================프로젝트=====================
+	
 	private String prCd;
 	
 	@NotBlank
@@ -43,16 +44,21 @@ public class ProjectDTO {
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date createDt;
 	private String entrprsMberId;
+	private String comNm;
 	private String delYn;
 	
-	//프로젝트 과업
+	//======================프로젝트 과업=====================
+	
 	private String prWorkCd;
 	private String prWorkNm;
-	private String progress;
+	private Long seq;
+	private Long progress;
 	
-	//프로젝트 일정
+	//======================프로젝트 일정=====================
+	
 	private String prPlanCd;
 	private String planNm;
 	private String startWeek;
 	private String endWeek;
+	private String color;
 }

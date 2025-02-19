@@ -103,25 +103,26 @@
             </thead>
             <tbody>
               <template v-if="projectCount > 0">
-                <tr :key="i" v-for="(project, i) in projectList">
+                <tr :key="i" v-for="(project, i) in projectList"
+                  :class="projectInfo.state == 'A04' ? 'table-secondary' : ''">
                   <td>
                     <div class="form-check">
                       <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
                     </div>
                   </td>
                   <td>{{ i + 1 }}</td>
-                  <td>진행중</td>
+                  <td>{{ projectInfo.state == 'A04' ? '완료' : '진행중' }}</td>
                   <td>
-                    <div class="category">{{ project.entrprsMberId }}</div>
+                    <div class="category">{{ project.comNm }}</div>
                     <div class="subject"><a href="#" @click="modalOpen(project.prCd)" class="mrp5">{{ project.prNm
-                        }}</a>
-                      <span class="badge badge-danger">D-10</span>
+                    }}</a>
+                      <span class="badge badge-danger">D{{ dateTermCalc(dateFormat(project.endDt)) }}</span>
                     </div>
                   </td>
                   <td>{{ dateFormat(project.startDt) }} ~ {{ dateFormat(project.endDt) }}</td>
                   <td>{{ project.price ? project.price : "-" }}</td>
-                  <td>김지환</td>
-                  <td><button class="btn btn-primary btn-sm" @click="btnPagePlan(project.prCd)">일정등록</button></td>
+                  <td>{{ project.createDt }}</td>
+                  <td><button class="btn btn-primary btn-sm" @click="btnPagePlan(project.prCd)">일정관리</button></td>
                   <td>{{ dateFormat(project.createDt) }}</td>
                   <td>
                     <button class="btn btn-success btn-fill btn-sm mr-1" @click="btnPageEdit(project.prCd)">수정</button>
@@ -135,53 +136,6 @@
                   <div class="list-nodata">등록된 프로젝트가 없습니다.</div>
                 </td>
               </tr>
-              <!--
-              <tr>
-                <td>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                  </div>
-                </td>
-                <td>2</td>
-                <td>진행중</td>
-                <td>
-                  <div class="category">경북자연생태원</div>
-                  <div class="subject">프로그램 예약 및 결제 시스템 구축
-                    <span class="badge badge-primary">D-20</span>
-                  </div>
-                </td>
-                <td>2024-12-01 ~ 2025-03-31</td>
-                <td>30,000,000</td>
-                <td>김지환</td>
-                <td><button class="btn btn-primary btn-sm">일정등록</button></td>
-                <td>2024-12-01</td>
-                <td>
-                  <button class="btn btn-success btn-fill btn-sm mr-1">수정</button>
-                  <button class="btn btn-danger btn-fill btn-sm mr-1">삭제</button>
-                </td>
-              </tr>
-              <tr class="table-secondary">
-                <td>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                  </div>
-                </td>
-                <td>3</td>
-                <td>완료</td>
-                <td>
-                  <div class="category">예담대학교</div>
-                  <div class="subject">예담대학교 빌더 관리자페이지 고도화 용역</div>
-                </td>
-                <td>2024-12-01 ~ 2025-03-31</td>
-                <td>30,000,000</td>
-                <td>김지환</td>
-                <td><button class="btn btn-primary btn-sm">일정등록</button></td>
-                <td>2024-12-01</td>
-                <td>
-                  <button class="btn btn-success btn-fill btn-sm mr-1">수정</button>
-                  <button class="btn btn-danger btn-fill btn-sm mr-1">삭제</button>
-                </td>
-              </tr>-->
             </tbody>
           </table>
         </div>
@@ -232,12 +186,12 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <template v-if="projectCount > 0">
-                    <tr>
-                      <th>1</th>
-                      <td>교내 SSO 연동</td>
-                      <th>100%</th>
-                      <td>완료</td>
+                  <template v-if="workCount > 0">
+                    <tr :key="i" v-for="(work, i) in workList">
+                      <th>{{ i + 1 }}</th>
+                      <td>{{ work.prWorkNm }}</td>
+                      <th>{{ work.progress }}%</th>
+                      <td>{{ work.state == 'A02' ? '미완료' : '완료' }}</td>
                     </tr>
                   </template>
                   <tr v-else>
@@ -267,7 +221,7 @@ import Swal from 'sweetalert2';
 import { onBeforeMount, ref } from 'vue';
 import Card from '../../components/Cards/Card.vue'
 import Modal from '../../components/Modal.vue';
-import { dateFormat } from '../../assets/js/common.js'
+import { dateFormat, dateTermCalc } from '../../assets/js/common.js'
 import { useRouter } from "vue-router";
 
 //---------------데이터-------------- 
@@ -298,11 +252,11 @@ const modalClose = (e) => { //프로젝트 정보 모달 닫기
 
 const router = useRouter();
 const btnPageEdit = (code) => {
-  router.push({ path : '/project/add' , query : { prCd : code }});
+  router.push({ path: '/project/add', query: { prCd: code } });
 }
 
 const btnPagePlan = (code) => {
-  router.push({ path : '/project/plan' , query : { prCd : code }});
+  router.push({ path: '/project/plan', query: { prCd: code } });
 }
 
 // 프로젝트 삭제 버튼
@@ -319,15 +273,8 @@ const btnProjectRemove = (code) => {
     confirmButtonText: "삭제",
   }).then((result) => {
     if (result.isConfirmed) {
-
       // 프로젝트 삭제
       projectRemove(code);
-
-      Swal.fire({
-        icon: "success",
-        title: "삭제완료",
-        text: "선택한 프로젝트를 삭제하였습니다",
-      })
     }
   });
 }
@@ -338,7 +285,7 @@ const projectList = ref([]);
 const projectCount = ref(0);
 const projectGetList = async () => { //프로젝트 전체조회
   try {
-    const result = await axios.get('/api/project');
+    const result = await axios.get('/api/project/list');
 
     projectList.value = result.data;
     projectCount.value = result.data.length;
@@ -356,8 +303,9 @@ const projectGetList = async () => { //프로젝트 전체조회
 const projectInfo = ref([]);
 const projectGetInfo = async (prCd) => { //프로젝트 단건조회
   try {
-    const result = await axios.get(`/api/project/info?prCd=${prCd}`);
+    const result = await axios.get(`/api/project/info/${prCd}`);
     projectInfo.value = result.data.info;
+    projectWorkGetList(prCd);
   } catch (err) {
     projectInfo.value = [];
 
@@ -369,12 +317,17 @@ const projectGetInfo = async (prCd) => { //프로젝트 단건조회
   }
 }
 
-const projectRemove = async (code) => { //프로젝트 단건조회
+const projectRemove = async (prCd) => { //프로젝트 삭제
 
   try {
-    const response = await axios.delete(`/api/project/${code}`);
+    const response = await axios.delete(`/api/project/${prCd}`);
 
     if (response.data.result === true) {
+      Swal.fire({
+        icon: "success",
+        title: "삭제완료",
+        text: "선택한 프로젝트를 삭제하였습니다",
+      })
       projectList.value = response.data.list;
     }
   } catch (err) {
@@ -386,4 +339,16 @@ const projectRemove = async (code) => { //프로젝트 단건조회
   }
 }
 
+const workList = ref([]);
+const workCount = ref(0);
+const projectWorkGetList = async (prCd) => { //프로젝트 과업조회
+  try {
+    const result = await axios.get(`/api/project/work/${prCd}`);
+
+    workList.value = result.data;
+    workCount.value = result.data.length;
+  } catch (err) {
+    workList.value = [];
+  }
+}
 </script>

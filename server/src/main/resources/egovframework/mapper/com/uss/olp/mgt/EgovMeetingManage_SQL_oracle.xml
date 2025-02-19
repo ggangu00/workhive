@@ -15,11 +15,11 @@
 		<result property="mtgCo" column="MTG_CO"/>
 		<result property="mtgDe" column="MTG_DE"/>
 		<result property="mtgPlace" column="MTG_PLACE"/>
-		<result property="mtgBeginTime" column="MTG_BEGIN_TM"/>
-		<result property="mtgEndTime" column="MTG_END_TM"/>
-		<result property="frstRegisterPnttm" column="FRST_REGIST_PNTTM"/>
+		<result property="mtgBeginTm" column="MTG_BEGIN_TM"/>
+		<result property="mtgEndTm" column="MTG_END_TM"/>
+		<result property="createDt" column="CREATE_DT"/>
 		<result property="frstRegisterNm" column="FRST_REGISTER_NM"/>
-		<result property="frstRegisterId" column="FRST_REGISTER_ID"/>
+		<result property="createId" column="CREATE_ID"/>
 	</resultMap>
 	<resultMap id="meetingManageMap" type="java.util.HashMap">
 		<result property="mtgId" column="MTG_ID"/>
@@ -29,8 +29,8 @@
 		<result property="mtgCo" column="MTG_CO"/>
 		<result property="mtgDe" column="MTG_DE"/>
 		<result property="mtgPlace" column="MTG_PLACE"/>
-		<result property="mtgBeginTime" column="MTG_BEGIN_TM"/>
-		<result property="mtgEndTime" column="MTG_END_TM"/>
+		<result property="mtgBeginTm" column="MTG_BEGIN_TM"/>
+		<result property="mtgEndTm" column="MTG_END_TM"/>
 		<result property="clsdrMtgAt" column="CLSDR_MTG_AT"/>
 		<result property="readngBeginDe" column="READNG_BGNDE"/>
 		<result property="readngAt" column="READNG_AT"/>
@@ -47,8 +47,8 @@
 		<result property="mtnAt" column="MTG_AT"/>
 		<result property="nonatdrnCo" column="NONATDRN_CO"/>
 		<result property="atdrnCo" column="ATDRN_CO"/>
-		<result property="frstRegisterPnttm" column="FRST_REGIST_PNTTM"/>
-		<result property="frstRegisterId" column="FRST_REGISTER_ID"/>
+		<result property="createDt" column="CREATE_DT"/>
+		<result property="createId" column="CREATE_ID"/>
 	</resultMap>
       <!-- 회의관리::부서검색  -->
 	<select id="EgovMeetingManageLisAuthorGroupPopup" parameterType="comDefaultVO" resultType="egovMap">
@@ -250,17 +250,13 @@
 	INSERT INTO COMTNMTGINFO (
 		MTG_ID,
 		TYPE_CD,
-		MTG_MTR_TITLE,
+		MTG_NM,
 		MTG_MTR_CN,
 		MTG_RESULT_CN,
 		MTG_DE,
 		MTG_BEGIN_TM,
 		MTG_END_TM,
-		MTG_PLACE,			
-		CLSDR_MTG_AT,
-		UPDATE_DT,
-		UPDATE_ID,
-		CREATE_DT,
+		MTG_PLACE,		
 		CREATE_ID
 	)VALUES(
 		#{mtgId},
@@ -269,13 +265,10 @@
 		#{mtgMtrCn},
 		#{mtgResultCn},
 		REPLACE(#{mtgDe},'-',''),
-		#{mtgBeginTime},
-		#{mtgEndTime},
+		#{mtgBeginTm},
+		#{mtgEndTm},
 		#{mtgPlace},	
-		sysdate,
-		#{frstRegisterId},
-		sysdate,
-		#{lastUpdusrId}
+		#{createId}
 	)
 	 
 	</insert>

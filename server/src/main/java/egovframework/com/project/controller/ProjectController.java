@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import egovframework.com.project.service.ProjectDTO;
@@ -27,22 +26,24 @@ import lombok.extern.slf4j.Slf4j;
 public class ProjectController {
 	
 	@Resource
-	private  ProjectService proejctService;
+	private  ProjectService projectService;
+	
+	//======================프로젝트=====================
 	
 	//프로젝트 전체조회
-	@GetMapping("")
+	@GetMapping("/list")
 	public List<ProjectDTO> projectList() {	  
-	  return proejctService.projectSelectAll();
+	  return projectService.projectSelectAll();
 	}	
 	
 	//프로젝트 단건조회
-	@GetMapping("/{prCd}")
-	public Map<String, Object> projectinfo(@RequestParam(name="prCd") String prCd) {
+	@GetMapping("/info/{prCd}")
+	public Map<String, Object> projectinfo(@PathVariable("prCd") String prCd) {
 		
 		Map<String, Object> map = new HashMap<>();
 		
 		//프로젝트 정보조회
-		ProjectDTO infoDto = proejctService.projectSelect(prCd);
+		ProjectDTO infoDto = projectService.projectSelect(prCd);
 		
 		if (infoDto != null) {
 	        map.put("result", true);
@@ -59,11 +60,11 @@ public class ProjectController {
 	@PostMapping("")
 	public Map<String, Object> proejectAdd(@Validated ProjectDTO project) {
 		
-	  boolean result = proejctService.projectInsert(project);
+	  boolean result = projectService.projectInsert(project);
 	  	  
 	  Map<String, Object> map = new HashMap<>();
 	  map.put("result", result);
-	  map.put("list", proejctService.projectSelectAll());
+	  map.put("list", projectService.projectSelectAll());
 		
 	  return map;
 	}
@@ -75,10 +76,10 @@ public class ProjectController {
 		
 		Map<String, Object> map = new HashMap<>();
 		
-		boolean result = proejctService.projectUpdate(dto);
+		boolean result = projectService.projectUpdate(dto);
 		
 		map.put("result", result);
-		map.put("list", proejctService.projectSelectAll());
+		map.put("list", projectService.projectSelectAll());
 		
 		return map;
 	}
@@ -89,53 +90,126 @@ public class ProjectController {
 		log.info("삭제 권한 코드 출력 => " + prCd);
 	    
 	    // 서비스 로직 실행
-		boolean result = proejctService.projectDelete(prCd);
+		boolean result = projectService.projectDelete(prCd);
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("result", result);
-		map.put("list", proejctService.projectSelectAll());
+		map.put("list", projectService.projectSelectAll());
 		
 		return map;
 	}
 	
+	//======================프로젝트 과업=====================
+	
 	//프로젝트 과업조회
 	@GetMapping("/work/{prCd}")
 	public List<ProjectDTO> projectWorkList(@PathVariable(name="prCd") String prCd) {	  
-	  return proejctService.projectWorkSelect(prCd);
+	  return projectService.projectWorkSelectAll(prCd);
 	}	
+
+	//프로젝트 과업 단건조회
+	@GetMapping("/work/info/{prWorkCd}")
+	public Map<String, Object> projectWorkinfo(@PathVariable("prWorkCd") String prWorkCd) {
+		
+		Map<String, Object> map = new HashMap<>();
+		
+		//프로젝트 과업 정보조회
+		ProjectDTO infoDto = projectService.projectWorkSelect(prWorkCd);
+		
+		if (infoDto != null) {
+	        map.put("result", true);
+	        map.put("info", infoDto);
+	    } else {
+	    	map.put("result", false);
+	    	map.put("info", "해당 권한이 없습니다.");
+	    }
+		
+		return map;
+	}
 	
 	//프로젝트 과업등록
 	@PostMapping("/work")
 	public Map<String, Object> proejectWorkAdd(@Validated ProjectDTO project) {
 		
-	  boolean result = proejctService.projectWorkInsert(project);
+	  boolean result = projectService.projectWorkInsert(project);
 	  	  
 	  Map<String, Object> map = new HashMap<>();
 	  map.put("result", result);
-	  map.put("list", proejctService.projectWorkSelect(project.getPrCd()));
+	  map.put("list", projectService.projectWorkSelectAll(project.getPrCd()));
 		
 	  return map;
 	}
 	
+	//프로젝트 과업 삭제
+	@DeleteMapping("/work/{prWorkCd}")
+	public Map<String, Object> projectWorkRemove(@PathVariable("prWorkCd") String prWorkCd) {
+		log.info("삭제 권한 코드 출력 => " + prWorkCd);
+	    
+	    // 서비스 로직 실행
+		boolean result = projectService.projectWorkDelete(prWorkCd);
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("result", result);
+		map.put("list", projectService.projectWorkSelectAll(prWorkCd));
+		
+		return map;
+	}
+	
+	//======================프로젝트 일정=====================
+	
 	//프로젝트 일정조회
 	@GetMapping("/plan/{prCd}")
-	public List<ProjectDTO> projectPlanList(@PathVariable(name="prCd") String prCd) {	  
-	  return proejctService.projectPlanSelect(prCd);
+	public List<ProjectDTO> projectPlanList(@PathVariable("prCd") String prCd) {
+		List<ProjectDTO> result = projectService.projectPlanSelectAll(prCd);
+		return result;
 	}	
 	
-	//프로젝트 과업등록
+	//프로젝트 일정 단건조회
+	@GetMapping("/plan/info/{prPlanCd}")
+	public Map<String, Object> projectPlaninfo(@PathVariable("prPlanCd") String prPlanCd) {
+		
+		Map<String, Object> map = new HashMap<>();
+		
+		//프로젝트 정보조회
+		ProjectDTO infoDto = projectService.projectPlanSelect(prPlanCd);
+		
+		if (infoDto != null) {
+	        map.put("result", true);
+	        map.put("info", infoDto);
+	    } else {
+	    	map.put("result", false);
+	    	map.put("info", "해당 권한이 없습니다.");
+	    }
+		
+		return map;
+	}
+	
+	//프로젝트 일정등록
 	@PostMapping("/plan")
 	public Map<String, Object> proejectPlanAdd(@Validated ProjectDTO project) {
 		
-	  boolean result = proejctService.projectPlanInsert(project);
-	  
-	  log.info("12312312312312 => " + result);
+	  boolean result = projectService.projectPlanInsert(project);	  
 	  	  
 	  Map<String, Object> map = new HashMap<>();
 	  map.put("result", result);
-	  map.put("list", proejctService.projectPlanSelect(project.getPrCd()));
+	  map.put("list", projectService.projectPlanSelectAll(project.getPrCd()));
 		
 	  return map;
+	}
+	
+	//프로젝트 일정 삭제
+	@DeleteMapping("/plan/{prPlanCd}")
+	public Map<String, Object> projectPlanRemove(@PathVariable("prPlanCd") String prPlanCd) {
+		log.info("삭제 권한 코드 출력 => " + prPlanCd);
+	    
+	    // 서비스 로직 실행
+		boolean result = projectService.projectPlanDelete(prPlanCd);
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("result", result);
+		map.put("list", projectService.projectPlanSelectAll(prPlanCd));
+		
+		return map;
 	}
 		
 }
