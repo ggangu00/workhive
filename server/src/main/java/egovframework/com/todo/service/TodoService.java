@@ -1,12 +1,11 @@
 package egovframework.com.todo.service;
 
-import java.util.Date;
 import java.util.List;
 
 public interface TodoService {
 	
 	//일지 전체조회
-	public List<TodoDTO> todoSelectAll(Date todoDt);
+	public List<TodoDTO> todoSelectAll(String todoDt);
 	
 	//일지 단건조회
 	public TodoDTO todoSelect(String todoCd);	

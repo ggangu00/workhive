@@ -1,6 +1,5 @@
 package egovframework.com.todo.service.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -19,7 +18,7 @@ public class TodoServiceImpl implements TodoService{
 	
 	//일지 전체조회
 	@Override
-	public List<TodoDTO> todoSelectAll(Date todoDt) {
+	public List<TodoDTO> todoSelectAll(String todoDt) {
 		return todoMapper.todoSelectAll(todoDt);
 	}
 	
