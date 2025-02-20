@@ -25,7 +25,6 @@ export default {
     return {
       buttons: [
         { label: '기안', class: 'btn-warning btn-fill', action: 'http://localhost:8077/registerTest'},
-        { label: '재기안', class: 'btn-primary btn-fill' },
         { label: '인쇄/다운로드', class: 'btn-excel' }
       ],
 
