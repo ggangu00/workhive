@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +27,7 @@ public class CommonController {
 	
 	// 공통코드 디테일 전체조회
 	@GetMapping("/codeList")
-	public List<CommonDTO> commonlist(@RequestParam(name="cd") String commCd) {
+	public List<CommonDTO> commonList(@RequestParam(name="cd") String commCd) {
 	  
 	  List<CommonDTO> result = service.commonSelectAll(commCd);
 	  
@@ -35,9 +36,18 @@ public class CommonController {
 	
 	// 거래처 전체조회
 	@GetMapping("/comList")
-	public List<CommonDTO> comlist() {
+	public List<CommonDTO> comList() {
 	  
 	  List<CommonDTO> result = service.comSelectAll();
+	  
+	  return result;
+	}
+	
+	// 로그인 로그 조회
+	@GetMapping("/loginLog")
+	public List<CommonDTO> loginLogList() {
+	  
+	  List<CommonDTO> result = service.loginLogSelectAll();
 	  
 	  return result;
 	}
@@ -61,4 +71,12 @@ public class CommonController {
 		
 		return map;
 	}
+	
+	// 사용자 ip 출력	
+	@GetMapping("/log")
+    public String myApi(HttpServletRequest request) {
+        String ipAddress = request.getRemoteAddr();
+        
+        return ipAddress;
+    }
 }

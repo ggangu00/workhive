@@ -8,9 +8,10 @@
       <div class="card border-primary">
         <div class="card-body">
           <p class="card-sub">{{ projectInfo.comNm }}</p>
-          <h5 class="card-title mb-3">{{ projectInfo.prNm }} <span class="badge badge-danger">D{{
-            dateTermCalc(dateFormat(projectInfo.endDt)) }}</span></h5>
-          <p class="card-sub"><b>기간 : </b> {{ dateFormat(projectInfo.startDt) }} ~ {{ dateFormat(projectInfo.endDt) }}
+          <h5 class="card-title mb-3">{{ projectInfo.prNm }} <span class="badge badge-danger">D{{ term > 0 ? "-" + term
+            :
+            "+" + term*(-1) }}</span></h5>
+          <p class="card-sub"><b>기간 : </b> {{ projectInfo.startDt }} ~ {{ projectInfo.endDt }}
           </p>
           <p class="card-sub"><b>참여자 : </b> 박주현, 박지훈, 정수민, 박명식</p>
         </div>
@@ -18,37 +19,43 @@
 
       <Card>
         <button class="btn btn-primary btn-fill float-right" @click="modalOpen">일정등록</button>
-        <table class="table-responsive">
-          <thead>
-            <tr>
-              <th :key="j" v-for="j in 8"> {{ j + "주차" }}</th>
-            </tr>
-          </thead>
-          <tbody>
+        <div style="width:100%; overflow:auto">
+          <table class="table-responsive">
+            <thead>
+              <tr>
+                <th :key="date" v-for="date in dateTerm">
+                  <span v-if="dateGetDay(date) == '일'" class="point-red">{{ dateFormatDay(date)}}</span>
+                  <span v-else-if="dateGetDay(date) == '토'" class="point-blue">{{ dateFormatDay(date) }}</span>                  
+                  <span v-else>{{ dateFormatDay(date) }}</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
 
-            <template v-if="planCount > 0">
-              <tr :key="i" v-for="(plan, i) in planList">
-                <td :key="j" v-for="j in 8">
-                  <div class="task" v-if="j == plan.startWeek"
-                    :style="'width: ' + ((plan.endWeek - plan.startWeek + 1) * 100 - 10) + '%; background-color:' + plan.color">
-                    <span @click="btnProjectPlanUpdate(plan.prPlanCd)">{{ plan.planNm }}</span>
-                    <button class="close" @click="btnProjectPlanRemove(plan.prPlanCd)">×</button>
-                  </div>
+              <template v-if="planCount > 0">
+                <tr :key="plan" v-for="plan in planList">
+                  <td :key="date" v-for="date in dateTerm">
+                    <div class="task" v-if="date == plan.startDt"
+                      :style="'width: ' + (dateTermCalc(plan.startDt, plan.endDt) * 100 - 10) + '%; background-color:' + plan.color">
+                      <span @click="btnProjectPlanUpdate(plan.prPlanCd)">{{ plan.planNm }}</span>
+                      <button class="close" @click="btnProjectPlanRemove(plan.prPlanCd)">×</button>
+                    </div>
+                  </td>
+                </tr>
+              </template>
+              <tr v-else class="list-nodata">
+                <td :colspan="dateTerm.length">
+                  <div>등록된 일정이 없습니다.</div>
                 </td>
               </tr>
-            </template>
-            <tr v-else>
-              <td colspan="10">
-                <div class="list-nodata">등록된 일정이 없습니다.</div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
       </Card>
     </div>
   </div>
 
-  <!--업무등록 모달[s]-->
+  <!--일정등록 모달[s]-->
   <Modal :isShowModal="isShowModal" :modalTitle="'일정등록'" @click.self="modalClose">
     <!-- 모달 바디 -->
     <template v-slot:body>
@@ -64,19 +71,13 @@
           <label class="form-label">기간 <em class="point-red">*</em></label>
           <div class="row">
             <div class="col-auto">
-              <select class="form-select" :name="startWeek" v-model="startWeek">
-                <option value="1">1주차</option>
-                <option value="2">2주차</option>
-                <option value="3">3주차</option>
-              </select>
+              <input type="date" :name="startDt" v-model="startDt" :min="dateFormat(projectInfo.startDt)"
+                class="form-control">
             </div>
-            <div class="col-auto">~</div>
+            <div class="col-auto p-none">~</div>
             <div class="col-auto">
-              <select class="form-select" :name="endWeek" v-model="endWeek">
-                <option value="1">1주차</option>
-                <option value="2">2주차</option>
-                <option value="3">3주차</option>
-              </select>
+              <input type="date" :name="endDt" v-model="endDt" :min="startDt" :max="dateFormat(projectInfo.endDt)"
+                class="form-control">
             </div>
           </div>
         </div>
@@ -95,7 +96,7 @@
       <button type="button" class="btn btn-secondary btn-fill" @click="modalClose">닫기</button>
     </template>
   </Modal>
-  <!--업무등록 모달[e]-->
+  <!--일정등록 모달[e]-->
 
 </template>
 
@@ -105,7 +106,7 @@ import Swal from 'sweetalert2';
 import { onBeforeMount, ref } from 'vue';
 import Card from '../../components/Cards/Card.vue'
 import Modal from '../../components/Modal.vue';
-import { dateFormat, dateTermCalc } from '../../assets/js/common.js'
+import { dateFormat, dateTermCalc, dateGetDay, dateFormatDay } from '../../assets/js/common.js'
 import { useRoute } from 'vue-router';
 
 //---------------데이터-------------- 
@@ -113,9 +114,11 @@ import { useRoute } from 'vue-router';
 const route = useRoute();
 const prCd = ref('');
 const planNm = ref('');
+const term = ref('');
 const color = ref('#fd9b9b');
-const startWeek = ref('1');
-const endWeek = ref('1');
+const startDt = ref('');
+const endDt = ref('');
+const dateTerm = ref([]);
 
 onBeforeMount(() => {
   prCd.value = route.query.prCd;
@@ -172,14 +175,34 @@ const btnProjectPlanRemove = (code) => {
   });
 }
 
+//-------------공통함수------------
+
+const generateDateList = (startDate, endDate) => { // 시작일 ~ 종료일 사이의 날짜 배열로 담는 함수 
+  let start = new Date(startDate);
+  let end = new Date(endDate);
+
+  while (start <= end) {
+    let formattedDate = start.toISOString().split("T")[0]; // YYYY-MM-DD 형식으로 변환
+    dateTerm.value.push(formattedDate);
+    start.setDate(start.getDate() + 1); // 하루 증가
+  }
+};
+
 //---------------axois--------------
 
 const projectInfo = ref([]);
 const projectGetInfo = async (prCd) => { //프로젝트 단건조회
   try {
     const result = await axios.get(`/api/project/info/${prCd}`);
+
     projectInfo.value = result.data.info;
+    projectInfo.value.startDt = dateFormat(projectInfo.value.startDt);
+    projectInfo.value.endDt = dateFormat(projectInfo.value.endDt);
+
+    term.value = dateTermCalc('', dateFormat(projectInfo.value.endDt))
+
     projectPlanGetList(prCd);
+    generateDateList(projectInfo.value.startDt, projectInfo.value.endDt);
   } catch (err) {
     projectInfo.value = [];
 
@@ -197,8 +220,14 @@ const projectPlanGetList = async (prCd) => { //프로젝트 일정조회
   try {
     const result = await axios.get(`/api/project/plan/${prCd}`);
 
-    planList.value = result.data;
+    planList.value = result.data.map(item => ({
+      ...item,
+      startDt: dateFormat(item.startDt),
+      endDt: dateFormat(item.endDt),
+    }));
+
     planCount.value = result.data.length;
+
   } catch (err) {
     planList.value = [];
   }
@@ -208,11 +237,13 @@ const projectPlanInfo = ref([]);
 const projectPlanGetInfo = async (prPlanCd) => { //프로젝트 일정 단건조회
   try {
     const result = await axios.get(`/api/project/plan/info/${prPlanCd}`);
+
     projectPlanInfo.value = result.data.info;
     planNm.value = projectPlanInfo.value.planNm;
     color.value = projectPlanInfo.value.color;
-    startWeek.value = projectPlanInfo.value.startWeek;
-    endWeek.value = projectPlanInfo.value.endWeek;
+    startDt.value = dateFormat(projectPlanInfo.value.startDt);
+    endDt.value = dateFormat(projectPlanInfo.value.endDt);
+
   } catch (err) {
     projectPlanInfo.value = [];
 
@@ -232,7 +263,7 @@ const projectPlanAdd = async () => { //프로젝트 일정 등록
       title: "일정명을 입력하세요"
     });
     return;
-  } else if (startWeek.value >= endWeek.value) {
+  } else if (startDt.value >= endDt.value) {
     Swal.fire({
       icon: "info",
       title: "일정 시작일이 종료일보다 작을 수 없습니다."
@@ -243,8 +274,8 @@ const projectPlanAdd = async () => { //프로젝트 일정 등록
   const formData = new FormData();
   formData.append("prCd", prCd.value);
   formData.append("planNm", planNm.value);
-  formData.append("startWeek", startWeek.value);
-  formData.append("endWeek", endWeek.value);
+  formData.append("startDt", startDt.value);
+  formData.append("endDt", endDt.value);
   formData.append("color", color.value);
   formData.append("createId", 'admin');
 
@@ -259,8 +290,8 @@ const projectPlanAdd = async () => { //프로젝트 일정 등록
       })
       planNm.value = '';
       color.value = '';
-      startWeek.value = '';
-      endWeek.value = '';
+      startDt.value = '';
+      endDt.value = '';
       projectPlanGetList(prCd.value);
     }
   } catch (err) {

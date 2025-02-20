@@ -27,10 +27,16 @@ public class CommonServiceImpl implements CommonService{
 	public List<CommonDTO> comSelectAll() {
 		return commonMapper.comSelectAll();
 	}
+	
+	// 로그인 로그 전체조회
+	@Override
+	public List<CommonDTO> loginLogSelectAll() {
+		return commonMapper.loginLogSelectAll();
+	}
 
 	// 홈 대시보드 건수 조회 (진행중인 프로젝트, 금일 예정 일정, 미완료 일지)
 	@Override
 	public CommonDTO homeInfo(String memCd) {
 		return commonMapper.homeInfo(memCd);
-	}
+	}	
 }
