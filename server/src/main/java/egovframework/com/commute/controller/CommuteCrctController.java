@@ -112,4 +112,11 @@ public class CommuteCrctController {
 		
 		return result;
 	}
+	
+	// 출퇴근 정정 결재
+	@PostMapping("/signModify")
+	public boolean signModify(@Validated CommuteCrctDTO crctDTO, RedirectAttributes rttr) {
+
+		return service.signUpdate(crctDTO);
+	}
 }

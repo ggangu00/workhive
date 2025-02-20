@@ -51,4 +51,9 @@ public class CommuteCrctServiceImpl implements CommuteCrctService {
 		return crctMapper.crctSelectSigned(crctDTO);
 	}
 
+	@Override
+	public boolean signUpdate(CommuteCrctDTO crctDTO) {
+		return crctMapper.signUpdate(crctDTO) == 1 ? true : false;
+	}
+
 }
