@@ -401,8 +401,8 @@ public class EgovBBSMasterController {
      * @param model
      * @throws Exception
      */
-    //@RequestMapping("/cop/bbs/updateBBSMasterView.do")
-    @PostMapping("/boardUpdate")
+    @RequestMapping("/cop/bbs/updateBBSMasterView.do")
+    //@PostMapping("/boardUpdate")
     public String updateBBSMasterView(@RequestParam("bbsId") String bbsId ,
             @ModelAttribute("searchVO") BoardMaster searchVO, ModelMap model)
             throws Exception {
@@ -446,7 +446,8 @@ public class EgovBBSMasterController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/cop/bbs/updateBBSMaster.do")
+    //@RequestMapping("/cop/bbs/updateBBSMaster.do")
+    @PostMapping("/boardUpdate")
     public String updateBBSMaster(@ModelAttribute("searchVO") BoardMasterVO boardMasterVO, @ModelAttribute("boardMaster") BoardMaster boardMaster,
 	    BindingResult bindingResult, ModelMap model) throws Exception {
 
@@ -485,7 +486,7 @@ public class EgovBBSMasterController {
      * @throws Exception
      */
     //@RequestMapping("/cop/bbs/deleteBBSMaster.do")
-    @DeleteMapping("/boardRemove")
+    @PostMapping("/boardRemove")
     public String deleteBBSMaster(@ModelAttribute("searchVO") BoardMasterVO boardMasterVO, @ModelAttribute("boardMaster") BoardMaster boardMaster
 	    ) throws Exception {
 
