@@ -170,7 +170,8 @@ const btnCrctManage = async () => {
   formData.append("signId", crctData.value.signId);
   
   if(!isUpdate) {
-    
+    formData.append("preGoTime", crctData.value.goTime);
+    formData.append("preLeaveTime", crctData.value.leaveTime);
     await axios.post('/api/commute/crctAdd', formData);
   }
   else {

@@ -75,8 +75,8 @@ const crctGetList = async () => {
 
   rowData.value.forEach((i) => {
     i.commuteDt = dateTimeFormat(i.commuteDt, 'yyyy-MM-dd');
-    i.goTime = dateTimeFormat(i.preGoTime, 'MM/dd hh:mm');
-    i.leaveTime = dateTimeFormat(i.preLeaveTime, 'MM/dd hh:mm');
+    i.preGoTime = dateTimeFormat(i.preGoTime, 'MM/dd hh:mm');
+    i.preLeaveTime = dateTimeFormat(i.preLeaveTime, 'MM/dd hh:mm');
     i.crctGoTime = dateTimeFormat(i.crctGoTime, 'MM/dd hh:mm');
     i.crctLeaveTime = dateTimeFormat(i.crctLeaveTime, 'MM/dd hh:mm');
     i.createDt = dateTimeFormat(i.createDt, 'yyyy-MM-dd');
@@ -99,8 +99,8 @@ onMounted(() => {
     scrollY: true,
     columns: [ //근무일자 / 출근시간 / 퇴근시간 / 정정출근시간 / 정정퇴근시간 / 신청일 / 결재자
       { header: '근무일자', name: 'commuteDt', align: 'center'},
-      { header: '출근시간', name: 'goTime', align: 'center'},
-      { header: '퇴근시간', name: 'leaveTime', align: 'center'},
+      { header: '출근시간', name: 'preGoTime', align: 'center'},
+      { header: '퇴근시간', name: 'preLeaveTime', align: 'center'},
       { header: '정정출근시간', name: 'crctGoTime', align: 'center'},
       { header: '정정퇴근시간', name: 'crctLeaveTime', align: 'center'},
       { header: '신청일', name: 'createDt', align: 'center'},
