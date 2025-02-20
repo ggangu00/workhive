@@ -75,8 +75,8 @@ const crctGetList = async () => {
 
   rowData.value.forEach((i) => {
     i.commuteDt = dateTimeFormat(i.commuteDt, 'yyyy-MM-dd');
-    i.goTime = dateTimeFormat(i.goTime, 'MM/dd hh:mm');
-    i.leaveTime = dateTimeFormat(i.leaveTime, 'MM/dd hh:mm');
+    i.goTime = dateTimeFormat(i.preGoTime, 'MM/dd hh:mm');
+    i.leaveTime = dateTimeFormat(i.preLeaveTime, 'MM/dd hh:mm');
     i.crctGoTime = dateTimeFormat(i.crctGoTime, 'MM/dd hh:mm');
     i.crctLeaveTime = dateTimeFormat(i.crctLeaveTime, 'MM/dd hh:mm');
     i.createDt = dateTimeFormat(i.createDt, 'yyyy-MM-dd');

@@ -42,11 +42,17 @@ public class CommuteController {
 		return "redirect:/commute/cmtList"; //redirect라고 적어줘야 list함수 데이터 조회해서 값 뿌림
 	}
 	
-	// 출퇴근 수정 : 퇴근 / 정정 요청 승인
+	// 출퇴근 수정 : 퇴근
 	@PostMapping("/cmtModify")
 	public boolean cmtModify(@Validated CommuteDTO commuteDTO, RedirectAttributes rttr) {
 
 		return service.cmtUpdate(commuteDTO);
+	}
+	// 출퇴근 수정 : 퇴근
+	@PostMapping("/crctSignModify")
+	public boolean crctSignModify(@Validated CommuteDTO commuteDTO, RedirectAttributes rttr) {
+
+		return service.crctSignUpdate(commuteDTO);
 	}
 	
 	// 출퇴근 삭제
@@ -92,4 +98,12 @@ public class CommuteController {
 		return result;
 	}
 
+	// 지정된 출퇴근 시간
+	@GetMapping("/cmtTimeInfo")
+	public CommuteDTO cmtTimeInfo() {
+		CommuteDTO result = service.cmtTimeSelect();
+		
+		return result;
+	}
+	
 }

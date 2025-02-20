@@ -16,15 +16,27 @@
 			   seq_commute_cd.nextval
 			 , #{memCd}
 			 , sysdate
-			 , sysdate
+			 , to_date(#{goTime}, 'YYYY-MM-DD HH24:MI:SS')
 			 , #{goState}
 		)
 	</insert>
 	
-	<!-- 출퇴근 수정 : 퇴근, 출퇴근 정정 승인 -->
+	<!-- 출퇴근 수정 : 퇴근 -->
 	<update id="cmtUpdate" parameterType="commuteDTO">
 		update commute
-		set leave_time = sysdate
+		set leave_time = to_date(#{leaveTime}, 'YYYY-MM-DD HH24:MI:SS')
+		  , leave_state = #{leaveState}
+		  , work_time = #{workTime}
+		  , over_work_time = #{overWorkTime}
+		where commute_cd = #{commuteCd}
+	</update>
+	
+	<!-- 출퇴근 수정 : 결재 -->
+	<update id="crctSignUpdate" parameterType="commuteDTO">
+		update commute
+		set go_time = to_date(#{goTime}, 'YYYY-MM-DD HH24:MI:SS')
+		  , go_state = #{goState}
+		  , leave_time = to_date(#{leaveTime}, 'YYYY-MM-DD HH24:MI:SS')
 		  , leave_state = #{leaveState}
 		  , work_time = #{workTime}
 		  , over_work_time = #{overWorkTime}
@@ -114,6 +126,14 @@
 			from commute
 			where TO_CHAR(commute_dt, 'YYYY-MM-DD') = #{commuteDt}
 		) where rownum = 1
+	</select>
+	
+	<!-- 지정된 출퇴근 시간 -->
+	<select id="cmtTimeSelect" parameterType="commuteDTO">
+		select start_time
+		     , end_time
+		from company
+		where business_no = '000-00-00000'
 	</select>
 	
 </mapper>

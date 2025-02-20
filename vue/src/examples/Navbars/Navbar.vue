@@ -186,7 +186,9 @@ import { mapMutations, mapState } from "vuex";
 // ksy 추가
 import axios from 'axios';
 import { useStore } from "vuex";
-import { ref } from "vue";
+import { ref, onBeforeMount } from "vue";
+import { cmtCheck } from "../../assets/js/ksy";
+import { dateTimeFormat } from "../../assets/js/common";
 
 export default {
   name: "navbar",
@@ -222,10 +224,17 @@ export default {
     const store = useStore();
 
     let loginUser = "user01";
+
+    // 출근
     const btnCommuteAdd = async () => {
+      const result = await cmtCheck(null, null); // 현재 시간 기준 출근 체크
+
+      console.log(result);
+
       const addData = new FormData();
       addData.append("memCd", loginUser); // 로그인 유저 정보로 변경 예정
-      addData.append("goState", "F01"); // 버튼 동작 시간 체크 후 지각여부 체크 후 입력
+      addData.append("goTime", dateTimeFormat(result.goTime, 'yyyy-MM-dd hh:mm:ss'));
+      addData.append("goState", result.goState); // 버튼 동작 시간 체크 후 지각여부 체크 후 입력
       
       await axios.post('/api/commute/cmtAdd', addData);
       await store.dispatch("commuteGetList"); // Vuex에서 출퇴근 목록 갱신
@@ -237,12 +246,16 @@ export default {
       lastCmtGetInfo(); // 출근 후 마지막 기록 갱신
     }
 
+    // 퇴근
     const btnCommuteModify = async () => {
+      let result = await cmtCheck(lastCmt.value.goTime, null);
+
       const modifyData = new FormData();
       modifyData.append("commuteCd", lastCmt.value.commuteCd);
-      modifyData.append("leaveState", 'G01');
-      modifyData.append("workTime", 8);
-      modifyData.append("overWorkTime", 0);
+      modifyData.append("leaveTime", dateTimeFormat(result.leaveTime, 'yyyy-MM-dd hh:mm:ss'));
+      modifyData.append("leaveState", result.leaveState);
+      modifyData.append("workTime", result.workTime);
+      modifyData.append("overWorkTime", result.overWorkTime);
       await axios.post(`/api/commute/cmtModify`, modifyData);
       await store.dispatch("commuteGetList"); // Vuex에서 출퇴근 목록 갱신
 
@@ -258,8 +271,10 @@ export default {
     const lastCmtGetInfo = async () => {
       const result = await axios.get('/api/commute/lastCmtInfo?memCd=user01');
       lastCmt.value = result.data ? result.data : null;
-      console.log(lastCmt.value);
     }
+    onBeforeMount(() => {
+      lastCmtGetInfo();
+    })
 
     return {
       btnCommuteAdd,
