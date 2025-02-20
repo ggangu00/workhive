@@ -44,4 +44,9 @@ public class DocumentServiceImpl implements DocumentService{
 		return documentMapper.documentUpdate(documentDTO);
 	}
 
+	@Override
+	public int documentDelete(DocumentDTO documentDTO) {
+		return documentMapper.documentDelete(documentDTO);
+	}
+
 }

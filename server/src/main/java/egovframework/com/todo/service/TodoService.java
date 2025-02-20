@@ -1,0 +1,22 @@
+package egovframework.com.todo.service;
+
+import java.util.Date;
+import java.util.List;
+
+public interface TodoService {
+	
+	//일지 전체조회
+	public List<TodoDTO> todoSelectAll(Date todoDt);
+	
+	//일지 단건조회
+	public TodoDTO todoSelect(String todoCd);	
+	
+	//일지 등록
+	public boolean todoInsert(TodoDTO todo);
+	
+	//일지 수정
+	public boolean todoUpdate(TodoDTO todo);
+	
+	//일지 삭제
+	public boolean todoDelete(String todoCd);
+}

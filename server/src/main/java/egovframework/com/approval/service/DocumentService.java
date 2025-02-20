@@ -17,4 +17,7 @@ public interface DocumentService {
 	
 	//문서회수(상태값 회수로 변경)
 	public int documentUpdate(DocumentDTO documentDTO);
+	
+	//삭제 (delYn 변경)
+	public int documentDelete(DocumentDTO documentDTO);
 }

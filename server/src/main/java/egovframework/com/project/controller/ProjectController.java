@@ -58,7 +58,7 @@ public class ProjectController {
 	
 	//프로젝트 등록
 	@PostMapping("")
-	public Map<String, Object> proejectAdd(@Validated ProjectDTO project) {
+	public Map<String, Object> projectAdd(@Validated ProjectDTO project) {
 		
 	  boolean result = projectService.projectInsert(project);
 	  	  
@@ -129,7 +129,7 @@ public class ProjectController {
 	
 	//프로젝트 과업등록
 	@PostMapping("/work")
-	public Map<String, Object> proejectWorkAdd(@Validated ProjectDTO project) {
+	public Map<String, Object> projectWorkAdd(@Validated ProjectDTO project) {
 		
 	  boolean result = projectService.projectWorkInsert(project);
 	  	  
@@ -186,7 +186,7 @@ public class ProjectController {
 	
 	//프로젝트 일정등록
 	@PostMapping("/plan")
-	public Map<String, Object> proejectPlanAdd(@Validated ProjectDTO project) {
+	public Map<String, Object> projectPlanAdd(@Validated ProjectDTO project) {
 		
 	  boolean result = projectService.projectPlanInsert(project);	  
 	  	  

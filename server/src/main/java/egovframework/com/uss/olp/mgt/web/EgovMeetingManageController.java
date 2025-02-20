@@ -1,5 +1,6 @@
 package egovframework.com.uss.olp.mgt.web;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -159,6 +160,8 @@ public class EgovMeetingManageController {
 	public List<EgovMap> egovMeetingManageList(
 			@ModelAttribute("searchVO") ComDefaultVO searchVO,
 			@RequestParam Map<?, ?> commandMap,
+			@RequestParam(value = "rowCtn", required = false, defaultValue = "0") int rowCtn,
+			@RequestParam(value = "state", required = false, defaultValue = "") String state,
 			MeetingManageVO meetingManageVO,
     		ModelMap model)
     throws Exception {
@@ -166,6 +169,8 @@ public class EgovMeetingManageController {
     	/** EgovPropertyService.sample */
     	searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
     	searchVO.setPageSize(propertiesService.getInt("pageSize"));
+    	searchVO.setRowCnt(rowCtn);
+    	searchVO.setState(state);
 
     	/** pageing */
     	PaginationInfo paginationInfo = new PaginationInfo();
@@ -201,26 +206,23 @@ public class EgovMeetingManageController {
 	 * @throws Exception
 	 */
     @GetMapping("/info/{mtgId}")
-	public String egovMeetingManageDetail(
-			@ModelAttribute("searchVO") ComDefaultVO searchVO,
-			MeetingManageVO meetingManageVO,
-			@RequestParam Map<?, ?> commandMap,
-    		ModelMap model)
-    throws Exception {
+    public List<EgovMap> egovMeetingManageDetail(
+            @ModelAttribute("searchVO") ComDefaultVO searchVO,
+            MeetingManageVO meetingManageVO,
+            @RequestParam Map<?, ?> commandMap,
+            ModelMap model) throws Exception {
 
-		String sLocationUrl = "egovframework/com/uss/olp/mgt/EgovMeetingManageDetail";
+        String sCmd = commandMap.get("cmd") == null ? "" : (String) commandMap.get("cmd");
 
-		String sCmd = commandMap.get("cmd") == null ? "" : (String)commandMap.get("cmd");
-		if(sCmd.equals("del")){
-			egovMeetingManageService.deleteMeetingManage(meetingManageVO);
-			sLocationUrl = "redirect:/uss/olp/mgt/EgovMeetingManageList.do";
-		}else{
-			List<EgovMap> sampleList = egovMeetingManageService.selectMeetingManageDetail(meetingManageVO);
-        	model.addAttribute("resultList", sampleList);
-		}
+        if (sCmd.equals("del")) {
+            egovMeetingManageService.deleteMeetingManage(meetingManageVO);
+            return Collections.emptyList(); // 삭제 후 빈 리스트 반환
+        } else {
+            List<EgovMap> sampleList = egovMeetingManageService.selectMeetingManageDetail(meetingManageVO);
+            return sampleList; // 조회 결과 반환
+        }
+    }
 
-		return sLocationUrl;
-	}
 
 	/**
 	  * 회의정보를 수정한다.

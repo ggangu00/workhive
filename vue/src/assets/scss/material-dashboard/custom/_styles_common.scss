@@ -168,7 +168,12 @@ width: 5%;
 }
 
 .point-red {
-   color: #fd4646;
+   color: #ff7171;
+   vertical-align: middle;
+}
+
+.point-blue {
+   color: #6c52ff;
    vertical-align: middle;
 }
 
@@ -281,4 +286,8 @@ width: 5%;
 
 .p-none {
 padding:0;
+}
+
+.list-nodata{
+   height: 150px;
 }

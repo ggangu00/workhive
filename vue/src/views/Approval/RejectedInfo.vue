@@ -2,7 +2,7 @@
     <div class="content">
       <ApprovalInfo
         :headButtons="headButtons"
-        :ApprovalButtons="true"
+        :ApprovalButtons="false"
         :showFile="true"
         @button-click="buttonClick"
       />
@@ -16,6 +16,7 @@
   import axios from 'axios';
   import { useRoute } from 'vue-router';
   import { useRouter } from 'vue-router';
+  //import Modal from '../../components/Modal.vue';
 
   const route = useRoute();
   const docCd = ref('');
@@ -25,9 +26,6 @@
   const docTitle = ref('');
   const docCnEditor = ref('');
 
-
-
-
   //넘긴 문서코드
   onMounted(()=>{
     docCd.value = route.query.docCd || "";
@@ -36,6 +34,8 @@
     deptNm.value = route.query.deptNm || "";
     docTitle.value = route.query.docTitle || "";
     docCnEditor.value = route.query.docCnEditor || "";
+
+    window.history.replaceState({}, '', route.path);
   })
   //버튼명
   const headButtons = ref([
@@ -46,19 +46,18 @@
 
   //버튼별 기능
   const buttonClick = async (buttonName)=>{
-    console.log(buttonName)
     switch(buttonName){
       case '회수' :
         await retrieveBtn();
         break;
 
       case '재기안':
-        restartDraft();
+        await restartDraft();
         break;
 
-      // case '삭제':
-      //   await deleteDocument();
-      //   break;
+      case '삭제':
+        await deleteDocument();
+        break;
   
     }
   }
@@ -98,4 +97,18 @@
     }
   });
   };
+
+  //삭제코드
+  const deleteDocument = async() => {
+    const response = await axios.put(`/api/document/delete/${docCd.value}`,{})
+    console.log(response)
+    if (response.status == 200) {
+          alert("삭제 성공");
+          router.push({path: '/approval/rejectedList'})
+        } else {
+          alert("삭제 실패");
+          router.push({path: '/approval/rejectedList'})
+        }
+    
+  }
   </script>
