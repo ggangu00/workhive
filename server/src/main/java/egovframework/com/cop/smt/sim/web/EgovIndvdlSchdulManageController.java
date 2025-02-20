@@ -597,7 +597,7 @@ public class EgovIndvdlSchdulManageController {
 
 		String sCmd = commandMap.get("cmd") == null ? "" : (String)commandMap.get("cmd");
 
-
+		Map<String, Object> response = new HashMap<>();
 
         if(sCmd.equals("save")){
     		//서버  validate 체크
@@ -669,7 +669,11 @@ public class EgovIndvdlSchdulManageController {
         	egovIndvdlSchdulManageService.updateIndvdlSchdulManage(indvdlSchdulManageVO);
         	 LOGGER.info("✅ [DB 업데이트 완료]");
         	//sLocationUrl = "redirect:/cop/smt/sim/EgovIndvdlSchdulManageList.do";
-		}
+        	 
+             	response.put("result", true);
+             }else {
+                response.put("result", false);
+             }
 
 		return commandMap;
 	}
@@ -770,6 +774,8 @@ public class EgovIndvdlSchdulManageController {
 		String sCmd = commandMap.get("cmd") == null ? "" : (String)commandMap.get("cmd");
 		LOGGER.info("cmd => {}", sCmd);
 
+		Map<String, Object> response = new HashMap<>();
+		
         if(sCmd.equals("save")){
     		//서버  validate 체크
 //            beanValidator.validate(indvdlSchdulManageVO, bindingResult);
@@ -804,6 +810,10 @@ public class EgovIndvdlSchdulManageController {
         	egovIndvdlSchdulManageService.insertIndvdlSchdulManage(indvdlSchdulManageVO);
         	sLocationUrl = "redirect:/cop/smt/sim/EgovIndvdlSchdulManageList.do";
         	LOGGER.info("🔹 받은 데이터: {}", commandMap);
+       
+            response.put("result", true);
+        }else {
+            response.put("result", false);
         }
 
         return commandMap;

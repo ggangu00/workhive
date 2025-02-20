@@ -14,7 +14,7 @@ public class DocumentDTO {
     private String docCd;           
     private String docTitle;                 
     private String docCnEditor;     
-    private String memCd;           
+    private String mberId;           
     private String crntSignStat;    
     private String draftDt;     
     private String completeDt;  
