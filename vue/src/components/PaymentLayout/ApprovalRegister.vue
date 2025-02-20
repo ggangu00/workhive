@@ -14,7 +14,7 @@
                           v-for="(btn, index) in headButtons" 
                           :key="index"
                           :class="['btn', btn.class, 'btn-fill']"
-                          @click="$emit('button-click', btn.action)">
+                          @click="$emit('button-click', btn.label)">
                           <!-- 자식컴포넌트 클릭이벤트 -->
                           {{ btn.label }}
                         </button>
@@ -31,14 +31,14 @@
                           <div class="col-3 title-box"><strong>기안부서</strong></div>
                       </div>
                       <div class="d-flex justify-content-between mb-1">
-                          <div class="col-3 input-box">
-                            <input type="text" v-model='docKind'>
+                          <div class="col-3">
+                            <input type="text" class="form-control" v-model='docKind'>
                           </div>
-                          <div class="col-3 input-box">
-                            <input type="text" v-model='formNm'>
+                          <div class="col-3">
+                            <input type="text" class="form-control" v-model='formNm'>
                           </div>
-                          <div class="col-3 input-box">
-                            <input type="text" v-model='deptNm'>
+                          <div class="col-3">
+                            <input type="text" class="form-control" v-model='deptNm'>
                           </div>
                       </div>
                     </div>
@@ -47,7 +47,9 @@
                           <div class="col-12" style='padding-left: 0;'><strong>제목</strong></div>
                       </div>
                       <div class="d-flex justify-content-between mb-1">
-                          <div class="col-12 input-box">{{$route.query.docTitle}}</div>
+                          <div class="col-12">
+                            <input type="text" class="form-control" v-model='docTitle'>
+                          </div>
                       </div>
                     </div>
                     <!-- 에디터 -->
@@ -143,17 +145,19 @@
 </div>
 <!-- 모달 끝 -->
 </template>
+
 <script setup>
-import { ref, onMounted,onUnmounted, nextTick } from 'vue';
+import { ref, onMounted,onUnmounted,watch} from 'vue';
 import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor } from '@toast-ui/editor';
 import ApprovalLine from '../../components/PaymentLayout/ApprovalLine.vue';
 import { useRoute } from 'vue-router';
 
+let editor ;
 const route = useRoute();
 
 //에디터객체
-const editor = ref('');
+
 const editorElement = ref('');
 
 //데이터받기
@@ -163,7 +167,44 @@ const formNm = ref("");
 const deptNm = ref("");
 const docTitle = ref("");
 const docCnEditor = ref("");
+const fileList = ref([]);
+//  Bootstrap 모달 이벤트 리스너 추가
+onMounted(() => {
+  const modalElement = document.getElementById('approvalRegiModal');
+  if (modalElement) {
+    modalElement.addEventListener('shown.bs.modal', handleModalOpen);
+  }
 
+  //query값 가져오기
+  // 앞전 페이지에서 정보 받아옴
+  docCd.value = route.query.docCd || "";
+  docKind.value = route.query.docKind || "";
+  formNm.value = route.query.formNm || "";
+  deptNm.value = route.query.deptNm || "";
+  docTitle.value = route.query.docTitle || "";
+  docCnEditor.value = route.query.docCnEditor || "";
+
+  if(docCd.value){
+    initEditor();
+  }
+
+  //param값 제거
+  window.history.replaceState({}, '', route.path);
+});
+
+//에디터
+const initEditor = () => {
+  //새로운 에디터 생성
+  editor = new Editor({
+    el: editorElement.value,
+    height: '500px',
+    initialEditType: 'wysiwyg',
+    previewStyle: 'vertical',
+    usageStatistics: false,
+  });
+};
+
+/////////////////////////////////
 defineProps({
   headButtons: { type: Array, required: true },
   ApprovalButtons: { type: Boolean, default: true },
@@ -180,58 +221,25 @@ const handleModalOpen = () => {
   }
 };
 
-//  Bootstrap 모달 이벤트 리스너 추가
-onMounted(() => {
-  nextTick(() => {
-    const modalElement = document.getElementById('approvalRegiModal');
-    if (modalElement) {
-      modalElement.addEventListener('shown.bs.modal', handleModalOpen);
-    }
-
-    //query값 가져오기
-    docCd.value = route.query.docCd || "";
-    docKind.value = route.query.docKind || "";
-    formNm.value = route.query.formNm || "";
-    deptNm.value = route.query.deptNm || "";
-    docTitle.value = route.query.docTitle || "";
-    docCnEditor.value = route.query.docCnEditor || "";
-
-    initEditor();
-  });
-});
-
-const fileList = ref([]);
-
-//에디터
-const initEditor = () => {
-  if (editorElement.value) {
-    editor.value = new Editor({
-      el: editorElement.value,
-      height: '500px',
-      initialEditType: 'wysiwyg',
-      previewStyle: 'vertical'
-    });
-
-  //   if (docCnEditor.value) {
-  //   editor.value.setMarkdown(docCnEditor.value);
-  // }else{
-  //   console.log('dssad')
-  // }
-  }
-};
-
 //  컴포넌트 언마운트 시 이벤트 리스너 제거 (페이지이동)
 onUnmounted(() => {
     const modalElement = document.getElementById('approvalRegiModal');
     if (modalElement) {
       modalElement.removeEventListener('shown.bs.modal', handleModalOpen);
     }
-    if (editor.value) {
-    editor.value.destroy();
-    editor.value = null;
+
+    if (editor) {
+    editor.destroy();
+    editor = null;
   }
 });
 
+watch(
+  ()=> docCnEditor.value, async()=>{
+    editor.setHTML(docCnEditor.value)
+  }
+  
+);
 
 </script>
 <style scoped>
