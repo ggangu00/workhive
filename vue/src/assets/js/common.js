@@ -20,7 +20,9 @@ export function dateFormat(value) {
 };
 
 export function dateTimeFormat(value, format) {
-   let date = value == null ? new Date() : new Date(value);
+   let date = value == null ? null : new Date(value);
+
+   if(date == null) return;
 
    let year = date.getFullYear();
    let month = ('0' + (date.getMonth() + 1)).slice(-2);

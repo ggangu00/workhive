@@ -95,18 +95,22 @@ let crctData = ref({
   crctReason: '',
   atchFileId: '',
   signId: '',
+  preGoTime: '',
+  preLeaveTime: '',
 });
 
 // 날짜 변경 감지(등록용 데이터 가져오기)
 watch (() => crctData.value.commuteDt, async () => {
-  console.log("날짜 감지");
-  let result = await axios.get(`/api/commute/dateCmtInfo`, {params: {commuteDt: crctData.value.commuteDt}});
-  
-  crctData.value.commuteCd = result.data.commuteCd;
-  crctData.value.goTime = result.data.goTime;
-  crctData.value.leaveTime = result.data.leaveTime;
-  crctData.value.crctGoTime = result.data.goTime;
-  crctData.value.crctLeaveTime = result.data.leaveTime;
+  if(cmtCd == null) {
+    console.log("날짜 감지");
+    let result = await axios.get(`/api/commute/dateCmtInfo`, {params: {commuteDt: crctData.value.commuteDt}});
+    
+    crctData.value.commuteCd = result.data.commuteCd;
+    crctData.value.goTime = result.data.goTime;
+    crctData.value.leaveTime = result.data.leaveTime;
+    crctData.value.crctGoTime = result.data.goTime;
+    crctData.value.crctLeaveTime = result.data.leaveTime;
+  }
 }, {deep:true});
 // 등록 화면 데이터 가져오기
 const cmtGetInfo = async () => {
@@ -138,35 +142,41 @@ onBeforeMount(() => {
   
 })
 onMounted(() => {
-  if(!isUpdate) {
+  if(!isUpdate && route.query.cmtCd != undefined) {
     console.log('등록 페이지 동작');
     cmtCd = route.query.cmtCd;
     cmtGetInfo();
-  } else {
+  } else if(isUpdate && route.query.crctCd != undefined) {
     console.log('수정 페이지 동작');
     crctCd = route.query.crctCd;
     crctGetInfo();
+  } else {
+    console.log("cmtCd 없음");
   }
 });
 
 // 저장/취소
 const router = useRouter();
 const btnCrctManage = async () => {
-  const addData = new FormData();
+  let formData = new FormData();
 
-  addData.append("crctCd", crctData.value.crctCd);
-  addData.append("commuteCd", crctData.value.commuteCd);
-  addData.append("crctGoTime", dateTimeFormat(crctData.value.crctGoTime, 'yyyy-MM-dd hh:mm:ss'));
-  addData.append("crctLeaveTime", dateTimeFormat(crctData.value.crctLeaveTime, 'yyyy-MM-dd hh:mm:ss'));
-  addData.append("crctReason", crctData.value.crctReason);
-  // addData.append("atchFileId", );
-  addData.append("createId", 'user01');
-  addData.append("signId", crctData.value.signId);
+  formData.append("crctCd", crctData.value.crctCd);
+  formData.append("commuteCd", crctData.value.commuteCd);
+  formData.append("crctGoTime", dateTimeFormat(crctData.value.crctGoTime, 'yyyy-MM-dd hh:mm:ss'));
+  formData.append("crctLeaveTime", dateTimeFormat(crctData.value.crctLeaveTime, 'yyyy-MM-dd hh:mm:ss'));
+  formData.append("crctReason", crctData.value.crctReason);
+  // formData.append("atchFileId", );
+  formData.append("createId", 'user01');
+  formData.append("signId", crctData.value.signId);
   
-  if(!isUpdate)
-    await axios.post('/api/commute/crctAdd', addData);
-  else
-    await axios.post('/api/commute/crctModify', addData);
+  if(!isUpdate) {
+    
+    await axios.post('/api/commute/crctAdd', formData);
+  }
+  else {
+    
+    await axios.post('/api/commute/crctModify', formData);
+  }
 
   router.push({ name: 'CrctList' });
 }

@@ -30,5 +30,7 @@ public class CommuteCrctDTO {
 	private String endDate;
 	private String searchState;
 	
+	private String preGoTime;
+	private String preLeaveTime;
 	
 }
