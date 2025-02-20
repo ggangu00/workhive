@@ -201,7 +201,7 @@
  		
  	</update>
  	
- 	<!--  <delete id="deleteBBSMaster" parameterType="egovframework.com.cop.bbs.service.BoardMasterVO">
+  <!--  <delete id="deleteBBSMaster" parameterType="egovframework.com.cop.bbs.service.BoardMasterVO">
  			DELETE FROM COMTNBBSMASTER
  			WHERE BBS_ID = #{bbsId}
  	</delete> -->
