@@ -16,4 +16,14 @@ public interface CommonMapper {
 	
 	// 홈 대시보드 건수 조회 (진행중인 프로젝트, 금일 예정 일정, 미완료 일지)
 	CommonDTO homeInfo(String memCd);
+	
+	// 이력내역 전체조회
+	public List<CommonDTO> historySelectAll();
+	
+	// 이력내역 단건조회
+	public CommonDTO historyInfo(String histCd);
+	
+	// 이력내역 등록
+	public boolean historyInsert(CommonDTO dto);
+	
 }

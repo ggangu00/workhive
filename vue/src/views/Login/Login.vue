@@ -64,6 +64,7 @@
    import { useRouter } from "vue-router";
    import axios from "axios";
    import Swal from 'sweetalert2';
+   import qs from 'qs';
 
 // ================================================== side, header 숨기기 ==================================================
    const store = useStore();
@@ -117,16 +118,30 @@
    const loginSelect = async () => {
       const requestData = {
          memId : userId.value,
-         pass : password.value
+         pass : password.value,
       }
+
+      const options = {
+         method: 'POST',
+         headers: { 'content-type': 'application/x-www-form-urlencoded' },
+         data: qs.stringify(requestData),
+         url : '/api/login.do'
+      };
+
       try {
-         const result = await axios.post('/api/login', requestData);
-         console.log(result.data)
+         const result = await axios(options);
+
+         console.log(result.data);
+
+         Swal.fire({
+            icon: "success",
+            title: "Login 성공 !!!",
+         });
       } catch (err) {
          Swal.fire({
             icon: "error",
             title: "Login 실패",
-            text:  "Error : " + err
+            text:  "Error : " + err.response.data.error
          });
       }
    }

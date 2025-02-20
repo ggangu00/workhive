@@ -15,5 +15,5 @@
 		<typeAlias alias="egovMap" 			type="org.egovframe.rte.psl.dataaccess.util.EgovMap" />
 		<package name="egovframework.com"/>
 	</typeAliases>
-    
+   
 </configuration>

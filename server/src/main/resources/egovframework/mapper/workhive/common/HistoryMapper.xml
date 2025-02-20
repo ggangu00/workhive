@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.common.mapper.CommonMapper">
+	
+	<!-- 이력 히스토리 전체조회 -->
+	<select id="historySelectAll" resultType="CommonDTO">
+		SELECT 
+		   hist_cd,
+		   type_cd,
+		   tbl_nm,
+		   create_dt,
+		   create_id,
+		   update_dt,
+		   update_id
+		FROM 
+		   history
+		WHERE
+		   <![CDATA[hist_cd > 0]]>
+	</select>
+	
+	<!-- 이력내역 단건조회 -->
+	<select id="historyInfo" resultType="CommonDTO">
+		SELECT 
+		   hist_cd,
+		   type_cd,
+		   tbl_nm,
+		   create_dt,
+		   create_id,
+		   update_dt,
+		   update_id
+		FROM 
+		   history
+		WHERE
+		   <![CDATA[hist_cd > 0]]>
+	</select>
+	
+	<!-- 이력내역 등록 -->
+	<insert id="historyInsert" parameterType="CommonDTO">
+		INSERT INTO
+		   history (
+		      hist_cd,
+		      type_cd,
+		      tbl_nm,
+		      create_dt,
+		      create_id,
+		      update_dt,
+		      update_id)
+		VALUES (
+		      seq_hist_cd.NEXTVAL,
+		      #{typeCd},
+		      #{tblNm},
+		      SYSDATE,
+		      #{createId},
+		      #{updateDt},
+		      #{updateId})
+	</insert>
+
+</mapper>

@@ -34,7 +34,6 @@
 	</resultMap>
 	
 	<!-- SSO용 ESNTL_ID를 이용한 로그인(2011.8.26) -->
-	
 	<select id="ssoLoginByEsntlId" resultMap="login">
 		<!-- 일반회원 -->
 		<if test="userSe != null and userSe == 'GNR'">
@@ -88,11 +87,10 @@
 	
 	
 	<!-- 일반 로그인 -->
-	<select id="actionLogin" resultMap="login">
+	<select id="actionLogin" resultType="egovframework.com.cmm.LoginVO">
 		<!-- 일반회원 -->
-		<if test="userSe != null and userSe == 'GNR'">
 			
-			SELECT mber_id AS id
+			<!-- SELECT mber_id AS id
 			     , mber_nm AS name
 			     , ihidNum AS ihidNum
 			     , password AS password
@@ -103,9 +101,39 @@
 			  FROM COMTNGNRLMBER
 			 WHERE mber_id = #{id}
 			   AND password = #{password}
-			   AND mber_sttus = 'P'
+			   AND mber_sttus = 'P'  -->
+			SELECT 
+			   mem_id AS id,
+			   mem_cd,
+			   mem_id,
+			   pass,   
+			   wrn_cnt,
+			   lock_yn,   
+			   mem_nm,  
+			   post,    
+			   addr,    
+			   addr_dtl,
+			   status,
+			   area_tel,
+			   mid_tel, 
+			   end_tel,
+			   phone,  
+			   email, 
+			   hire_dt, 
+			   quit_dt,
+			   create_dt,
+			   create_id,
+			   update_dt, 
+			   update_id, 
+			   del_yn,    
+			   grade_cd, 
+			   resp_cd,   
+			   dept_cd    
+			FROM
+			   MEMBER
+			WHERE
+			   mem_id = #{memId}
 			
-		</if>
 		<!-- 기업회원 -->
 		<if test="userSe != null and userSe == 'ENT'">
 			
@@ -267,20 +295,18 @@
 	</update>
 	
 	<!-- 로그인인증제한 조회 -->
-	<select id="selectLoginIncorrect" resultType="egovMap">
+	<select id="selectLoginIncorrect" resultType="egovframework.com.cmm.LoginVO">
 	<!-- 일반회원 -->
-	<if test="userSe != null and userSe == 'GNR'">
 	<![CDATA[
-	SELECT  MBER_ID AS USER_ID
-         ,  PASSWORD AS USER_PW
-	     ,  MBER_NM AS USER_NM
-	     ,  ESNTL_ID AS UNIQ_ID
-	     ,  NVL(LOCK_AT,'N') LOCK_AT
-	     ,  NVL(LOCK_CNT,0) AS LOCK_CNT
-      FROM  COMTNGNRLMBER
-	 WHERE  MBER_ID = #{id} 
+	SELECT  mem_id AS USER_ID
+	      ,  pass AS USER_PW
+	     ,  mem_nm AS USER_NM
+	     ,  mem_cd AS UNIQ_ID
+	     ,  NVL(lock_yn, 'N') LOCK_AT
+	     ,  NVL(wrn_cnt, 0) AS LOCK_CNT
+	   FROM  member
+	 WHERE  mem_id = #{id}
 	]]>
-	</if>
 	<!-- 기업회원 -->
 	<if test="userSe != null and userSe == 'ENT'">
 	<![CDATA[

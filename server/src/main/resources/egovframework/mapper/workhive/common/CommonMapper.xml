@@ -36,8 +36,10 @@
 		    create_id,
 		    create_dt,
 		    del_yn
-		  FROM comtnentrprsmber
-		  ORDER BY create_dt desc
+		  FROM 
+		  	comtnentrprsmber
+		  ORDER BY 
+		  	create_dt desc
 	</select>
 	
 	<!-- 홈 대시보드 건수 조회 (진행중인 프로젝트, 금일 예정 일정, 미완료 일지) -->
