@@ -20,17 +20,17 @@
             </div>
             <div class="status-box projects">
               <div class="status-title status-orange">진행중인 프로젝트</div>
-              <div class="status-content">{{homeInfo.project_cnt ? numberFormat(homeInfo.project_cnt) : 0 }}건</div>
+              <div class="status-content">{{ homeInfo.projectCnt ? numberFormat(homeInfo.projectCnt) : 0 }}건</div>
             </div>
 
             <div class="status-box projects">
               <div class="status-title status-green">금일 예정 일정</div>
-              <div class="status-content">{{homeInfo.sch_cnt ? numberFormat(homeInfo.sch_cnt) : 0 }}건</div>
+              <div class="status-content">{{ homeInfo.schCnt ? numberFormat(homeInfo.schCnt) : 0 }}건</div>
             </div>
 
             <div class="status-box projects">
               <div class="status-title status-blue">미완료 일지</div>
-              <div class="status-content">{{homeInfo.todo_cnt ? numberFormat(homeInfo.todo_cnt) : 0 }}건</div>
+              <div class="status-content">{{ homeInfo.todoCnt ? numberFormat(homeInfo.todoCnt) : 0 }}건</div>
             </div>
 
           </div>
@@ -39,34 +39,32 @@
 
 
       <div class="row" style="background-color: transparent;">
-        <div class="col-5" style=" padding-left: 0;">
+        <div class="col-5">
           <div class="card">
             <div class="home-container">
               <div class="home-container-header">참여예정 회의</div>
-
-              <div class="meeting-item">
-                <div class="meeting-category">프로젝트</div>
-                <div class="meeting-title">빵둘2 빵순2 킥오프 회의 <span class="badge badge-warning">D-day</span></div>
-                <div class="meeting-date">2025-02-05(수) 10:00</div>
-              </div>
-
-              <div class="meeting-item">
-                <div class="meeting-category">일정</div>
-                <div class="meeting-title">세미나 일정 회의 <span class="badge badge-warning">D-day</span></div>
-                <div class="meeting-date">2025-02-10(월) 10:30</div>
-              </div>
-
-              <div class="meeting-item">
-                <div class="meeting-category">외부</div>
-                <div class="meeting-title">업체 과업 조율 회의 <span class="badge badge-warning">D-day</span></div>
-                <div class="meeting-date">2025-02-12(수) 16:00</div>
+              <template v-if="meetCount > 0">
+                <div class="meeting-item" :key="i" v-for="(meet, i) in meetList">
+                  <div class="meeting-category">{{ meet.typeCd }}</div>
+                  <div class="meeting-title">{{ meet.mtgNm }} <span class="badge badge-warning">D{{
+                    dateTermCalc(dateFormat(meet.mtgDe)) }}</span></div>
+                  <div class="meeting-date">{{ dateFormat(meet.mtgDe) }}({{ dateGetDay(meet.mtgDe) }}) {{
+                    meet.mtgBeginTm }} ~ {{ meet.mtgEndTm }}</div>
+                </div>
+              </template>
+              <div v-else class="meeting-none">
+                <div class="meeting-item" :key="i" v-for="i in 3">
+                  <div class="meeting-category">-</div>
+                  <div class="meeting-title">예정된 회의가 없습니다.</div>
+                  <div class="meeting-date"></div>
+                </div>
               </div>
             </div>
           </div>
 
         </div>
 
-        <div class="col-7" style="padding-right: 0;">
+        <div class="col-7">
           <div class="card">
             <div class="calendar-container">
               <!-- Calendar Section -->
@@ -187,22 +185,42 @@
 import axios from "axios";
 import Swal from 'sweetalert2';
 import { onBeforeMount, ref } from 'vue';
-import { numberFormat } from '../assets/js/common.js'
+import { numberFormat, dateFormat, dateGetDay, dateTermCalc } from '../assets/js/common.js'
 
 //---------------데이터-------------- 
 
 onBeforeMount(() => {
   homeGetInfo();
+  meetGetList();
 });
 
 //---------------axios--------------
 const homeInfo = ref([]);
-const homeGetInfo = async () => { //프로젝트 단건조회
+const homeGetInfo = async () => { // 대시보드 건수 조회
   try {
-    const result = await axios.get(`/api/comm/homeInfo/2015001`);
+    const result = await axios.get(`/api/comm/homeInfo/2025001`);
     homeInfo.value = result.data.info;
   } catch (err) {
     homeInfo.value = [];
+
+    Swal.fire({
+      icon: "error",
+      title: "API 조회 오류",
+      text: "Error : " + err
+    });
+  }
+}
+
+const meetList = ref([]);
+const meetCount = ref(0);
+const meetGetList = async () => { //회의 최신 3건 조회
+  try {
+    const result = await axios.get('/api/meet/list?rowCtn=3&state=ing');
+
+    meetList.value = result.data;
+    meetCount.value = result.data.length;
+  } catch (err) {
+    meetList.value = [];
 
     Swal.fire({
       icon: "error",

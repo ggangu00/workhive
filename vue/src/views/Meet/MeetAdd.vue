@@ -36,23 +36,15 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">회의실 구분 <em class="point-red">*</em></label>
-                        <select class="form-select w30" aria-label="Default select example" :name="mtgPlace"
-                            v-model="mtgPlace">
-                            <option value="M01">회의실1</option>
-                            <option value="M02">회의실2</option>
-                            <option value="M03">회의실3</option>
-                            <option value="M04">회의실4</option>
-                            <option value="M05">회의실5</option>
+                        <select class="form-select w30" :name="mtgPlace" v-model="mtgPlace">
+                            <option :key="place" v-for="place in mtgPlaceArr" :value="place.commDtlCd">{{place.commDtlNm}}</option>
                         </select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">회의 구분 <em class="point-red">*</em></label>
                         <select class="form-select w30" aria-label="Default select example" :name="typeCd"
                             v-model="typeCd">
-                            <option value="A03">내부</option>
-                            <option value="A04">외부</option>
-                            <option value="A04">프로젝트</option>
-                            <option value="A04">기타</option>
+                            <option :key="type" v-for="type in typeCdArr" :value="type.commDtlCd">{{type.commDtlNm}}</option>
                         </select>
                     </div>
                 </div>
@@ -94,22 +86,40 @@
 <script setup>
 import axios from "axios";
 import Swal from 'sweetalert2';
-import { ref } from 'vue';
+import { onBeforeMount, ref } from 'vue';
 import Card from '../../components/Cards/Card.vue'
 import { useRouter } from 'vue-router';
+import { getComm } from '../../assets/js/common.js'
 
 //---------------데이터-------------- 
 
-const typeCd = ref('A03');
+const typeCd = ref('B01');
+const typeCdArr = ref([]);
 const mtgNm = ref('');
 const mtgMtrCn = ref('');
 const mtgResultCn = ref('');
 const mtgDe = ref('');
 const mtgBeginTm = ref('');
 const mtgEndTm = ref('');
-const mtgPlace = ref('A03');
+const mtgPlace = ref('M01');
+const mtgPlaceArr = ref([]);
 
 const router = useRouter()
+
+onBeforeMount(() => {
+    getStatus();
+});
+
+const getStatus = async() => { //회의실 목록 호출
+    let arr = await getComm("MP");
+    let arrAdd = {comm_dtl_cd: '', comm_dtl_nm: '전체'};
+    mtgPlaceArr.value.unshift(arrAdd);
+    mtgPlaceArr.value = arr;
+
+    let arr2 = await getComm("WT");
+    typeCdArr.value.unshift(arrAdd);
+    typeCdArr.value = arr2;
+}
 
 const meetAdd = async () => { //회의 등록
 

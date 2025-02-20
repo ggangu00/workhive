@@ -55,6 +55,12 @@ public class ComDefaultVO implements Serializable {
 	/** 검색KeywordTo */
     private String searchKeywordTo = "";  
     
+    /** 출력 갯수 지정 rowCnt(limit) */
+    private int rowCnt = 0;
+    
+    /** (회의) 진행예정 / 금일 구분 */
+    private String state = "";  
+    
 	public int getFirstIndex() {
 		return firstIndex;
 	}
@@ -162,5 +168,21 @@ public class ComDefaultVO implements Serializable {
 	 */
 	public void setSearchKeywordTo(String searchKeywordTo) {
 		this.searchKeywordTo = searchKeywordTo;
+	}
+
+	public int getRowCnt() {
+		return rowCnt;
+	}
+
+	public void setRowCnt(int rowCnt) {
+		this.rowCnt = rowCnt;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
 	}
 }

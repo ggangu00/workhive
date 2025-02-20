@@ -116,12 +116,12 @@
                     <div class="category">{{ project.comNm }}</div>
                     <div class="subject"><a href="#" @click="modalOpen(project.prCd)" class="mrp5">{{ project.prNm
                     }}</a>
-                      <span class="badge badge-danger">D{{ dateTermCalc(dateFormat(project.endDt)) }}</span>
+                      <span class="badge badge-danger">D{{ project.term > 0 ? "-"+project.term : "+"+project.term*(-1) }}</span>
                     </div>
                   </td>
-                  <td>{{ dateFormat(project.startDt) }} ~ {{ dateFormat(project.endDt) }}</td>
+                  <td>{{ project.startDt }} ~ {{ project.endDt }}</td>
                   <td>{{ project.price ? project.price : "-" }}</td>
-                  <td>{{ project.createDt }}</td>
+                  <td>{{ project.entrprsMberId }}</td>
                   <td><button class="btn btn-primary btn-sm" @click="btnPagePlan(project.prCd)">일정관리</button></td>
                   <td>{{ dateFormat(project.createDt) }}</td>
                   <td>
@@ -131,9 +131,9 @@
                   </td>
                 </tr>
               </template>
-              <tr v-else>
+              <tr v-else class="list-nodata">
                 <td colspan="10">
-                  <div class="list-nodata">등록된 프로젝트가 없습니다.</div>
+                  <div>등록된 프로젝트가 없습니다.</div>
                 </td>
               </tr>
             </tbody>
@@ -194,9 +194,9 @@
                       <td>{{ work.state == 'A02' ? '미완료' : '완료' }}</td>
                     </tr>
                   </template>
-                  <tr v-else>
+                  <tr v-else class="list-nodata">
                     <td colspan="4">
-                      <div class="list-nodata">등록된 일정이 없습니다.</div>
+                      <div>등록된 일정이 없습니다.</div>
                     </td>
                   </tr>
                 </tbody>
@@ -286,9 +286,15 @@ const projectCount = ref(0);
 const projectGetList = async () => { //프로젝트 전체조회
   try {
     const result = await axios.get('/api/project/list');
-
-    projectList.value = result.data;
+    
     projectCount.value = result.data.length;
+    projectList.value = result.data.map(item => ({
+      ...item,
+      startDt: dateFormat(item.startDt),
+      endDt: dateFormat(item.endDt),
+      term: dateTermCalc('', dateFormat(item.endDt))
+    }));
+
   } catch (err) {
     projectList.value = [];
 
