@@ -23,7 +23,7 @@
               <div class="mb-3">
                 <label class="form-label">게시판 유형</label>
                 <select v-model="formValues.bbsTyCode" class="form-select w30">
-                  <option selected>선택하세요</option>
+                  <option value="" disabled selected>선택하세요</option>
                   <option value="A01">공지사항</option>
                   <option value="A02">사내게시판</option>
                 </select>
@@ -32,7 +32,7 @@
               <div class="mb-3">
                 <label class="form-label">파일첨부 가능여부</label>
                 <select v-model="formValues.fileAtchPosblAt" class="form-select w30">
-                  <option selected>선택하세요</option>
+                  <option value="" disabled selected>선택하세요</option>
                   <option value="A01">예</option>
                   <option value="A02">아니오</option>
                 </select>
@@ -41,7 +41,16 @@
               <div class="mb-3">
                 <label class="form-label">댓글 가능여부</label>
                 <select v-model="formValues.answerAt" class="form-select w30">
-                  <option selected>선택하세요</option>
+                  <option value="" disabled selected>선택하세요</option>
+                  <option value="A01">예</option>
+                  <option value="A02">아니오</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">사용여부</label>
+                <select v-model="formValues.useAt" class="form-select w30">
+                  <option value="" disabled selected>선택하세요</option>
                   <option value="A01">예</option>
                   <option value="A02">아니오</option>
                 </select>
@@ -72,7 +81,8 @@
     bbsNm: route.query.bbsNm || '',
     bbsTyCode: route.query.bbsTyCode || '',          //  게시판 유형
     fileAtchPosblAt: route.query.fileAtchPosblAt || '', //  파일 첨부 여부
-    answerAt: route.query.answerAt || ''             //  댓글 여부
+    answerAt: route.query.answerAt || '' ,            //  댓글 여부
+    useAt: route.query.useAt || ''             //  사용여부
   });
   console.log(' route.query:', route.query);
   console.log('받은 데이터:', boardData.value);
@@ -84,7 +94,7 @@
     bbsAttrbCode: 'abc',
     bbsTyCode: '', 
     fileAtchPosblAt: '', 
-    useAt: 'abc',
+    useAt: '',
     frstRegisterId: 'abbc',
     frstRegisterPnttm: 'abc',
     answerAt: '', 
@@ -97,11 +107,12 @@
   const setFormValuesFromQuery = () => {
     const query = route.query;
   console.log("응답:",query);
-
+    formValues.value.bbsId = query.bbsId ?? '';
     formValues.value.bbsNm = query.bbsNm ?? '';
     formValues.value.bbsTyCode = query.bbsTyCode ?? '';
     formValues.value.fileAtchPosblAt = query.fileAtchPosblAt ?? '';
     formValues.value.answerAt = query.answerAt ?? '';
+    formValues.value.useAt = query.useAt ?? '';
   
     console.log('✅ 적용된 formValues:', formValues.value);
   };
@@ -127,7 +138,7 @@
     });
   
     try {
-      const result = await axios.post('/api/board/boardAdd', addData);
+      const result = await axios.post('/api/board/boardUpdate', addData);
       responseMessage.value = result.data.message || "게시판이 성공적으로 등록되었습니다!";
       isSuccess.value = true;
   

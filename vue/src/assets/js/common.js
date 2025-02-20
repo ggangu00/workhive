@@ -21,7 +21,9 @@ export function dateFormat(value) {
 
 // 날짜포맷 (년-월-일 시:분:초 형식)
 export function dateTimeFormat(value, format) {
-   let date = value == null ? new Date() : new Date(value);
+   let date = value == null ? null : new Date(value);
+
+   if(date == null) return;
 
    let year = date.getFullYear();
    let month = ('0' + (date.getMonth() + 1)).slice(-2);

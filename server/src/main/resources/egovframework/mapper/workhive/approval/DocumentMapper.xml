@@ -38,6 +38,13 @@
     	where doc_cd = #{docCd}
     </update>
     
+    <!-- 문서삭제 -->
+     <update id="documentDelete">
+    	update document
+    	set	del_yn = 'Y'
+    	where doc_cd = #{docCd}
+    </update>
+    
     <!-- 문서양식 -->
     <select id="formSelectAll" resultType = "egovframework.com.approval.service.FormDTO">
     	SELECT

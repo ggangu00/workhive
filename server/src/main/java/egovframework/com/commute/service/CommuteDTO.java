@@ -20,6 +20,11 @@ public class CommuteDTO {
 	private long workTime;
 	private long overWorkTime;
 	
+	// 날짜 조회 조건
 	private String startDate;
 	private String endDate;
+	
+	// 출퇴근 시간
+	private String startTime;
+	private String endTime;
 }

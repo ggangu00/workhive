@@ -39,6 +39,7 @@
     "core-js": "3.33.0",
     "pinia": "^3.0.1",
     "tui-grid": "^4.21.22",
+    "turndown": "^7.2.0",
     "vue": "3.3.4",
     "vue-router": "4.2.5",
     "vue-sweetalert2": "^5.0.11",
