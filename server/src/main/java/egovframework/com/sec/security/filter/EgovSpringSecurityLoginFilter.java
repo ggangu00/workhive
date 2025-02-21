@@ -55,10 +55,11 @@ import egovframework.com.utl.sim.service.EgovClntInfo;
 
 public class EgovSpringSecurityLoginFilter implements Filter {
 
+	// Filter 인터페이스는 **서블릿 컨테이너(Tomcat, Jetty 등)**에서 제공하는 기능으로,
+	// 클라이언트의 요청이 들어오면 서블릿(또는 Spring Controller)으로 전달되기 전에 요청을 가로채어 원하는 작업을 수행
 	private FilterConfig config; // 필터 설정 정보를 저장하는 변수
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EgovSpringSecurityLoginFilter.class); // 로깅을 위한 Logger
-																										// 객체 선언
 
 	// 필터 종료 시 호출되는 메서드, 현재 별도 구현 없음
 	public void destroy() {
@@ -69,6 +70,9 @@ public class EgovSpringSecurityLoginFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
 		LOGGER.info("EgovSpringSecurityLoginFilter called..."); // 필터가 실행될 때 로그 출력
+		System.out.println("doFilter 실행 request " + request);
+		System.out.println("doFilter 실행 response " + response);
+		System.out.println("doFilter 실행 chain " + chain);
 
 		// 로그인 URL을 가져와 개행 문자 제거
 		String loginURL = config.getInitParameter("loginURL");
