@@ -184,9 +184,7 @@ onMounted(() => {
   docTitle.value = route.query.docTitle || "";
   docCnEditor.value = route.query.docCnEditor || "";
 
-  if(docCd.value){
-    initEditor();
-  }
+  initEditor();
 
   //param값 제거
   window.history.replaceState({}, '', route.path);
@@ -234,11 +232,9 @@ onUnmounted(() => {
   }
 });
 
-watch(
-  ()=> docCnEditor.value, async()=>{
+watch(()=> docCnEditor.value, async()=>{
     editor.setHTML(docCnEditor.value)
   }
-  
 );
 
 </script>

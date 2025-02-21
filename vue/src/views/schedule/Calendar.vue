@@ -89,7 +89,7 @@
                 <label class="form-label">부서</label>
                 <div class="row">
                   <div class="col-auto">
-                    <input type="text" class="form-control" v-model="dept">
+                    <input type="text" class="form-control" v-model="schedule.dept">
                   </div>
                 </div>
               </div>
@@ -97,7 +97,7 @@
                 <label class="form-label">담당자</label>
                 <div class="row">
                   <div class="col-auto">
-                    <input type="text" class="form-control" v-model="name">
+                    <input type="text" class="form-control" v-model="schedule.name">
                   </div>
                 </div>
               </div>
@@ -122,6 +122,7 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import axios from "axios";
 import { Modal } from "bootstrap";
+import Swal from 'sweetalert2'
 
 
 export default {
@@ -235,12 +236,11 @@ export default {
           schdulCn: event.schdulCn,
           place: event.schdulPlace,
           charger: event.schdulChargerId,
-          register: event.memCd,
+          register: event.mberId,
           kind: event.schdulKndCode,
-          name: event.memCd,
+          name: event.mberId,
           type: event.schdulSe
         }));
-        
     },
 
     //등록 메소드
@@ -257,13 +257,28 @@ export default {
       addList.append("schdulPlace", this.schedule.place);
       addList.append("schdulBgnde", this.schedule.start.replace(/-/g, '')  + bgndeTime);
       addList.append("schdulEndde", this.schedule.end.replace(/-/g, '') + enddeTime);
+      addList.append("schdulPlace", this.schedule.place);
 
       if(this.selectedEventId){
         addList.append("schdulId", this.selectedEventId);
-        await axios.post('/api/schedule/modify', addList );
-      }else{
-        await axios.post('/api/schedule/register', addList );
+        const response = await axios.post('/api/schedule/modify', addList );
+        console.log(response)
+        if(response.request.status==200){
+          Swal.fire({
+          icon: "success",
+          title: "일정 수정완료",
+        })
       }
+      }else{
+        const response = await axios.post('/api/schedule/register', addList );
+        console.log(response)
+        if(response.request.status==200){
+          Swal.fire({
+          icon: "success",
+          title: "일정 등록완료",
+        })
+      }
+    }
 
     //다시불러오기
     this.scheduleGetList();
@@ -287,6 +302,10 @@ export default {
   async scheduleRemove(){
     let response = await axios.delete(`/api/schedule/delete/${this.selectedEventId}`);
     if(response.data == "success"){
+      Swal.fire({
+          title: "삭제 완료",
+          icon: "success"
+      });
       this.scheduleGetList();
     }
   },

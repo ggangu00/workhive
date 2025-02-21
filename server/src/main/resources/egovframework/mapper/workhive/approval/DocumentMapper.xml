@@ -10,7 +10,7 @@
 	       DOC_TITLE, 
 	       DOC_CN, 
 	       DOC_CN_EDITOR, 
-	       MEM_CD, 
+	       MBER_ID, 
 	       CRNT_SIGN_STAT, 
 	       DRAFT_DT, 
 	       COMPLETE_DT, 
@@ -22,7 +22,7 @@
 	       #{docTitle}, 
 	       #{docCn}, 
 	       #{docCnEditor}, 
-	       #{memCd}, 
+	       #{mberId}, 
 	       #{crntSignStat}, 
 	       SYSDATE, 
 	       #{completeDt},
@@ -72,8 +72,8 @@
 		                doc_title,
 		                doc_cn,
 		                doc_cn_editor,
-		                fn_get_memnm(MEM_CD) as mem_cd,
-		                fn_get_deptNm(MEM_CD) as dept_nm,
+		                fn_get_memnm(mber_id) as mber_id,
+		                fn_get_deptNm(mber_id) as dept_nm,
 		                fn_get_codename(CRNT_SIGN_STAT) as crnt_sign_stat,
 		                draft_dt,
 		                complete_dt,
@@ -107,7 +107,7 @@
             AND doc_kind = #{docKind}
         </if>
         <if test="deptNm != null and deptNm != ''">
-            AND fn_get_deptNm(MEM_CD) = #{deptNm}
+            AND fn_get_deptNm(mber_id) = #{deptNm}
         </if>
 		<if test='!startDate.isEmpty()'>
 			<![CDATA[
