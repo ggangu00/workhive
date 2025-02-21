@@ -73,7 +73,7 @@
               엑셀다운로드</button>
           </div>
           <div class="p-2 flex-shrink-1">
-            <select class="form-select form-select-sm">
+            <select class="form-select form-select-sm mt-1">
               <option value="PA">프로젝트명 오름차순</option>
               <option value="PD">프로젝트명 내림차순</option>
               <option value="DA">프로젝트 기간 최신순</option>
@@ -122,10 +122,10 @@
                   <td>{{ project.startDt }} ~ {{ project.endDt }}</td>
                   <td>{{ project.price ? project.price : "-" }}</td>
                   <td>{{ project.entrprsMberId }}</td>
-                  <td><button class="btn btn-primary btn-sm" @click="btnPagePlan(project.prCd)">일정관리</button></td>
+                  <td><button class="btn btn-primary btn-sm" @click="btnPageMove('plan', project.prCd)">일정관리</button></td>
                   <td>{{ dateFormat(project.createDt) }}</td>
                   <td>
-                    <button class="btn btn-success btn-fill btn-sm mr-1" @click="btnPageEdit(project.prCd)">수정</button>
+                    <button class="btn btn-success btn-fill btn-sm mr-1" @click="btnPageMove('add', project.prCd)">수정</button>
                     <button class="btn btn-danger btn-fill btn-sm mr-1"
                       @click="btnProjectRemove(project.prCd)">삭제</button>
                   </td>
@@ -217,12 +217,19 @@
 
 <script setup>
 import axios from "axios";
-import Swal from 'sweetalert2';
 import { onBeforeMount, ref } from 'vue';
+import { useRouter } from "vue-router";
+
+//---------------컴포넌트-------------- 
+import Swal from 'sweetalert2';
 import Card from '../../components/Cards/Card.vue'
 import Modal from '../../components/Modal.vue';
-import { dateFormat, dateTermCalc } from '../../assets/js/common.js'
-import { useRouter } from "vue-router";
+
+//---------------js-------------- 
+import { dateFormat } from '../../assets/js/common'
+import { dateTermCalc } from '../../assets/js/project'
+
+
 
 //---------------데이터-------------- 
 
@@ -251,12 +258,8 @@ const modalClose = (e) => { //프로젝트 정보 모달 닫기
 //-------------버튼이벤트------------
 
 const router = useRouter();
-const btnPageEdit = (code) => {
-  router.push({ path: '/project/add', query: { prCd: code } });
-}
-
-const btnPagePlan = (code) => {
-  router.push({ path: '/project/plan', query: { prCd: code } });
+const btnPageMove= (mode, code) => { //수정/일정관리 페이지로
+  router.push({ path: `/project/${mode}`, query: { prCd: code } });
 }
 
 // 프로젝트 삭제 버튼

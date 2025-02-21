@@ -8,7 +8,10 @@ public interface TodoService {
 	public List<TodoDTO> todoSelectAll(String todoDt);
 	
 	//일지 단건조회
-	public TodoDTO todoSelect(String todoCd);	
+	public TodoDTO todoSelect(String todoCd);
+	
+	//일지 날짜별 건수조회
+	public List<TodoDTO> todoSelectCnt(String todoDt);
 	
 	//일지 등록
 	public boolean todoInsert(TodoDTO todo);

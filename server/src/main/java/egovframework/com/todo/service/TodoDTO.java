@@ -32,4 +32,5 @@ public class TodoDTO {
 	
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date createDt;		// 프로젝트 등록일
+	private Long dateCnt;		// 날짜별 건수
 }
