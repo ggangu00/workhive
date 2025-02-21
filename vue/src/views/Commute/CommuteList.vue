@@ -75,7 +75,7 @@ const endDate = computed({
 
 watch ([startDate, endDate], async () => {
   const params = {
-    memCd: "user01",
+    mberId: "user01",
     startDate: startDate.value,
     endDate: endDate.value
   };
@@ -99,7 +99,7 @@ const initGrid = () => {
     bodyHeight: 500,
     columns: [
       { header: '근무일자', name: 'commuteDt', align: 'center' },
-      { header: '사원정보', name: 'memCd', align: 'center' },
+      { header: '사원정보', name: 'mberId', align: 'center' },
       { header: '출근시간', name: 'goTime', align: 'center' },
       { header: '출근상태', name: 'goState', align: 'center' },
       { header: '퇴근시간', name: 'leaveTime', align: 'center' },

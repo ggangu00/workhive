@@ -7,14 +7,14 @@
 	<insert id="cmtInsert" parameterType="commuteDTO">
 		insert into commute (
 			   commute_cd
-			 , mem_cd
+			 , mber_id
 			 , commute_dt
 			 , go_time
 			 , go_state
 		)
 		values (
 			   seq_commute_cd.nextval
-			 , #{memCd}
+			 , #{mberId}
 			 , sysdate
 			 , to_date(#{goTime}, 'YYYY-MM-DD HH24:MI:SS')
 			 , #{goState}
@@ -51,7 +51,7 @@
 	<!-- 출퇴근 단건 조회 -->
 	<select id="cmtSelect" parameterType="String">
 		select commute_cd
-			 , mem_cd
+			 , mber_id
 			 , commute_dt
 			 , go_time
 			 , go_state
@@ -66,7 +66,7 @@
 	<!-- 출퇴근 전체 조회 : 사용자별 -->
 	<select id="cmtSelectAll" parameterType="commuteDTO" resultType="commuteDTO">
 		select commute_cd
-			 , mem_cd
+			 , mber_id
 			 , commute_dt
 			 , TO_CHAR(go_time, 'YYYY-MM-DD HH24:MI:SS') go_time
 			 , go_state
@@ -75,7 +75,7 @@
 			 , work_time
 			 , over_work_time
 		from commute
-		where mem_cd = #{memCd}
+		where mber_id = #{mberId}
 		<if test='!startDate.isEmpty()'>
 			<![CDATA[
 			and to_char(commute_dt, 'yyyy-mm-dd') >= #{startDate}
@@ -94,7 +94,7 @@
 		select *
 		from (
 			select commute_cd
-				 , mem_cd
+				 , mber_id
 				 , commute_dt
 				 , TO_CHAR(go_time, 'YYYY-MM-DD HH24:MI:SS') go_time
 				 , go_state
@@ -103,7 +103,7 @@
 				 , work_time
 				 , over_work_time
 			from commute
-			where mem_cd = #{memCd}
+			where mber_id = #{mberId}
 			and leave_time is null
 			order by go_time desc
 		)
@@ -115,7 +115,7 @@
 		select *
 		from (
 			select commute_cd
-				 , mem_cd
+				 , mber_id
 				 , commute_dt
 				 , go_time
 				 , go_state

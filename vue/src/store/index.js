@@ -78,7 +78,7 @@ export default createStore({
 
       async commuteGetList({ commit, state }) {
          const params = {
-         memCd: "user01",
+         mberId: "user01",
          startDate: state.startDate,
          endDate: state.endDate
          };

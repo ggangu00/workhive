@@ -68,12 +68,12 @@ public class CommuteController {
 	
 	// 출퇴근 전체 조회
 	@GetMapping("/cmtList")
-	public List<CommuteDTO> cmtList(@RequestParam(name="memCd") String memCd, 
+	public List<CommuteDTO> cmtList(@RequestParam(name="mberId") String mberId, 
 									@RequestParam(name="startDate") String startDate,
 									@RequestParam(name="endDate") String endDate) {
 		
 		CommuteDTO searchDTO = new CommuteDTO();
-		searchDTO.setMemCd(memCd);
+		searchDTO.setMberId(mberId);
 		searchDTO.setStartDate(startDate);
 		searchDTO.setEndDate(endDate);
 		
@@ -84,8 +84,8 @@ public class CommuteController {
 	
 	// 마지막 출퇴근 정보 조회
 	@GetMapping("/lastCmtInfo")
-	public CommuteDTO lastCmtInfo(@RequestParam(name="memCd") String memCd) {
-		CommuteDTO result = service.lastCmtSelect(memCd);
+	public CommuteDTO lastCmtInfo(@RequestParam(name="mberId") String mberId) {
+		CommuteDTO result = service.lastCmtSelect(mberId);
 		
 		return result;
 	}
