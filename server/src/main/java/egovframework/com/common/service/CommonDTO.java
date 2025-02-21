@@ -55,7 +55,7 @@ public class CommonDTO {
 	private String updateId;	// 수정자
 	
 	// 홈 대시보드 건수 조회
-	private String memCd;		// 구성원코드
+	private String mberId;		// 구성원코드
 	private Long projectCnt;	// 진행중인 프로젝트 갯수
 	private Long todoCnt;		// 미완료 일지 갯수
 	private Long schCnt;		// 금일 예정 일정 갯수
