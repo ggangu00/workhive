@@ -64,8 +64,8 @@
                 placeholder="업무내용을 입력해주세요">
             </div>
             <div class="col-2">
-              <button class="btn btn-secondary btn-fill btn-sm float-left" @click="todoAdd">등록</button>
-              <button class="btn btn-primary btn-fill btn-sm float-left" @click="openModal">상세등록</button>
+              <button class="btn btn-secondary btn-fill float-left mt-0" @click="todoAdd">등록</button>
+              <button class="btn btn-primary btn-fill loat-left mt-0" @click="openModal">상세등록</button>
             </div>
           </div>
           <div class="table-responsive">
