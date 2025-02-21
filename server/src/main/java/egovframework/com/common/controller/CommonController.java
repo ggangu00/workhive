@@ -53,13 +53,13 @@ public class CommonController {
 	}
 	
 	// 홈 대시보드 건수 조회 (진행중인 프로젝트, 금일 예정 일정, 미완료 일지)
-	@GetMapping("/homeInfo/{memCd}")
-	public Map<String, Object> homeInfo(@PathVariable("memCd") String memCd) {
+	@GetMapping("/homeInfo/{mberId}")
+	public Map<String, Object> homeInfo(@PathVariable("mberId") String mberId) {
 		
 		Map<String, Object> map = new HashMap<>();
 		
 		//프로젝트 정보조회
-		CommonDTO result = service.homeInfo(memCd);
+		CommonDTO result = service.homeInfo(mberId);
 		
 		if (result != null) {
 	        map.put("result", true);

@@ -5,7 +5,7 @@
 	<!-- 일지 전체조회 -->
 	<select id="todoSelectAll" parameterType="String" resultType="todoDTO">
 		select todo_cd,		
-			   mem_cd,		
+			   mber_id,		
 			   fn_get_codename(type_cd) as type_cd,	
 			   title,		
 			   content,		
@@ -22,7 +22,7 @@
 	<!-- 일지 단건조회 -->
 	<select id="todoSelect" parameterType="String">
 		select todo_cd,		--일지 코드
-			   mem_cd,		--구성원 코드
+			   mber_id,		--구성원 코드
 			   fn_get_codename(type_cd) as type_cd,	--업무구분
 			   title,		--업무명
 			   content,		--업무 상세내용
@@ -38,7 +38,7 @@
 	<insert id="todoInsert" parameterType="todoDTO">
 		INSERT INTO todo (
 			todo_cd,		--일지 코드
-		    mem_cd,		--구성원 코드
+		    mber_id,		--구성원 코드
 		    type_cd,	--업무구분
 		    title,		--업무명
 		    content,		--업무 상세내용
@@ -47,7 +47,7 @@
 		)
 		VALUES (
 			seq_todo_cd.nextval,
-			#{memCd},
+			#{mberId},
 			#{typeCd},
 			#{title},
 			#{content},
@@ -76,7 +76,7 @@
 			<if test="content != null and !content.equals('')">
 			content = #{content},
 			</if>
-			mem_cd = #{memCd}
+			mber_id = #{mberId}
 		where 
 			todo_cd = ${todoCd}				
 	</update>
