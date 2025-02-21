@@ -1,5 +1,19 @@
 import axios from "axios";
 
+// 휴식 시간 계산
+const restTime = (go, leave, time) => {
+  // 점심시간 제외 (12~13시 근무 포함 시 1시간 차감)
+  if (go <= 12 && leave >= 13) {
+    time--;
+  }
+  // 저녁시간 제외
+  if (go <= 18 && leave >= 19) {
+    time--;
+  }
+
+  return time;
+}
+
 // 출퇴근 체크(출근 상태 / 퇴근 상태 / 근무 시간)
 export async function cmtCheck(goTimeInput, leaveTimeInput) {
   const goTime = goTimeInput == null ? new Date() : new Date(goTimeInput);
@@ -39,15 +53,8 @@ export async function cmtCheck(goTimeInput, leaveTimeInput) {
     result.overWorkTime = result.workTime;
     result.workTime = 0;
     
-    // 점심시간 제외 (12~13시 근무 포함 시 1시간 차감)
-    if (goHour <= 12 && leaveHour >= 13) {
-      result.overWorkTime--;
-    }
-    // 저녁시간 제외
-    if (goHour <= 18 && leaveHour >= 19) {
-      result.overWorkTime--;
-    }
-
+    result.overWorkTime = restTime(goHour, leaveHour, result.overWorkTime);
+    
     return result;
 
   } else if (isNightWork || isNextDayWork) { // G04: 야간 근무
@@ -64,30 +71,28 @@ export async function cmtCheck(goTimeInput, leaveTimeInput) {
     result.overWorkTime = nightWorkHours;
     result.workTime -= nightWorkHours;
 
-    if(result.workTime > 9) {
-      result.overWorkTime += result.workTime - 9;
-      result.workTime = 9;
+    result.workTime = restTime(goHour, leaveHour, result.workTime);
+
+    if(result.workTime > 8) {
+      result.overWorkTime += result.workTime - 8;
+      result.workTime = 8;
     }
 
-  } else if (result.workTime > 9) { // G02: 연장 근무
-    result.leaveState = "G02";
-    result.overWorkTime = result.workTime - 9;
-    result.workTime = 9;
-    
-  } else if (result.workTime < 9) { // G05: 조퇴
-    result.leaveState = "G05";
+  } else { // 연장, 조퇴, 정상 퇴근인 경우(점심 저녁 시간 제외 후 업무 시간 계산)
+    result.workTime = restTime(goHour, leaveHour, result.workTime);
 
-  } else if(leaveHour >= endTime) { // G01: 정상 퇴근
-    result.leaveState = "G01";
-  }
-            
-  // 점심시간 제외 (12~13시 근무 포함 시 1시간 차감)
-  if (goHour <= 12 && leaveHour >= 13) {
-    result.workTime--;
-  }
-  // 저녁시간 제외
-  if (goHour <= 18 && leaveHour >= 19) {
-    result.workTime--;
+    if (result.workTime > 8) { // G02: 연장 근무
+      result.leaveState = "G02";
+      result.overWorkTime = result.workTime - 8;
+      result.workTime = 8;
+      
+    } else if (leaveHour < endTime) { // G05: 조퇴
+      result.leaveState = "G05";
+  
+    } else if(leaveHour >= endTime) { // G01: 정상 퇴근
+      result.leaveState = "G01";
+    }
+
   }
   
   return result;

@@ -10,22 +10,22 @@
           <p class="card-sub">{{ projectInfo.comNm }}</p>
           <h5 class="card-title mb-3">{{ projectInfo.prNm }} <span class="badge badge-danger">D{{ term > 0 ? "-" + term
             :
-            "+" + term*(-1) }}</span></h5>
+            "+" + term * (-1) }}</span></h5>
           <p class="card-sub"><b>기간 : </b> {{ projectInfo.startDt }} ~ {{ projectInfo.endDt }}
           </p>
           <p class="card-sub"><b>참여자 : </b> 박주현, 박지훈, 정수민, 박명식</p>
         </div>
       </div>
-
       <Card>
         <button class="btn btn-primary btn-fill float-right" @click="modalOpen">일정등록</button>
+        
         <div style="width:100%; overflow:auto">
           <table class="table-responsive">
             <thead>
               <tr>
                 <th :key="date" v-for="date in dateTerm">
-                  <span v-if="dateGetDay(date) == '일'" class="point-red">{{ dateFormatDay(date)}}</span>
-                  <span v-else-if="dateGetDay(date) == '토'" class="point-blue">{{ dateFormatDay(date) }}</span>                  
+                  <span v-if="dateGetDay(date) == '일'" class="point-red">{{ dateFormatDay(date) }}</span>
+                  <span v-else-if="dateGetDay(date) == '토'" class="point-blue">{{ dateFormatDay(date) }}</span>
                   <span v-else>{{ dateFormatDay(date) }}</span>
                 </th>
               </tr>
@@ -133,6 +133,7 @@ const modalOpen = () => { //프로젝트 정보 모달 열기
 }
 
 const modalClose = (e) => { //프로젝트 정보 모달 닫기
+  formReset();
   if (e.key === "Escape") {
     if (isShowModal.value) {
       isShowModal.value = !isShowModal.value
@@ -288,10 +289,7 @@ const projectPlanAdd = async () => { //프로젝트 일정 등록
         title: "등록완료",
         text: "등록한 일정은 목록에서 확인할 수 있습니다",
       })
-      planNm.value = '';
-      color.value = '';
-      startDt.value = '';
-      endDt.value = '';
+
       projectPlanGetList(prCd.value);
     }
   } catch (err) {
@@ -325,5 +323,12 @@ const projectPlanRemove = async (prPlanCd) => { //프로젝트 일정삭제
       text: "Error : " + err
     });
   }
+}
+
+const formReset = () => { //입력정보 초기화
+  planNm.value = '';
+  color.value = '';
+  startDt.value = '';
+  endDt.value = '';
 }
 </script>

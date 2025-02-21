@@ -35,7 +35,7 @@
                             <input type="text" class="form-control" v-model='docKind'>
                           </div>
                           <div class="col-3">
-                            <input type="text" class="form-control" v-model='formNm'>
+                            <input type="text" class="form-control" v-model='formNm' readonly/>
                           </div>
                           <div class="col-3">
                             <input type="text" class="form-control" v-model='deptNm'>
@@ -119,7 +119,7 @@
     </div>
   </div>
 
-  <!-- 모달 시작 -->
+  <!-- 모달 시작 (거래선)  -->
 <div class="modal fade" id="approvalRegiModal" tabindex="-1" aria-labelledby="approvalRegiModalLabel"
   aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-centered">
@@ -144,14 +144,57 @@
   </div>
 </div>
 <!-- 모달 끝 -->
+    <!--프로젝트 상세보기 모달[s]-->
+    <Modal :isShowModal="isShowModal" :modalTitle="'거래처 선택'" @click.self="modalClose">
+    <template v-slot:body>
+      <card>
+        <p class="card-title mb-2">거래처 목록</p>
+        <div class="table-responsive">
+          <table class="table table-hover project">
+            <thead class="table-light">
+              <tr>
+                <th>번호</th>
+                <th>양식명</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <template v-if="formCount > 0">
+                <tr :key="i" v-for="(form, i) in formList">
+                  <td>{{ i + 1 }}</td>
+                  <td>{{ form.formType }}</td>
+                  <td>
+                    <button class="btn btn-info btn-fill btn-sm mr-1" @click="formSelect(form)">선택</button>
+                  </td>
+                </tr>
+              </template>
+              <tr v-else>
+                <td colspan="10">
+                  <div class="list-nodata">등록된 거래처가 없습니다.</div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </card>
+    </template>
+
+    <template v-slot:footer>
+      <button type="button" class="btn btn-secondary btn-fill" @click="modalClose">닫기</button>
+    </template>
+  </Modal>
+  <!--프로젝트 상세보기 모달[e]-->
 </template>
 
 <script setup>
-import { ref, onMounted,onUnmounted,watch} from 'vue';
+import { ref, onMounted, onUnmounted, watch} from 'vue';
 import '@toast-ui/editor/dist/toastui-editor.css';
-import { Editor } from '@toast-ui/editor';
+import Editor from '@toast-ui/editor';
+import tableMergedCell from '@toast-ui/editor-plugin-table-merged-cell';
 import ApprovalLine from '../../components/PaymentLayout/ApprovalLine.vue';
 import { useRoute } from 'vue-router';
+import Modal from '../../components/Modal.vue';
+import axios from 'axios';
 
 let editor ;
 const route = useRoute();
@@ -168,6 +211,8 @@ const deptNm = ref("");
 const docTitle = ref("");
 const docCnEditor = ref("");
 const fileList = ref([]);
+const formFile = ref("");
+
 //  Bootstrap 모달 이벤트 리스너 추가
 onMounted(() => {
   const modalElement = document.getElementById('approvalRegiModal');
@@ -199,7 +244,9 @@ const initEditor = () => {
     initialEditType: 'wysiwyg',
     previewStyle: 'vertical',
     usageStatistics: false,
+    plugins: [tableMergedCell]
   });
+
 };
 
 /////////////////////////////////
@@ -230,6 +277,56 @@ onUnmounted(() => {
     editor.destroy();
     editor = null;
   }
+});
+
+//--------------양식 모달--------------
+
+const isShowModal = ref(false);
+const modalOpen = () => { //양식 정보 모달 열기
+  isShowModal.value = true;
+  formGetList();
+}
+
+const modalClose = (e) => { //양식 정보 모달 닫기
+  if (e.key === "Escape") {
+    if (isShowModal.value) {
+      isShowModal.value = !isShowModal.value
+    }
+  } else {
+    isShowModal.value = false;
+  }
+}
+
+//양식유형 가져오기
+const formList =ref([]);
+const formCount = ref(0);
+const formGetList = async () =>{
+  const formType = await axios.get('/api/document/form')
+
+  formList.value = formType.data;
+  formCount.value = formType.data.length;
+}
+
+//양신석택 모달
+const formSelect = (params) => {
+  formNm.value = params.formType;
+  formFile.value = params.formFile;
+  editor.setHTML(formFile.value);
+  isShowModal.value = false;
+}
+
+////////////////////리셋버튼/////////////////////////
+
+const conditionReset = () => { // 정보 리셋
+  formNm.value = "";
+  docTitle.value = "";
+  docCnEditor.value = "";
+
+}
+
+defineExpose({  // modalOpen expose
+  modalOpen,
+  conditionReset
 });
 
 watch(()=> docCnEditor.value, async()=>{
@@ -280,6 +377,6 @@ watch(()=> docCnEditor.value, async()=>{
   }
   .left-card, .right-card {
     height: 100%;
-    
+    padding: 10px;
   }
 </style>

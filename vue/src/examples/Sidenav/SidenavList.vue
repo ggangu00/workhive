@@ -125,13 +125,12 @@
                   <i class="fa-solid fa-file"></i>
                </template>
                <template v-slot:list>
-                  <li class="sub-item" @click="movePage('Register')">문서기안</li>
-                  <li class="sub-item" @click="movePage('CompletedList')">완료함</li>
+                  <li class="sub-item" @click="movePage('RegisterTest')">문서기안</li>
                   <li class="sub-item" @click="movePage('PendingList')">미결함</li>
                   <li class="sub-item" @click="movePage('ProceedList')">진행함</li>
+                  <li class="sub-item" @click="movePage('CompletedList')">완료함</li>
                   <li class="sub-item" @click="movePage('RejectedList')">반려함</li>
-                  <li class="sub-item" @click="movePage('Test')">컴포넌트테스트</li>
-                  <li class="sub-item" @click="movePage('RegisterTest')">등록테스트</li>
+                  <li class="sub-item" @click="movePage('RetrieveList')">임시함</li>
                </template>
             </sidenav-collapse>
          </li>
