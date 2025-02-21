@@ -166,7 +166,8 @@ const TueGrid = () => {
 
 // 행 클릭 이벤트 핸들러
 const handleRowClick = (e) => {
-  if (!grid.value) return;
+  console.log(e.event);
+  if (!grid.value || !e.columnName) return;
   const dataRow = grid.value.getRow(e.rowKey);
 
   let routePath ='';
@@ -212,17 +213,16 @@ watch([docKind, deptNm, formType, startDate, endDate], async ([newDodKind, newDe
       startDate : newStartDate,
       endDate : newEndDate,
       perPage: 5,
-      page: page.value
-    } });
+      page: page.value,
+      status : props.status
+    }
+  });
 
     rowData.value = [...response.data?.data?.contents ?? [], {...response.data?.data?.pagination ?? []}];
     if (grid.value) {
       grid.value.resetData(rowData.value);
     }
 });
-
-
-
 
 </script>
 

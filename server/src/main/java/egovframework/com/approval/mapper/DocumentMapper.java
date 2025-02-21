@@ -23,4 +23,7 @@ public interface DocumentMapper {
 	
 	//문서회수(상태값 회수로 변경)
 	int documentUpdate(DocumentDTO documentDTO);
+	
+	//문서삭제(delYN 변경)
+	int documentDelete(DocumentDTO documentDTO);
 }

@@ -100,7 +100,6 @@ public class DocumentController {
 	}
 	 
 	//문서회수(상태변경회수 상태로)
-	// 권한 수정 처리
 	@PutMapping("/retrieve/{docCd}")
 		public ResponseEntity<String> documentUpdate(
 				@RequestBody DocumentDTO documentDTO,
@@ -112,5 +111,15 @@ public class DocumentController {
 		
 	}
 	
-	
+	//문서삭제(DelYn값 변경)
+	@PutMapping("/delete/{docCd}")
+		public ResponseEntity<String> documentDelete(
+				@RequestBody DocumentDTO documentDTO,
+				@PathVariable(name="docCd") String docCd){
+		documentDTO.setDocCd(docCd);
+		return documentService.documentDelete(documentDTO) == 1
+				? new ResponseEntity<>("success", HttpStatus.OK)
+				: new ResponseEntity<>( HttpStatus.INTERNAL_SERVER_ERROR);
+		
+	}
 }

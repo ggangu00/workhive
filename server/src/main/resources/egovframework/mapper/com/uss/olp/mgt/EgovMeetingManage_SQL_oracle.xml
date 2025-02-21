@@ -154,10 +154,11 @@
 	<select id="selectMeetingManageDetail" parameterType="egovframework.com.uss.olp.mgt.service.MeetingManageVO" resultType="egovMap" resultMap="meetingManageMap">
 		SELECT
 			A.MTG_ID,
+			fn_get_codename(A.TYPE_CD) as TYPE_CD,
 			A.MTG_NM,
 			A.MTG_MTR_CN,
 			A.MTG_DE,
-			A.MTG_PLACE,
+			fn_get_codename(A.MTG_PLACE) as MTG_PLACE,
 			A.MTG_BEGIN_TM,
 			A.MTG_END_TM,
 			A.MTG_RESULT_CN,
@@ -178,8 +179,10 @@
 	 
 		SELECT
 		A.MTG_ID,
+		fn_get_codename(A.TYPE_CD) as TYPE_CD,
 		A.MTG_NM,
 		A.MTG_MTR_CN,
+		A.MTG_RESULT_CN,
 		A.MTG_DE,
 		A.MTG_BEGIN_TM,
 		A.MTG_END_TM,
@@ -191,16 +194,37 @@
 	 
 	 <if test="searchKeyword != null and searchKeyword != ''">
 	 	
-	 		<if test="searchCondition == 'MTG_NM'">
-	 			AND MTG_NM LIKE '%' || #{searchKeyword} || '%'
-	 		</if>
-	 		<if test="searchCondition == 'MTG_MTR_CN'">
-	 			AND MTG_MTR_CN LIKE '%' || #{searchKeyword} || '%'
-	 		</if>
+ 		<if test="searchCondition == 'MTG_NM'">
+ 			AND MTG_NM LIKE '%' || #{searchKeyword} || '%'
+ 		</if>
+ 		<if test="searchCondition == 'MTG_MTR_CN'">
+ 			AND MTG_MTR_CN LIKE '%' || #{searchKeyword} || '%'
+ 		</if>
 	 	
 	 </if>
 	 
-		ORDER BY A.CREATE_DT DESC
+	 <!-- 진행예정 / 금일 구분 -->	 
+	 <if test="state != null and state != ''">
+	 	
+ 		<if test="state == 'ing'">
+	 		<![CDATA[
+	 			AND TRUNC(mtg_de) > TRUNC(SYSDATE)
+ 			]]>
+ 		</if>
+ 		<if test="state == 'now'">
+ 			AND TRUNC(mtg_de) = TRUNC(SYSDATE)
+	 	</if>
+	 	
+	 </if> 
+	 
+	 <!-- 갯수 제한 -->
+	 <if test="rowCnt != 0 and rowCnt != ''">
+	 	<![CDATA[
+	 		AND rownum <= #{rowCnt}
+	 	]]>
+	 </if>	
+	 
+		ORDER BY A.MTG_DE ASC
 	
 	
 		) T0
@@ -224,6 +248,7 @@
 	 		</if>
 	 	
 	 </if>
+	 
 	</select>
 	<!-- 회의관리::입력  -->
 	<insert id="insertMeetingManage">

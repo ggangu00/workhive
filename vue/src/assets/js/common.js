@@ -7,7 +7,7 @@ export async function getComm(cd) { // comm_cd
    return result.data;
 };
 
-// 날짜포맷 (yyyy-mm-dd 형식)
+// 날짜포맷 (년-월-일 형식)
 export function dateFormat(value) {
    let date = value == null ? new Date() : new Date(value);
 
@@ -19,8 +19,11 @@ export function dateFormat(value) {
    return result;
 };
 
+// 날짜포맷 (년-월-일 시:분:초 형식)
 export function dateTimeFormat(value, format) {
-   let date = value == null ? new Date() : new Date(value);
+   let date = value == null ? null : new Date(value);
+
+   if(date == null) return;
 
    let year = date.getFullYear();
    let month = ('0' + (date.getMonth() + 1)).slice(-2);
@@ -46,21 +49,16 @@ export function numberFormat(num) {
 };
 
 // 날짜차이 계산
-export function dateTermCalc(date) {
-    const endDate = new Date(date);
-    const today = new Date();
+export function dateTermCalc(startDt, endDt) {
+    let endDate = new Date(endDt);
+    let today = new Date();
+
+    if(startDt != '') today = new Date(startDt);
+    
 
     const diff = endDate - today;
 
     let diffDay = Math.floor(diff / (1000 * 60 * 60 * 24)) + 1;
-
-    if (diffDay == 0) {
-        diffDay = "-day";
-    } else if (diffDay < 0) {
-        diffDay = "+" + (diffDay * (-1));
-    } else {
-        diffDay = "-" + diffDay;
-    }
 
     return diffDay;
 }
@@ -70,4 +68,10 @@ export function dateGetDay(dateString){
     const days = ['일', '월', '화', '수', '목', '금', '토'];
     const date = new Date(dateString);
     return days[date.getDay()]; // 0: 일요일, 1: 월요일, ...
+};
+
+//월-일 요일 출력 (프로젝트 일정)
+export function dateFormatDay(dateString){
+    const day = dateString.substr(5, 10) + " (" + dateGetDay(dateString) + ")";
+    return day;
 };
