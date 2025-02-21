@@ -40,12 +40,11 @@ import axios from 'axios';
 const gridInstance = ref(null);
 const BulletinList = ref([]);
 
+
 //조회
-
-
 const BulletinGetList = async () => {
   try {
-    const { data } = await axios.get('/api/bulletin/BulletinList');
+    const { data } = await axios.get('/api/bulletin/bulletinList');
     BulletinList.value = (data.resultList || []).map((item, index) => ({
       rowNum: index + 1, // 1부터 시작하는 행번호 추가
       ...item
@@ -102,7 +101,7 @@ const initializeGrid = () => {
       },
       { 
         header: '조회수', 
-        name: 'rdcnt', 
+        name: 'rdCnt', 
         sortable: true, 
         align: 'center', 
         width: 140,         

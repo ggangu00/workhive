@@ -13,7 +13,7 @@
                           <button 
                             v-for="(btn, index) in headButtons" 
                             :key="index"
-                            :class="['btn', btn.class, 'btn-fill']"
+                            :class="['btn', btn.class]"
                             @click="$emit('button-click', btn.label)">
                             <!-- 자식컴포넌트 클릭이벤트 -->
                             {{ btn.label }}
@@ -49,14 +49,13 @@
                       <!-- 에디터 -->
                       <div class='col-12'>
                         <div v-html="$route.query.docCnEditor"></div>
-                          <!-- <div id="editor"></div> -->
                       </div>
                       <div class="d-flex" style='margin-top: 20px;'>
                         <!-- 왼쪽 -->
-                        <div class="col-5" v-if="showFile">
+                        <div class="col-5" >
                             <strong>첨부파일</strong>
                             <br>
-                            <input type="file"/>
+                            <input type="file" v-if="showFile"/>
                             <p class="file-info">개별 파일 기준 최대 30MB까지 첨부할 수 있습니다.</p>
                         </div>
 
@@ -113,36 +112,10 @@
         </div>
       </div>
     </div>
-
-    <!-- 모달 시작 -->
-  <div class="modal fade" id="approvalRegiModal" tabindex="-1" aria-labelledby="approvalRegiModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
-      <div class="modal-content">
-        <!-- 모달 헤더 -->
-        <div class="modal-header">
-          <h5 class="modal-title" id="approvalRegiModalLabel">결재선</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-
-        <!-- 모달 바디 -->
-        <div class="modal-body">
-          <ApprovalLine ref="approvalLineRef" />
-        </div>
-
-        <!-- 모달 푸터 -->
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary btn-fill" data-bs-dismiss="modal">등록</button>
-          <button type="button" class="btn btn-secondary btn-fill" data-bs-dismiss="modal">닫기</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- 모달 끝 -->
   </template>
   <script setup>
   import { ref, onMounted,onUnmounted } from 'vue';
-  import ApprovalLine from '../../components/PaymentLayout/ApprovalLine.vue';
+ //import ApprovalLine from '../../components/PaymentLayout/ApprovalLine.vue';
   import { useRoute } from 'vue-router';
 
   const route = useRoute();
@@ -187,14 +160,7 @@
 
 
   </script>
-  <style>
-    .modal-xl {
-      max-width: 70vw !important; /* 모달 가로 크기 확장 */
-    }
-    .modal-content {
-      max-height: 80vh; /* 모달 세로 크기 제한 */
-      overflow-y: auto; /* 내부 스크롤 적용 */
-    }
+  <style scoped>
     .button-collection button{
         margin-right: 10px;
     }
