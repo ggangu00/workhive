@@ -24,11 +24,10 @@ public class TodoDTO {
 	private String typeCd;		// 업무 구분
 	
 	@NotBlank
-	private String titlie;		// 업무제목
+	private String title;		// 업무제목
 	private String content;		// 업무 상세내용
 	
-	@NotBlank
-	private Date todoDt;		// 업무일자
+	private String todoDt;		// 업무일자
 	private String state;		// 완료여부
 	
 	@DateTimeFormat(pattern = "yyyy-MM-dd")

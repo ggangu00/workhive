@@ -1,6 +1,5 @@
 package egovframework.com.todo.controller;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,11 +28,9 @@ public class TodoController {
 	@Resource
 	private  TodoService todoService;
 	
-	//======================프로젝트=====================
-	
 	//일지 전체조회
-	@GetMapping("/list")
-	public List<TodoDTO> todoList(@PathVariable("todoDt") Date todoDt) {	  
+	@GetMapping("/list/{todoDt}")
+	public List<TodoDTO> todoList(@PathVariable("todoDt") String todoDt) {
 	  return todoService.todoSelectAll(todoDt);
 	}	
 	
@@ -63,7 +60,7 @@ public class TodoController {
 		
 	  boolean result = todoService.todoInsert(todo);
 	  
-	  Date todoDt = todo.getTodoDt();
+	  String todoDt = todo.getTodoDt();
 	  	  
 	  Map<String, Object> map = new HashMap<>();
 	  map.put("result", result);
@@ -80,7 +77,7 @@ public class TodoController {
 		Map<String, Object> map = new HashMap<>();
 		
 		boolean result = todoService.todoUpdate(todo);
-		Date todoDt = todo.getTodoDt();
+		String todoDt = todo.getTodoDt();
 		
 		map.put("result", result);
 		map.put("list", todoService.todoSelectAll(todoDt));

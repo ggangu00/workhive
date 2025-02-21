@@ -3,18 +3,18 @@
 <mapper namespace="egovframework.com.todo.mapper.TodoMapper">	
 	
 	<!-- 일지 전체조회 -->
-	<select id="todoSelectAll" parameterType="int" resultType="todoDTO">
-		select todo_cd,		--일지 코드
-			   mem_cd,		--구성원 코드
-			   type_cd,	--업무구분
-			   title,		--업무명
-			   content,		--업무 상세내용
-			   state,		--완료여부
-			   todo_dt,		--업무일자
+	<select id="todoSelectAll" parameterType="String" resultType="todoDTO">
+		select todo_cd,		
+			   mem_cd,		
+			   fn_get_codename(type_cd) as type_cd,	
+			   title,		
+			   content,		
+			   state,		
+			   todo_dt,		
 			   create_dt
 		from todo
 		where 
-			todoDt = #{todoDt} 
+			todo_dt = TO_DATE(#{todoDt}, 'YYYY-MM-DD')
 		order by 
 			create_dt desc
 	</select>
@@ -23,7 +23,7 @@
 	<select id="todoSelect" parameterType="String">
 		select todo_cd,		--일지 코드
 			   mem_cd,		--구성원 코드
-			   type_cd,	--업무구분
+			   fn_get_codename(type_cd) as type_cd,	--업무구분
 			   title,		--업무명
 			   content,		--업무 상세내용
 			   state,		--완료여부
@@ -52,7 +52,7 @@
 			#{title},
 			#{content},
 			#{state},
-			#{todoDt},
+			#{todoDt}
 		)
 		
 	</insert>
