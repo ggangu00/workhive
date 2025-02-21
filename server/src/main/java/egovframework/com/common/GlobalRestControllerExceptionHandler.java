@@ -1,4 +1,4 @@
-package egovframework.com.cmm;
+package egovframework.com.common;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.SQLSyntaxErrorException;

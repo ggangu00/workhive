@@ -36,8 +36,10 @@
 		    create_id,
 		    create_dt,
 		    del_yn
-		  FROM comtnentrprsmber
-		  ORDER BY create_dt desc
+		  FROM 
+		  	comtnentrprsmber
+		  ORDER BY 
+		  	create_dt desc
 	</select>
 	
 	<!-- 로그인 로그 전체조회 -->
