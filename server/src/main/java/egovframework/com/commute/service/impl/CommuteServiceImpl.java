@@ -48,8 +48,8 @@ public class CommuteServiceImpl implements CommuteService {
 	}
 
 	@Override
-	public CommuteDTO lastCmtSelect(String memCd) {
-		return commuteMapper.lastCmtSelect(memCd);
+	public CommuteDTO lastCmtSelect(String mberId) {
+		return commuteMapper.lastCmtSelect(mberId);
 	}
 
 	@Override

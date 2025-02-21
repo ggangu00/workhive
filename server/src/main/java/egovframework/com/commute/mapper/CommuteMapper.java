@@ -15,7 +15,7 @@ public interface CommuteMapper {
 	int cmtDelete(String commuteCd);
 	CommuteDTO cmtSelect(String commuteCd);
 	List<CommuteDTO> cmtSelectAll(CommuteDTO commuteDTO);
-	CommuteDTO lastCmtSelect(String memCd);
+	CommuteDTO lastCmtSelect(String mberId);
 	CommuteDTO dateCmtSelect(String commuteDt);
 	CommuteDTO cmtTimeSelect(); // 차후 회사 정보 설정에 따라 사업자 번호 받아서 검색
 }

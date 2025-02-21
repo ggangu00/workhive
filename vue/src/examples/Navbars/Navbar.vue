@@ -232,7 +232,7 @@ export default {
       console.log(result);
 
       const addData = new FormData();
-      addData.append("memCd", loginUser); // 로그인 유저 정보로 변경 예정
+      addData.append("mberId", loginUser); // 로그인 유저 정보로 변경 예정
       addData.append("goTime", dateTimeFormat(result.goTime, 'yyyy-MM-dd hh:mm:ss'));
       addData.append("goState", result.goState); // 버튼 동작 시간 체크 후 지각여부 체크 후 입력
       
@@ -269,7 +269,7 @@ export default {
     // 마지막 출퇴근 기록
     const lastCmt = ref(null);
     const lastCmtGetInfo = async () => {
-      const result = await axios.get('/api/commute/lastCmtInfo?memCd=user01');
+      const result = await axios.get('/api/commute/lastCmtInfo?mberId=user01');
       lastCmt.value = result.data ? result.data : null;
     }
     onBeforeMount(() => {
