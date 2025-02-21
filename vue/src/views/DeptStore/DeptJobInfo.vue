@@ -1,6 +1,6 @@
 <template>
 
-<div class="content"  @keydown.esc="modalCloseFunc">
+<div class="content" @keydown.esc="modalCloseFunc">
   <div class="container-fluid">
     <!-- 페이지 헤더 -->
     <div class="card">
@@ -27,34 +27,37 @@
                 />
               </ul>
 
-              <!-- 업무함 관리(등록/수정) -->
-              <Modal
-                :isShowModal="props.isShowModal"
-                :modalTitle="'업무함 관리'"
-                @click.self="modalClose"
-              >
-                <template v-slot:body>
-                  <div class="content">
-                    <div class="container-fluid">
+            </div>
+            
+            <!-- 업무함 관리(등록/수정) -->
+            <Modal
+              :isShowModal="isShowModal"
+              :modalTitle="'업무함 관리'"
+              @click.self="modalClose"
+              @keydown.esc="modalClose"
+            >
+              <template v-slot:body>
+                <div class="content">
+                  <div class="container-fluid">
 
-                      <div class="mb-3">
-                        <label>부서명</label>
-                        <div class="row">
-                          <div class="col-6">
-                            <input type="text" class="form-control" placeholder="부서명" readonly />
-                          </div>
+                    <div class="mb-3">
+                      <label>부서명</label>
+                      <div class="row">
+                        <div class="col-6">
+                          <input type="text" class="form-control" placeholder="부서명" readonly />
                         </div>
                       </div>
-
                     </div>
+
                   </div>
-                </template>
-                <template v-slot:footer>
-                  <button class="btn btn-secondary btn-fill mx-2" @click="modalClose">닫기</button>
-                  <button class="btn btn-success btn-fill mx-2" @click="modalConfirm">저장</button>     
-                </template>
-              </Modal>
-            </div>
+                </div>
+              </template>
+              <template v-slot:footer>
+                <button class="btn btn-secondary btn-fill mx-2" @click="modalClose">닫기</button>
+                <button class="btn btn-success btn-fill mx-2" @click="modalConfirm">저장</button>     
+              </template>
+            </Modal>
+
           </div>
     
           <div class="col-9">
@@ -169,12 +172,15 @@ const jobBxCheck = (type, data) => {
   switch(type) {
     case 'add':
       console.log("업무함 추가");
+      modalOpen();
       break;
     case 'modify':
-    console.log("업무함 수정");
+      console.log("업무함 수정");
+      modalOpen();
       break;
     case 'remove':
-    console.log("업무함 제거");
+      console.log("업무함 제거");
+      modalClose();
       break;
   }
   console.log("데이터 : ", data);
@@ -182,16 +188,13 @@ const jobBxCheck = (type, data) => {
 provide('jobBxCheck', jobBxCheck);
 
 // 업무함 관리 모달
-const props = defineProps({
-  isShowModal: Boolean,
-});
-
-const emit = defineEmits(['closeModal', 'confirm']);
-const modalClose = () => {
-  emit('업무함 닫기');
+const isShowModal = ref(false);
+const modalOpen = () => {
+  isShowModal.value = true;
 }
-const modalConfirm = () => {
-  emit('업무함 저장');
+
+const modalClose = () => {
+  isShowModal.value = false;
 }
 
 
@@ -322,9 +325,14 @@ const modalUpdateJob = () => {
 
 const modalCloseFunc = (e) => {
   if (e.key === "Escape") {
-      if(isShowJobModal.value) {
-        isShowJobModal.value = !isShowJobModal.value;
-      }
+    // `isShowJobModal`이 true일 경우 업무 등록 모달을 닫고
+    if (isShowJobModal.value) {
+      isShowJobModal.value = false;
+    }
+    // `isShowModal`이 true일 경우 업무함 관리 모달을 닫기
+    if (isShowModal.value) {
+      isShowModal.value = false;
+    }
   }
 }
 
