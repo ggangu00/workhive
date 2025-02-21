@@ -24,16 +24,18 @@ import ApprovalLine from "../components/PaymentLayout/ApprovalLine.vue";
 import ApprovalRegister from "../components/PaymentLayout/ApprovalRegister.vue";
 import ApprovalInfo from "../components/PaymentLayout/ApprovalInfo.vue";
 //skh
-import Test from "../views/Approval/test.vue";
 import RegisterTest from "../views/Approval/RegisterTest.vue";
 import CompletedList from "../views/Approval/CompletedList.vue";
-import Register from "../views/Approval/Register.vue";
 import Calendar from "../views/schedule/Calendar.vue";
 import PendingList from "../views/Approval/PendingList.vue";
 import ProceedList from "../views/Approval/ProceedList.vue";
 import RejectedList from "../views/Approval/RejectedList.vue";
 import RejectedInfo from "../views/Approval/RejectedInfo.vue";
 import RestartDraft from "../views/Approval/RestartDraft.vue";
+import CompletedInfo from "../views/Approval/CompletedInfo.vue";
+import PendingInfo from "../views/Approval/PendingInfo.vue";
+import ProceedInfo from "../views/Approval/ProceedInfo.vue";
+import RetrieveList from "../views/Approval/RetrieveList.vue";
 
 
 // pjh
@@ -180,17 +182,12 @@ const routes = [
       name: 'RestartDraft',
       component: RestartDraft
    },
-   { //
-      path: '/schdule/test',
-      name: 'Test',
-      component: Test
-   },
    {
       path: '/registerTest',
       name: 'RegisterTest',
       component: RegisterTest
    },
-   {
+   { //일정
       path: '/schdule/calendar',
       name: 'Calendar',
       component: Calendar
@@ -200,15 +197,30 @@ const routes = [
       name: 'PendingList',
       component : PendingList
    },
+   { //미결문서 상세보기
+      path: '/approval/pendingInfo',
+      name: 'PendingInfo',
+      component : PendingInfo
+   },
    { // 완료함
       path: '/approval/completedList',
       name: 'CompletedList',
       component : CompletedList
    },
+   {//완료문서 상세보기
+      path: '/approval/completedInfo',
+      name: 'CompletedInfo',
+      component : CompletedInfo
+   },
    { // 진행함
       path: '/approval/proceedList',
       name: 'ProceedList',
       component : ProceedList
+   },
+   { // 진행문서 상세보기
+      path: '/approval/proceedInfo',
+      name: 'ProceedInfo',
+      component : ProceedInfo
    },
    { // 반려함
       path: '/approval/rejectedList',
@@ -220,11 +232,12 @@ const routes = [
       name: 'RejectedInfo',
       component:RejectedInfo
    },
-   { // 문서 기안
-      path: '/approval/register',
-      name: 'Register',
-      component : Register
+   {//임시함
+      path: '/approval/retrieveList',
+      name: 'RetrieveList',
+      component : RetrieveList
    },
+
 
    //ksy
    { // 테스트
