@@ -19,7 +19,7 @@
         >
         </div>
         <ul class="navbar-nav justify-content-end">
-          
+
           <!-- 출퇴근 버튼 추가 - 토글식으로 변경 예정 -->
           <li class="px-3 nav-item d-flex align-items-center">
             <button class="btn btn-primary" @click="btnCommuteAdd" v-if="!lastCmt">출근</button>
@@ -235,7 +235,7 @@ export default {
       addData.append("mberId", loginUser); // 로그인 유저 정보로 변경 예정
       addData.append("goTime", dateTimeFormat(result.goTime, 'yyyy-MM-dd hh:mm:ss'));
       addData.append("goState", result.goState); // 버튼 동작 시간 체크 후 지각여부 체크 후 입력
-      
+
       await axios.post('/api/commute/cmtAdd', addData);
       await store.dispatch("commuteGetList"); // Vuex에서 출퇴근 목록 갱신
 
@@ -262,15 +262,16 @@ export default {
       // 출퇴근 버튼 클릭 후 날짜 초기화
       store.commit("setStartDate", "");
       store.commit("setEndDate", "");
-      
+
       lastCmtGetInfo(); // 출근 후 마지막 기록 갱신
     }
-    
+
     // 마지막 출퇴근 기록
     const lastCmt = ref(null);
     const lastCmtGetInfo = async () => {
-      const result = await axios.get('/api/commute/lastCmtInfo?mberId=user01');
-      lastCmt.value = result.data ? result.data : null;
+      console.log("출퇴근 기록 ")
+      // const result = await axios.get('/api/commute/lastCmtInfo?mberId=user01');
+      // lastCmt.value = result.data ? result.data : null;
     }
     onBeforeMount(() => {
       lastCmtGetInfo();

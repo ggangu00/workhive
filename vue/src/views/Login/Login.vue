@@ -6,7 +6,7 @@
          <h1>WorkHive</h1>
       </div>
 
-      <div class="mx-auto">
+      <div class="mx-auto" @keydown.enter="keyEventHandler">
          <div class="login_box">
             <div class="input_box mb10">
                <div class="input_item">
@@ -42,11 +42,13 @@
                <input class="form-check-input me-1" type="checkbox">
                <label class="form-check-label">로그인 상태 유지</label>
             </div>
+
+            <div class="btn_login_wrap">
+               <button type="button" class="btn_login" @click="btnLogin">로그인</button>
+            </div>
          </div>
 
-         <div class="btn_login_wrap">
-            <button type="button" class="btn_login" @click="btnLogin">로그인</button>
-         </div>
+
 
          <ul class="find_wrap">
             <li><a href="/findPw" class="find_text" @click="goToFindPw">비밀번호 찾기</a></li>
@@ -113,12 +115,16 @@
       loginSelect();
    }
 
+   const keyEventHandler = () => {
+      btnLogin(); // 로그인 실행
+   }
+
 // ============================================= Axios Event =============================================
    // id, pass값 서버로 보내기
    const loginSelect = async () => {
       const requestData = {
-         memId : userId.value,
-         pass : password.value,
+         id : userId.value,
+         password : password.value,
       }
 
       const options = {
@@ -131,13 +137,14 @@
       try {
          const result = await axios(options);
 
-         console.log(result.data);
+         console.log("로그인 성공 => ", result.data);
 
          Swal.fire({
             icon: "success",
             title: "Login 성공 !!!",
          });
       } catch (err) {
+         console.log("로그인 실패 => ", err)
          Swal.fire({
             icon: "error",
             title: "Login 실패",

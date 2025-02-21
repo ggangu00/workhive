@@ -37,6 +37,7 @@ public class LoginDAO extends EgovComAbstractDAO {
 	 * @exception Exception
 	 */
     public LoginVO actionLoginByEsntlId(LoginVO vo) throws Exception {
+    	System.out.println("LoginDAO => " + vo);
     	return (LoginVO)selectOne("LoginUsr.ssoLoginByEsntlId", vo);
     }
 
@@ -100,6 +101,7 @@ public class LoginDAO extends EgovComAbstractDAO {
 	 * @exception Exception
 	 */
 	public Map<?,?> selectLoginIncorrect(LoginVO vo) throws Exception {
+		System.out.println("selectLoginIncorrect DAO = > " + vo);
     	return (Map<?,?>)selectOne("LoginUsr.selectLoginIncorrect", vo);
     }
 

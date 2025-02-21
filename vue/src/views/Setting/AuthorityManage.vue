@@ -172,17 +172,17 @@
    // 권한삭제 버튼
    const btnAuthorityRemove = (name, code) => {
       Swal.fire({
-         title: '"' + name + '" 권한을 삭제 하시겠습니까?',
+         title: `"${name}" 권한을 삭제 하시겠습니까?`,
          icon: "question",
          showCancelButton: true,
          customClass: {
-            confirmButton: "btn btn-danger btn-fill",
-            cancelButton: "btn btn-secondary btn-fill"
+            confirmButton: "btn btn-secondary btn-fill",
+            cancelButton: "btn btn-danger btn-fill"
          },
-         cancelButtonText: "닫기",
-         confirmButtonText: "삭제",
+         confirmButtonText: "닫기", // "삭제" → "닫기"
+         cancelButtonText: "삭제", // "닫기" → "삭제"
       }).then((result) => {
-         if (result.isConfirmed) {
+         if (result.dismiss == Swal.DismissReason.cancel) {
             // 권한 삭제
             authorityRemove(code);
 
