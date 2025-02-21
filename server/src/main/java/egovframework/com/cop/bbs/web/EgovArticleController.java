@@ -1295,7 +1295,7 @@ public class EgovArticleController {
 		target.setNttSj("게시판 기능 설명");
 		target.setFrstRegisterId("ID");
 		target.setFrstRegisterNm("관리자");
-		target.setFrstRegistPnttm("2019-01-01");
+		target.setFrstRegisterPnttm("2019-01-01");
 		target.setInqireCo(7);
 		target.setParnts("0");
 		target.setReplyAt("N");
@@ -1308,7 +1308,7 @@ public class EgovArticleController {
 		target.setNttSj("게시판 부가 기능 설명");
 		target.setFrstRegisterId("ID");
 		target.setFrstRegisterNm("관리자");
-		target.setFrstRegistPnttm("2019-01-01");
+		target.setFrstRegisterPnttm("2019-01-01");
 		target.setInqireCo(7);
 		target.setParnts("0");
 		target.setReplyAt("N");

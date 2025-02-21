@@ -44,7 +44,7 @@ const BulletinList = ref([]);
 //조회
 const BulletinGetList = async () => {
   try {
-    const { data } = await axios.get('/api/bulletin/bulletinList');
+    const { data } = await axios.get('/api/bulletin/bulletinList?bbsId=BBS001');
     BulletinList.value = (data.resultList || []).map((item, index) => ({
       rowNum: index + 1, // 1부터 시작하는 행번호 추가
       ...item
@@ -70,7 +70,7 @@ const initializeGrid = () => {
     scrollY: true,
     bodyHeight: 480, // ✅ 표 높이 지정    
     pageOptions: {
-      useClient: true, // ✅ 클라이언트 사이드 페이지네이션
+      useClient: false, // ✅ 클라이언트 사이드 페이지네이션
       perPage: 10,
     },
     columnOptions: {
@@ -94,14 +94,14 @@ const initializeGrid = () => {
       },
       { 
         header: '작성일', 
-        name: 'frstRegisterPnttm', 
+        name: 'frstRegistPnttm', 
         sortable: true, 
         align: 'center', 
         width: 140, 
       },
       { 
         header: '조회수', 
-        name: 'rdCnt', 
+        name: 'inqireCo', 
         sortable: true, 
         align: 'center', 
         width: 140,         
