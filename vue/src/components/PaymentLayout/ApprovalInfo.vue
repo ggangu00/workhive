@@ -125,7 +125,6 @@
 </template>
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
-import ApprovalLine from '../../components/PaymentLayout/ApprovalLine.vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
