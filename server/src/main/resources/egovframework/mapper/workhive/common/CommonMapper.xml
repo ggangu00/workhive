@@ -60,8 +60,8 @@
 	select
 	    NVL((select count(*) from project project join project_mem pm on project.pr_cd=pm.pr_cd where project.state='A02' and pm.mber_id=m.mber_id),0) as project_cnt, --참여자로 등록된 프로젝트 갯수
 	    NVL((select count(*) from todo todo where todo.state='A02' and mber_id=m.mber_id),0) as todo_cnt,	--금일 예정 일지 갯수
-	    NVL((select count(*) from COMTNGNRLMBER sch WHERE TRUNC(TO_DATE(SCHDUL_BGNDE, 'YYYYMMDDHH24MI')) <= TRUNC(SYSDATE) and TRUNC(TO_DATE(SCHDUL_ENDDE, 'YYYYMMDDHH24MI')) >= TRUNC(SYSDATE)),0) as sch_cnt --금일 일정 갯수
-	from member m 
+	    NVL((select count(*) from COMTNSCHDULINFO sch WHERE TRUNC(TO_DATE(SCHDUL_BGNDE, 'YYYYMMDDHH24MI')) <= TRUNC(SYSDATE) and TRUNC(TO_DATE(SCHDUL_ENDDE, 'YYYYMMDDHH24MI')) >= TRUNC(SYSDATE)),0) as sch_cnt --금일 일정 갯수
+	from COMTNGNRLMBER m
 	where mber_id=#{mberId}
 	]]>
 	
