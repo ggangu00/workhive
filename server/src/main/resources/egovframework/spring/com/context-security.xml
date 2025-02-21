@@ -82,9 +82,9 @@
 
 	<!-- 
 		sqlHierarchicalRoles : 역할 계층 구조 조회 쿼리
-		sqlRolesAndUrl : URL에 대한 역할 매핑 조회 쿼리
-		sqlRolesAndMethod : 메서드에 대한 역할 매핑 조회 쿼리
-		sqlRolesAndPointcut : 포인트컷에 대한 역할 매핑 조회 쿼리
+		sqlRolesAndUrl       : URL에 대한 역할 매핑 조회 쿼리
+		sqlRolesAndMethod    : 메서드에 대한 역할 매핑 조회 쿼리
+		sqlRolesAndPointcut  : 포인트컷에 대한 역할 매핑 조회 쿼리
 		sqlRegexMatchedRequestMapping : 정규식 기반 요청 매핑 조회 쿼리
 	 -->
 	<egov-security:secured-object-config
