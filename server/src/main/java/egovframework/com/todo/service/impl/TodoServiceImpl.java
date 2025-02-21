@@ -27,6 +27,12 @@ public class TodoServiceImpl implements TodoService{
 	public TodoDTO todoSelect(String todoCd) {
 		return todoMapper.todoSelect(todoCd);
 	}
+	
+	//일지 날짜별 건수조회
+	@Override
+	public List<TodoDTO> todoSelectCnt(String todoDt) {
+		return todoMapper.todoSelectCnt(todoDt);
+	}
 
 	//일지 등록
 	@Override

@@ -34,6 +34,19 @@
 			todo_cd = #{todoCd} 
 	</select>
 	
+	<!-- 일지 날짜별 건수 조회 -->
+	<select id="todoSelectCnt" parameterType="String" resultType="todoDTO">
+		select todo_dt, 
+			   count(*) as dateCnt
+		from todo
+		where 
+			extract (year from todo_dt) = SUBSTR(#{todoDt}, 1, 4) 
+		and extract (month from todo_dt) = SUBSTR(#{todoDt}, 5, 2)
+			
+		group by 
+			todo_dt
+	</select>
+	
 	<!-- 일지 등록 -->
 	<insert id="todoInsert" parameterType="todoDTO">
 		INSERT INTO todo (

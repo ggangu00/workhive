@@ -54,6 +54,12 @@ public class TodoController {
 		return map;
 	}
 	
+	//일지 날짜별 건수조회
+	@GetMapping("/list/cnt/{todoDt}")
+	public List<TodoDTO> todoListCnt(@PathVariable("todoDt") String todoDt) {
+	  return todoService.todoSelectCnt(todoDt);
+	}	
+	
 	//일지 등록
 	@PostMapping("")
 	public Map<String, Object> todoAdd(@Validated TodoDTO todo) {

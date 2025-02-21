@@ -16,7 +16,44 @@
           <!-- 업무함 사이드바 -->
           <div class="col-3">
             <div class="jobBx">
-              <DeptJobBx @datareturn="getDeptData"></DeptJobBx>
+              <ul>
+                <DeptJobBx
+                  v-for="dept in rootDepartments"
+                  :key="dept.deptCd"
+                  :dept="dept"
+                  :departments="departments"
+                  :jobBoxes="jobBoxes"
+                  @jobBxManage="jobBxManage"
+                />
+              </ul>
+
+              <!-- 업무함 관리(등록/수정) -->
+              <Modal
+                :isShowModal="props.isShowModal"
+                :modalTitle="'업무함 관리'"
+                @click.self="modalClose"
+              >
+                <template v-slot:body>
+                  <div class="content">
+                    <div class="container-fluid">
+
+                      <div class="mb-3">
+                        <label>부서명</label>
+                        <div class="row">
+                          <div class="col-6">
+                            <input type="text" class="form-control" placeholder="부서명" readonly />
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                </template>
+                <template v-slot:footer>
+                  <button class="btn btn-secondary btn-fill mx-2" @click="modalClose">닫기</button>
+                  <button class="btn btn-success btn-fill mx-2" @click="modalConfirm">저장</button>     
+                </template>
+              </Modal>
             </div>
           </div>
     
@@ -66,33 +103,107 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import axios from 'axios';
 import Grid from 'tui-grid';
+import Swal from 'sweetalert2';
+import { useStore } from 'vuex';
+import { provide } from 'vue'; // 자식에게 전달
 
 import DeptJobBx from "./DeptJobBx.vue";
 import JobManage from "./JobManage.vue";
+import Modal from '../../components/Modal.vue';
 
 let gridInstance = ref();
 let rowData = ref([]);
 
-let jobBxList = [];
-let jobBxSelected = {
-  searchDeptId: 'ORGNZT_0000000000000',
-  searchDeptjobBxId: 'DX_012'
+
+// 부서 및 업무함 시작
+
+// vuex 감지
+const store = useStore();
+const jobBxList = computed(() => store.state.jobBxList);
+const jobBxSelected = computed(() => store.state.jobBxSelected);
+
+// 선택한 업무함 변경시 업무 목록 갱신
+watch(jobBxSelected, () => { 
+  jobGetList(jobBxSelected.value);
+});
+
+// 부서 및 업무함 데이터
+const departments = ref([]);
+const jobBoxes = ref([]);
+
+// 부서 정보 조회
+const deptGetList = async () => {
+  try {
+    const result = await axios.get('/api/department');
+    departments.value = result.data;
+
+  } catch (err) {
+    Swal.fire({ icon: "error", title: "부서 조회 실패", text: "Error : " + err });
+  }
 };
 
-// 부서 정보 받아오기
-const getDeptData = (result) => {
-  jobBxSelected.searchDeptId = result.deptId;
-  jobBxSelected.searchDeptjobBxId = result.jobBxId;
-  jobBxList = result.jobBxList;
+// 업무함 정보 조회
+const jobBxGetList  = async () => {
+  try {
+    const result = await axios.get('/api/deptstore/jobBxList');
+    jobBoxes.value = result.data.map(job => ({
+      ...job,
+      deptCd: job.deptId  // deptId를 deptCd로 통일
+    }));
+    
+  } catch (err) {
+    Swal.fire({ icon: "error", title: "업무함 조회 실패", text: "Error : " + err });
+  }
+};
 
-  jobGetList(jobBxSelected);
+// 최상위 부서 찾기 (depth === 0)
+const rootDepartments = computed(() =>
+  departments.value.filter(dept => dept.depth === 0)
+);
+
+// 업무함 관리 동작
+const jobBxCheck = (type, data) => {
+  switch(type) {
+    case 'add':
+      console.log("업무함 추가");
+      break;
+    case 'modify':
+    console.log("업무함 수정");
+      break;
+    case 'remove':
+    console.log("업무함 제거");
+      break;
+  }
+  console.log("데이터 : ", data);
 }
+provide('jobBxCheck', jobBxCheck);
+
+// 업무함 관리 모달
+const props = defineProps({
+  isShowModal: Boolean,
+});
+
+const emit = defineEmits(['closeModal', 'confirm']);
+const modalClose = () => {
+  emit('업무함 닫기');
+}
+const modalConfirm = () => {
+  emit('업무함 저장');
+}
+
+
+// 부서 및 업무함 종료
+
 
 // Toast UI Grid 초기화
 onMounted(() => {
+  // 사이드 메뉴 데이터 호출
+  deptGetList();
+  jobBxGetList();
+
   gridInstance.value = new Grid({
     el: document.getElementById('jobGrid'),
     data: rowData.value,
@@ -112,7 +223,7 @@ onMounted(() => {
     ]
   })
   
-  jobGetList(jobBxSelected);
+  jobGetList(jobBxSelected.value);
 })
 
 // 그리드 버튼
@@ -164,7 +275,7 @@ const delEvent = async (rowKey) => {
 
   await axios.delete('/api/deptstore/jobRemove', { params: { deptJobId: selectedRowData.deptJobId } });
   
-  jobGetList(jobBxSelected);
+  jobGetList(jobBxSelected.value);
 };
 
 // 업무 목록 조회 업무함 아이디로 검색
@@ -199,7 +310,7 @@ const modalCloseJob = () => {
 const modalConfirmJob = () => {
   console.log('job modal confirm click');
   isShowJobModal.value = false;
-  jobGetList(jobBxSelected);
+  jobGetList(jobBxSelected.value);
 }
 
 // 업무 수정
@@ -228,6 +339,26 @@ const modalCloseFunc = (e) => {
   height: 600px;
   margin: 5px 0;
   /* padding: 5px; */
+}
+ul {
+  list-style: none;
+  padding-left: 15px;
+}
+li {
+  margin: 5px 0;
+}
+span {
+  font-weight: bold;
+  cursor: pointer;
+}
+.job-box {
+  color: blue;
+  font-style: italic;
+  margin-left: 15px;
+}
+/* 아이콘 스타일 */
+i {
+  margin-right: 8px;
 }
 
 div::v-deep .nav-link {
