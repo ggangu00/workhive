@@ -103,7 +103,7 @@
 			  FROM COMTNGNRLMBER
 			 WHERE mber_id = #{id}
 			   AND password = #{password}
-			   AND mber_sttus = 'P'
+			   AND mber_sttus = 'J01'
 			
 		</if>
 		<!-- 기업회원 -->
@@ -137,7 +137,7 @@
 			  FROM COMTNEMPLYRINFO
 			 WHERE emplyr_id = #{id}
 			   AND password = #{password}
-			   AND emplyr_sttus_code = 'P'
+			   AND emplyr_sttus_code = 'J01'
 			
 		</if>
 	</select>
@@ -272,7 +272,8 @@
 	<if test="userSe != null and userSe == 'GNR'">
 	<![CDATA[
 	SELECT  MBER_ID AS USER_ID
-         ,  PASSWORD AS USER_PW
+		 ,  MBER_ID AS ID
+         ,  PASSWORD AS PASSWORD
 	     ,  MBER_NM AS USER_NM
 	     ,  ESNTL_ID AS UNIQ_ID
 	     ,  NVL(LOCK_AT,'N') LOCK_AT
@@ -315,8 +316,8 @@
 		<if test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(updateAt,'E')">
 			<![CDATA[
 			UPDATE  COMTNGNRLMBER
-			   SET  LOCK_AT = NULL
-			     ,  LOCK_CNT  = NULL
+			   SET  LOCK_AT = 'N'
+			     ,  LOCK_CNT  = 0
 			     ,  LOCK_LAST_PNTTM = NULL     
 			   WHERE MBER_ID = #{id}
 			]]>
@@ -348,8 +349,8 @@
 		<if test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(updateAt,'E')">
 			<![CDATA[
 			UPDATE  COMTNENTRPRSMBER
-			   SET  LOCK_AT = NULL
-			     ,  LOCK_CNT  = NULL
+			   SET  LOCK_AT = 'N'
+			     ,  LOCK_CNT  = 0
 			     ,  LOCK_LAST_PNTTM = NULL     
 			   WHERE ENTRPRS_MBER_ID = #{id}
 			]]>
@@ -381,8 +382,8 @@
 		<if test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(updateAt,'E')">
 			<![CDATA[
 			UPDATE  COMTNEMPLYRINFO
-			   SET  LOCK_AT = NULL
-			     ,  LOCK_CNT  = NULL
+			   SET  LOCK_AT = 'N'
+			     ,  LOCK_CNT  = 0
 			     ,  LOCK_LAST_PNTTM = NULL     
 			   WHERE EMPLYR_ID = #{id}
 			]]>
