@@ -35,7 +35,7 @@ export default {
         { header: '양식', name: 'formNm' },
         { header: '제목', name: 'docTitle' },
         { header: '기안부서', name: 'deptNm' },
-        { header: '기안자', name: 'memCd' },
+        { header: '기안자', name: 'mberId' },
         { header: '기안일시', name: 'draftDt' },
       ],
       status: "H03",

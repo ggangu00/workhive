@@ -15,8 +15,6 @@
   import ApprovalInfo from '@/components/PaymentLayout/ApprovalInfo.vue';
   import axios from 'axios';
   import { useRoute } from 'vue-router';
-  import { useRouter } from 'vue-router';
-  //import Modal from '../../components/Modal.vue';
 
   const route = useRoute();
   const docCd = ref('');
@@ -39,9 +37,8 @@
   })
   //버튼명
   const headButtons = ref([
+    { label: '인쇄/다운로드', class: 'btn-success btn-fill' }, 
     { label: '회수', class: 'btn-primary' },
-    { label: '재기안', class: 'btn-warning' },
-    { label: '삭제', class: 'btn-success' }
   ]);
 
   //버튼별 기능
@@ -50,21 +47,12 @@
       case '회수' :
         await retrieveBtn();
         break;
-
-      case '재기안':
-        await restartDraft();
-        break;
-
-      case '삭제':
-        await deleteDocument();
-        break;
-  
     }
   }
 
   //회수코드
   const retrieveBtn = async () => {
-      if (!docCd.value) {
+    if (!docCd.value) {
         alert("문서 코드 x");
         return;
       }
@@ -74,41 +62,7 @@
         } else {
           alert("회수 실패");
         }
-
     };
 
-  //재기안코드
-  const router = useRouter();
-  const restartDraft = () => {
-    if (!docCd.value) {
-      alert("문서 코드 x");
-      return;
-    }
-    router.push(`/approval/restartDraft?docCd=${docCd.value}`);
-    router.push({
-    path: '/approval/restartDraft',
-    query: {
-      docCd: docCd.value,
-      docKind: docKind.value,
-      formNm: formNm.value,
-      deptNm: deptNm.value,
-      docTitle: docTitle.value,
-      docCnEditor: docCnEditor.value
-    }
-  });
-  };
 
-  //삭제코드
-  const deleteDocument = async() => {
-    const response = await axios.put(`/api/document/delete/${docCd.value}`,{})
-    console.log(response)
-    if (response.status == 200) {
-          alert("삭제 성공");
-          router.push({path: '/approval/rejectedList'})
-        } else {
-          alert("삭제 실패");
-          router.push({path: '/approval/rejectedList'})
-        }
-    
-  }
   </script>
