@@ -10,7 +10,7 @@
                 <h4 class="card-title me-auto">문서기안</h4>
               </div>
               <div>
-                <button v-for="(btn, index) in headButtons" :key="index" :class="['btn', btn.class, 'btn-fill']"
+                <button v-for="(btn, index) in headButtons" :key="index" :class="['btn', btn.class]"
                   @click="$emit('button-click', btn.label)">
                   <!-- 자식컴포넌트 클릭이벤트 -->
                   {{ btn.label }}
@@ -122,32 +122,6 @@
       </div>
     </div>
   </div>
-
-  <!-- 모달 시작 -->
-  <div class="modal fade" id="approvalRegiModal" tabindex="-1" aria-labelledby="approvalRegiModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
-      <div class="modal-content">
-        <!-- 모달 헤더 -->
-        <div class="modal-header">
-          <h5 class="modal-title" id="approvalRegiModalLabel">결재선</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-
-        <!-- 모달 바디 -->
-        <div class="modal-body">
-          <ApprovalLine ref="approvalLineRef" />
-        </div>
-
-        <!-- 모달 푸터 -->
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary btn-fill" data-bs-dismiss="modal">등록</button>
-          <button type="button" class="btn btn-secondary btn-fill" data-bs-dismiss="modal">닫기</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- 모달 끝 -->
 </template>
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';

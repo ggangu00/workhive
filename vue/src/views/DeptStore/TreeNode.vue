@@ -4,14 +4,14 @@
       <!-- 부서 열기/닫기 아이콘 -->
       <i :class="isOpen ? 'fa-regular fa-folder-open' : 'fa-solid fa-folder'" @click="toggle"></i>
       <span @click="toggle">{{ dept.deptNm }}</span>
-      <i class="fa-solid fa-plus" @click.stop="jobBxManage('add', dept)"></i>
+      <i class="fa-solid fa-plus" @click.stop="addJobBx(dept)"></i>
     </div>
 
     <!-- 하위 부서 및 업무함을 같은 위치에 배치 -->
     <ul v-if="isOpen">
       <!-- 하위 부서 렌더링 -->
       <li v-for="child in children" :key="child.deptCd">
-        <DeptJobBx
+        <TreeNode
           :dept="child"
           :departments="departments"
           :jobBoxes="jobBoxes"
@@ -20,10 +20,10 @@
 
       <!-- 업무함 렌더링 -->
       <li v-for="job in deptJobBoxes" :key="job.deptJobBxId" class="job-box">
-        <i class="fa-solid fa-file" @click="jobBoxClicked(job)"></i>
-        <span @click="jobBoxClicked(job)">{{ job.deptJobBxNm }}</span>
-        <i class="fa-solid fa-pen" @click.stop="jobBxManage('modify', job)"></i>
-        <i class="fa-solid fa-x" @click.stop="jobBxManage('remove', job)"></i>
+        <i class="fa-solid fa-file" @click="handlerDeptJobBx(job)"></i>
+        <span @click="handlerDeptJobBx(job)">{{ job.deptJobBxNm }}</span>
+        <i class="fa-solid fa-pen" @click.stop="editJobBx(job)"></i>
+        <i class="fa-solid fa-x" @click.stop="removeJobBx(job)"></i>
       </li>
     </ul>
   </li>
@@ -31,8 +31,6 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import { useStore } from 'vuex';
-import { inject } from 'vue'; // 부모에게 받아오기
 
 const props = defineProps({
   dept: Object,
@@ -56,37 +54,19 @@ const deptJobBoxes = computed(() =>
   props.jobBoxes.filter(j => j.deptCd === props.dept.deptCd)
 );
 
-// 부모로부터 jobBxManage 함수 받아오기
-const jobBxCheck = inject('jobBxCheck');
-
-// 자식에서 발생한 이벤트 처리
-const jobBxManage = (type, data) => {
-  jobBxCheck(type, data); // 부모로 이벤트 전달
+const addJobBx = (parent) => {
+  console.log("업무함 추가", parent);
+};
+const editJobBx = (job) => {
+  console.log("업무함 수정", job);
+};
+const removeJobBx = (job) => {
+  console.log("업무함 삭제", job);
 };
 
-// const jobBxAdd = (dept) => { // 업무함 등록
-//   emit('jobBxAdd', dept); // 부서 정보 전달
-// };
-// const jobBxModify = (job) => { // 업무함 수정
-//   emit('jobBxModify', job); // 업무함 정보 전달
-// };
-// const jobBxRemove = (job) => { // 업무함 삭제
-//   emit('jobBxRemove', job);
-// };
-
-// 업무함 클릭시 vuex 정보 변경
-const store = useStore();
-const jobBoxClicked = (job) => {
-  const relatedJobBoxes = props.jobBoxes.filter(j => j.deptCd === job.deptCd);
-
-  store.dispatch('jobBxSelectedUpdate', { 
-    searchDeptId: job.deptCd, 
-    searchDeptjobBxId: job.deptJobBxId
-  });
-  
-  store.dispatch('jobBxListUpdate', relatedJobBoxes);
-};
-
+const handlerDeptJobBx = (job) => {
+  console.log("업무함 정보 : ", job);
+}
 </script>
 
 <style scoped>
@@ -120,3 +100,5 @@ li {
   margin: 5px 0;
 }
 </style>
+
+

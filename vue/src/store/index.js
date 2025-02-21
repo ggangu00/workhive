@@ -21,10 +21,16 @@ export default createStore({
          "position-sticky blur shadow-blur left-auto top-1 z-index-sticky px-0 mx-4",
       absolute: "position-absolute px-4 mx-0 w-100 z-index-2",
 
-      // ksy 출퇴근 데이터
+      // ksy
       commuteList: [],
       startDate: "",
       endDate: "",
+
+      jobBxSelected: {
+         searchDeptId: '',
+         searchDeptjobBxId: ''
+      },
+      jobBxList: []
    },
    mutations: {
       toggleConfigurator(state) {
@@ -60,7 +66,7 @@ export default createStore({
          state.color = payload;
       },
 
-      // ksy 출퇴근 관리
+      // ksy
       commuteSetList(state, data) {
          state.commuteList = data;
       },
@@ -70,12 +76,20 @@ export default createStore({
       setEndDate(state, value) {
          state.endDate = value;
       },
+
+      setJobBxSelected(state, payload) {
+         state.jobBxSelected = payload;
+      },
+      setJobBxList(state, payload) {
+         state.jobBxList = payload;
+      }
    },
    actions: {
       setColor({ commit }, payload) {
          commit("color", payload);
       },
 
+      // ksy
       async commuteGetList({ commit, state }) {
          const params = {
          mberId: "user01",
@@ -85,6 +99,16 @@ export default createStore({
          let result = await axios.get(`/api/commute/cmtList`, { params });
          commit("commuteSetList", result.data);
       },
+
+      jobBxSelectedUpdate({ commit }, jobBxSelected) {
+         commit('setJobBxSelected', jobBxSelected);
+      },
+      jobBxListUpdate({ commit }, jobBxList) {
+         commit('setJobBxList', jobBxList);
+      }
    },
-   getters: {},
+   getters: {
+      jobBxSelected: state => state.jobBxSelected,
+      jobBxList: state => state.jobBxList
+   },
 });

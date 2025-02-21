@@ -151,25 +151,25 @@ public class EgovArticleController {
      */
     //@RequestMapping("/cop/bbs/selectArticleList.do")
     @GetMapping("/bulletinList")
-    public String selectArticleList(@ModelAttribute("searchVO") BoardVO boardVO, ModelMap model) throws Exception {
+    public Map<String, Object> selectArticleList(@ModelAttribute("searchVO") BoardVO boardVO, ModelMap model) throws Exception {
 		LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
 		
 		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();	//KISA 보안취약점 조치 (2018-12-10, 이정은)
 
-        if(!isAuthenticated) {
-            return "redirect:/uat/uia/egovLoginUsr.do";
-        }
-	
+//        if(!isAuthenticated) {
+//            return "redirect:/uat/uia/egovLoginUsr.do";
+//        }
+//	
 		BoardMasterVO vo = new BoardMasterVO();
 		
 		vo.setBbsId(boardVO.getBbsId());
 		vo.setUniqId((user == null || user.getUniqId() == null) ? "" : user.getUniqId());
 		BoardMasterVO master = egovBBSMasterService.selectBBSMasterInf(vo);
 		
-		//방명록은 방명록 게시판으로 이동
-		if(master.getBbsTyCode().equals("BBST03")){
-			return "forward:/cop/bbs/selectGuestArticleList.do";
-		}
+//		//방명록은 방명록 게시판으로 이동
+//		if(master.getBbsTyCode().equals("BBST03")){
+//			return "forward:/cop/bbs/selectGuestArticleList.do";
+//		}
 		
 		
 		boardVO.setPageUnit(propertyService.getInt("pageUnit"));
@@ -211,7 +211,8 @@ public class EgovArticleController {
 		model.addAttribute("boardMasterVO", master);
 		model.addAttribute("paginationInfo", paginationInfo);
 		model.addAttribute("noticeList", noticeList);
-		return "egovframework/com/cop/bbs/EgovArticleList";
+		//return "egovframework/com/cop/bbs/EgovArticleList";
+		return map;
     }
     
     

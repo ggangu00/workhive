@@ -16,6 +16,7 @@
           <select  v-model="searchColumn" class="custom-select">
             <option value="" disabled selected>선택하세요</option>
             <option value="bbsNm">게시판명</option>
+            <option value="frstRegisterNm">작성자</option>
             
           </select>
           <input type="text" v-model="searchKeyword" @input="filterGrid" placeholder="검색어를 입력하세요" class="custom-input" />           

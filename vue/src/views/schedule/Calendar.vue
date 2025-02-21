@@ -276,6 +276,7 @@ export default {
           Swal.fire({
           icon: "success",
           title: "일정 등록완료",
+          
         })
       }
     }
@@ -304,7 +305,15 @@ export default {
     if(response.data == "success"){
       Swal.fire({
           title: "삭제 완료",
-          icon: "success"
+          icon: "success",
+          buttons: {
+            cancel : "취소", 
+            catch: {
+                text: "확인",
+                value: "catch"
+            }, 
+          }
+
       });
       this.scheduleGetList();
     }
