@@ -276,7 +276,6 @@ watch(()=> docCnEditor.value, async()=>{
     border: 1px solid #ccc;
     padding: 10px;
     background-color: #fafafa;
-    margin: 30px;
   }
   .left-card, .right-card {
     height: 100%;

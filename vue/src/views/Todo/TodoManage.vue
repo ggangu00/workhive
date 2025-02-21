@@ -9,45 +9,20 @@
 
       <div class="card todo-container">
         <div class="todo-header">
-          <button>캘린더 펼침 ▼</button>
+          <button>캘린더 펼침 <i class="fa-solid fa-angle-up"></i> <i class="fa-solid fa-angle-down"></i></button>
         </div>
         <div class="month">
-          <button>&lt;</button>
-          2025.01
-          <button>&gt;</button>
+          <button @click="monthMove('prev')"><i class="fa-solid fa-angle-left" style="float: left;"></i></button>
+          {{ year }}.{{ month }}
+          <button @click="monthMove('next')"><i class="fa-solid fa-angle-right" style="float: left;"></i></button>
         </div>
-        <div class="days">
-          <button class="day red">1</button>
-          <button class="day">2</button>
-          <button class="day">3</button>
-          <button class="day blue">4</button>
-          <button class="day red">5</button>
-          <button class="day">6</button>
-          <button class="day">7</button>
-          <button class="day">8</button>
-          <button class="day">9</button>
-          <button class="day">10</button>
-          <button class="day blue">11</button>
-          <button class="day red">12</button>
-          <button class="day">13</button>
-          <button class="day">14</button>
-          <button class="day">15</button>
-          <button class="day">16</button>
-          <button class="day">17</button>
-          <button class="day blue">18</button>
-          <button class="day red">19</button>
-          <button class="day">20</button>
-          <button class="day">21</button>
-          <button class="day">22</button>
-          <button class="day">23</button>
-          <button class="day">24</button>
-          <button class="day blue">25</button>
-          <button class="day red">26</button>
-          <button class="day">27</button>
-          <button class="day">28</button>
-          <button class="day">29</button>
-          <button class="day">30</button>
-          <button class="day">31</button>
+        <div class="days" :class="'day' + dateArr.length">
+          <button class="day" :key="i" v-for="i in dateArr" :class="{
+            'point-red': i.dateDay === '일',
+            'point-blue': i.dateDay === '토',
+            'highlight': todoListCnt.includes(dateFormat(i.thisDate)),
+            'today': dateFormat(i.thisDate) == dateFormat()
+          }" @click=" todoGetList(i.thisDate)">{{ i.date }}</button>
         </div>
       </div>
 
@@ -61,16 +36,16 @@
             </div>
             <div class="col-8">
               <input type="text" :name="title" v-model="title" class="form-control float-right"
-                placeholder="업무내용을 입력해주세요">
+                placeholder="업무내용을 입력해주세요" @keyup.enter="todoAdd">
             </div>
             <div class="col-2">
-              <button class="btn btn-secondary btn-fill float-left mt-0" @click="todoAdd">등록</button>
-              <button class="btn btn-primary btn-fill loat-left mt-0" @click="openModal">상세등록</button>
+              <button class="btn btn-primary btn-fill float-left mt-0" @click="todoAdd">등록</button>
+              <button class="btn btn-secondary btn-fill loat-left mt-0" @click="openModal">상세등록</button>
             </div>
           </div>
           <div class="table-responsive">
             <table class="table table-hover project" style="margin-bottom: 0;">
-              <thead>
+              <thead class="table-secondary">
                 <tr>
                   <th width="50px">
                     <div class="form-check">
@@ -78,7 +53,7 @@
                     </div>
                   </th>
                   <th>
-                    <button class="btn btn-secondary btn-fill btn-sm float-left">선택미완료</button>
+                    <button class="btn btn-secondary btn-fill btn-sm float-left" @click="btnSelectDelete">선택미완료</button>
                     <button class="btn btn-secondary btn-fill btn-sm float-left">선택완료</button>
                     <button class="btn btn-danger btn-fill btn-sm float-left">선택삭제</button>
                   </th>
@@ -91,26 +66,28 @@
             <table class="table table-hover project">
               <colgroup>
                 <col width="50px">
-                <col width="10%">
-                <col width="10%">
+                <col width="6%">
+                <col width="5%">
                 <col>
                 <col width="13%">
               </colgroup>
               <tbody>
                 <template v-if="todoCount > 0">
-                  <tr :key="i" v-for="(todo, i) in todoList"
-                    :class="todo.state == 'A01' ? 'table-secondary' : ''">
+                  <tr :key="i" v-for="(todo, i) in todoList" :class="todo.state == 'A01' ? 'table-secondary' : ''">
                     <td>
                       <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+                        <input class="form-check-input" type="checkbox" name="todoChk" :value="todo.todoCd">
                       </div>
                     </td>
-                    <td>{{todo.state == 'A01' ? '완료' : '미완료'}}</td>
-                    <td>{{todo.typeCd}}</td>
-                    <td align="left">{{todo.title}}</td>
+                    <td>{{ todo.state == 'A01' ? '완료' : '미완료' }}</td>
+                    <td>{{ todo.typeCd }}</td>
+
+                    <td align="left" data-bs-toggle="tooltip" data-bs-html="true" :data-bs-title="todo.content">{{
+                      todo.title }} {{ todo.content != null ? '(+)' : '' }}</td>
                     <td>
                       <button class="btn btn-success btn-fill btn-sm mr-1">수정</button>
-                      <button class="btn btn-danger btn-fill btn-sm mr-1">삭제</button>
+                      <button class="btn btn-danger btn-fill btn-sm mr-1"
+                        @click="btnTodoRemove(todo.todoCd)">삭제</button>
                     </td>
                   </tr>
                 </template>
@@ -159,7 +136,7 @@
           <div class="form-group has-label">
             <label>업무내용 <em class="point-red">*</em></label>
           </div>
-          <textarea type="text" class="form-control" placeholder="업무내용을 입력해주세요"></textarea>
+          <textarea type="text" class="form-control" placeholder="업무내용을 입력해주세요" style="min-height: 150px;"></textarea>
         </div>
         <div class="mb-3">
           <label class="form-label">상태 <em class="point-red">*</em></label>
@@ -178,7 +155,7 @@
     <!-- 모달 푸터 -->
     <template v-slot:footer>
       <button type="button" class="btn btn-secondary btn-fill" @click="closeModal">닫기</button>
-      <button type="button" class="btn btn-primary btn-fill" @click="todoAdd; confirm">등록</button>
+      <button type="button" class="btn btn-primary btn-fill" @click="todoAdd; closeModal">등록</button>
     </template>
   </Modal>
   <!--업무등록 모달[e]-->
@@ -187,33 +164,38 @@
 
 <script setup>
 import axios from "axios";
+import { onBeforeMount, ref } from 'vue';
+
+//---------------컴포넌트-------------- 
 import Swal from 'sweetalert2';
-import Modal from '../../components/Modal.vue';
-import { ref, onBeforeMount } from 'vue';
 import Card from '../../components/Cards/Card.vue'
-import { getComm, dateFormat } from '../../assets/js/common.js'
+import Modal from '../../components/Modal.vue';
+
+//---------------js-------------- 
+import { getComm, dateFormat } from '../../assets/js/common'
+import { dateGetDay } from '../../assets/js/project'
 
 //---------------데이터-------------- 
+
+const year = ref(new Date().getFullYear()); // 현재 연도 기본값
+const month = ref(new Date().getMonth() + 1); // 현재 월 기본값 (1~12 범위)
 
 const typeCd = ref('B01');
 const typeCdArr = ref([]);
 const title = ref('');
 const content = ref('');
 const state = ref('A02');
+const mberId = ref('admin');
+const todoDt = ref(dateFormat());
 
 onBeforeMount(() => {
+  nowDateInfo();
   todoGetList();
+  todoGetListCnt();
   getStatus();
 });
 
-//---------------공통함수-------------- 
-
-const getStatus = async () => { //업무구분 목록 호출
-  let arr = await getComm("WT");
-  let arrAdd = { comm_dtl_cd: '', comm_dtl_nm: '전체' };
-  typeCdArr.value.unshift(arrAdd);
-  typeCdArr.value = arr;
-}
+//---------------모달-------------- 
 
 const isShowModal = ref(false);
 const modalCloseFunc = (e) => {
@@ -227,19 +209,104 @@ const openModal = () => {
   isShowModal.value = true;
 }
 const closeModal = () => {
-  isShowModal.value = false;
-}
-const confirm = () => {
+  formReset
   isShowModal.value = false;
 }
 
+//---------------공통함수-------------- 
+
+const monthMove = (mode) => {
+
+  if (mode == "prev") { //이전달
+    if (month.value === 1) {
+      year.value--;
+      month.value = 12;
+    } else {
+      month.value--;
+    }
+  }
+
+  if (mode == "next") { //다음달
+    if (month.value === 12) {
+      year.value++;
+      month.value = 1;
+    } else {
+      month.value++;
+    }
+  }
+  nowDateInfo();
+}
+
+const dateArr = ref([]);
+const nowDateInfo = () => {
+  const dayCnt = new Date(year.value, month.value, 0).getDate(); // 현재 월의 총 일수
+
+  dateArr.value = [];
+  for (let i = 1; i <= dayCnt; i++) {
+    dateArr.value.push(
+      {
+        date: i,
+        thisDate: year.value + "-" + month.value + "-" + i,
+        dateDay: dateGetDay(year.value + "-" + month.value + "-" + i)
+      }
+    );
+  }
+}
+
+const formReset = () => { //입력정보 초기화
+  typeCd.value = 'B01';
+  title.value = '';
+  content.value = '';
+}
+
+//-------------버튼이벤트------------
+
+const btnTodoRemove = (code) => {
+  Swal.fire({
+    title: "해당 업무일지를 삭제 하시겠습니까?",
+    icon: "question",
+    showCancelButton: true,
+    customClass: {
+      confirmButton: "btn btn-secondary btn-fill",
+      cancelButton: "btn btn-danger btn-fill"
+    },
+    confirmButtonText: "닫기",
+    cancelButtonText: "삭제",
+  }).then((result) => {
+    if (result.dismiss == Swal.DismissReason.cancel) {
+      todoRemove(code);
+    }
+  });
+};
+
+const btnSelectDelete = () => {
+  const arr = [];
+  const color = document.getElementsByName("todoChk");
+
+  color.forEach(item => {
+    if (item.checked == true) {
+      arr.push(item.value);
+    }
+  });
+}
 //---------------axios--------------
+
+const getStatus = async () => { //업무구분 목록 호출
+  let arr = await getComm("WT");
+  let arrAdd = { comm_dtl_cd: '', comm_dtl_nm: '전체' };
+  typeCdArr.value.unshift(arrAdd);
+  typeCdArr.value = arr;
+}
 
 const todoList = ref([]);
 const todoCount = ref(0);
-const todoGetList = async () => { //일지 전체조회
+const todoGetList = async (date) => { //일지 전체조회
+  todoDt.value = date;
+
+  date = dateFormat(date).replaceAll("-", "");
+
   try {
-    const result = await axios.get(`/api/todo/list/${dateFormat()}`);
+    const result = await axios.get(`/api/todo/list/${date}`);
 
     todoCount.value = result.data.length;
     todoList.value = result.data;
@@ -255,15 +322,46 @@ const todoGetList = async () => { //일지 전체조회
   }
 }
 
+const todoListCnt = ref([]);
+const todoGetListCnt = async (date) => { //일지 날짜별 건수조회
+
+  date = dateFormat(date).replaceAll("-", "");
+
+  try {
+    const result = await axios.get(`/api/todo/list/cnt/${date}`);
+    result.data.forEach(item => {
+      todoListCnt.value.push(dateFormat(item.todoDt));
+    });
+
+  } catch (err) {
+    todoListCnt.value = [];
+
+    Swal.fire({
+      icon: "error",
+      title: "API 조회 오류",
+      text: "Error : " + err
+    });
+  }
+}
+
 const todoAdd = async () => { //일지 등록
+
+  if (!title.value) {
+    Swal.fire({
+      icon: "info",
+      title: "업무내용을 입력하세요"
+    });
+    return;
+  }
+
 
   const formData = new FormData();
   formData.append("typeCd", typeCd.value);
-  formData.append("memCd", '2025001');
+  formData.append("mberId", mberId.value);
   formData.append("title", title.value);
   formData.append("content", content.value);
   formData.append("state", state.value);
-  console.log(formData);
+  formData.append("todoDt", todoDt.value);
 
   try {
     const response = await axios.post('/api/todo', formData);
@@ -275,6 +373,8 @@ const todoAdd = async () => { //일지 등록
         text: "일지등록을 완료하였습니다",
       })
       todoList.value = response.data.list;
+      formReset();
+      todoGetList(todoDt.value);
     }
   } catch (err) {
     Swal.fire({
@@ -282,6 +382,28 @@ const todoAdd = async () => { //일지 등록
       title: "등록실패",
       text: "일지 등록 실패",
     })
+  }
+}
+
+const todoRemove = async (todoCd) => { //일지 삭제
+
+  try {
+    const response = await axios.delete(`/api/todo/${todoCd}`);
+
+    if (response.data.result === true) {
+      Swal.fire({
+        icon: "success",
+        title: "삭제완료",
+        text: "선택한 일지를 삭제하였습니다",
+      })
+      todoGetList(todoDt.value);
+    }
+  } catch (err) {
+    Swal.fire({
+      icon: "error",
+      title: "삭제 실패",
+      text: "Error : " + err
+    });
   }
 }
 </script>

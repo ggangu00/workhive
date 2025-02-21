@@ -8,9 +8,10 @@
       <div class="card border-primary">
         <div class="card-body">
           <p class="card-sub">{{ projectInfo.comNm }}</p>
-          <h5 class="card-title mb-3">{{ projectInfo.prNm }} <span class="badge badge-danger">D{{ term > 0 ? "-" + term
-            :
-            "+" + term * (-1) }}</span></h5>
+          <h5 class="card-title mb-3">
+            {{ projectInfo.prNm }}
+            <span class="badge badge-danger">D{{ term }}</span>
+          </h5>
           <p class="card-sub"><b>기간 : </b> {{ projectInfo.startDt }} ~ {{ projectInfo.endDt }}
           </p>
           <p class="card-sub"><b>참여자 : </b> 박주현, 박지훈, 정수민, 박명식</p>
@@ -18,23 +19,21 @@
       </div>
       <Card>
         <button class="btn btn-primary btn-fill float-right" @click="modalOpen">일정등록</button>
-        
+
         <div style="width:100%; overflow:auto">
-          <table class="table-responsive">
+          <table>
             <thead>
               <tr>
-                <th :key="date" v-for="date in dateTerm">
-                  <span v-if="dateGetDay(date) == '일'" class="point-red">{{ dateFormatDay(date) }}</span>
-                  <span v-else-if="dateGetDay(date) == '토'" class="point-blue">{{ dateFormatDay(date) }}</span>
-                  <span v-else>{{ dateFormatDay(date) }}</span>
+                <th :key="date" v-for="date in dateTermArr">
+                  <span :class="dateGetDay(date) == '일' ? 'point-red' : dateGetDay(date) == '토' ? 'point-blue' : ''">{{
+                    dateFormatDay(date) }}</span>
                 </th>
               </tr>
             </thead>
             <tbody>
-
               <template v-if="planCount > 0">
-                <tr :key="plan" v-for="plan in planList">
-                  <td :key="date" v-for="date in dateTerm">
+                <tr :key="plan" v-for="plan in planList"> <!--등록된 일정갯수만큼-->
+                  <td :key="date" v-for="date in dateTermArr"> <!--시작일 ~ 종료일 날짜 기간만큼-->
                     <div class="task" v-if="date == plan.startDt"
                       :style="'width: ' + (dateTermCalc(plan.startDt, plan.endDt) * 100 - 10) + '%; background-color:' + plan.color">
                       <span @click="btnProjectPlanUpdate(plan.prPlanCd)">{{ plan.planNm }}</span>
@@ -44,7 +43,7 @@
                 </tr>
               </template>
               <tr v-else class="list-nodata">
-                <td :colspan="dateTerm.length">
+                <td :colspan="dateTermArr.length">
                   <div>등록된 일정이 없습니다.</div>
                 </td>
               </tr>
@@ -92,7 +91,7 @@
 
     <!-- 모달 푸터 -->
     <template v-slot:footer>
-      <button type="button" class="btn btn-primary btn-fill" @click="confirm">등록</button>
+      <button type="button" class="btn btn-primary btn-fill" @click="btnProjectPlanAdd">등록</button>
       <button type="button" class="btn btn-secondary btn-fill" @click="modalClose">닫기</button>
     </template>
   </Modal>
@@ -102,37 +101,45 @@
 
 <script setup>
 import axios from "axios";
-import Swal from 'sweetalert2';
 import { onBeforeMount, ref } from 'vue';
+import { useRoute } from "vue-router";
+
+//---------------컴포넌트-------------- 
+import Swal from 'sweetalert2';
 import Card from '../../components/Cards/Card.vue'
 import Modal from '../../components/Modal.vue';
-import { dateFormat, dateTermCalc, dateGetDay, dateFormatDay } from '../../assets/js/common.js'
-import { useRoute } from 'vue-router';
+
+//---------------js-------------- 
+import { dateFormat } from '../../assets/js/common'
+import { dateTermCalc, dateGetDay, dateFormatDay } from '../../assets/js/project'
+
 
 //---------------데이터-------------- 
 
 const route = useRoute();
-const prCd = ref('');
-const planNm = ref('');
-const term = ref('');
-const color = ref('#fd9b9b');
-const startDt = ref('');
-const endDt = ref('');
-const dateTerm = ref([]);
+const prCd = ref('');            //해당 프로젝트 코드
+const term = ref('');            //프로젝트 남은일수
+
+const planNm = ref('');          //일정명
+const color = ref('#fd9b9b');    //화면에 보여질 일정색상
+const startDt = ref('');         //일정 시작일
+const endDt = ref('');           //일정 종료일
+const dateTermArr = ref([]);        //일정 시작일~종료일 모든 일자 출력
+const createId = ref('admin');
 
 onBeforeMount(() => {
   prCd.value = route.query.prCd;
-  projectGetInfo(prCd.value);
+  projectGetInfo(prCd.value);     //해당 프로젝트 정보 호출 함수
 });
 
 //---------------모달--------------
 
 const isShowModal = ref(false);
-const modalOpen = () => { //프로젝트 정보 모달 열기
+const modalOpen = () => { //일정 등록/수정 모달 열기
   isShowModal.value = true;
 }
 
-const modalClose = (e) => { //프로젝트 정보 모달 닫기
+const modalClose = (e) => { //일정 등록/수정 모달 닫기
   formReset();
   if (e.key === "Escape") {
     if (isShowModal.value) {
@@ -143,20 +150,19 @@ const modalClose = (e) => { //프로젝트 정보 모달 닫기
   }
 }
 
-const confirm = () => {
+//-------------버튼이벤트------------
+
+const btnProjectPlanAdd = () => { //일정 등록
   projectPlanAdd();
   isShowModal.value = false;
 }
 
-//-------------버튼이벤트------------
-
-const btnProjectPlanUpdate = (code) => {
+const btnProjectPlanUpdate = (code) => { //일정 수정
   modalOpen();
   projectPlanGetInfo(code);
 }
 
-// 프로젝트 일정 삭제 버튼
-const btnProjectPlanRemove = (code) => {
+const btnProjectPlanRemove = (code) => { //일정 삭제
   Swal.fire({
     title: "해당 일정을 삭제 하시겠습니까?",
     icon: "question",
@@ -169,8 +175,6 @@ const btnProjectPlanRemove = (code) => {
     confirmButtonText: "삭제",
   }).then((result) => {
     if (result.isConfirmed) {
-
-      // 프로젝트 일정삭제
       projectPlanRemove(code);
     }
   });
@@ -178,16 +182,23 @@ const btnProjectPlanRemove = (code) => {
 
 //-------------공통함수------------
 
-const generateDateList = (startDate, endDate) => { // 시작일 ~ 종료일 사이의 날짜 배열로 담는 함수 
+const projectDateTerm = (startDate, endDate) => { // 시작일 ~ 종료일 사이의 날짜 배열로 담는 함수 
   let start = new Date(startDate);
   let end = new Date(endDate);
 
   while (start <= end) {
     let formattedDate = start.toISOString().split("T")[0]; // YYYY-MM-DD 형식으로 변환
-    dateTerm.value.push(formattedDate);
+    dateTermArr.value.push(formattedDate);
     start.setDate(start.getDate() + 1); // 하루 증가
   }
 };
+
+const formReset = () => { //입력정보 초기화
+  planNm.value = '';
+  color.value = '';
+  startDt.value = '';
+  endDt.value = '';
+}
 
 //---------------axois--------------
 
@@ -200,10 +211,14 @@ const projectGetInfo = async (prCd) => { //프로젝트 단건조회
     projectInfo.value.startDt = dateFormat(projectInfo.value.startDt);
     projectInfo.value.endDt = dateFormat(projectInfo.value.endDt);
 
-    term.value = dateTermCalc('', dateFormat(projectInfo.value.endDt))
+    term.value = dateTermCalc('', dateFormat(projectInfo.value.endDt)); //프로젝트 종료일까지 남은 일수 값 저장
+
+    term.value > 0 ? term.value = "-" + term.value         //종료일 전일 때
+      : term.value < 0 ? term.value = "+" + term.value * (-1)  //종료일을 초과했을 때
+        : term.value = term.value = "-day";                  //종료일 당일일 때
 
     projectPlanGetList(prCd);
-    generateDateList(projectInfo.value.startDt, projectInfo.value.endDt);
+    projectDateTerm(projectInfo.value.startDt, projectInfo.value.endDt); //프로젝트 시작일~종료일까지 모든 일자 배열에 담음
   } catch (err) {
     projectInfo.value = [];
 
@@ -217,17 +232,16 @@ const projectGetInfo = async (prCd) => { //프로젝트 단건조회
 
 const planList = ref([]);
 const planCount = ref(0);
-const projectPlanGetList = async (prCd) => { //프로젝트 일정조회
+const projectPlanGetList = async (prCd) => { //프로젝트 일정 전체조회
   try {
     const result = await axios.get(`/api/project/plan/${prCd}`);
 
+    planCount.value = result.data.length;
     planList.value = result.data.map(item => ({
       ...item,
       startDt: dateFormat(item.startDt),
       endDt: dateFormat(item.endDt),
     }));
-
-    planCount.value = result.data.length;
 
   } catch (err) {
     planList.value = [];
@@ -264,12 +278,6 @@ const projectPlanAdd = async () => { //프로젝트 일정 등록
       title: "일정명을 입력하세요"
     });
     return;
-  } else if (startDt.value >= endDt.value) {
-    Swal.fire({
-      icon: "info",
-      title: "일정 시작일이 종료일보다 작을 수 없습니다."
-    });
-    return;
   }
 
   const formData = new FormData();
@@ -278,7 +286,7 @@ const projectPlanAdd = async () => { //프로젝트 일정 등록
   formData.append("startDt", startDt.value);
   formData.append("endDt", endDt.value);
   formData.append("color", color.value);
-  formData.append("createId", 'admin');
+  formData.append("createId", createId.value);
 
   try {
     const response = await axios.post('/api/project/plan', formData);
@@ -302,7 +310,6 @@ const projectPlanAdd = async () => { //프로젝트 일정 등록
 }
 
 const projectPlanRemove = async (prPlanCd) => { //프로젝트 일정삭제
-  console.log(prPlanCd);
 
   try {
     const response = await axios.delete(`/api/project/plan/${prPlanCd}`);
@@ -323,12 +330,5 @@ const projectPlanRemove = async (prPlanCd) => { //프로젝트 일정삭제
       text: "Error : " + err
     });
   }
-}
-
-const formReset = () => { //입력정보 초기화
-  planNm.value = '';
-  color.value = '';
-  startDt.value = '';
-  endDt.value = '';
 }
 </script>

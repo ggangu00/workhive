@@ -29,12 +29,11 @@
                                     <td>{{ i + 1 }}</td>
                                     <td>{{ meet.typeCd }}</td>
                                     <td>
-                                        <div class="subject"><a href="#" @click="modalOpen(meet.mtgId)">{{ meet.mtgNm
-                                        }}</a></div>
+                                        <div class="subject">
+                                            <a href="#" @click="modalOpen(meet.mtgId)">{{ meet.mtgNm }}</a>
+                                        </div>
                                     </td>
-                                    <td>{{ dateFormat(meet.mtgDe) }}({{ dateGetDay(meet.mtgDe) }}) {{ meet.mtgBeginTm }}
-                                        ~ {{
-                                            meet.mtgEndTm }}</td>
+                                    <td>{{ dateFormat(meet.mtgDe) }}({{ dateGetDay(meet.mtgDe) }}) {{ meet.mtgBeginTm }} ~ {{ meet.mtgEndTm }}</td>
                                     <td>{{ meet.mtgPlace }}</td>
                                     <td>김민진, 신강현, 박주현 외 3명</td>
                                     <td>
@@ -86,12 +85,11 @@
                                     <td>진행예정</td>
                                     <td>{{ meet.typeCd }}</td>
                                     <td>
-                                        <div class="subject"><a href="#" @click="modalOpen(meet.mtgId)">{{ meet.mtgNm
-                                        }}</a></div>
+                                        <div class="subject">
+                                            <a href="#" @click="modalOpen(meet.mtgId)">{{ meet.mtgNm }}</a>
+                                        </div>
                                     </td>
-                                    <td>{{ dateFormat(meet.mtgDe) }}({{ dateGetDay(meet.mtgDe) }}) {{ meet.mtgBeginTm }}
-                                        ~ {{
-                                            meet.mtgEndTm }}</td>
+                                    <td>{{ dateFormat(meet.mtgDe) }}({{ dateGetDay(meet.mtgDe) }}) {{ meet.mtgBeginTm }} ~ {{ meet.mtgEndTm }}</td>
                                     <td>{{ meet.mtgPlace }}</td>
                                     <td>김민진, 신강현, 박주현 외 3명</td>
                                     <td>
@@ -127,12 +125,11 @@
                                     </tr>
                                     <tr>
                                         <th class="table-secondary">회의일시</th>
-                                        <td class="text-start">{{ dateFormat(meetInfo.mtgDe) }}({{ dateGetDay(meetInfo.mtgDe) }}) {{ meetInfo.mtgBeginTm }}
-                                        ~ {{
-                                            meetInfo.mtgEndTm }}
+                                        <td class="text-start">{{ dateFormat(meetInfo.mtgDe) }}({{
+                                            dateGetDay(meetInfo.mtgDe) }}) {{ meetInfo.mtgBeginTm }} ~ {{ meetInfo.mtgEndTm }}
                                         </td>
                                         <th class="table-secondary">회의실</th>
-                                        <td class="text-start">{{ meetInfo.mtgPlace}}</td>
+                                        <td class="text-start">{{ meetInfo.mtgPlace }}</td>
                                     </tr>
                                     <tr>
                                         <th class="table-secondary">참여자</th>
@@ -140,11 +137,11 @@
                                     </tr>
                                     <tr>
                                         <th class="table-secondary">회의안건</th>
-                                        <td colspan="3" class="text-start">{{ meetInfo.mtgMtrCn}}</td>
+                                        <td colspan="3" class="text-start">{{ meetInfo.mtgMtrCn }}</td>
                                     </tr>
                                     <tr>
                                         <th class="table-secondary">회의결과</th>
-                                        <td colspan="3" class="text-start">{{ meetInfo.mtgResultCn}}</td>
+                                        <td colspan="3" class="text-start">{{ meetInfo.mtgResultCn }}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -164,11 +161,16 @@
 
 <script setup>
 import axios from "axios";
-import Swal from 'sweetalert2';
 import { onBeforeMount, ref } from 'vue';
+
+//---------------컴포넌트-------------- 
+import Swal from 'sweetalert2';
 import Card from '../../components/Cards/Card.vue'
 import Modal from '../../components/Modal.vue';
-import { dateFormat, dateGetDay, numberFormat } from '../../assets/js/common.js'
+
+//---------------js-------------- 
+import { dateFormat, numberFormat } from '../../assets/js/common'
+import { dateGetDay } from '../../assets/js/project'
 
 //---------------데이터-------------- 
 
@@ -181,20 +183,19 @@ onBeforeMount(() => {
 
 const isShowModal = ref(false);
 const modalOpen = (code) => { //회의 정보 모달 열기
-  isShowModal.value = true;
-  meetGetInfo(code);
+    isShowModal.value = true;
+    meetGetInfo(code);
 }
 
 const modalClose = (e) => { //회의 정보 모달 닫기
-  if (e.key === "Escape") {
-    if (isShowModal.value) {
-      isShowModal.value = !isShowModal.value
+    if (e.key === "Escape") {
+        if (isShowModal.value) {
+            isShowModal.value = !isShowModal.value
+        }
+    } else {
+        isShowModal.value = false;
     }
-  } else {
-    isShowModal.value = false;
-  }
 }
-
 
 //---------------axios--------------
 
@@ -219,7 +220,7 @@ const meetGetNowList = async () => { //금일 예정 회의 조회
 
 const meetList = ref([]);
 const meetCount = ref(0);
-const meetGetList = async () => { //회의 최신 3건 조회
+const meetGetList = async () => { //진행 예정 회의 전체출력
     try {
         const result = await axios.get('/api/meet/list?state=ing');
 
@@ -238,19 +239,18 @@ const meetGetList = async () => { //회의 최신 3건 조회
 
 const meetInfo = ref([]);
 const meetGetInfo = async (mtgId) => { //회의 단건조회
-  try {
-    const result = await axios.get(`/api/meet/info/${mtgId}`);
-    console.log(result.data[0]);
-    meetInfo.value = result.data[0];
-  } catch (err) {
-    meetInfo.value = [];
+    try {
+        const result = await axios.get(`/api/meet/info/${mtgId}`);
+        console.log(result.data[0]);
+        meetInfo.value = result.data[0];
+    } catch (err) {
+        meetInfo.value = [];
 
-    Swal.fire({
-      icon: "error",
-      title: "API 조회 오류",
-      text: "Error : " + err
-    });
-  }
+        Swal.fire({
+            icon: "error",
+            title: "API 조회 오류",
+            text: "Error : " + err
+        });
+    }
 }
-
 </script>
