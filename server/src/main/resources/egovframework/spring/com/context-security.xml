@@ -48,16 +48,14 @@
 		csrfAccessDeniedUrl :CSRF 공격 감지 시 이동할 URL 설정
 	 -->
 	<egov-security:config id="securityConfig"
-		loginUrl="/loginFail.do" 
-		logoutSuccessUrl="/home"
-		loginFailureUrl="/loginFail.do"
-		accessDeniedUrl="/loginSuccesss.do"
+		loginUrl="/server/loginFail.do" 
+		logoutSuccessUrl="/server/home"
+		loginFailureUrl="/server/loginFail.do"
+		accessDeniedUrl="/server/loginSuccesss.do"
 
 		dataSource="egov.dataSource"
-		jdbcUsersByUsernameQuery=" SELECT mber_id USER_ID, PASSWORD, 1 ENABLED
-		,'' USER_NM, '' USER_ZIP,
-                                                              '' USER_ADRES, '' USER_EMAIL, 'GNR' USER_SE, '' ORGNZT_ID, '' ESNTL_ID,
-                                                             ''  ORGNZT_NM
+		jdbcUsersByUsernameQuery=" SELECT mber_id USER_ID, PASSWORD, 1 ENABLED,'' USER_NM, '' USER_ZIP,
+                                          '' USER_ADRES, '' USER_EMAIL, 'GNR' USER_SE, '' ORGNZT_ID, '' ESNTL_ID, ''  ORGNZT_NM
 								   FROM   comtngnrlmber m WHERE mber_id = ?"
 		jdbcAuthoritiesByUsernameQuery="SELECT MBER_ID USER_ID, authority_cd AUTHORITY
 										FROM   personal_authority
