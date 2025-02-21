@@ -56,12 +56,12 @@
               </div>
               <div class="d-flex" style='margin-top: 20px;'>
                 <!-- 왼쪽 -->
-                <div class="col-5" v-if="showFile">
+                <div class="col-5" >
                   <div class="mb-1">
                     <span>첨부파일</span>
                   </div>
                   <div>
-                    <input type="file" />
+                    <input type="file" v-if="showFile"/>
                     <p class="file-info">개별 파일 기준 최대 30MB까지 첨부할 수 있습니다.</p>
                   </div>
                 </div>
