@@ -181,6 +181,8 @@ const handleRowClick = (e) => {
     routePath = "/approval/pendingInfo"
   }else if (dataRow?.crntSignStat == "진행중") {
     routePath = "/approval/proceedInfo"
+  }else if (dataRow?.crntSignStat == "회수"){
+    routePath = "/approval/restartDraft"
   }
 
   console.log(dataRow)
