@@ -80,7 +80,7 @@ const jobBoxClicked = (job) => {
   const relatedJobBoxes = props.jobBoxes.filter(j => j.deptCd === job.deptCd);
 
   store.dispatch('jobBxSelectedUpdate', { 
-    searchDeptId: job.deptCd, 
+    searchDeptCd: job.deptCd, 
     searchDeptjobBxId: job.deptJobBxId
   });
   
