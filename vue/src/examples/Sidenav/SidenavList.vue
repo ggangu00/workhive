@@ -140,7 +140,7 @@
                url="#"
                :aria-controls="''"
                v-bind:collapse="false"
-               collapseRef="/schedule/calendar"
+               collapseRef="/schdule/calendar"
                navText="일정관리"
             >
                <template v-slot:icon>
