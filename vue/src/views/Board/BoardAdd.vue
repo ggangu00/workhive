@@ -72,7 +72,7 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { useRoute, useRouter } from 'vue-router';
 
-const route = useRoute(); 
+const route = useRoute();  
 const router = useRouter(); 
 
 //  쿼리 파라미터에서 데이터 추출 (쿼리 파라미터 이름과 일치시킴)

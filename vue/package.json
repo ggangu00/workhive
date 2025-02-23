@@ -38,6 +38,7 @@
     "bootstrap-icons": "^1.11.3",
     "chart.js": "4.4.0",
     "core-js": "3.33.0",
+    "font-awesome": "^4.7.0",
     "pinia": "^3.0.1",
     "tui-grid": "^4.21.22",
     "turndown": "^7.2.0",
