@@ -6,7 +6,8 @@
 	<select id="todoSelectAll" parameterType="String" resultType="todoDTO">
 		select todo_cd,		
 			   mber_id,		
-			   fn_get_codename(type_cd) as type_cd,	
+			   type_cd,		--업무구분
+			   fn_get_codename(type_cd) as type_nm,	--업무구분명
 			   title,		
 			   content,		
 			   state,		
@@ -23,7 +24,8 @@
 	<select id="todoSelect" parameterType="String">
 		select todo_cd,		--일지 코드
 			   mber_id,		--구성원 코드
-			   fn_get_codename(type_cd) as type_cd,	--업무구분
+			   type_cd,		--업무구분
+			   fn_get_codename(type_cd) as type_nm,	--업무구분명
 			   title,		--업무명
 			   content,		--업무 상세내용
 			   state,		--완료여부
@@ -34,14 +36,14 @@
 			todo_cd = #{todoCd} 
 	</select>
 	
-	<!-- 일지 날짜별 건수 조회 -->
-	<select id="todoSelectCnt" parameterType="String" resultType="todoDTO">
+	<!-- 일지 월별 건수 조회 -->
+	<select id="todoSelectCnt" parameterType="HashMap" resultType="todoDTO">
 		select todo_dt, 
 			   count(*) as dateCnt
 		from todo
 		where 
-			extract (year from todo_dt) = SUBSTR(#{todoDt}, 1, 4) 
-		and extract (month from todo_dt) = SUBSTR(#{todoDt}, 5, 2)
+			extract (year from todo_dt) = #{year}
+		and extract (month from todo_dt) = #{month}
 			
 		group by 
 			todo_dt
@@ -95,11 +97,15 @@
 	</update>
 	
 	<!-- 일지 삭제 -->
-	<delete id="todoDelete" parameterType="String">
-		delete from 
-		   todo
-		WHERE
-		   todo_cd = #{todoCd}
+	<delete id="todoDelete" parameterType="java.util.List">
+	    DELETE FROM 
+	    	todo 
+	    WHERE 
+	    	todo_cd 
+	    IN
+	    <foreach collection="list" item="todoCd" separator="," open="(" close=")">
+	        #{todoCd}
+	    </foreach>
 	</delete>
 
 </mapper>

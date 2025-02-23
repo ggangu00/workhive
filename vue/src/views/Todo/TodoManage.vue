@@ -21,8 +21,8 @@
             'point-red': i.dateDay === '일',
             'point-blue': i.dateDay === '토',
             'highlight': todoListCnt.includes(dateFormat(i.thisDate)),
-            'today': dateFormat(i.thisDate) == dateFormat()
-          }" @click=" todoGetList(i.thisDate)">{{ i.date }}</button>
+            'today': dateFormat(i.thisDate) == todoDt
+          }" @click=" todoGetDate(i.thisDate)">{{ i.date }}</button>
         </div>
       </div>
 
@@ -53,9 +53,9 @@
                     </div>
                   </th>
                   <th>
-                    <button class="btn btn-secondary btn-fill btn-sm float-left" @click="btnSelectDelete">선택미완료</button>
+                    <button class="btn btn-secondary btn-fill btn-sm float-left">선택미완료</button>
                     <button class="btn btn-secondary btn-fill btn-sm float-left">선택완료</button>
-                    <button class="btn btn-danger btn-fill btn-sm float-left">선택삭제</button>
+                    <button class="btn btn-danger btn-fill btn-sm float-left" @click="btnSelectDelete">선택삭제</button>
                   </th>
                   <th></th>
                   <th></th>
@@ -76,7 +76,7 @@
                   <tr :key="i" v-for="(todo, i) in todoList" :class="todo.state == 'A01' ? 'table-secondary' : ''">
                     <td>
                       <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="todoChk" :value="todo.todoCd">
+                        <input class="form-check-input" type="checkbox" name="todoChk" :value="todo.todoCd" v-model="todoChk">
                       </div>
                     </td>
                     <td>{{ todo.state == 'A01' ? '완료' : '미완료' }}</td>
@@ -85,7 +85,8 @@
                     <td align="left" data-bs-toggle="tooltip" data-bs-html="true" :data-bs-title="todo.content">{{
                       todo.title }} {{ todo.content != null ? '(+)' : '' }}</td>
                     <td>
-                      <button class="btn btn-success btn-fill btn-sm mr-1">수정</button>
+                      <button class="btn btn-success btn-fill btn-sm mr-1"
+                        @click="btnSelectUpdate(todo.todoCd)">수정</button>
                       <button class="btn btn-danger btn-fill btn-sm mr-1"
                         @click="btnTodoRemove(todo.todoCd)">삭제</button>
                     </td>
@@ -112,16 +113,14 @@
 
         <div class="mb-3">
           <label class="form-label">업무일 <em class="point-red">*</em></label>
-          <input type="date" name="project_nm" class="form-control w30">
+          <input type="date" class="form-control w30" :name="todoDt" v-model="todoDt">
         </div>
         <div class="mb-3">
           <label class="form-label">업무분류 <em class="point-red">*</em></label>
           <div class="row">
             <div class="col-auto">
-              <select class="form-select">
-                <option value="1">내부업무</option>
-                <option value="2">외부업무</option>
-                <option value="3">프로젝트</option>
+              <select class="form-select float-right" :name="typeCd" v-model="typeCd">
+                <option :key="type" v-for="type in typeCdArr" :value="type.commDtlCd">{{ type.commDtlNm }}</option>
               </select>
             </div>
           </div>
@@ -130,21 +129,22 @@
           <div class="form-group has-label">
             <label>일지제목 <em class="point-red">*</em></label>
           </div>
-          <input type="text" class="form-control" placeholder="일지제목을 입력해주세요">
+          <input type="text" class="form-control" placeholder="일지제목을 입력해주세요" :name="title" v-model="title">
         </div>
         <div class="mb-3">
           <div class="form-group has-label">
             <label>업무내용 <em class="point-red">*</em></label>
           </div>
-          <textarea type="text" class="form-control" placeholder="업무내용을 입력해주세요" style="min-height: 150px;"></textarea>
+          <textarea type="text" class="form-control" placeholder="업무내용을 입력해주세요" style="min-height: 150px;"
+            :name="content" v-model="content"></textarea>
         </div>
         <div class="mb-3">
           <label class="form-label">상태 <em class="point-red">*</em></label>
           <div class="row">
             <div class="col-auto">
-              <select class="form-select" name="state">
-                <option value="1">미완료</option>
-                <option value="2">완료</option>
+              <select class="form-select" :name="state" v-model="state">
+                <option value="A02">미완료</option>
+                <option value="A01">완료</option>
               </select>
             </div>
           </div>
@@ -164,7 +164,7 @@
 
 <script setup>
 import axios from "axios";
-import { onBeforeMount, ref } from 'vue';
+import { ref, computed, watch, watchEffect, onBeforeMount } from 'vue';
 
 //---------------컴포넌트-------------- 
 import Swal from 'sweetalert2';
@@ -186,13 +186,11 @@ const title = ref('');
 const content = ref('');
 const state = ref('A02');
 const mberId = ref('admin');
-const todoDt = ref(dateFormat());
+const todoDt = ref(dateFormat()); // 현재 선택된 날짜 (디폴트 : 오늘)
 
 onBeforeMount(() => {
-  nowDateInfo();
-  todoGetList();
-  todoGetListCnt();
-  getStatus();
+  nowDateInfo(); //해당 월의 일수 표출
+  getStatus(); //업무구분
 });
 
 //---------------모달-------------- 
@@ -208,8 +206,9 @@ const modalCloseFunc = (e) => {
 const openModal = () => {
   isShowModal.value = true;
 }
+
 const closeModal = () => {
-  formReset
+  formReset();
   isShowModal.value = false;
 }
 
@@ -234,24 +233,25 @@ const monthMove = (mode) => {
       month.value++;
     }
   }
-  nowDateInfo();
 }
 
 const dateArr = ref([]);
+const dayCnt = computed(() => new Date(year.value, month.value, 0).getDate()); // 현재 월의 총 일수
 const nowDateInfo = () => {
-  const dayCnt = new Date(year.value, month.value, 0).getDate(); // 현재 월의 총 일수
-
   dateArr.value = [];
-  for (let i = 1; i <= dayCnt; i++) {
-    dateArr.value.push(
-      {
-        date: i,
-        thisDate: year.value + "-" + month.value + "-" + i,
-        dateDay: dateGetDay(year.value + "-" + month.value + "-" + i)
-      }
-    );
+  for (let i = 1; i <= dayCnt.value; i++) {
+    const formattedDate = `${year.value}-${String(month.value).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+    dateArr.value.push({
+      date: i,
+      thisDate: formattedDate,
+      dateDay: dateGetDay(formattedDate)
+    });
   }
 }
+
+const todoGetDate = (date) => {
+  todoDt.value = date; // todoDt가 변경되면 watchEffect가 자동 실행됨
+};
 
 const formReset = () => { //입력정보 초기화
   typeCd.value = 'B01';
@@ -260,6 +260,11 @@ const formReset = () => { //입력정보 초기화
 }
 
 //-------------버튼이벤트------------
+
+const btnSelectUpdate = (code) => {
+  openModal();
+  todoGetList(code);
+}
 
 const btnTodoRemove = (code) => {
   Swal.fire({
@@ -279,16 +284,16 @@ const btnTodoRemove = (code) => {
   });
 };
 
+const todoChk = ref([]);
 const btnSelectDelete = () => {
-  const arr = [];
-  const color = document.getElementsByName("todoChk");
-
-  color.forEach(item => {
-    if (item.checked == true) {
-      arr.push(item.value);
-    }
-  });
+  if (todoChk.value.length === 0) {
+    alert("삭제할 항목을 선택하세요.");
+    return;
+  }else{
+    todoRemove();
+  }
 }
+
 //---------------axios--------------
 
 const getStatus = async () => { //업무구분 목록 호출
@@ -300,16 +305,15 @@ const getStatus = async () => { //업무구분 목록 호출
 
 const todoList = ref([]);
 const todoCount = ref(0);
-const todoGetList = async (date) => { //일지 전체조회
-  todoDt.value = date;
+watchEffect(async () => { //일지 전체조회
 
-  date = dateFormat(date).replaceAll("-", "");
+  const date = dateFormat(todoDt.value).replaceAll("-", "");
 
   try {
     const result = await axios.get(`/api/todo/list/${date}`);
 
-    todoCount.value = result.data.length;
     todoList.value = result.data;
+    todoCount.value = result.data.length;
 
   } catch (err) {
     todoList.value = [];
@@ -320,18 +324,39 @@ const todoGetList = async (date) => { //일지 전체조회
       text: "Error : " + err
     });
   }
-}
+});
 
-const todoListCnt = ref([]);
-const todoGetListCnt = async (date) => { //일지 날짜별 건수조회
-
-  date = dateFormat(date).replaceAll("-", "");
+const todoInfo = ref([]);
+const todoGetList = async (todoCd) => { //일지 단건조회
 
   try {
-    const result = await axios.get(`/api/todo/list/cnt/${date}`);
-    result.data.forEach(item => {
-      todoListCnt.value.push(dateFormat(item.todoDt));
+    const result = await axios.get(`/api/todo/info/${todoCd}`);
+
+    todoInfo.value = result.data.info;
+    todoDt.value = todoInfo.value.todoDt;
+    typeCd.value = todoInfo.value.typeCd;
+    title.value = todoInfo.value.title;
+    content.value = todoInfo.value.content;
+    state.value = todoInfo.value.state;
+
+  } catch (err) {
+    todoInfo.value = [];
+
+    Swal.fire({
+      icon: "error",
+      title: "API 조회 오류",
+      text: "Error : " + err
     });
+  }
+};
+
+const todoListCnt = ref([]);
+watch(month, async () => { //해당 월 건수조회
+  try {
+    const result = await axios.get(`/api/todo/list/cnt?year=${year.value}&month=${month.value}`);
+
+    //기존 데이터를 지우고 새로 할당
+    todoListCnt.value = result.data.map(item => dateFormat(item.todoDt));
 
   } catch (err) {
     todoListCnt.value = [];
@@ -342,7 +367,7 @@ const todoGetListCnt = async (date) => { //일지 날짜별 건수조회
       text: "Error : " + err
     });
   }
-}
+}, { immediate: true });
 
 const todoAdd = async () => { //일지 등록
 
@@ -354,7 +379,6 @@ const todoAdd = async () => { //일지 등록
     return;
   }
 
-
   const formData = new FormData();
   formData.append("typeCd", typeCd.value);
   formData.append("mberId", mberId.value);
@@ -362,6 +386,7 @@ const todoAdd = async () => { //일지 등록
   formData.append("content", content.value);
   formData.append("state", state.value);
   formData.append("todoDt", todoDt.value);
+
 
   try {
     const response = await axios.post('/api/todo', formData);
@@ -374,7 +399,6 @@ const todoAdd = async () => { //일지 등록
       })
       todoList.value = response.data.list;
       formReset();
-      todoGetList(todoDt.value);
     }
   } catch (err) {
     Swal.fire({
@@ -385,18 +409,17 @@ const todoAdd = async () => { //일지 등록
   }
 }
 
-const todoRemove = async (todoCd) => { //일지 삭제
+const todoRemove = async () => { //일지 삭제
 
   try {
-    const response = await axios.delete(`/api/todo/${todoCd}`);
+    const response = await axios.delete(`/api/todo/delete`, { data: { todoArr: todoChk.value }});
 
-    if (response.data.result === true) {
+    if (response.data === true) {
       Swal.fire({
         icon: "success",
         title: "삭제완료",
         text: "선택한 일지를 삭제하였습니다",
       })
-      todoGetList(todoDt.value);
     }
   } catch (err) {
     Swal.fire({

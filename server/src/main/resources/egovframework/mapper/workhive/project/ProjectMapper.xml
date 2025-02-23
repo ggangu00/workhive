@@ -119,8 +119,8 @@
 	</select>	
 	
 	<!-- 프로젝트 과업등록 -->
-	<insert id="projectWorkInsert" parameterType="projectDTO">
-		INSERT INTO project_work (
+	<insert id="projectWorkInsert" parameterType="java.util.List">
+	    INSERT INTO project_work (
 			pr_work_cd, --과업코드
 			pr_cd,		--프로젝트 코드
 			pr_work_nm, --과업명
@@ -128,13 +128,16 @@
 			progress,	--진행률
 			state		--완료여부
 		)
-		VALUES (
-			seq_pr_work_cd.nextval,
-			#{prCd},
-			#{prWorkNm},			
-			#{progress},
-			#{state}
-		)		
+		VALUES
+	    <foreach collection="list" item="todo" separator=",">
+	       (
+				seq_pr_work_cd.nextval,
+				#{prCd},
+				#{prWorkNm},			
+				#{progress},
+				#{state}
+			)		
+	    </foreach>
 	</insert>
 	
 	<!-- ======================프로젝트 일정=====================  -->

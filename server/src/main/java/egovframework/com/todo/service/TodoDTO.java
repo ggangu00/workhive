@@ -22,6 +22,7 @@ public class TodoDTO {
 	
 	@NotBlank
 	private String typeCd;		// 업무 구분
+	private String typeNm;		// 업무 구분명
 	
 	@NotBlank
 	private String title;		// 업무제목
@@ -29,6 +30,8 @@ public class TodoDTO {
 	
 	private String todoDt;		// 업무일자
 	private String state;		// 완료여부
+	private String year;		// 완료여부
+	private String month;		// 완료여부
 	
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date createDt;		// 프로젝트 등록일
