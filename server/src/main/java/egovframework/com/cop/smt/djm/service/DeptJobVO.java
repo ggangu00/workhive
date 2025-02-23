@@ -28,7 +28,7 @@ public class DeptJobVO extends DeptJob {
     private String searchWrd = "";
     
     /** 부서ID조회조건 */
-    private String searchDeptId = "";
+    private String searchDeptCd = "";
     
     /** 부서업무함ID조회조건 */
     private String searchDeptJobBxId = "";
@@ -67,12 +67,12 @@ public class DeptJobVO extends DeptJob {
 		this.searchWrd = searchWrd;
 	}
 
-	public String getSearchDeptId() {
-		return searchDeptId;
+	public String getSearchDeptCd() {
+		return searchDeptCd;
 	}
 
-	public void setSearchDeptId(String searchDeptId) {
-		this.searchDeptId = searchDeptId;
+	public void setSearchDeptCd(String searchDeptCd) {
+		this.searchDeptCd = searchDeptCd;
 	}
 
 	public String getSearchDeptJobBxId() {

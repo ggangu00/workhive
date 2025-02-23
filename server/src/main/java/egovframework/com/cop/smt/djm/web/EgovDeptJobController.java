@@ -263,13 +263,15 @@ public class EgovDeptJobController {
 	 * @param deptJobBxVO
 	 */
 //	@RequestMapping("/cop/smt/djm/selectDeptJobBx.do")
-//	public String selectDeptJobBx(@ModelAttribute("searchVO") DeptJobBxVO deptJobBxVO, ModelMap model) throws Exception{
-//
-//		DeptJobBx deptJobBx = deptJobService.selectDeptJobBx(deptJobBxVO);
-//        model.addAttribute("deptJobBx", deptJobBx);
-//
+	@GetMapping("/jobBxInfo")
+	public DeptJobBx selectDeptJobBx(@ModelAttribute("searchVO") DeptJobBxVO deptJobBxVO, ModelMap model) throws Exception{
+
+		DeptJobBx deptJobBx = deptJobService.selectDeptJobBx(deptJobBxVO);
+        model.addAttribute("deptJobBx", deptJobBx);
+
 //		return "egovframework/com/cop/smt/djm/EgovDeptJobBxDetail";
-//	}
+        return deptJobBx;
+	}
 
 	/**
 	 * 부서업무함 정보의 등록화면으로 이동한다.
@@ -320,7 +322,7 @@ public class EgovDeptJobController {
         	return "redirect:/uat/uia/egovLoginUsr.do";
     	}
 
-    	model.addAttribute("indictOrdrValue", deptJobService.selectDeptJobBxOrdr(deptJobBxVO.getDeptId()) + 1);
+    	model.addAttribute("indictOrdrValue", deptJobService.selectDeptJobBxOrdr(deptJobBxVO.getDeptCd()) + 1);
     	return sLocationUrl;
 	}
 
@@ -358,20 +360,24 @@ public class EgovDeptJobController {
 	 *
 	 * @param deptJobBxVO
 	 */
-	@RequestMapping("/cop/smt/djm/updateDeptJobBx.do")
+//	@RequestMapping("/cop/smt/djm/updateDeptJobBx.do")
+	@PostMapping("/jobBxModify")
 	public String updateDeptJobBx(@ModelAttribute("deptJobBxVO") DeptJobBxVO deptJobBxVO, BindingResult bindingResult, ModelMap model) throws Exception{
 		LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
 		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
 
 		beanValidator.validate(deptJobBxVO, bindingResult);
 		if (bindingResult.hasErrors()) {
-		    return "egovframework/com/cop/smt/djm/EgovDeptJobBxUpdt";
+//		    return "egovframework/com/cop/smt/djm/EgovDeptJobBxUpdt";
 		}
 
-		if (isAuthenticated) {
-			deptJobBxVO.setLastUpdusrId(user == null ? "" : EgovStringUtil.isNullToString(user.getUniqId()));
-			deptJobService.updateDeptJobBx(deptJobBxVO);
-		}
+//		if (isAuthenticated) {
+//			deptJobBxVO.setLastUpdusrId(user == null ? "" : EgovStringUtil.isNullToString(user.getUniqId()));
+//			deptJobService.updateDeptJobBx(deptJobBxVO);
+//			System.out.println("jobBx update check");
+//		}
+		deptJobBxVO.setLastUpdusrId(user == null ? "user01" : EgovStringUtil.isNullToString(user.getUniqId()));
+		deptJobService.updateDeptJobBx(deptJobBxVO);
 
 		return "forward:/cop/smt/djm/selectDeptJobBxList.do";
 	}
@@ -408,13 +414,14 @@ public class EgovDeptJobController {
 	 *
 	 * @param deptJobBxVO
 	 */
-	@RequestMapping("/cop/smt/djm/insertDeptJobBx.do")
+//	@RequestMapping("/cop/smt/djm/insertDeptJobBx.do")
+	@PostMapping("/jobBxAdd")
 	public String insertDeptJobBx(@ModelAttribute("deptJobBxVO") DeptJobBxVO deptJobBxVO, BindingResult bindingResult, ModelMap model) throws Exception{
 		// 0. Spring Security 사용자권한 처리
     	Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
     	if(!isAuthenticated) {
     		model.addAttribute("message", egovMessageSource.getMessage("fail.common.login"));
-        	return "redirect:/uat/uia/egovLoginUsr.do";
+//        	return "redirect:/uat/uia/egovLoginUsr.do";
     	}
 
 		//로그인 객체 선언
@@ -425,12 +432,12 @@ public class EgovDeptJobController {
 		//서버  validate 체크
         beanValidator.validate(deptJobBxVO, bindingResult);
 		if(bindingResult.hasErrors()){
-			return sLocationUrl;
+//			return sLocationUrl;
 		}
 
 		//아이디 설정
-		deptJobBxVO.setFrstRegisterId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
-		deptJobBxVO.setLastUpdusrId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
+		deptJobBxVO.setFrstRegisterId(loginVO == null ? "user01" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
+		deptJobBxVO.setLastUpdusrId(loginVO == null ? "user01" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
 
 		//부서내 부서업무함명 중복체크
 		if(deptJobService.selectDeptJobBxCheck(deptJobBxVO) > 0){
@@ -450,13 +457,14 @@ public class EgovDeptJobController {
 	 *
 	 * @param DeptJobBx
 	 */
-	@RequestMapping("/cop/smt/djm/deleteDeptJobBx.do")
+//	@RequestMapping("/cop/smt/djm/deleteDeptJobBx.do")
+	@DeleteMapping("/jobBxRemove")
 	public String deleteDeptJobBx(@ModelAttribute("deptJobBxVO") DeptJobBx deptJobBx, ModelMap model) throws Exception{
 		// 0. Spring Security 사용자권한 처리
     	Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
     	if(!isAuthenticated) {
     		model.addAttribute("message", egovMessageSource.getMessage("fail.common.login"));
-        	return "redirect:/uat/uia/egovLoginUsr.do";
+//        	return "redirect:/uat/uia/egovLoginUsr.do";
     	}
     	deptJobService.deleteDeptJobBx(deptJobBx);
 		return "forward:/cop/smt/djm/selectDeptJobBxList.do";
@@ -494,8 +502,8 @@ public class EgovDeptJobController {
 		deptJobVO.setLastIndex(paginationInfo.getLastRecordIndex());
 		deptJobVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
 
-		if(deptJobVO.getSearchDeptId() == null || deptJobVO.getSearchDeptId().equals("")){
-			deptJobVO.setSearchDeptId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getOrgnztId()));
+		if(deptJobVO.getSearchDeptCd() == null || deptJobVO.getSearchDeptCd().equals("")){
+			deptJobVO.setSearchDeptCd(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getOrgnztId()));
 		}
 
 		Map<String, Object> map = deptJobService.selectDeptJobList(deptJobVO);
@@ -529,8 +537,8 @@ public class EgovDeptJobController {
         	return "redirect:/uat/uia/egovLoginUsr.do";
     	}
 
-    	deptJobVO.setDeptId(deptJobVO.getSearchDeptId());
-    	deptJobVO.setDeptNm(deptJobService.selectDept(deptJobVO.getSearchDeptId()));
+    	deptJobVO.setDeptCd(deptJobVO.getSearchDeptCd());
+    	deptJobVO.setDeptNm(deptJobService.selectDept(deptJobVO.getSearchDeptCd()));
     	deptJobVO.setDeptJobBxId(deptJobVO.getSearchDeptJobBxId());
 
     	// 파일업로드 제한
@@ -562,7 +570,7 @@ public class EgovDeptJobController {
 		DeptJobVO resultVO = deptJobService.selectDeptJob(deptJobVO);
 		resultVO.setSearchCnd(deptJobVO.getSearchCnd());
 		resultVO.setSearchWrd(deptJobVO.getSearchWrd());
-		resultVO.setSearchDeptId(deptJobVO.getSearchDeptId());
+		resultVO.setSearchDeptCd(deptJobVO.getSearchDeptCd());
 		resultVO.setSearchDeptJobBxId(deptJobVO.getSearchDeptJobBxId());
 		resultVO.setPageIndex(deptJobVO.getPageIndex());
         model.addAttribute("deptJobVO", resultVO);

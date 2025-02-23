@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.menu.mapper.MenuInfoMapper">
+	
+	<select id="menuSelectAll" resultType="menuInfoDTO">
+		SELECT
+		   menu_cd,
+		   menu_nm,
+		   depth,
+		   parent_menu_cd,
+		   url,
+		   router_nm,
+		   icon_class,
+		   seq,
+		   use_yn,
+		   del_yn,
+		   create_dt,
+		   create_id,
+		   update_dt,
+		   update_id
+		FROM
+		   menuinfo
+		ORDER BY
+		   TO_NUMBER(menu_cd),
+		   depth,
+		   seq
+	</select>
+
+</mapper>

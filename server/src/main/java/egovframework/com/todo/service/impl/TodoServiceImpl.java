@@ -1,6 +1,7 @@
 package egovframework.com.todo.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -30,8 +31,8 @@ public class TodoServiceImpl implements TodoService{
 	
 	//일지 날짜별 건수조회
 	@Override
-	public List<TodoDTO> todoSelectCnt(String todoDt) {
-		return todoMapper.todoSelectCnt(todoDt);
+	public List<TodoDTO> todoSelectCnt(Map<String, Object> response) {
+		return todoMapper.todoSelectCnt(response);
 	}
 
 	//일지 등록
@@ -48,8 +49,8 @@ public class TodoServiceImpl implements TodoService{
 
 	//일지 삭제
 	@Override
-	public boolean todoDelete(String todoCd) {
-		return todoMapper.todoDelete(todoCd) == 1 ? true : false;
+	public boolean todoDelete(List<String> todoArr) {
+		return todoMapper.todoDelete(todoArr) == 1 ? true : false;
 	}
 	
 }

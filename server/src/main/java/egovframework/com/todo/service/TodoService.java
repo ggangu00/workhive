@@ -1,6 +1,7 @@
 package egovframework.com.todo.service;
 
 import java.util.List;
+import java.util.Map;
 
 public interface TodoService {
 	
@@ -11,7 +12,7 @@ public interface TodoService {
 	public TodoDTO todoSelect(String todoCd);
 	
 	//일지 날짜별 건수조회
-	public List<TodoDTO> todoSelectCnt(String todoDt);
+	public List<TodoDTO> todoSelectCnt(Map<String, Object> response);
 	
 	//일지 등록
 	public boolean todoInsert(TodoDTO todo);
@@ -20,5 +21,5 @@ public interface TodoService {
 	public boolean todoUpdate(TodoDTO todo);
 	
 	//일지 삭제
-	public boolean todoDelete(String todoCd);
+	public boolean todoDelete(List<String> todoArr);
 }

@@ -5,7 +5,7 @@
 
 	
 	<resultMap id="chargerList" type="egovframework.com.cop.smt.djm.service.ChargerVO">
-		<result property="orgnztNm" column="ORGNZT_NM"/>
+		<result property="orgnztNm" column="DEPT_NM"/>
 		<result property="uniqId" column="ESNTL_ID"/>
 		<result property="emplyrNm" column="USER_NM"/>
 		<result property="emplNo" column="EMPL_NO"/>
@@ -13,13 +13,13 @@
 	</resultMap>
 	
 	<resultMap id="DeptList" type="egovframework.com.cop.smt.djm.service.DeptVO">
-		<result property="orgnztId" column="ORGNZT_ID"/>
-		<result property="orgnztNm" column="ORGNZT_NM"/>
+		<result property="orgnztId" column="DEPT_CD"/>
+		<result property="orgnztNm" column="DEPT_NM"/>
 		<result property="orgnztDc" column="ORGNZT_DC"/>	
 	</resultMap>
 	
 	<resultMap id="DeptJobBxList" type="egovframework.com.cop.smt.djm.service.DeptJobBxVO">
-		<result property="deptId" column="DEPT_CD"/>
+		<result property="deptCd" column="DEPT_CD"/>
 		<result property="deptNm" column="DEPT_NM"/>
 		<result property="deptJobBxId" column="DEPT_JOBBX_ID"/>
 		<result property="deptJobBxNm" column="DEPT_JOBBX_NM"/>
@@ -29,14 +29,14 @@
 	</resultMap>
 	
 	<resultMap id="DeptJobBxListAll" type="egovframework.com.cop.smt.djm.service.DeptJobBxVO">
-		<result property="deptId" column="DEPT_CD"/>
+		<result property="deptCd" column="DEPT_CD"/>
 		<result property="deptNm" column="DEPT_NM"/>
 		<result property="deptJobBxId" column="DEPT_JOBBX_ID"/>
 		<result property="deptJobBxNm" column="DEPT_JOBBX_NM"/>
 	</resultMap>
 	
 	<resultMap id="DeptJobList" type="egovframework.com.cop.smt.djm.service.DeptJobVO">
-		<result property="deptId" column="DEPT_CD"/>
+		<result property="deptCd" column="DEPT_CD"/>
 		<result property="deptJobId" column="DEPT_JOB_ID"/>
 		<result property="deptJobNm" column="DEPT_JOB_NM"/>
 		<result property="priort" column="PRIORT"/>
@@ -45,7 +45,7 @@
 	</resultMap>
 	
 	<resultMap id="DeptJobBxDetail" type="egovframework.com.cop.smt.djm.service.DeptJobBxVO">
-		<result property="deptId" column="DEPT_CD"/>
+		<result property="deptCd" column="DEPT_CD"/>
 		<result property="deptNm" column="DEPT_NM"/>
 		<result property="deptJobBxId" column="DEPT_JOBBX_ID"/>
 		<result property="deptJobBxNm" column="DEPT_JOBBX_NM"/>	
@@ -55,7 +55,7 @@
 	</resultMap>
 	
 	<resultMap id="DeptJobDetail" type="egovframework.com.cop.smt.djm.service.DeptJobVO">
-		<result property="deptId" column="DEPT_CD"/>
+		<result property="deptCd" column="DEPT_CD"/>
 		<result property="deptNm" column="DEPT_NM"/>
 		<result property="deptJobBxId" column="DEPT_JOBBX_ID"/>
 		<result property="deptJobBxNm" column="DEPT_JOBBX_NM"/>	
@@ -82,22 +82,22 @@
 	
 		
 			SELECT
-				b.ORGNZT_NM, a.ESNTL_ID, a.USER_NM, 
+				b.DEPT_NM, a.ESNTL_ID, a.USER_NM, 
 				a.EMPL_NO, a.OFCPS_NM
 			FROM
 				COMTNEMPLYRINFO a
-			LEFT OUTER JOIN COMTNORGNZTINFO b
-				ON a.ORGNZT_ID = b.ORGNZT_ID
+			LEFT OUTER JOIN DEPARTMENT b
+				ON a.DEPT_CD = b.DEPT_CD
 			WHERE 1=1
 		
 			<if test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(searchCnd, 0)">AND
-					NVL(b.ORGNZT_NM, ' ') LIKE '%'||#{searchWrd}||'%' 		
+					NVL(b.DEPT_NM, ' ') LIKE '%'||#{searchWrd}||'%' 		
 			</if>
 			<if test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(searchCnd, 1)">AND
 					NVL(a.USER_NM, ' ') LIKE '%'||#{searchWrd}||'%' 		
 			</if>
 		
-			ORDER BY b.ORGNZT_NM, a.USER_NM ASC
+			ORDER BY b.DEPT_NM, a.USER_NM ASC
 			
 	
 		
@@ -113,12 +113,12 @@
 				COUNT(EMPLYR_ID) as cnt
 			FROM
 				COMTNEMPLYRINFO a
-			LEFT OUTER JOIN COMTNORGNZTINFO b
-				ON a.ORGNZT_ID = b.ORGNZT_ID
+			LEFT OUTER JOIN DEPARTMENT b
+				ON a.DEPT_CD = b.DEPT_CD
 			WHERE 1=1
 		
 			<if test='searchCnd == "0"'>AND
-					NVL(b.ORGNZT_NM, ' ') LIKE '%'||#{searchWrd}||'%' 		
+					NVL(b.DEPT_NM, ' ') LIKE '%'||#{searchWrd}||'%' 		
 			</if>
 			<if test='searchCnd == "1"'>AND
 					NVL(a.USER_NM, ' ') LIKE '%'||#{searchWrd}||'%' 		
@@ -136,20 +136,20 @@
 	
 	 
 		SELECT 
-			ORGNZT_ID,
-			ORGNZT_NM,
+			DEPT_CD,
+			DEPT_NM,
 			ORGNZT_DC 
-		FROM COMTNORGNZTINFO
+		FROM DEPARTMENT
 		WHERE 1=1
 	 
 	 <if test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(searchCnd, 0)">AND
-		 	ORGNZT_NM LIKE '%'||#{searchWrd}||'%' 		
+		 	DEPT_NM LIKE '%'||#{searchWrd}||'%' 		
 	 </if>
 	 <if test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(searchCnd, 1)">AND
 		 	ORGNZT_DC LIKE '%'||#{searchWrd}||'%' 		
 	 </if>
 	 
-		ORDER BY ORGNZT_NM ASC
+		ORDER BY DEPT_NM ASC
 	 
 	 
 		
@@ -163,13 +163,13 @@
 	<select id="selectDeptListCnt" parameterType="egovframework.com.cop.smt.djm.service.DeptVO" resultType="java.lang.Integer">
 		
 			SELECT
-				COUNT(ORGNZT_ID) as cnt
+				COUNT(DEPT_CD) as cnt
 			FROM
-				COMTNORGNZTINFO 
+				DEPARTMENT 
 			WHERE 1=1
 		
 			<if test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(searchCnd, 0)">AND
-					ORGNZT_NM LIKE '%'||#{searchWrd}||'%' 		
+					DEPT_NM LIKE '%'||#{searchWrd}||'%' 		
 			</if>
 			<if test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(searchCnd, 1)">AND
 					ORGNZT_DC LIKE '%'||#{searchWrd}||'%' 		
@@ -180,9 +180,9 @@
 	<select id="selectDept" parameterType="java.lang.String" resultType="java.lang.String">
 	 
 		SELECT 
-			ORGNZT_NM 
-		FROM COMTNORGNZTINFO
-		WHERE ORGNZT_ID = #{orgnztId}
+			DEPT_NM 
+		FROM DEPARTMENT
+		WHERE DEPT_CD = #{orgnztId}
 	 
 	</select>
 	
@@ -191,13 +191,13 @@
 	 
 		SELECT 
 			A.DEPT_CD,
-			B.ORGNZT_NM DEPT_NM,
+			B.DEPT_NM DEPT_NM,
 			A.DEPT_JOBBX_ID,
 			A.DEPT_JOBBX_NM
 		FROM COMTNDEPTJOBBX A
-		LEFT OUTER JOIN COMTNORGNZTINFO B
-			ON A.DEPT_CD = B.ORGNZT_ID 
-		ORDER BY B.ORGNZT_NM, A.INDICT_ORDR ASC
+		LEFT OUTER JOIN DEPARTMENT B
+			ON A.DEPT_CD = B.DEPT_CD 
+		ORDER BY B.DEPT_NM, A.INDICT_ORDR ASC
 	 	
 	</select>
 	
@@ -213,32 +213,32 @@
 	 
 		SELECT 
 			A.DEPT_CD,
-			B.ORGNZT_NM DEPT_NM,
+			B.DEPT_NM,
 			A.DEPT_JOBBX_ID,
 			A.DEPT_JOBBX_NM,
 			A.INDICT_ORDR,
 			C.USER_NM LAST_UPDUSR_NM,
 			TO_DATE(A.UPDATE_DT) UPDATE_DT 
 		FROM COMTNDEPTJOBBX A
-		LEFT OUTER JOIN COMTNORGNZTINFO B
-			ON A.DEPT_CD = B.ORGNZT_ID 
+		LEFT OUTER JOIN DEPARTMENT B
+			ON A.DEPT_CD = B.DEPT_CD 
 		LEFT OUTER JOIN COMTNEMPLYRINFO C
 			ON A.UPDATE_ID = C.ESNTL_ID 
 		WHERE 1=1
 	 
 	 <if test='popupCnd != null and popupCnd != ""'>
-		 <if test='deptId != null and deptId != ""'>AND
-			 A.DEPT_CD = #{deptId}
+		 <if test='deptCd != null and deptCd != ""'>AND
+			 A.DEPT_CD = #{deptCd}
 		 </if>
 	 </if>
 	 <if test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(searchCnd, 0)">AND
-		 	NVL(B.ORGNZT_NM, ' ') LIKE '%'||#{searchWrd}||'%' 		
+		 	NVL(B.DEPT_NM, ' ') LIKE '%'||#{searchWrd}||'%' 		
 	 </if>
 	 <if test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(searchCnd, 1)">AND
 		 	A.DEPT_JOBBX_NM LIKE '%'||#{searchWrd}||'%' 		
 	 </if>
 	 
-		ORDER BY B.ORGNZT_NM, A.INDICT_ORDR ASC
+		ORDER BY B.DEPT_NM, A.INDICT_ORDR ASC
 	 
 	
 		
@@ -255,17 +255,17 @@
 				COUNT(DEPT_JOBBX_ID) as cnt
 			FROM
 				COMTNDEPTJOBBX A
-			LEFT OUTER JOIN COMTNORGNZTINFO B
-				ON A.DEPT_CD = B.ORGNZT_ID 
+			LEFT OUTER JOIN DEPARTMENT B
+				ON A.DEPT_CD = B.DEPT_CD 
 			WHERE 1=1
 		
 		<if test='popupCnd != null and popupCnd != ""'>
-		 <if test='deptId != null and deptId != ""'>AND
-			 A.DEPT_CD = #{deptId}
+		 <if test='deptCd != null and deptCd != ""'>AND
+			 A.DEPT_CD = #{deptCd}
 		 </if>
 	 	</if>
 		<if test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(searchCnd, 0)">AND
-		 		NVL(B.ORGNZT_NM, ' ') LIKE '%'||#{searchWrd}||'%' 		
+		 		NVL(B.DEPT_NM, ' ') LIKE '%'||#{searchWrd}||'%' 		
 	 	</if>
 		<if test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(searchCnd, 1)">AND
 				A.DEPT_JOBBX_NM LIKE '%'||#{searchWrd}||'%' 		
@@ -276,15 +276,15 @@
 	<select id="selectDeptJobBx" parameterType="egovframework.com.cop.smt.djm.service.DeptJobBxVO" resultMap="DeptJobBxDetail">
 		SELECT 
 			A.DEPT_CD,
-			B.ORGNZT_NM DEPT_NM,
+			B.DEPT_NM DEPT_NM,
 			A.DEPT_JOBBX_ID,
 			A.DEPT_JOBBX_NM,
 			A.INDICT_ORDR,
 			A.UPDATE_DT,
 			C.USER_NM LAST_UPDUSR_NM 
 		FROM COMTNDEPTJOBBX A
-		LEFT OUTER JOIN COMTNORGNZTINFO B
-			ON A.DEPT_CD = B.ORGNZT_ID
+		LEFT OUTER JOIN DEPARTMENT B
+			ON A.DEPT_CD = B.DEPT_CD
 		LEFT OUTER JOIN COMTNEMPLYRINFO C
 			ON A.UPDATE_ID = C.ESNTL_ID 
 		WHERE A.DEPT_JOBBX_ID = #{deptJobBxId}
@@ -294,7 +294,7 @@
 	<update id="updateDeptJobBx" parameterType="egovframework.com.cop.smt.djm.service.DeptJobBx"> 
 		UPDATE COMTNDEPTJOBBX 
 		SET  
-			DEPT_CD=#{deptId},
+			DEPT_CD=#{deptCd},
 			DEPT_JOBBX_NM=#{deptJobBxNm},
 			INDICT_ORDR=#{indictOrdr},
 			UPDATE_DT = sysdate,
@@ -310,7 +310,7 @@
 			FROM
 				COMTNDEPTJOBBX 
 		
-		WHERE DEPT_CD=#{deptId}
+		WHERE DEPT_CD=#{deptCd}
 	</select>
 	
 	<!-- 부서업무함::순서 조회 -->
@@ -321,7 +321,7 @@
 			FROM
 				COMTNDEPTJOBBX 
 		
-		WHERE DEPT_CD=#{deptId}
+		WHERE DEPT_CD=#{deptCd}
 			<if test='ordrCnd != null and ordrCnd != ""'>
 				<if test='ordrCnd == "up"'>
 				<![CDATA[ AND
@@ -344,7 +344,7 @@
 		UPDATE COMTNDEPTJOBBX 
 		SET  
 			INDICT_ORDR = INDICT_ORDR + 1
-		WHERE DEPT_CD=#{deptId}
+		WHERE DEPT_CD=#{deptCd}
 			AND INDICT_ORDR = #{indictOrdr}
 	</update>
 	
@@ -353,7 +353,7 @@
 		UPDATE COMTNDEPTJOBBX 
 		SET  
 			INDICT_ORDR = INDICT_ORDR - 1
-		WHERE DEPT_CD=#{deptId}
+		WHERE DEPT_CD=#{deptCd}
 			AND INDICT_ORDR = #{indictOrdr}
 	</update>
 	
@@ -370,7 +370,7 @@
 		UPDATE COMTNDEPTJOBBX 
 		SET  
 			INDICT_ORDR = INDICT_ORDR + 1
-		WHERE DEPT_CD=#{deptId}
+		WHERE DEPT_CD=#{deptCd}
 				AND INDICT_ORDR >= #{indictOrdr} 
 	</update>
 	
@@ -397,7 +397,7 @@
 			UPDATE_ID
 		)VALUES( 
 			#{deptJobBxId},
-			#{deptId},
+			#{deptCd},
 			#{deptJobBxNm},
 			#{indictOrdr},
 			sysdate,
@@ -415,7 +415,7 @@
 			COUNT(DEPT_JOBBX_ID) as cnt
 		FROM
 			COMTNDEPTJOBBX 
-		WHERE DEPT_CD = #{deptId}
+		WHERE DEPT_CD = #{deptCd}
 			AND DEPT_JOBBX_NM = #{deptJobBxNm}
 			
 	</select>
@@ -446,7 +446,7 @@
 		WHERE A.DEPT_JOBBX_ID = #{searchDeptJobBxId}
 	 </if>
 	 <if test='searchDeptJobBxId == null or searchDeptJobBxId == ""'>
-		WHERE B.DEPT_CD = #{searchDeptId}
+		WHERE B.DEPT_CD = #{searchDeptCd}
 	 </if>
 	 <if test='searchCnd == "0"'>AND
 		 	A.DEPT_JOB_NM LIKE '%'||#{searchWrd}||'%' 		
@@ -484,7 +484,7 @@
 			WHERE A.DEPT_JOBBX_ID = #{searchDeptJobBxId}
 		</if>
 		<if test='searchDeptJobBxId == null or searchDeptJobBxId == ""'>
-			WHERE B.DEPT_CD = #{searchDeptId}
+			WHERE B.DEPT_CD = #{searchDeptCd}
 		</if>
 		<if test='searchCnd == "0"'>AND
 		 		A.DEPT_JOB_NM LIKE '%'||#{searchWrd}||'%' 		
@@ -501,7 +501,7 @@
 	<select id="selectDeptJob" parameterType="egovframework.com.cop.smt.djm.service.DeptJobVO" resultMap="DeptJobDetail">
 		SELECT 
 			B.DEPT_CD,
-			C.ORGNZT_NM DEPT_NM,
+			C.DEPT_NM DEPT_NM,
 			A.DEPT_JOBBX_ID,
 			B.DEPT_JOBBX_NM,
 			A.DEPT_JOB_ID,
@@ -518,8 +518,8 @@
 		FROM COMTNDEPTJOB A
 		LEFT OUTER JOIN COMTNDEPTJOBBX B 
 			ON A.DEPT_JOBBX_ID = B.DEPT_JOBBX_ID
-		LEFT OUTER JOIN COMTNORGNZTINFO C
-			ON B.DEPT_CD = C.ORGNZT_ID
+		LEFT OUTER JOIN DEPARTMENT C
+			ON B.DEPT_CD = C.DEPT_CD
 		LEFT OUTER JOIN COMTNEMPLYRINFO D
 			ON A.CHARGER_ID = D.ESNTL_ID
 		WHERE A.DEPT_JOB_ID = #{deptJobId}
