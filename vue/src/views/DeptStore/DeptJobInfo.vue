@@ -23,7 +23,6 @@
                   :dept="dept"
                   :departments="departments"
                   :jobBoxes="jobBoxes"
-                  @jobBxManage="jobBxManage"
                 />
               </ul>
 
@@ -34,17 +33,30 @@
               :isShowModal="isShowModal"
               :modalTitle="'업무함 관리'"
               @click.self="modalClose"
-              @keydown.esc="modalClose"
             >
               <template v-slot:body>
                 <div class="content">
                   <div class="container-fluid">
 
-                    <div class="mb-3">
-                      <label>부서명</label>
-                      <div class="row">
-                        <div class="col-6">
-                          <input type="text" class="form-control" placeholder="부서명" readonly />
+                    <div class="row">
+                      <div class="col">
+                        <div class="mb-3">
+                          <label>부서명</label>
+                          <input type="text" class="form-control" v-model="jobBxData.deptNm" placeholder="부서명" readonly />
+                        </div>
+                      </div>
+                      <div class="col">
+                        <div class="mb-3">
+                          <label>표시순서</label>
+                          <input type="number" class="form-control" v-model="jobBxData.indictOrdr" />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col">
+                        <div class="mb-3">
+                          <label>업무함명</label>
+                          <input type="text" class="form-control" v-model="jobBxData.deptJobBxNm" placeholder="업무함명을 입력해주세요." />
                         </div>
                       </div>
                     </div>
@@ -152,10 +164,7 @@ const deptGetList = async () => {
 const jobBxGetList  = async () => {
   try {
     const result = await axios.get('/api/deptstore/jobBxList');
-    jobBoxes.value = result.data.map(job => ({
-      ...job,
-      deptCd: job.deptId  // deptId를 deptCd로 통일
-    }));
+    jobBoxes.value = result.data;
     
   } catch (err) {
     Swal.fire({ icon: "error", title: "업무함 조회 실패", text: "Error : " + err });
@@ -167,20 +176,36 @@ const rootDepartments = computed(() =>
   departments.value.filter(dept => dept.depth === 0)
 );
 
+// 업무함 모달 데이터
+const jobBxData = ref({
+  deptCd: '',
+  deptNm: '',
+  indictOrdr: 0,
+  deptJobBxNm: '',
+  deptJobBxId: '',
+});
+let jobBxModalType = '';
 // 업무함 관리 동작
-const jobBxCheck = (type, data) => {
+const jobBxCheck = async (type, data) => {
+  jobBxModalType = type;
   switch(type) {
     case 'add':
       console.log("업무함 추가");
+      jobBxData.value.deptCd = data.deptCd;
+      jobBxData.value.deptNm = data.deptNm;
       modalOpen();
       break;
     case 'modify':
       console.log("업무함 수정");
+      jobBxData.value.deptCd = data.deptCd;
+      jobBxData.value.deptNm = data.deptNm;
+      jobBxData.value.indictOrdr = data.indictOrdr;
+      jobBxData.value.deptJobBxId = data.deptJobBxId;
       modalOpen();
       break;
     case 'remove':
       console.log("업무함 제거");
-      modalClose();
+      axios.delete('/api/deptstore/jobBxRemove', { params: { deptJobBxId: data.deptJobBxId } });
       break;
   }
   console.log("데이터 : ", data);
@@ -192,9 +217,25 @@ const isShowModal = ref(false);
 const modalOpen = () => {
   isShowModal.value = true;
 }
-
 const modalClose = () => {
   isShowModal.value = false;
+}
+const modalConfirm = async () => {
+  console.log("confirm", jobBxModalType);
+  const formData = new FormData();
+  formData.append("deptCd", jobBxData.value.deptCd);
+  formData.append("deptJobBxNm", jobBxData.value.deptJobBxNm);
+  formData.append("indictOrdr", jobBxData.value.indictOrdr);
+  formData.append("frstRegisterId", 'user01');
+  formData.append("lastUpdusrId", 'user01');
+
+  if(jobBxModalType == 'add') {
+    axios.post('/api/deptstore/jobBxAdd', formData);
+
+  } else if(jobBxModalType == 'modify') {
+    formData.append("deptJobBxId", jobBxData.value.deptJobBxId);
+    axios.post('/api/deptstore/jobBxModify', formData);
+  }
 }
 
 
@@ -325,11 +366,9 @@ const modalUpdateJob = () => {
 
 const modalCloseFunc = (e) => {
   if (e.key === "Escape") {
-    // `isShowJobModal`이 true일 경우 업무 등록 모달을 닫고
     if (isShowJobModal.value) {
       isShowJobModal.value = false;
     }
-    // `isShowModal`이 true일 경우 업무함 관리 모달을 닫기
     if (isShowModal.value) {
       isShowModal.value = false;
     }
