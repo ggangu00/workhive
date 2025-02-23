@@ -1,432 +1,232 @@
 <template>
-   <div
-      class="w-auto h-auto collapse navbar-collapse max-height-vh-100 h-100"
-      id="sidenav-collapse-main"
-   >
+   <div class="w-auto h-auto collapse navbar-collapse max-height-vh-100 h-100" id="sidenav-collapse-main">
       <ul class="navbar-nav">
-         <li class="nav-item">
+         <li class="nav-item" v-for="(item, i) in menus" :key="i">
             <sidenav-collapse
                url="#"
                :aria-controls="''"
-               v-bind:collapse="false"
-               collapseRef="/login"
-               navText="Login"
+               :collapse="false"
+               :collapseRef="item.collapseRef"
+               :navText="item.navText"
             >
                <template v-slot:icon>
-                  <i class="material-icons-round opacity-10 fs-5">dashboard</i>
-               </template>
-            </sidenav-collapse>
-         </li>
-
-         <li class="nav-item">
-            <sidenav-collapse
-               url="#"
-               :aria-controls="''"
-               v-bind:collapse="false"
-               collapseRef="/home"
-               navText="Home"
-            >
-               <template v-slot:icon>
-                  <i class="material-icons-round opacity-10 fs-5">dashboard</i>
-               </template>
-            </sidenav-collapse>
-         </li>
-         <li class="nav-item">
-            <sidenav-collapse
-               url="#"
-               :aria-controls="''"
-               v-bind:collapse="false"
-               collapseRef="/guide"
-               navText="레이아웃"
-            >
-               <template v-slot:icon>
-                  <i class="material-icons-round opacity-10 fs-5">dashboard</i>
-               </template>
-            </sidenav-collapse>
-         </li>
-
-         <li class="nav-item">
-            <sidenav-collapse
-               url="#"
-               :aria-controls="''"
-               v-bind:collapse="false"
-               collapseRef="/layout"
-               navText="레이아웃틀"
-            >
-               <template v-slot:icon>
-                  <i class="material-icons-round opacity-10 fs-5">dashboard</i>
-               </template>
-            </sidenav-collapse>
-         </li>
-
-         <li class="nav-item">
-            <sidenav-collapse
-               url="#"
-               :aria-controls="''"
-               v-bind:collapse="false"
-               collapseRef="/todo/manage"
-               navText="업무일지 관리"
-            >
-               <template v-slot:icon>
-                  <i class="fa-solid fa-list-ol"></i>
-               </template>
-               <template v-slot:list>
-                  <li class="sub-item" @click="movePage('Todo')">업무일지 관리</li>
-               </template>
-            </sidenav-collapse>
-         </li>
-
-         <li class="nav-item">
-            <sidenav-collapse
-               url="#"
-               :aria-controls="''"
-               v-bind:collapse="false"
-               collapseRef="/project/list"
-               navText="프로젝트 관리"
-            >
-               <template v-slot:icon>
-                  <i class="fa-solid fa-chart-line"></i>
-               </template>
-               <template v-slot:list>
-                  <li class="sub-item" @click="movePage('ProjectList')">프로젝트 조회</li>
-                  <li class="sub-item" @click="movePage('ProjectAdd')">프로젝트 등록</li>
-                  <li class="sub-item" @click="movePage('ProjectMem')">프로젝트 참여자관리</li>
-               </template>
-            </sidenav-collapse>
-         </li>
-
-         <li class="nav-item">
-            <sidenav-collapse
-               url="#"
-               :aria-controls="''"
-               v-bind:collapse="false"
-               collapseRef="/meet/list"
-               navText="회의 관리"
-            >
-               <template v-slot:icon>
-                  <i class="fa-solid fa-users-line"></i>
-               </template>
-               <template v-slot:list>
-                  <li class="sub-item" @click="movePage('MeetList')">회의 조회</li>
-                  <li class="sub-item" @click="movePage('MeetAdd')">회의 등록</li>
-               </template>
-            </sidenav-collapse>
-         </li>
-
-         <li class="nav-item">
-            <sidenav-collapse
-               url="#"
-               :aria-controls="''"
-               v-bind:collapse="false"
-               collapseRef="/approval/"
-               navText="전자결재"
-            >
-               <template v-slot:icon>
-                  <i class="fa-solid fa-file"></i>
-               </template>
-               <template v-slot:list>
-                  <li class="sub-item" @click="movePage('RegisterTest')">문서기안</li>
-                  <li class="sub-item" @click="movePage('PendingList')">미결함</li>
-                  <li class="sub-item" @click="movePage('ProceedList')">진행함</li>
-                  <li class="sub-item" @click="movePage('CompletedList')">완료함</li>
-                  <li class="sub-item" @click="movePage('RejectedList')">반려함</li>
-                  <li class="sub-item" @click="movePage('RetrieveList')">임시함</li>
-               </template>
-            </sidenav-collapse>
-         </li>
-
-         <li class="nav-item">
-            <sidenav-collapse
-               url="#"
-               :aria-controls="''"
-               v-bind:collapse="false"
-               collapseRef="/schedule/calendar"
-               navText="일정관리"
-            >
-               <template v-slot:icon>
-                  <i class="fa-regular fa-calendar-check"></i>
+                  <i :class="item.iconClass"></i>
                </template>
 
-               <template v-slot:list>
-                  <li class="sub-item" @click="movePage('Calendar')">풀캘린더</li>
-               </template>
-            </sidenav-collapse>
-         </li>
-
-         <!-- KSY -->
-         <li class="nav-item">
-            <sidenav-collapse
-               url="#"
-               :aria-controls="''"
-               v-bind:collapse="false"
-               collapseRef="/deptstore/list"
-               navText="부서 업무 관리"
-            >
-               <template v-slot:icon>
-                  <i class="fa-solid fa-box-archive"></i>
-               </template>
-            </sidenav-collapse>
-         </li>
-         <li class="nav-item">
-            <sidenav-collapse
-               url="#"
-               :aria-controls="''"
-               v-bind:collapse="false"
-               collapseRef="/commute/cmtList"
-               navText="출퇴근 관리"
-            >
-               <template v-slot:icon>
-                  <i class="material-icons-round opacity-10 fs-5">dashboard</i>
-               </template>
-               <template v-slot:list>
-                  <li class="sub-item" @click="movePage('CmtList')">출퇴근 기록 조회</li>
-                  <li class="sub-item" @click="movePage('CrctManage')">
-                  출퇴근 정정 요청 등록
-                  </li>
-                  <li class="sub-item" @click="movePage('CrctList')">출퇴근 정정 요청 조회</li>
-                  <li class="sub-item" @click="movePage('CrctSignManage')">
-                  출퇴근 정정 요청 결재
+               <template v-if="item.subMenus" v-slot:list>
+                  <li
+                     v-for="sub in item.subMenus"
+                     :key="sub.name"
+                     class="sub-item"
+                     @click="movePage(sub.route)"
+                  >
+                     {{ sub.label }}
                   </li>
                </template>
             </sidenav-collapse>
          </li>
-         <li class="nav-item">
-            <sidenav-collapse
-               url="#"
-               :aria-controls="''"
-               v-bind:collapse="false"
-               collapseRef="/vacation/vcList"
-               navText="휴가 관리"
-            >
-               <template v-slot:icon>
-                  <i class="material-icons-round opacity-10 fs-5">dashboard</i>
-               </template>
-               <template v-slot:list>
-                  <li class="sub-item" @click="movePage('VcList')">휴가 조회</li>
-                  <li class="sub-item" @click="movePage('VcManage')">휴가 신청 등록</li>
-                  <li class="sub-item" @click="movePage('VcSignManage')">휴가 신청 결재</li>
-               </template>
-            </sidenav-collapse>
-         </li>
-
-         <!--kjg-->
-         <li class="nav-item">
-            <sidenav-collapse
-               url="#"
-               :aria-controls="''"
-               v-bind:collapse="false"
-               collapseRef="/PaymentList"
-               navText="외부지출 관리"
-            >
-               <template v-slot:icon>
-                  <i class="material-icons-round opacity-10 fs-5">dashboard</i>
-               </template>
-               <template v-slot:list>
-                  <li class="sub-item" @click="movePage('PaymentList')">외부지출 조회</li>
-                  <li class="sub-item" @click="movePage('PaymentAdd')">외부지출 등록</li>
-                  <li class="sub-item" @click="movePage('PaymentManage')">
-                  외부지출 승인/반려 관리
-                  </li>
-               </template>
-            </sidenav-collapse>
-         </li>
-
-         <li class="nav-item">
-         <sidenav-collapse
-               url="#"
-               :aria-controls="''"
-               v-bind:collapse="false"
-               collapseRef="/BoardList"
-               navText="게시판 관리"
-            >
-               <template v-slot:icon>
-                  <i class="material-icons-round opacity-10 fs-5">dashboard</i>
-               </template>
-               <template v-slot:list>
-                  <li class="sub-item" @click="movePage('BoardList')">게시판 목록</li>
-                  <li class="sub-item" @click="movePage('BoardAdd')">게시판 등록</li>
-                  <li class="sub-item" @click="movePage('BoardUpdate')">게시판 수정</li>
-               </template>
-            </sidenav-collapse>
-         </li>
-
-         <li class="nav-item">
-            <sidenav-collapse
-               url="#"
-               :aria-controls="''"
-               v-bind:collapse="false"
-               collapseRef="/BulletinList"
-               navText="게시글 관리"
-            >
-               <template v-slot:icon>
-                  <i class="material-icons-round opacity-10 fs-5">dashboard</i>
-               </template>
-               <template v-slot:list>
-                  <li class="sub-item" @click="movePage('BulletinList')">게시글 목록</li>
-                  <li class="sub-item" @click="movePage('BulletinAdd')">게시글 등록</li>
-                  <li class="sub-item" @click="movePage('BulletinInfo')">게시글 상세조회</li>
-               </template>
-            </sidenav-collapse>
-         </li>
-
-         <li class="nav-item">
-            <sidenav-collapse
-               url="#"
-               :aria-controls="''"
-               v-bind:collapse="false"
-               collapseRef="/setting/personalInfo"
-               navText="관리자"
-            >
-               <template v-slot:icon>
-                  <i class="fa-solid fa-gears"></i>
-               </template>
-               <template v-slot:list>
-                  <li class="sub-item" @click="movePage('PersonalManage')">개인정보 설정</li>
-                  <li class="sub-item" @click="movePage('DepartmentManage')">부서 관리</li>
-                  <li class="sub-item" @click="movePage('MemberManage')">구성원</li>
-                  <li class="sub-item" @click="movePage('AuthorityManage')">권한관리</li>
-                  <li class="sub-item" @click="movePage('LoginLog')">접속기록 조회</li>
-               </template>
-            </sidenav-collapse>
-         </li>
-
-         <!-- <li class="nav-item">
-            <sidenav-collapse
-               url="#"
-               :aria-controls="''"
-               v-bind:collapse="false"
-               collapseRef="dashboard"
-               navText="Dashboard"
-            >
-               <template v-slot:icon>
-                  <i class="material-icons-round opacity-10 fs-5">dashboard</i>
-               </template>
-            </sidenav-collapse>
-            </li> -->
-         <!-- <li class="nav-item">
-            <sidenav-collapse
-               url="#"
-               :aria-controls="''"
-               v-bind:collapse="false"
-               collapseRef="tables"
-               navText="Tables"
-            >
-               <template v-slot:icon>
-                  <i class="material-icons-round opacity-10 fs-5">table_view</i>
-               </template>
-            </sidenav-collapse>
-            </li> -->
-         <!-- <li class="nav-item">
-            <sidenav-collapse
-               url="#"
-               :aria-controls="''"
-               v-bind:collapse="false"
-               collapseRef="billing"
-               navText="Billing"
-            >
-               <template v-slot:icon>
-                  <i class="material-icons-round opacity-10 fs-5">receipt_long</i>
-               </template>
-            </sidenav-collapse>
-            </li> -->
-         <!-- <li class="nav-item">
-            <sidenav-collapse
-               url="#"
-               :aria-controls="''"
-               v-bind:collapse="false"
-               collapseRef="notifications"
-               navText="Notifications"
-            >
-               <template v-slot:icon>
-                  <i class="material-icons-round opacity-10 fs-5">notifications</i>
-               </template>
-            </sidenav-collapse>
-            </li> -->
-         <!-- <li class="mt-3 nav-item">
-            <h6
-               class="text-xs ps-4 text-uppercase font-weight-bolder text-white"
-               :class="$store.state.isRTL ? 'me-4' : 'ms-2'"
-            >
-               ACCOUNT PAGES
-            </h6>
-            </li> -->
-         <!-- <li class="nav-item">
-            <sidenav-collapse
-               url="#"
-               :aria-controls="''"
-               v-bind:collapse="false"
-               collapseRef="profile"
-               navText="Profile"
-            >
-               <template v-slot:icon>
-                  <i class="material-icons-round opacity-10 fs-5">person</i>
-               </template>
-            </sidenav-collapse>
-            </li> -->
-         <li class="nav-item">
-            <sidenav-collapse
-               url="#"
-               :aria-controls="''"
-               v-bind:collapse="false"
-               collapseRef="sign-in"
-               navText="SignIn"
-            >
-               <template v-slot:icon>
-                  <i class="material-icons-round opacity-10 fs-5">login</i>
-               </template>
-            </sidenav-collapse>
-         </li>
-         <!-- <li class="nav-item">
-            <sidenav-collapse
-               url="#"
-               :aria-controls="''"
-               v-bind:collapse="false"
-               collapseRef="sign-up"
-               navText="SignUp"
-            >
-               <template v-slot:icon>
-                  <i class="material-icons-round opacity-10 fs-5">assignment</i>
-               </template>
-            </sidenav-collapse>
-            </li>   -->
       </ul>
    </div>
 </template>
 
-<script>
+<script setup>
+   import { ref, onMounted } from "vue";
+   import { useRouter } from "vue-router";
    import SidenavCollapse from "./SidenavCollapse.vue";
+   import axios from "axios";
+   import Swal from 'sweetalert2';
 
-   export default {
-      name: "SidenavList",
-      props: {
-         cardBg: String,
-      },
-      data() {
-         return {
-            title: "Soft UI Dashboard PRO",
-            controls: "dashboardsExamples",
-            isActive: "active",
-         };
-      },
-      components: {
-         SidenavCollapse,
-      },
+   const router = useRouter();
 
-      methods: {
-         movePage(page) {
-            this.$router.push({ name: page });
-         },
+// ============================================= Axios Event =============================================
+   // id, pass값 서버로 보내기
+   const menuGetList = async () => {
+      try {
+         const response = await axios.get('/api/menu');
+
+         menuBuildTree(response.data);
+
+      } catch (err) {
+         Swal.fire({
+            icon: "error",
+            title: "API 조회 오류",
+            text:  "Error : " + err
+         });
+      }
+   }
+   //const menus = ref([]);
+   // 메뉴 구조 생성
+   const menuBuildTree = (menuArr) => {
+      let mainMenus = new Map();
+      let subMenus = new Map();
+      let subSubMenus = new Map();
+      menuArr.forEach((item, idx) => {
+         console.log("item => ", item, "idx => ", idx);
+         if(item.depth === 1) {
+            console.log(item , "은 최상위 메뉴")
+         }
+      });
+   }
+
+   let menus = ref([
+      {
+         collapseRef: "/login",
+         navText: "Login",
+         iconClass: "material-icons-round"
       },
+      {
+         collapseRef: "/guide",
+         navText: "레이아웃",
+         iconClass: "material-icons-round opacity-10 fs-5"
+      },
+      {
+         collapseRef: "/layout",
+         navText: "레이아웃틀",
+         iconClass: "material-icons-round opacity-10 fs-5"
+      },
+      {
+         collapseRef: "/home",
+         navText: "Home",
+         iconClass: "fa-solid fa-house"
+      },
+      {
+         collapseRef: "/todo/manage",
+         navText: "업무일지 관리",
+         iconClass: "fa-solid fa-list-ol",
+         subMenus: [
+            { name: "Todo", route: "Todo", label: "업무일지 관리" }
+         ],
+      },
+      {
+         collapseRef: "/project/list",
+         navText: "프로젝트 관리",
+         iconClass: "fa-solid fa-chart-line",
+         subMenus: [
+            { name: "ProjectList", route: "ProjectList", label: "프로젝트 조회" },
+            { name: "ProjectAdd", route: "ProjectAdd", label: "프로젝트 등록" },
+            { name: "ProjectMem", route: "ProjectMem", label: "프로젝트 참여자관리" },
+         ],
+      },
+      {
+         collapseRef: "/meet/list",
+         navText: "회의 관리",
+         iconClass: "fa-solid fa-users-line",
+         subMenus: [
+            { name: "MeetList", route: "MeetList", label: "회의 조회" },
+            { name: "MeetAdd", route: "MeetAdd", label: "회의 등록" },
+         ],
+      },
+      {
+         collapseRef: "/approval/",
+         navText: "전자결재",
+         iconClass: "fa-solid fa-file-signature",
+         subMenus: [
+            { name: "RegisterTest", route: "RegisterTest", label: "문서기안" },
+            { name: "PendingList", route: "PendingList", label: "미결함" },
+            { name: "ProceedList", route: "ProceedList", label: "진행함" },
+            { name: "CompletedList", route: "CompletedList", label: "완료함" },
+            { name: "RejectedList", route: "RejectedList", label: "반려함" },
+            { name: "RetrieveList", route: "RetrieveList", label: "임시함" },
+         ],
+      },
+      {
+         collapseRef: "/schedule/calendar",
+         navText: "일정관리",
+         iconClass: "fa-regular fa-calendar-check",
+         subMenus: [
+            { name: "Calendar", route: "Calendar", label: "풀캘린더" }
+         ],
+      },
+      {
+         collapseRef: "/deptstore/list",
+         navText: "부서 업무 관리",
+         iconClass: "fa-solid fa-folder-closed",
+      },
+      {
+         collapseRef: "/commute/cmtList",
+         navText: "출퇴근 관리",
+         iconClass: "fa-solid fa-person-walking",
+         subMenus: [
+            { name: "CmtList", route: "CmtList", label: "출퇴근 기록 조회" },
+            { name: "CrctManage", route: "CrctManage", label: "출퇴근 정정 요청 등록" },
+            { name: "CrctList", route: "CrctList", label: "출퇴근 정정 요청 조회" },
+            { name: "CrctSignManage", route: "CrctSignManage", label: "출퇴근 정정 요청 결재" },
+         ],
+      },
+      {
+         collapseRef: "/vacation/vcList",
+         navText: "휴가 관리",
+         iconClass: "fa-solid fa-plane",
+         subMenus: [
+            { name: "VcList", route: "VcList", label: "휴가 조회" },
+            { name: "VcManage", route: "VcManage", label: "휴가 신청 등록" },
+            { name: "VcSignManage", route: "VcSignManage", label: "휴가 신청 결재" },
+         ],
+      },
+      {
+         collapseRef: "/PaymentList",
+         navText: "외부지출 관리",
+         iconClass: "fa-solid fa-file-invoice-dollar",
+         subMenus: [
+            { name: "PaymentList", route: "PaymentList", label: "외부지출 조회" },
+            { name: "PaymentAdd", route: "PaymentAdd", label: "외부지출 등록" },
+            { name: "PaymentManage", route: "PaymentManage", label: "외부지출 승인/반려 관리" },
+         ],
+      },
+      {
+         collapseRef: "/BoardList",
+         navText: "게시판 관리",
+         iconClass: "",
+         subMenus: [
+            { name: "BoardList", route: "BoardList", label: "게시판 목록" },
+            { name: "BoardAdd", route: "BoardAdd", label: "게시판 등록" },
+            { name: "BoardUpdate", route: "BoardUpdate", label: "게시판 수정" },
+         ],
+      },
+      {
+         collapseRef: "/BulletinList",
+         navText: "게시글 관리",
+         iconClass: "fa-solid fa-pen-to-square",
+         subMenus: [
+            { name: "BulletinList", route: "BulletinList", label: "게시글 목록" },
+            { name: "BulletinAdd", route: "BulletinAdd", label: "게시글 등록" },
+            { name: "BulletinInfo", route: "BulletinInfo", label: "게시글 상세조회" },
+         ],
+      },
+      {
+         collapseRef: "/personal/setting",
+         navText: "개인정보 설정",
+         iconClass: "fa-solid fa-user",
+      },
+      {
+         collapseRef: "/setting/personalInfo",
+         navText: "관리자",
+         iconClass: "fa-solid fa-gears",
+         subMenus: [
+            { name: "PersonalManage", route: "PersonalManage", label: "개인정보 설정" },
+            { name: "DepartmentManage", route: "DepartmentManage", label: "부서 관리" },
+            { name: "MemberManage", route: "MemberManage", label: "구성원" },
+            { name: "AuthorityManage", route: "AuthorityManage", label: "권한관리" },
+            { name: "LoginLog", route: "LoginLog", label: "접속기록 조회" },
+         ],
+      },
+   ]);
+
+   const movePage = (page) => {
+      router.push({ name: page });
    };
+
+   onMounted(() => {
+      menuGetList(); // 메뉴 목록 가져오기
+   });
 </script>
 
 <style scoped>
    .sub-item {
       color: #cfcfcf;
-      font-size: 13px;
-      border-left: 3px solid;
-      padding: 2px 1px 2px 4px;
-      margin: 7px 6px 11px 32px;
+      font-size: 12px;
+      padding: 3px 1px 2px 4px;
+      margin: 10px 5px 10px 35px;
    }
 
    li {
