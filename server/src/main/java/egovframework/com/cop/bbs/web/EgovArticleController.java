@@ -15,6 +15,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -331,7 +332,8 @@ public class EgovArticleController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/cop/bbs/insertArticle.do")
+    //@RequestMapping("/cop/bbs/insertArticle.do")
+    @PostMapping("/bulletinAdd")
     public String insertArticle(final MultipartHttpServletRequest multiRequest, @ModelAttribute("searchVO") BoardVO boardVO,
 	    @ModelAttribute("bdMstr") BoardMaster bdMstr, @ModelAttribute("board") BoardVO board, BindingResult bindingResult, 
 	    ModelMap model) throws Exception {
