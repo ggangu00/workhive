@@ -101,17 +101,21 @@
               <div class="divid_line"></div>
               <div class="d-flex flex-column flex-grow-1">
                <span>결재</span>    
-                  <div class="approval-box flex-grow-1">                    
-                    <div class="approval-item"><span class='badge bg-info text-dark'>결정</span> [총무팀] 홍길동 팀장</div>
-                    <div class="approval-item"><span class='badge bg-info text-dark'>결정</span> [인사팀] 홍길순 과장</div>
-                    <div class="approval-item"><span class='badge bg-info text-dark'>기안</span> [영업팀] 홍길권 대리</div>
+                <!-- 결재 목록 -->
+                <div class="approval-box">
+                  <div v-for="(approver, index) in reversedApprovers" :key="index" class="approval-item">
+                    <span class='badge bg-info text-dark'>{{ approver.status }}</span> 
+                    [{{ approver.dept }}] {{ approver.name }} {{ approver.title }}
                   </div>
+                </div>
                 <span>수신</span>
-                  <div class="approval-box flex-grow-1">                      
-                    <div class="approval-item"><span class="badge bg-warning text-dark">수신</span> [총무팀]</div>
-                    <div class="approval-item"><span class="badge bg-warning text-dark">수신</span> [인사팀]</div>
-                    <div class="approval-item"><span class="badge bg-warning text-dark">수신</span> [영업팀]</div>
+                  <div class="approval-box">
+                  <div v-for="(receiver, index) in receivers" :key="index" class="approval-item">
+                    <span class="badge bg-warning text-dark">수신</span>
+                    <span v-if="receiver.name">[{{ receiver.title }}] {{ receiver.name }}</span> <!-- 사원 -->
+                    <span v-else>[{{ receiver.dept }}]</span> <!-- 부서 -->
                   </div>
+                </div>
               </div>
           </div>
         </div>  
@@ -119,7 +123,7 @@
     </div>
   </div>
 
-  <!-- 모달 시작 (거래선)  -->
+  <!-- 모달 시작 (결재선)  -->
 <div class="modal fade" id="approvalRegiModal" tabindex="-1" aria-labelledby="approvalRegiModalLabel"
   aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-centered">
@@ -137,13 +141,14 @@
 
       <!-- 모달 푸터 -->
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary btn-fill" data-bs-dismiss="modal">등록</button>
+        <button type="button" class="btn btn-primary btn-fill" data-bs-dismiss="modal" @click='registerApprovals'>등록</button>
         <button type="button" class="btn btn-secondary btn-fill" data-bs-dismiss="modal">닫기</button>
       </div>
     </div>
   </div>
 </div>
 <!-- 모달 끝 -->
+
     <!--프로젝트 상세보기 모달[s]-->
     <Modal :isShowModal="isShowModal" :modalTitle="'거래처 선택'" @click.self="modalClose">
     <template v-slot:body>
@@ -266,6 +271,44 @@ const handleModalOpen = () => {
   }
 };
 
+const reversedApprovers = ref([]);
+//결재자목록 수신자목록 가져오기
+const approvers = ref([]);
+const receivers = ref([]);
+const registerApprovals = () => {
+  if (approvalLineRef.value) {
+    reversedApprovers.value = approvalLineRef.value.reversedApprovers;  // ApprovalLine의 approvers 데이터를 가져오기(화면에 보여주는)
+    console.log("결재자 => ", approvalLineRef.value.approvers);//이값으로 디비에넘기기
+    console.log("결재자 => ", approvers.value);
+    receivers.value = approvalLineRef.value.receivers;
+    console.log("수신자 => ", approvalLineRef.value.receivers);
+    console.log("수신자 => ", receivers.value);
+  }
+};
+
+//결재선등록(임시)
+// const saveApprovalLine = async () => {
+//   const approvalData = approvers.value.map((approver, index) => ({
+//     mberId: approver.id,   // 사원 ID
+//     docCd: documentCode,   // 문서 코드
+//     signSeq: index + 1,    // 순서 부여 (1부터 시작)
+//     signStat: 'D01',       // 기본 상태값
+//     signOpen: approver.memo || "",  // 결재 의견 (선택사항)
+//     signName: approver.status        // 기안, 결재, 결정
+//   }));
+
+//   try {
+//     await axios.post('/api/approval/save', approvalData);
+//     console.log("성공");
+//   } catch (error) {
+//     console.error("실패:", error);
+//   }
+// };
+
+
+
+
+
 //  컴포넌트 언마운트 시 이벤트 리스너 제거 (페이지이동)
 onUnmounted(() => {
     const modalElement = document.getElementById('approvalRegiModal');
@@ -288,7 +331,7 @@ const modalOpen = () => { //양식 정보 모달 열기
 }
 
 const modalClose = (e) => { //양식 정보 모달 닫기
-  if (e.key === "Escape") {
+  if (e.key == "Escape") {
     if (isShowModal.value) {
       isShowModal.value = !isShowModal.value
     }
