@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import egovframework.com.todo.service.TodoDTO;
@@ -55,9 +56,17 @@ public class TodoController {
 	}
 	
 	//일지 날짜별 건수조회
-	@GetMapping("/list/cnt/{todoDt}")
-	public List<TodoDTO> todoListCnt(@PathVariable("todoDt") String todoDt) {
-	  return todoService.todoSelectCnt(todoDt);
+	@GetMapping("/list/cnt")
+	public List<TodoDTO> todoListCnt(
+								@RequestParam("year") String year,
+					            @RequestParam("month") String month) {
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("year", year);
+        response.put("month", month);
+        log.info("12312323"+response.toString());
+        
+        return todoService.todoSelectCnt(response);
 	}	
 	
 	//일지 등록
@@ -66,7 +75,7 @@ public class TodoController {
 		
 	  boolean result = todoService.todoInsert(todo);
 	  
-	  String todoDt = todo.getTodoDt();
+	  String todoDt = todo.getTodoDt().replaceAll("-", ""); //하이픈 제거
 	  	  
 	  Map<String, Object> map = new HashMap<>();
 	  map.put("result", result);
@@ -92,16 +101,9 @@ public class TodoController {
 	}
 	
 	//일지 삭제
-	@DeleteMapping("/{todoCd}")
-	public Map<String, Object> todoRemove(@PathVariable(name="todoCd") String todoCd) {
-		log.info("삭제 권한 코드 출력 => " + todoCd);
-	    
-	    // 서비스 로직 실행
-		boolean result = todoService.todoDelete(todoCd);
-		
-		Map<String, Object> map = new HashMap<>();
-		map.put("result", result);
-		
-		return map;
+	@DeleteMapping("/delete")
+	public boolean todoRemove(@RequestBody Map<String, List<String>> requestBody) {
+		List<String> todoArr = requestBody.get("todoArr");
+		return todoService.todoDelete(todoArr);
 	}		
 }

@@ -1,6 +1,7 @@
 package egovframework.com.todo.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import egovframework.com.todo.service.TodoDTO;
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
@@ -15,7 +16,7 @@ public interface TodoMapper {
 	public TodoDTO todoSelect(String todoCd);
 	
 	// 일지 날짜별 건수조회
-	public List<TodoDTO> todoSelectCnt(String todoDt);
+	public List<TodoDTO> todoSelectCnt(Map<String, Object> response);
 	
 	// 일지 등록
 	public int todoInsert(TodoDTO todoDTO);
@@ -24,5 +25,5 @@ public interface TodoMapper {
 	public int todoUpdate(TodoDTO todoDTO);
 	
 	// 일지 삭제
-	public int todoDelete(String todoCd);
+	public int todoDelete(List<String> todoArr);
 }
