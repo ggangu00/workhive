@@ -57,9 +57,9 @@
    //const menus = ref([]);
    // 메뉴 구조 생성
    const menuBuildTree = (menuArr) => {
-      let mainMenus = new Map();
-      let subMenus = new Map();
-      let subSubMenus = new Map();
+      //let mainMenus = new Map();
+      //let subMenus = new Map();
+      //let subSubMenus = new Map();
       menuArr.forEach((item, idx) => {
          console.log("item => ", item, "idx => ", idx);
          if(item.depth === 1) {
