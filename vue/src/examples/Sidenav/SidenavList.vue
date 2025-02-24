@@ -11,14 +11,14 @@
                <!-- 서브 메뉴 (Depth 2) -->
                <template v-if="item.subMenus.length" v-slot:list>
                   <div class="sub-item" v-for="(sub, j) in item.subMenus" :key="j" @click="movePage(sub.routerNm)">
-                     <li class="sub-li">{{ sub.menuNm }} <i class="fa-solid fa-chevron-down arrow-icon" v-if="sub.subSubMenus.length > 0"></i></li>                    
-                     
+                     <li class="sub-li">{{ sub.menuNm }} <i class="fa-solid fa-chevron-down arrow-icon" v-if="sub.subSubMenus.length > 0"></i></li>
+
                      <template v-if="sub.subSubMenus.length > 0" >
                         <li v-for="(child, k) in sub.subSubMenus" :key="k" @click.stop="childMovePage(child.routerNm)" class="sub2-item">
                            {{ child.menuNm }}
                         </li>
                      </template>
-                     
+
                   </div>
                </template>
 
@@ -161,8 +161,8 @@
    }
 
    .sub-li{
-      padding-top: 10px;
-      padding-bottom: 10px;
+      padding-top: 13px;
+      padding-bottom: 13px;
    }
 }
 
@@ -185,8 +185,8 @@
    padding: none;
    list-style: none;
    list-style: none;
-   padding-top: 10px;
-   padding-bottom: 10px;
+   padding-top: 13px;
+   padding-bottom: 13px;
 }
 
 li {
