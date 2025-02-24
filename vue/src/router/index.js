@@ -278,7 +278,7 @@ const routes = [
       component: Vacation,
       children: [
          {
-            path: '', // 기본 페이지로 'VacationList'를 표시
+            path: 'vcList', // 기본 페이지로 'VacationList'를 표시
             name: 'VcList',
             component: VcList,
          },
