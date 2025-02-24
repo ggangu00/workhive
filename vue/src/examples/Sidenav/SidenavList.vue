@@ -1,6 +1,34 @@
 <template>
    <div class="w-auto h-auto collapse navbar-collapse max-height-vh-100 h-100" id="sidenav-collapse-main">
       <ul class="navbar-nav">
+         <li class="nav-item">
+            <sidenav-collapse
+               url="#"
+               :aria-controls="''"
+               v-bind:collapse="false"
+               collapseRef="/guide"
+               navText="레이아웃"
+            >
+               <template v-slot:icon>
+                  <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+               </template>
+            </sidenav-collapse>
+         </li>
+
+         <li class="nav-item">
+            <sidenav-collapse
+               url="#"
+               :aria-controls="''"
+               v-bind:collapse="false"
+               collapseRef="/layout"
+               navText="레이아웃틀"
+            >
+               <template v-slot:icon>
+                  <i class="material-icons-round opacity-10 fs-5">dashboard</i>
+               </template>
+            </sidenav-collapse>
+         </li>
+
          <li class="nav-item" v-for="(item, i) in menus" :key="i">
             <sidenav-collapse  :aria-controls="''" :collapse="false" :collapseRef="item.url"
                :navText="item.menuNm">
@@ -43,7 +71,6 @@
    const router = useRouter();
 
    // ============================================= Axios Event =============================================
-   // id, pass값 서버로 보내기
    const menus = ref([]);
    const menuGetList = async () => {
       try {
@@ -54,7 +81,7 @@
          Swal.fire({
             icon: "error",
             title: "API 조회 오류",
-            text: "Error : " + err
+            text: "Error : " + err.response.data.error
          });
       }
    }
@@ -116,11 +143,7 @@
       }));
    }
 
-
-
    const movePage = (page) => {
-
-      console.log("movePage() => ", page)
       if (!page) {
          isHidden.value = !isHidden.value
          return;
@@ -133,14 +156,13 @@
       }
 
    };
-   const isHidden = ref(false);
 
+   const isHidden = ref(false);
    const toggleSubMenu = (subMenu) => {
       subMenu.isHidden = !subMenu.isHidden;
    };
 
    const childMovePage = (page) => {
-      console.log("childMovePage() => ", page)
       if (!page) {
          isHidden.value = !isHidden.value
          return;
@@ -148,7 +170,6 @@
       if (router.hasRoute(page)) {
          router.push({ name: page });
       } else {
-         console.warn("라우트가 존재하지 않습니다:", page);
          router.push(page);
       }
    };

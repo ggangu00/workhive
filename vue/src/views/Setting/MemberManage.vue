@@ -106,16 +106,18 @@
          <Modal :isShowModal="isShowModal" :modalTitle="'부서 등록'" @click.self="modalClose">
             <!-- 모달 바디 -->
             <template v-slot:body>
-               <div class="mb-3">
-                  <label class="form-label">부서명 <i class="fa-solid fa-asterisk point-red"></i></label>
-                  <input type="text" name="dept_name" class="form-control w30">
-               </div>
-               <div class="mb-3">
-                  <div class="form-group has-label">
-                     <label>부서 설명</label>
+               <card class="mb-0">
+                  <div class="mb-3">
+                     <label class="form-label">부서명 <i class="fa-solid fa-asterisk point-red"></i></label>
+                     <input type="text" name="dept_name" class="form-control w30">
                   </div>
-                  <textarea type="text" name="project_nm" class="form-control" placeholder="부서에 대한 설명을 입력하세요." style="height: 130px;"></textarea>
-               </div>
+                  <div class="mb-3">
+                     <div class="form-group has-label">
+                        <label>부서 설명</label>
+                     </div>
+                     <textarea type="text" name="project_nm" class="form-control" placeholder="부서에 대한 설명을 입력하세요." style="height: 130px;"></textarea>
+                  </div>
+               </card>
             </template>
 
             <!-- 모달 푸터 -->
@@ -133,6 +135,7 @@
    import { ref } from "vue";
    import TreeNode from "../../components/TreeView/TreeNode.vue";
    import Modal from '../../components/Modal.vue';
+   import Card from '../../components/Cards/Card.vue'
 
    const isShowModal = ref(false);
 
