@@ -171,7 +171,6 @@ class BtnRenderer {
 const router = useRouter();
 const btnCrctAdd = (rowKey) => {
   let selectedRowData = gridInstance.value.getRow(rowKey);
-  console.log("selectedRowData : ", selectedRowData.commuteCd);
 
   router.push({ name: 'CrctManage', query: { cmtCd: selectedRowData.commuteCd, isUpdate: false } });
 }
