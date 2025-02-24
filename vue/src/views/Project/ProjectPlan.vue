@@ -10,7 +10,7 @@
           <p class="card-sub">{{ projectInfo.comNm }}</p>
           <h5 class="card-title mb-3">
             {{ projectInfo.prNm }}
-            <span class="badge badge-danger">D{{ term }}</span>
+            <span class="badge" :class="projectInfo.term > 10 ? 'badge-primary' : 'badge-danger'">D{{ term }}</span>
           </h5>
           <p class="card-sub"><b>기간 : </b> {{ projectInfo.startDt }} ~ {{ projectInfo.endDt }}
           </p>
@@ -210,8 +210,9 @@ const projectGetInfo = async (prCd) => { //프로젝트 단건조회
     projectInfo.value = result.data.info;
     projectInfo.value.startDt = dateFormat(projectInfo.value.startDt);
     projectInfo.value.endDt = dateFormat(projectInfo.value.endDt);
+    projectInfo.value.term = dateTermCalc('', dateFormat(projectInfo.value.endDt));
 
-    term.value = dateTermCalc('', dateFormat(projectInfo.value.endDt)); //프로젝트 종료일까지 남은 일수 값 저장
+    term.value = projectInfo.value.term;
 
     term.value > 0 ? term.value = "-" + term.value         //종료일 전일 때
       : term.value < 0 ? term.value = "+" + term.value * (-1)  //종료일을 초과했을 때

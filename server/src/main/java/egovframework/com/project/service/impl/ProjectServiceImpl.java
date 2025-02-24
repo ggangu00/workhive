@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
+import egovframework.com.cmm.ComDefaultVO;
 import egovframework.com.project.mapper.ProjectMapper;
 import egovframework.com.project.service.ProjectDTO;
 import egovframework.com.project.service.ProjectService;
@@ -20,8 +21,8 @@ public class ProjectServiceImpl implements ProjectService{
 	
 	//프로젝트 전체조회
 	@Override
-	public List<ProjectDTO> projectSelectAll() {
-		return projectMapper.projectSelectAll();
+	public List<ProjectDTO> projectSelectAll(ComDefaultVO searchVO) {
+		return projectMapper.projectSelectAll(searchVO);
 	}
 	
 	//프로젝트 단건조회
