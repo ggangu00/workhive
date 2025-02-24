@@ -36,9 +36,9 @@
       //   await deleteDocument();
       //   break;
   
-      // case '상신':
-      //   await deleteDocument();
-      //   break;
+      case '상신':
+        await approvalBtn();
+        break;
     }
   }
   const approvalRegisterRef = ref(null);
@@ -51,6 +51,12 @@
   const resetBtn = () =>{
       if (approvalRegisterRef.value) {
       approvalRegisterRef.value.conditionReset(); 
+    }
+  }
+
+  const approvalBtn = () =>{
+    if (approvalRegisterRef.value) {
+      approvalRegisterRef.value.approvalInfo(); 
     }
   }
   </script>

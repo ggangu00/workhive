@@ -32,7 +32,7 @@
                       </div>
                       <div class="d-flex justify-content-between mb-1">
                           <div class="col-3">
-                            <input type="text" class="form-control" v-model='docKind'>
+                            <input type="text" class="form-control" v-model='docKind' readonly>
                           </div>
                           <div class="col-3">
                             <input type="text" class="form-control" v-model='formNm' readonly/>
@@ -61,7 +61,7 @@
                       <div class="col-5" v-if="showFile">
                           <strong>첨부파일</strong>
                           <br>
-                          <input type="file"/>
+                          <input type="file" @change="addFileList($event.target)" multiple/>
                           <p class="file-info">개별 파일 기준 최대 30MB까지 첨부할 수 있습니다.</p>
                       </div>
 
@@ -75,7 +75,7 @@
                       <strong>첨부된 파일 목록</strong>
                       <ul class="file-list">
                           <li v-for="(file, index) in fileList" :key="index">
-                          {{ file.name }} ({{ formatFileSize(file.size) }})
+                          {{ file.name }}
                           <button class="btn btn-sm btn-danger">삭제</button>
                           </li>
                           <li v-if="fileList.length == 0">첨부된 파일이 없습니다.</li>
@@ -149,7 +149,7 @@
 </div>
 <!-- 모달 끝 -->
 
-    <!--프로젝트 상세보기 모달[s]-->
+    <!--양식 상세보기 모달[s]-->
     <Modal :isShowModal="isShowModal" :modalTitle="'거래처 선택'" @click.self="modalClose">
     <template v-slot:body>
       <card>
@@ -198,6 +198,7 @@ import Editor from '@toast-ui/editor';
 import tableMergedCell from '@toast-ui/editor-plugin-table-merged-cell';
 import ApprovalLine from '../../components/PaymentLayout/ApprovalLine.vue';
 import { useRoute } from 'vue-router';
+import Swal from 'sweetalert2';
 import Modal from '../../components/Modal.vue';
 import axios from 'axios';
 
@@ -210,13 +211,14 @@ const editorElement = ref('');
 
 //데이터받기
 const docCd = ref("");
-const docKind = ref("");
+const docKind = ref("I01");
 const formNm = ref("");
 const deptNm = ref("");
 const docTitle = ref("");
 const docCnEditor = ref("");
 const fileList = ref([]);
 const formFile = ref("");
+const formCd = ref("");
 
 //  Bootstrap 모달 이벤트 리스너 추가
 onMounted(() => {
@@ -233,6 +235,7 @@ onMounted(() => {
   deptNm.value = route.query.deptNm || "";
   docTitle.value = route.query.docTitle || "";
   docCnEditor.value = route.query.docCnEditor || "";
+  formCd.value = route.query.formCd || "";
 
   initEditor();
 
@@ -278,6 +281,7 @@ const receivers = ref([]);
 const registerApprovals = () => {
   if (approvalLineRef.value) {
     reversedApprovers.value = approvalLineRef.value.reversedApprovers;  // ApprovalLine의 approvers 데이터를 가져오기(화면에 보여주는)
+    approvers.value = approvalLineRef.value.approvers;
     console.log("결재자 => ", approvalLineRef.value.approvers);//이값으로 디비에넘기기
     console.log("결재자 => ", approvers.value);
     receivers.value = approvalLineRef.value.receivers;
@@ -305,7 +309,12 @@ const registerApprovals = () => {
 //   }
 // };
 
-
+/////////////////////첨부파일/////////////////////////
+const addFileList = (target) => {
+  const newFile = Array.from(target.files);
+  fileList.value.push(...newFile);
+  console.log(fileList.value);
+}
 
 
 
@@ -346,6 +355,7 @@ const formCount = ref(0);
 const formGetList = async () =>{
   const formType = await axios.get('/api/document/form')
 
+  console.log(formType.data.formCd)
   formList.value = formType.data;
   formCount.value = formType.data.length;
 }
@@ -354,6 +364,7 @@ const formGetList = async () =>{
 const formSelect = (params) => {
   formNm.value = params.formType;
   formFile.value = params.formFile;
+  formCd.value = params.formCd;
   editor.setHTML(formFile.value);
   isShowModal.value = false;
 }
@@ -367,9 +378,49 @@ const conditionReset = () => { // 정보 리셋
 
 }
 
+//const sessionId = this.$session.get('user_id');
+///////////////////상신버튼////////////////////////////
+const approvalInfo = async() => {
+  console.log(editor.getHTML()); // 내용
+  console.log(reversedApprovers.value);// 결재자정보
+  console.log('결재자정보 =>',approvers.value);// 결재자정보
+  console.log(receivers.value);// 수신자정보
+  console.log(fileList.value);
+  const requestData = { // 서버로 보낼 데이터
+      docTitle : docTitle.value,
+      docCnEditor : editor.getHTML(),
+      mberId : 'sdfdsf',
+      docKind : 'I01',
+      formCd : formCd.value,
+      deptNm : deptNm.value,
+      formNm : formNm.value
+      };
+
+      console.log(requestData);
+      try {
+         const response = await axios.post('/api/document/register', requestData);
+
+         if(response.data.result === true) {
+            Swal.fire({
+               icon: "success",
+               title: "등록 성공",
+            });
+
+         }
+      } catch (err) {
+         Swal.fire({
+            icon: "error",
+            title: "등록 실패",
+            text:  "Error : " + err.response.data.error
+         });
+      }
+
+}
+
 defineExpose({  // modalOpen expose
   modalOpen,
-  conditionReset
+  conditionReset,
+  approvalInfo
 });
 
 watch(()=> docCnEditor.value, async()=>{
