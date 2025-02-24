@@ -364,7 +364,7 @@ body:not(.dark-version) {
   .navbar-nav .nav-link.active {
     font-weight: $font-weight-normal;
     box-shadow: $card-box-shadow;
-    border-radius: $border-radius-md;
+    //border-radius: $border-radius-md;
     margin-top: 1.5px;
     margin-bottom: 1.5px;
   }
@@ -517,7 +517,7 @@ body:not(.dark-version) {
     .nav-link {
       margin-top: 3px;
       margin-bottom: 3px;
-      border-radius: $navbar-nav-link-border-radius;
+      //border-radius: $navbar-nav-link-border-radius;
       margin-bottom: 1.5px;
       margin-top: 1.5px;
 
@@ -761,4 +761,8 @@ body:not(.dark-version) {
 
 .sidenav .sidenav-footer .btn {
   color: $white !important;
+}
+
+.nav-icon {
+  width: 20px;
 }

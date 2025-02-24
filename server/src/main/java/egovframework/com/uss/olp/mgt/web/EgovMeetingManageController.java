@@ -160,7 +160,7 @@ public class EgovMeetingManageController {
 	public List<EgovMap> egovMeetingManageList(
 			@ModelAttribute("searchVO") ComDefaultVO searchVO,
 			@RequestParam Map<?, ?> commandMap,
-			@RequestParam(value = "rowCtn", required = false, defaultValue = "0") int rowCtn,
+			@RequestParam(value = "rowCtn", required = false, defaultValue = "0") int rowCnt,
 			@RequestParam(value = "state", required = false, defaultValue = "") String state,
 			MeetingManageVO meetingManageVO,
     		ModelMap model)
@@ -169,7 +169,7 @@ public class EgovMeetingManageController {
     	/** EgovPropertyService.sample */
     	searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
     	searchVO.setPageSize(propertiesService.getInt("pageSize"));
-    	searchVO.setRowCnt(rowCtn);
+    	searchVO.setRowCnt(rowCnt);
     	searchVO.setState(state);
 
     	/** pageing */

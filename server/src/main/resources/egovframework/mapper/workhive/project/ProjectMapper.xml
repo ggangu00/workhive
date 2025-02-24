@@ -20,6 +20,14 @@
 		from project
 		where 
 			UPPER(del_yn) = UPPER('N')
+			
+			<if test="searchCondition == 0">AND
+                 PR_NM LIKE '%' || #{searchKeyword} || '%'
+            </if>
+            <if test="searchCondition == 1">AND
+                 com_nm LIKE '%' ||#{searchKeyword} || '%'
+            </if>
+            
 		order by 
 			create_dt desc
 	</select>
