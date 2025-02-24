@@ -9,11 +9,12 @@ import Layout from '../views/Layout.vue';
 
 // kmj
 import Login from "../views/Login/Login.vue";
+import FindPw from '../views/Login/findPassword.vue';
 import PersonalManage from '../views/Setting/PersonalManage.vue';
 import MemberManage from '../views/Setting/MemberManage.vue'
 import DepartmentManage from "../views/Setting/DepartmentManage.vue";
 import AuthorityManage from "../views/Setting/AuthorityManage.vue";
-import FindPw from '../views/Login/findPassword.vue';
+
 
 
 
@@ -54,8 +55,9 @@ import Home from '../views/Home.vue'
 // ksy
 import KsyTest from '../views/DeptStore/Test.vue';
 import DeptjobInfo from '../views/DeptStore/DeptJobInfo.vue';
-import VcList from '../views/Vacation/VacationInfo.vue';
-import VcManage from '../views/Vacation/VacationManage.vue';
+import Vacation from '../views/Vacation/Vacation.vue';
+import VcList from "../views/Vacation/VacationList.vue";
+import VcManage from "../views/Vacation/VacationManage.vue";
 import VcSignManage from '../views/Vacation/VacationSign.vue';
 import CmtList from '../views/Commute/CommuteList.vue';
 import CrctManage from '../views/Commute/CommuteCrctManage.vue';
@@ -129,22 +131,22 @@ const routes = [
       component: FindPw,
    },
    { // 개인정보 설정
-      path: '/personal/setting',
+      path: '/personal/manage',
       name: 'PersonalManage',
       component: PersonalManage
    },
    { // 부서 구성원 관리
-      path: '/setting/member/users',
+      path: '/setting/organization/member',
       name: 'MemberManage',
       component: MemberManage
    },
    { // 부서 관리
-      path: '/setting/department',
+      path: '/setting/organization/department',
       name: 'DepartmentManage',
       component: DepartmentManage
    },
-   { // 부서 관리
-      path: '/setting/authority',
+   { // 권한 관리
+      path: '/setting/organization/authority',
       name: 'AuthorityManage',
       component: AuthorityManage
    },
@@ -188,7 +190,7 @@ const routes = [
       component: RegisterTest
    },
    { //일정
-      path: '/schdule/calendar',
+      path: '/schdule/manage',
       name: 'Calendar',
       component: Calendar
    },
@@ -271,14 +273,21 @@ const routes = [
       component: CrctSignManage,
    },
    { // 휴가 조회
-      path: '/vacation/vcList',
-      name: 'VcList',
-      component: VcList,
-   },
-   { // 휴가 신청 관리(등록, 수정 등)
-      path: '/vacation/vcManage',
-      name: 'VcManage',
-      component: VcManage,
+      path: '/vacation',
+      name: 'Vacation',
+      component: Vacation,
+      children: [
+         {
+            path: '', // 기본 페이지로 'VacationList'를 표시
+            name: 'VcList',
+            component: VcList,
+         },
+         {
+            path: 'vcManage/:isUpdate?', // 휴가 관리 페이지
+            name: 'VcManage',
+            component: VcManage,
+         },
+      ],
    },
    { // 휴가 신청 결재
       path: '/vacation/vcSignManage',
@@ -304,17 +313,17 @@ const routes = [
       },
 
    {//게시판 목록
-      path:'/board/boardList',
+      path:'/setting/board/boardList',
       name: 'BoardList',
       component : BoardList,
    },
    {//게시판 등록
-      path:'/board/boardAdd',
+      path:'/setting/board/boardAdd',
       name: 'BoardAdd',
       component : BoardAdd,
    },
-    {//게시판 수정
-      path:'/board/boardUpdate',
+   {//게시판 수정
+      path:'/setting/board/boardUpdate',
       name: 'BoardUpdate',
       component : BoardUpdate,
    },
@@ -384,9 +393,9 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
-  routes,
-  linkActiveClass: "active",
+   history: createWebHistory(process.env.BASE_URL),
+   routes,
+   linkActiveClass: "active",
 });
 
 export default router;

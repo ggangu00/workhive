@@ -4,32 +4,59 @@
 	namespace="egovframework.com.approval.mapper.DocumentMapper">
 	
 	<!-- 문서기안 -->
-    <insert id="documentInsert">
+    <insert id="documentInsert" parameterType="egovframework.com.approval.service.Document" useGeneratedKeys="true" keyProperty="docCd">
        INSERT INTO DOCUMENT (
 	       DOC_CD, 
 	       DOC_TITLE, 
-	       DOC_CN, 
 	       DOC_CN_EDITOR, 
 	       MBER_ID, 
-	       CRNT_SIGN_STAT, 
 	       DRAFT_DT, 
 	       COMPLETE_DT, 
 	       DOC_KIND, 
 	       ATCH_FILE_ID, 
 	       FORM_CD)
        VALUES (
-	       #{docCd}, 
-	       #{docTitle}, 
-	       #{docCn}, 
+	       'DOC' || seq_document_cd.NEXTVAL, 
+	       #{docTitle},  
 	       #{docCnEditor}, 
 	       #{mberId}, 
-	       #{crntSignStat}, 
 	       SYSDATE, 
 	       #{completeDt},
 	       #{docKind}, 
 		   #{atchFileId}, 
 		   #{formCd})
     </insert>
+    <!-- 결재선등록 -->
+    <insert id="approvalInsert" parameterType="egovframework.com.approval.service.ApprovalLine">
+    	INSERT INTO APPROVAL_LINE (doc_cd, mber_id, sign_seq, sign_opn, sign_dt, sign_name)
+    	VALUES ('APPRVL' || seq_approval_cd.NEXTVAL, #{mberId}, #{signSeq}, #{signOpn}, #{signDt}, #{signName})
+    </insert>
+    <!-- 수신정보 등록 -->
+	  <insert id="receptionInsert" parameterType="egovframework.com.approval.service.Reception">
+    	INSERT INTO RECEPTION (recept_cd, recept_dt, recept_yn, doc_cd, mber_id, dept_cd)
+    	VALUES ('RCPTN' || seq_reception_cd.NEXTVAL, #{receptDt}, #{receptYn}, #{docCd}, #{mberId}, #{deptCd})
+    </insert>
+    
+    <!-- 파일등록 -->
+    <insert id="insertFileMaster" parameterType="egovframework.com.approval.service.File">
+			INSERT INTO COMTNFILE
+			(ATCH_FILE_ID, CREAT_DT, USE_AT)
+			VALUES
+			( #{atchFileId}, SYSDATE, 'Y')			
+		
+	</insert>
+	
+	<insert id="insertFileDetail" parameterType="egovframework.com.approval.service.ApprovalParentDTO">
+		
+			INSERT INTO COMTNFILEDETAIL
+			( ATCH_FILE_ID, FILE_SN, FILE_STRE_COURS, STRE_FILE_NM, 
+			  ORIGNL_FILE_NM, FILE_EXTSN, FILE_SIZE, FILE_CN )
+			VALUES
+			( #{atchFileId}, #{fileSn}, #{fileStreCours}, #{streFileNm}, 
+			  #{orignlFileNm}, #{fileExtsn}, #{fileMg}, #{fileCn} )			
+		
+	</insert>	
+    
     
     <!-- 문서회수(상태 회수로변경) -->
     <update id="documentUpdate">
@@ -70,7 +97,6 @@
 		                ROWNUM AS rn,
 		                doc_cd,
 		                doc_title,
-		                doc_cn,
 		                doc_cn_editor,
 		                fn_get_memnm(mber_id) as mber_id,
 		                fn_get_deptNm(mber_id) as dept_nm,

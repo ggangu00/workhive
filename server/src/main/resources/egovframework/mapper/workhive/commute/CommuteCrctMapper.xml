@@ -135,7 +135,7 @@
 			 , pre_leave_time
 		from commute_correction crct join commute cmt on (crct.commute_cd = cmt.commute_cd)
 		where sign_id = #{signId}
-		and sign_state = 'D01'
+		and sign_state in ('D01', 'D03')
 		and del_yn = 'N'
 		<if test='!startDate.isEmpty()'>
 			<![CDATA[
@@ -170,7 +170,7 @@
 			 , pre_leave_time
 		from commute_correction crct join commute cmt on (crct.commute_cd = cmt.commute_cd)
 		where sign_id = #{signId}
-		and sign_state != 'D01'
+		and sign_state not in ('D01', 'D03')
 		and del_yn = 'N'
 		<if test='!startDate.isEmpty()'>
 			<![CDATA[

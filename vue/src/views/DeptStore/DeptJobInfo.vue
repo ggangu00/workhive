@@ -190,13 +190,11 @@ const jobBxCheck = async (type, data) => {
   jobBxModalType = type;
   switch(type) {
     case 'add':
-      console.log("업무함 추가");
       jobBxData.value.deptCd = data.deptCd;
       jobBxData.value.deptNm = data.deptNm;
       modalOpen();
       break;
     case 'modify':
-      console.log("업무함 수정");
       jobBxData.value.deptCd = data.deptCd;
       jobBxData.value.deptNm = data.deptNm;
       jobBxData.value.indictOrdr = data.indictOrdr;
@@ -204,16 +202,14 @@ const jobBxCheck = async (type, data) => {
       modalOpen();
       break;
     case 'remove':
-      console.log("업무함 제거");
       axios.delete('/api/deptstore/jobBxRemove', { params: { deptJobBxId: data.deptJobBxId } });
       break;
   }
-  console.log("데이터 : ", data);
 }
 provide('jobBxCheck', jobBxCheck);
 
 // 업무함 관리 모달
-const isShowModal = ref(false);
+let isShowModal = ref(false);
 const modalOpen = () => {
   isShowModal.value = true;
 }
@@ -221,7 +217,6 @@ const modalClose = () => {
   isShowModal.value = false;
 }
 const modalConfirm = async () => {
-  console.log("confirm", jobBxModalType);
   const formData = new FormData();
   formData.append("deptCd", jobBxData.value.deptCd);
   formData.append("deptJobBxNm", jobBxData.value.deptJobBxNm);
@@ -309,13 +304,11 @@ class BtnRenderer {
 
 const udtEvent = (rowKey) => {
   selectedRowData = gridInstance.value.getRow(rowKey);
-  console.log(`수정 버튼 클릭됨, 행 번호: ${rowKey}`, selectedRowData);
   modalUpdateJob(); // 모달 열기
 };
 
 const delEvent = async (rowKey) => {
   selectedRowData = gridInstance.value.getRow(rowKey);
-  console.log(`삭제 버튼 클릭됨, 행 번호: ${rowKey}`, selectedRowData.deptJobId);
 
   await axios.delete('/api/deptstore/jobRemove', { params: { deptJobId: selectedRowData.deptJobId } });
   
@@ -352,7 +345,6 @@ const modalCloseJob = () => {
   isShowJobModal.value = false;
 }
 const modalConfirmJob = () => {
-  console.log('job modal confirm click');
   isShowJobModal.value = false;
   jobGetList(jobBxSelected.value);
 }
