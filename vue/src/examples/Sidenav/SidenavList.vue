@@ -188,9 +188,9 @@
          navText: "게시글 관리",
          iconClass: "fa-solid fa-pen-to-square",
          subMenus: [
-            { name: "BulletinList", route: "BulletinList", label: "게시글 목록" },
-            { name: "BulletinAdd", route: "BulletinAdd", label: "게시글 등록" },
-            { name: "BulletinInfo", route: "BulletinInfo", label: "게시글 상세조회" },
+            { name: "BulletinList", route: "BulletinList", label: "공지사항"},
+            { name: "BulletinList", route: "BulletinList", label: "사내게시판" },
+                  
          ],
       },
       {
@@ -211,6 +211,7 @@
          ],
       },
    ]);
+   //
 
    const movePage = (page) => {
       router.push({ name: page });
