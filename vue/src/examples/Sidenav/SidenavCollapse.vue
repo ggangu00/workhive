@@ -59,7 +59,7 @@ export default {
 
 <style scoped>
    .collapse {
-      padding-left: 20%;
+      
       background-color: #454545;
    }
 </style>
