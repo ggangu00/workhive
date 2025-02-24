@@ -10,15 +10,16 @@
 
                <!-- 서브 메뉴 (Depth 2) -->
                <template v-if="item.subMenus.length" v-slot:list>
-                  <li class="sub-item" v-for="(sub, j) in item.subMenus" :key="j" @click="movePage(sub.routerNm)">
-                     {{ sub.menuNm }}
-                     <i class="fa-solid fa-chevron-down arrow-icon" v-if="sub.subSubMenus.length > 0"></i>
-                     <ul v-show="isHide" v-if="sub.subSubMenus.length > 0" class="menu-box">
-                        <li class="sub-item" v-for="(child, k) in sub.subSubMenus" :key="k" @click.stop="childMovePage(child.routerNm)">
+                  <div class="sub-item" v-for="(sub, j) in item.subMenus" :key="j" @click="movePage(sub.routerNm)">
+                     <li class="sub-li">{{ sub.menuNm }} <i class="fa-solid fa-chevron-down arrow-icon" v-if="sub.subSubMenus.length > 0"></i></li>                    
+                     
+                     <template v-if="sub.subSubMenus.length > 0" >
+                        <li v-for="(child, k) in sub.subSubMenus" :key="k" @click.stop="childMovePage(child.routerNm)" class="sub2-item">
                            {{ child.menuNm }}
                         </li>
-                     </ul>
-                  </li>
+                     </template>
+                     
+                  </div>
                </template>
 
             </sidenav-collapse>
@@ -154,7 +155,15 @@
 .sub-item {
    color: #cfcfcf;
    font-size: 13px;
-   padding: 10px 0px;
+
+   >li{
+      padding-left : 21%;
+   }
+
+   .sub-li{
+      padding-top: 10px;
+      padding-bottom: 10px;
+   }
 }
 
 .menu-box {
@@ -164,16 +173,20 @@
 
 .arrow-icon{
    padding-right: 15px;
+   padding-top: 5px;
    float: right;
    font-size: 10px;
 }
 
 .sub2-item {
+   background-color: #333333;
    color: #cfcfcf;
    font-size: 13px;
    padding: none;
    list-style: none;
-   margin: 6px 0px 0px 0px;
+   list-style: none;
+   padding-top: 10px;
+   padding-bottom: 10px;
 }
 
 li {
