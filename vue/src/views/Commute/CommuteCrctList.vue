@@ -58,7 +58,6 @@ import Grid from 'tui-grid';
 import { ref, onBeforeUnmount, onMounted, watch } from 'vue';
 import { dateTimeFormat } from '../../assets/js/common.js';
 import { useRouter } from 'vue-router';
-import 'font-awesome/css/font-awesome.min.css';
 
 let gridInstance = ref();
 let rowData = ref([]);
