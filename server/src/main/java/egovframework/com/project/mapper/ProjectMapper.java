@@ -2,6 +2,7 @@ package egovframework.com.project.mapper;
 
 import java.util.List;
 
+import egovframework.com.cmm.ComDefaultVO;
 import egovframework.com.project.service.ProjectDTO;
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 
@@ -11,7 +12,7 @@ public interface ProjectMapper {
 	//======================프로젝트=====================
 	
 	// 프로젝트 전체조회
-	public List<ProjectDTO> projectSelectAll();
+	public List<ProjectDTO> projectSelectAll(ComDefaultVO searchVO);
 	
 	// 프로젝트 단건조회
 	public ProjectDTO projectSelect(String prCd);
