@@ -227,7 +227,8 @@ public class EgovArticleController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/cop/bbs/selectArticleDetail.do")
+    //@RequestMapping("/cop/bbs/selectArticleDetail.do")
+    @GetMapping("bulletinInfo")
     public String selectArticleDetail(@ModelAttribute("searchVO") BoardVO boardVO, ModelMap model) throws Exception {
 		LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
 		
@@ -332,9 +333,8 @@ public class EgovArticleController {
      * @return
      * @throws Exception
      */
-    //@RequestMapping("/cop/bbs/insertArticle.do")
-    @PostMapping("/bulletinAdd")
-    public String insertArticle(final MultipartHttpServletRequest multiRequest, @ModelAttribute("searchVO") BoardVO boardVO,
+    @RequestMapping("/cop/bbs/insertArticle.do")
+      public String insertArticle(final MultipartHttpServletRequest multiRequest, @ModelAttribute("searchVO") BoardVO boardVO,
 	    @ModelAttribute("bdMstr") BoardMaster bdMstr, @ModelAttribute("board") BoardVO board, BindingResult bindingResult, 
 	    ModelMap model) throws Exception {
 
@@ -369,7 +369,7 @@ public class EgovArticleController {
 		    return "egovframework/com/cop/bbs/EgovArticleRegist";
 		}
 
-		// 2022.11.11 시큐어코딩 처리
+		 //2022.11.11 시큐어코딩 처리
 		List<FileVO> result = null;
 	    String atchFileId = "";
 	    

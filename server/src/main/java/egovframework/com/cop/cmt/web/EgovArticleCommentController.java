@@ -10,8 +10,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springmodules.validation.commons.DefaultBeanValidator;
 
 import egovframework.com.cmm.EgovMessageSource;
@@ -41,7 +43,8 @@ import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
  * </pre>
  */
 
-@Controller
+@RestController
+@RequestMapping("/commet")
 public class EgovArticleCommentController {
 
 	@Resource(name = "EgovArticleCommentService")
@@ -134,7 +137,8 @@ public class EgovArticleCommentController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/cop/cmt/insertArticleComment.do")
+    //@RequestMapping("/cop/cmt/insertArticleComment.do")
+    @PostMapping("/commentAdd")
     public String insertArticleComment(@ModelAttribute("searchVO") CommentVO commentVO, @ModelAttribute("comment") Comment comment, 
 	    BindingResult bindingResult, ModelMap model, @RequestParam HashMap<String, String> map) throws Exception {
 
