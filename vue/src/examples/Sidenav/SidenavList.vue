@@ -10,17 +10,19 @@
 
                <!-- 서브 메뉴 (Depth 2) -->
                <template v-if="item.subMenus.length" v-slot:list>
-                  <div class="sub-item" v-for="(sub, j) in item.subMenus" :key="j" @click="movePage(sub.routerNm)">
-                     <li class="sub-li">{{ sub.menuNm }} <i class="fa-solid fa-chevron-down arrow-icon" v-if="sub.subSubMenus.length > 0"></i></li>
+                  <div class="sub-item" v-for="(sub, j) in item.subMenus" :key="j" @click="sub.subSubMenus.length > 0 ? toggleSubMenu(sub) : movePage(sub.routerNm)">
+                     <li class="sub-li">
+                        {{ sub.menuNm }}
+                        <i v-if="sub.subSubMenus.length > 0" :class="['fa-solid', 'arrow-icon', sub.isHidden ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
+                     </li>
 
-                     <template v-if="sub.subSubMenus.length > 0" >
-                        <div v-show="isHidden">
-                           <li v-for="(child, k) in sub.subSubMenus" :key="k" @click.stop="childMovePage(child.routerNm)" class="sub2-item">
+                     <div v-for="(child, k) in sub.subSubMenus" class="sub2-item" :key="k" v-show="sub.isHidden" :id="'menuDropdown' + sub.menuCd">
+                        <template v-if="sub.subSubMenus.length > 0">
+                           <li @click.stop="childMovePage(child.routerNm)" >
                               {{ child.menuNm }}
                            </li>
-                        </div>
-
-                     </template>
+                        </template>
+                     </div>
 
                   </div>
                </template>
@@ -80,6 +82,7 @@
             if (parentMenu) {
                // parentMenu의 subMenus에 배열 넣기
                parentMenu.subMenus.push({
+                  menuCd: menu.menuCd,
                   url: menu.url,
                   menuNm: menu.menuNm,
                   iconClass: menu.iconClass || '',
@@ -97,6 +100,7 @@
             const parentSubMenu = subMenus.get(menu.parentMenuCd);
             if (parentSubMenu) {
                parentSubMenu.subSubMenus.push({
+                  menuCd: menu.menuCd,
                   url: menu.url,
                   menuNm: menu.menuNm,
                   iconClass: menu.iconClass || "",
@@ -105,10 +109,6 @@
             }
          }
       });
-      console.log("ddd => ", Array.from(mainMenus, ([key, value]) => ({
-         menuCd: key,
-         ...value,
-      })))
 
       menus.value = Array.from(mainMenus, ([key, value]) => ({
          menuCd: key,
@@ -116,10 +116,11 @@
       }));
    }
 
-   const isHidden = ref(false)
+
 
    const movePage = (page) => {
-      console.log("page => ", page)
+
+      console.log("movePage() => ", page)
       if (!page) {
          isHidden.value = !isHidden.value
          return;
@@ -132,9 +133,14 @@
       }
 
    };
+   const isHidden = ref(false);
+
+   const toggleSubMenu = (subMenu) => {
+      subMenu.isHidden = !subMenu.isHidden;
+   };
 
    const childMovePage = (page) => {
-      console.log("page => ", page)
+      console.log("childMovePage() => ", page)
       if (!page) {
          isHidden.value = !isHidden.value
          return;
@@ -158,15 +164,13 @@
 .sub-item {
    color: #cfcfcf;
    font-size: 13px;
-
-   >li{
-      padding-left : 21%;
-   }
-
-   .sub-li{
-      padding-top: 13px;
-      padding-bottom: 13px;
-   }
+}
+.sub-item > li {
+   padding-left : 21%;
+}
+.sub-li{
+   padding-top: 13px;
+   padding-bottom: 13px;
 }
 
 .menu-box {
@@ -190,6 +194,7 @@
    list-style: none;
    padding-top: 13px;
    padding-bottom: 13px;
+   padding-left : 21%;
 }
 
 li {
