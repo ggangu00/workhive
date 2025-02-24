@@ -187,7 +187,7 @@ import { mapMutations, mapState } from "vuex";
 import axios from 'axios';
 import { useStore } from "vuex";
 import { ref, onBeforeMount } from "vue";
-import { cmtCheck } from "../../assets/js/ksy";
+import { cmtCheck } from "../../assets/js/commute";
 import { dateTimeFormat } from "../../assets/js/common";
 
 export default {

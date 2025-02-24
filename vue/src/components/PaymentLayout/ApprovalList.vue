@@ -192,6 +192,7 @@ const handleRowClick = (e) => {
       docCd : dataRow.docCd,
       docKind : dataRow.docKind,
       formNm : dataRow.formNm,
+      formCd : dataRow.formCd,
       deptNm : dataRow.deptNm,
       docTitle : dataRow.docTitle,
       docCnEditor : dataRow.docCnEditor

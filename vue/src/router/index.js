@@ -55,8 +55,9 @@ import Home from '../views/Home.vue'
 // ksy
 import KsyTest from '../views/DeptStore/Test.vue';
 import DeptjobInfo from '../views/DeptStore/DeptJobInfo.vue';
-import VcList from '../views/Vacation/VacationInfo.vue';
-import VcManage from '../views/Vacation/VacationManage.vue';
+import Vacation from '../views/Vacation/Vacation.vue';
+import VcList from "../views/Vacation/VacationList.vue";
+import VcManage from "../views/Vacation/VacationManage.vue";
 import VcSignManage from '../views/Vacation/VacationSign.vue';
 import CmtList from '../views/Commute/CommuteList.vue';
 import CrctManage from '../views/Commute/CommuteCrctManage.vue';
@@ -272,14 +273,21 @@ const routes = [
       component: CrctSignManage,
    },
    { // 휴가 조회
-      path: '/vacation/vcList',
-      name: 'VcList',
-      component: VcList,
-   },
-   { // 휴가 신청 관리(등록, 수정 등)
-      path: '/vacation/vcManage',
-      name: 'VcManage',
-      component: VcManage,
+      path: '/vacation',
+      name: 'Vacation',
+      component: Vacation,
+      children: [
+         {
+            path: '', // 기본 페이지로 'VacationList'를 표시
+            name: 'VcList',
+            component: VcList,
+         },
+         {
+            path: 'vcManage/:isUpdate?', // 휴가 관리 페이지
+            name: 'VcManage',
+            component: VcManage,
+         },
+      ],
    },
    { // 휴가 신청 결재
       path: '/vacation/vcSignManage',

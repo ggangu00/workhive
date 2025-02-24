@@ -3,8 +3,8 @@ package egovframework.com.approval.service;
 import java.util.List;
 
 public interface DocumentService {
-	//문서기안
-	public int documentInsert(DocumentDTO documentDTO);
+	//문서기안(수신자 결재자 첨부파일 문서)
+	public int approvalInsert(ApprovalParentDTO approvalParentDTO);
 	
 	// 전체조회
 	public List<DocumentDTO> documentSelectAll(SearchDTO searchDTO);
@@ -23,4 +23,6 @@ public interface DocumentService {
 	
 	//부서로 사원조회
 	public List<MemberDTO> memberSelectAll(SearchDTO searchDTO);
+	
+	
 }
