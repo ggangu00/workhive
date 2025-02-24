@@ -91,7 +91,6 @@ watch(() => searchData, () => {
 
 // Toast UI Grid 초기화
 onMounted(() => {
-  console.log("rowData = ", rowData);
   gridInstance.value = new Grid({
     el: document.getElementById('crctGrid'),
     data: rowData.value,
@@ -172,7 +171,6 @@ const btnCrctUpdate = (rowKey) => {
 };
 const btnCrctDelete = async (rowKey) => {
   let crctCd = gridInstance.value.getRow(rowKey).crctCd;
-  console.log(`삭제 버튼 클릭됨, 행 번호: ${rowKey}`, crctCd);
 
   await axios.post(`/api/commute/crctRemove?crctCd=${crctCd}`);
   crctGetList();

@@ -74,7 +74,7 @@ import axios from 'axios';
 import Grid from 'tui-grid';
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 import { dateTimeFormat } from '../../assets/js/common';
-import { cmtCheck } from '../../assets/js/ksy';
+import { cmtCheck } from '../../assets/js/commute';
 
 // 그리드 인스턴스
 let crctGridInstance = ref();
@@ -97,6 +97,7 @@ let crctCol = [
   { header: '정정퇴근시간', name: 'crctLeaveTime'},
   { header: '신청일', name: 'createDt'},
   { header: '신청자', name: 'createId'},
+  { header: '결재상태', name: 'signState'},
 ];
 let signCol = [
   { header: '근무일자', name: 'commuteDt'},
@@ -131,9 +132,6 @@ const crctGetList = async () => {
   listFormat(crctList.value);
   
   crctGridInstance.value.resetData(crctList.value);
-
-  console.log("결재 요청 데이터(출력) : ", crctList.value);
-  console.log("결재 요청 데이터(원본) : ", originCrctList);
 }
 const signGetList = async () => {
   const result = await axios.get('/api/commute/signedList', { params : signSrchData.value });
@@ -143,9 +141,6 @@ const signGetList = async () => {
   listFormat(signList.value);
 
   signGridInstance.value.resetData(signList.value);
-
-  console.log("결재 내역 데이터(출력) : ", signList.value);
-  console.log("결재 내역 데이터(원본) : ", originSignList);
 }
 // 그리드 데이터 형식 변경
 const listFormat = (list) => {
@@ -158,6 +153,9 @@ const listFormat = (list) => {
     i.createDt = dateTimeFormat(i.createDt, 'yyyy-MM-dd');
     i.signDt = dateTimeFormat(i.signDt, 'yyyy-MM-dd');
     switch(i.signState) {
+      case "D01":
+        i.signState = "미결재";
+        break;
       case "D02":
         i.signState = "승인";
         break;
@@ -205,67 +203,116 @@ onBeforeUnmount(() => {
   if (signGridInstance.value) signGridInstance.value.destroy();
 });
 
-// 결재 버튼
-const btnCrctSign = async (e) => {
-  let selectedRows;
-  let originList;
+// // 결재 버튼
+// const btnCrctSign = async (e) => {
+//   let selectedRows;
+//   let originList;
 
-  if (e.target.value == "D01") {
-    selectedRows = signGridInstance.value.getCheckedRows();
-    originList = originSignList;
-  } else {
-    selectedRows = crctGridInstance.value.getCheckedRows();
-    originList = originCrctList;
-  }
+//   if (e.target.value == "D01") {
+//     selectedRows = signGridInstance.value.getCheckedRows();
+//     originList = originSignList;
+//   } else {
+//     selectedRows = crctGridInstance.value.getCheckedRows();
+//     originList = originCrctList;
+//   }
+
+//   for (const row of selectedRows) {
+//     let originalRow = originList.find(item => item.commuteCd === row.commuteCd);
+//     if (originalRow) {
+//       await signModify(originalRow, e.target.value);
+//     }
+//   }
+
+//   crctGetList();
+//   signGetList();
+// }
+// // 결재 처리 : 출퇴근 정정 수정
+// const signModify = async (row, signState) => {
+//   let signData = new FormData();
+//   signData.append("crctCd", row.crctCd);
+//   signData.append("signState", signState);
+
+//   if(signState == "D01") { // 결재취소(대기상태로 변경) => 결재 이전의 출퇴근 시간을 기반으로 출퇴근 수정, 정정 상태 수정
+//     let cmtData = new FormData();
+//     cmtData.append('commuteCd', row.commuteCd);
+//     cmtData.append('goTime', row.preGoTime);
+//     cmtData.append('leaveTime', row.preLeaveTime);
+
+//     let changeData = await cmtCheck(row.preGoTime, row.preLeaveTime);
+//     cmtData.append('goState', changeData.goState);
+//     cmtData.append('leaveState', changeData.leaveState);
+//     cmtData.append('workTime', changeData.workTime);
+//     cmtData.append('overWorkTime', changeData.overWorkTime);
+
+//     await axios.post('/api/commute/crctSignModify', cmtData); // 기존 출퇴근 시간 및 상태로 출퇴근 정보 되돌리기
+
+//   } else if(signState == "D02") { // 승인 => 현재 출퇴근 시간 정보를 출퇴근 정정에 추가(pre), 정정 시간을 출퇴근에 수정
+//     let cmtData = new FormData();
+//     cmtData.append('commuteCd', row.commuteCd);
+//     cmtData.append('goTime', row.crctGoTime);
+//     cmtData.append('leaveTime', row.crctLeaveTime);
+
+//     let changeData = await cmtCheck(row.crctGoTime, row.crctLeaveTime);
+//     cmtData.append('goState', changeData.goState);
+//     cmtData.append('leaveState', changeData.leaveState);
+//     cmtData.append('workTime', changeData.workTime);
+//     cmtData.append('overWorkTime', changeData.overWorkTime);
+    
+//     await axios.post('/api/commute/crctSignModify', cmtData); // 기존 출퇴근 시간 및 상태로 출퇴근 정보 되돌리기
+//   }
+
+//   await axios.post('/api/commute/signModify', signData); // 출퇴근 정정 결재 상태 변경
+
+// }
+
+const btnCrctSign = async (e) => {
+  let selectedRows = e.target.value === 'D01' ? signGridInstance.value.getCheckedRows() : crctGridInstance.value.getCheckedRows();
+  let originList = e.target.value === 'D01' ? originSignList : originCrctList;
+
+  let signDataArray = [];
 
   for (const row of selectedRows) {
     let originalRow = originList.find(item => item.commuteCd === row.commuteCd);
     if (originalRow) {
-      await signModify(originalRow, e.target.value);
+      let signData = {
+        crctCd: originalRow.crctCd,
+        signState: e.target.value
+      };
+
+      let cmtData = {
+        commuteCd: originalRow.commuteCd,
+        goTime: e.target.value === 'D01' ? originalRow.preGoTime : originalRow.crctGoTime,
+        leaveTime: e.target.value === 'D01' ? originalRow.preLeaveTime : originalRow.crctLeaveTime
+      };
+
+      let changeData = await cmtCheck(cmtData.goTime, cmtData.leaveTime);
+    //   Object.assign(cmtData, changeData);
+      cmtData.goState = changeData.goState;
+      cmtData.leaveState = changeData.leaveState;
+      cmtData.workTime = changeData.workTime;
+      cmtData.overWorkTime = changeData.overWorkTime;
+
+      // signData에 cmtData를 포함
+      signData.cmtData = cmtData;
+
+      // signData와 cmtData를 모두 포함한 객체를 배열에 추가
+      signDataArray.push({ signData, cmtData });
     }
   }
 
-  crctGetList();
-  signGetList();
-}
-// 결재 처리 : 출퇴근 정정 수정
-const signModify = async (row, signState) => {
-  let signData = new FormData();
-  signData.append("crctCd", row.crctCd);
-  signData.append("signState", signState);
-
-  if(signState == "D01") { // 결재취소(대기상태로 변경) => 결재 이전의 출퇴근 시간을 기반으로 출퇴근 수정, 정정 상태 수정
-    let cmtData = new FormData();
-    cmtData.append('commuteCd', row.commuteCd);
-    cmtData.append('goTime', row.preGoTime);
-    cmtData.append('leaveTime', row.preLeaveTime);
-
-    let changeData = await cmtCheck(row.preGoTime, row.preLeaveTime);
-    cmtData.append('goState', changeData.goState);
-    cmtData.append('leaveState', changeData.leaveState);
-    cmtData.append('workTime', changeData.workTime);
-    cmtData.append('overWorkTime', changeData.overWorkTime);
-
-    await axios.post('/api/commute/crctSignModify', cmtData); // 기존 출퇴근 시간 및 상태로 출퇴근 정보 되돌리기
-
-  } else if(signState == "D02") { // 승인 => 현재 출퇴근 시간 정보를 출퇴근 정정에 추가(pre), 정정 시간을 출퇴근에 수정
-    let cmtData = new FormData();
-    cmtData.append('commuteCd', row.commuteCd);
-    cmtData.append('goTime', row.crctGoTime);
-    cmtData.append('leaveTime', row.crctLeaveTime);
-
-    let changeData = await cmtCheck(row.crctGoTime, row.crctLeaveTime);
-    cmtData.append('goState', changeData.goState);
-    cmtData.append('leaveState', changeData.leaveState);
-    cmtData.append('workTime', changeData.workTime);
-    cmtData.append('overWorkTime', changeData.overWorkTime);
-    
-    await axios.post('/api/commute/crctSignModify', cmtData); // 기존 출퇴근 시간 및 상태로 출퇴근 정보 되돌리기
+  // 해당 데이터들을 서버에 보내도록 수정
+  if (signDataArray.length) {
+    if(e.target.value == 'D01' || e.target.value == 'D02')
+      await axios.post('/api/commute/crctSignModify', signDataArray.map(data => data.cmtData)); 
+    await axios.post('/api/commute/signModify', signDataArray.map(data => data.signData)); 
   }
 
-  await axios.post('/api/commute/signModify', signData); // 출퇴근 정정 결재 상태 변경
+  // 리스트 새로 고침
+  crctGetList();
+  signGetList();
+};
 
-}
+
 
 </script>
 
@@ -278,5 +325,5 @@ const signModify = async (row, signState) => {
   margin: 2px !important;
 }
 </style>
-  
-    
+
+

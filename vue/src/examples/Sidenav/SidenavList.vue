@@ -154,7 +154,7 @@
          ],
       },
       {
-         collapseRef: "/vacation/vcList",
+         collapseRef: "/vacation",
          navText: "휴가 관리",
          iconClass: "fa-solid fa-plane",
          subMenus: [

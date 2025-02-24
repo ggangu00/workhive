@@ -163,9 +163,7 @@ const jobAdd = async () => {
   addData.append("chargerId", formValues.value.chargerId);
   // addData.append("", formValues.); 파일
   
-  const result = await axios.post('/api/deptstore/jobAdd', addData);
-  //서버응답 찍어보기
-  console.log("서버 응답:", result.data);
+  await axios.post('/api/deptstore/jobAdd', addData);
 }
 
 // 수정
@@ -179,12 +177,8 @@ const jobUpdate = async () => {
   modifyData.append("deptJobCn", formValues.value.deptJobCn);
   modifyData.append("chargerId", formValues.value.chargerId);
   // modifyData.append("", formValues.); 파일
-
-  console.log("update data : ", formValues.value);
   
-  const result = await axios.post('/api/deptstore/jobModify', modifyData);
-  //서버응답 찍어보기
-  console.log("서버 응답:", result.data);
+  await axios.post('/api/deptstore/jobModify', modifyData);
 }
 </script>
 

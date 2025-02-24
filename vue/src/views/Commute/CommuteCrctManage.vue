@@ -102,7 +102,6 @@ let crctData = ref({
 // 날짜 변경 감지(등록용 데이터 가져오기)
 watch (() => crctData.value.commuteDt, async () => {
   if(cmtCd == null) {
-    console.log("날짜 감지");
     let result = await axios.get(`/api/commute/dateCmtInfo`, {params: {commuteDt: crctData.value.commuteDt}});
     
     crctData.value.commuteCd = result.data.commuteCd;
@@ -132,8 +131,6 @@ const crctGetInfo = async () => {
 }
 
 onBeforeMount(() => {
-  let test = route.query;
-  console.log("전체 테스트 : ", test);
   let pageState = route.query.isUpdate;
   if(pageState == 'true')
     isUpdate = true;
@@ -143,15 +140,11 @@ onBeforeMount(() => {
 })
 onMounted(() => {
   if(!isUpdate && route.query.cmtCd != undefined) {
-    console.log('등록 페이지 동작');
     cmtCd = route.query.cmtCd;
     cmtGetInfo();
   } else if(isUpdate && route.query.crctCd != undefined) {
-    console.log('수정 페이지 동작');
     crctCd = route.query.crctCd;
     crctGetInfo();
-  } else {
-    console.log("cmtCd 없음");
   }
 });
 
