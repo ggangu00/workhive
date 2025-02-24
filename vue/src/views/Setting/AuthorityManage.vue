@@ -7,7 +7,7 @@
             </div>
          </div>
 
-         <div class="card" @keydown.esc="modalClose">
+         <div class="card">
             <div class="card-body">
                <div class="row m-0">
 
