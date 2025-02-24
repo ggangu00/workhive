@@ -14,7 +14,7 @@
                      {{ sub.menuNm }}
                      <i class="fa-solid fa-chevron-down arrow-icon" v-if="sub.subSubMenus.length > 0"></i>
                      <ul v-show="isHide" v-if="sub.subSubMenus.length > 0" class="menu-box">
-                        <li class="sub-item" v-for="(child, k) in sub.subSubMenus" :key="k" @click="movePage(child.routerNm)">
+                        <li class="sub-item" v-for="(child, k) in sub.subSubMenus" :key="k" @click.stop="childMovePage(child.routerNm)">
                            {{ child.menuNm }}
                         </li>
                      </ul>
@@ -74,7 +74,7 @@
             const parentMenu = mainMenus.get(menu.parentMenuCd); // mainMenus의 key값으로 value를 가져옴
 
             if (parentMenu) {
-               // parentMenu의 subMenus에
+               // parentMenu의 subMenus에 배열 넣기
                parentMenu.subMenus.push({
                   url: menu.url,
                   menuNm: menu.menuNm,
@@ -127,6 +127,20 @@
          router.push(page);
       }
 
+   };
+
+   const childMovePage = (page) => {
+      console.log("page => ", page)
+      if (!page) {
+         isHide.value = !isHide.value
+         return;
+      }
+      if (router.hasRoute(page)) {
+         router.push({ name: page });
+      } else {
+         console.warn("라우트가 존재하지 않습니다:", page);
+         router.push(page);
+      }
    };
 
    onMounted(() => {
