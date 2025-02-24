@@ -25,6 +25,12 @@ public class ProjectServiceImpl implements ProjectService{
 		return projectMapper.projectSelectAll(searchVO);
 	}
 	
+	//프로젝트 전체건수
+	@Override
+	public int projectSelectAllCnt(ComDefaultVO searchVO) {
+		return 0;
+	}
+	
 	//프로젝트 단건조회
 	@Override
 	public ProjectDTO projectSelect(String prCd) {
@@ -107,4 +113,5 @@ public class ProjectServiceImpl implements ProjectService{
 	public boolean projectPlanDelete(String prPlanCd) {
 		return projectMapper.projectPlanDelete(prPlanCd) == 1 ? true : false;
 	}
+
 }

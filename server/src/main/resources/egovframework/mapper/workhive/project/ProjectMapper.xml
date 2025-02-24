@@ -6,6 +6,11 @@
 	
 	<!-- 프로젝트 전체조회 -->
 	<select id="projectSelectAll" parameterType="int" resultType="projectDTO">
+	SELECT *
+	FROM (
+	SELECT T0.*, ROWNUM RNUM
+		FROM (
+		
 		select pr_cd,		--프로젝트 코드
 			   type_cd,		--프로젝트 구분코드
 			   pr_nm,		--프로젝트명
@@ -28,8 +33,63 @@
                  com_nm LIKE '%' ||#{searchKeyword} || '%'
             </if>
             
+            <if test="searchStartDt != null and !searchStartDt.equals('')">AND
+                 <![CDATA[CDATAstart_dt >= #{searchStartDt}]]>
+            </if>
+            
+            <if test="searchEndDt != null and !searchEndDt.equals('')">AND
+               	 <![CDATA[start_dt <= #{searchEndDt}]]>
+            </if>
+            
+            <if test="searchStartPrice != null and !searchStartPrice.equals('')">AND
+                 <![CDATA[price >= #{searchStartPrice}]]>
+            </if>
+            
+            <if test="searchEndPrice != null and !searchEndPrice.equals('')">AND
+               	 <![CDATA[price <= #{searchEndPrice}]]>
+            </if>
+            
 		order by 
 			create_dt desc
+			
+			) T0
+	)
+	WHERE RNUM BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}
+	
+	</select>
+	
+	<!-- 프로젝트 전체건수 -->
+	<select id="projectSelectAllCnt" parameterType="comDefaultVO" resultType="int">
+		SELECT
+		COUNT(*) totcnt
+		FROM project
+		WHERE 1=1
+	 <if test="searchKeyword != null and searchKeyword != ''">
+	 	
+		 <if test="searchCondition == 0">AND
+              PR_NM LIKE '%' || #{searchKeyword} || '%'
+         </if>
+         <if test="searchCondition == 1">AND
+              com_nm LIKE '%' ||#{searchKeyword} || '%'
+         </if>
+         
+         <if test="searchStartDt != null and !searchStartDt.equals('')">AND
+              <![CDATA[CDATAstart_dt >= #{searchStartDt}]]>
+         </if>
+         
+         <if test="searchEndDt != null and !searchEndDt.equals('')">AND
+            	 <![CDATA[start_dt <= #{searchEndDt}]]>
+         </if>
+         
+         <if test="searchStartPrice != null and !searchStartPrice.equals('')">AND
+              <![CDATA[price >= #{searchStartPrice}]]>
+         </if>
+         
+         <if test="searchEndPrice != null and !searchEndPrice.equals('')">AND
+            	 <![CDATA[price <= #{searchEndPrice}]]>
+         </if>
+	 </if>
+	 
 	</select>
 	
 	<!-- 프로젝트 단건조회 -->

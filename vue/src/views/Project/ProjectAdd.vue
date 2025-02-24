@@ -337,7 +337,6 @@ const projectAdd = async () => { //프로젝트 등록
   const modifiedRows = gridInstance.value.getModifiedRows(); // 변경된 데이터 가져오기
   const newData = modifiedRows.createdRows; // 새로 추가된 데이터만 추출
 
-  console.log(newData);
   try {
     const response = await axios.post('/api/project', { data: { workData: newData }} );
 

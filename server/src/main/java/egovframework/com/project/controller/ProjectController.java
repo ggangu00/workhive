@@ -8,10 +8,10 @@ import javax.annotation.Resource;
 
 import org.egovframe.rte.fdl.property.EgovPropertyService;
 import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -39,24 +39,29 @@ public class ProjectController {
 	
 	//프로젝트 전체조회
 	@GetMapping("/list")
-	public List<ProjectDTO> projectList(
-				@ModelAttribute("searchVO") ComDefaultVO searchVO
-				) {	  
-		
-		searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
-		searchVO.setPageSize(propertiesService.getInt("pageSize"));
-		
-		PaginationInfo paginationInfo = new PaginationInfo();
+	public List<ProjectDTO> projectList(ComDefaultVO searchVO, ModelMap model) {	  
+		/** EgovPropertyService.sample */
+    	searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
+    	searchVO.setPageSize(propertiesService.getInt("pageSize"));
+
+    	/** pageing */
+    	PaginationInfo paginationInfo = new PaginationInfo();
 		paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
 		paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());
 		paginationInfo.setPageSize(searchVO.getPageSize());
-		
+
 		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
 		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
 		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
-		log.info("123123"+searchVO.toString());
 		
-		return projectService.projectSelectAll(searchVO);
+		List<ProjectDTO> projectList = projectService.projectSelectAll(searchVO);
+		
+		int totCnt = projectService.projectSelectAllCnt(searchVO);
+		paginationInfo.setTotalRecordCount(totCnt);
+		model.addAttribute("paginationInfo", paginationInfo);
+		model.addAttribute("list", projectList); 
+		
+		return projectList;
 	}	
 	
 	//프로젝트 단건조회
