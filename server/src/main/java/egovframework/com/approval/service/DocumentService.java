@@ -20,4 +20,7 @@ public interface DocumentService {
 	
 	//삭제 (delYn 변경)
 	public int documentDelete(DocumentDTO documentDTO);
+	
+	//부서로 사원조회
+	public List<MemberDTO> memberSelectAll(SearchDTO searchDTO);
 }
