@@ -16,6 +16,8 @@ import egovframework.rte.psl.dataaccess.mapper.Mapper;
 public interface DocumentMapper {
 	//문서등록
 	int documentInsert(Document document);
+	//문서코드 가져오기
+	String lastDocCdGet();
 	//첨부파일 등록(헤더)
 	int insertFileMaster(File file);
 	//첨부파일 등록(디테일)

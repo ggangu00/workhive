@@ -62,8 +62,12 @@ public class DocumentServiceImpl implements DocumentService{
         System.out.println(document.toString());
         documentMapper.documentInsert(document);
         
-        String docCd = document.getDocCd();
+        //문서코드가져오기
         
+        String docCd = documentMapper.lastDocCdGet();
+        
+        System.out.println("생성된 문서 코드: " + docCd);
+
 		//결재자
         List<ApprovalLine> approvalLines = approvalParentDTO.getApprovalLine();
         if (approvalLines != null && !approvalLines.isEmpty()) {
@@ -83,7 +87,7 @@ public class DocumentServiceImpl implements DocumentService{
                }
         }
 		//첨부파일
-		return 0;
+		return 1;
 	}
 
 }

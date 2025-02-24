@@ -290,25 +290,6 @@ const registerApprovals = () => {
   }
 };
 
-//결재선등록(임시)
-// const saveApprovalLine = async () => {
-//   const approvalData = approvers.value.map((approver, index) => ({
-//     mberId: approver.id,   // 사원 ID
-//     docCd: documentCode,   // 문서 코드
-//     signSeq: index + 1,    // 순서 부여 (1부터 시작)
-//     signStat: 'D01',       // 기본 상태값
-//     signOpen: approver.memo || "",  // 결재 의견 (선택사항)
-//     signName: approver.status        // 기안, 결재, 결정
-//   }));
-
-//   try {
-//     await axios.post('/api/approval/save', approvalData);
-//     console.log("성공");
-//   } catch (error) {
-//     console.error("실패:", error);
-//   }
-// };
-
 /////////////////////첨부파일/////////////////////////
 const addFileList = (target) => {
   const newFile = Array.from(target.files);
@@ -386,21 +367,33 @@ const approvalInfo = async() => {
   console.log('결재자정보 =>',approvers.value);// 결재자정보
   console.log(receivers.value);// 수신자정보
   console.log(fileList.value);
-  const requestData = { // 서버로 보낼 데이터
+
+  //결재자정보포멧
+  const formatApprovalLine = approvers.value.map((approver, index)=>({
+    mberId: approver.mberId,
+    signSeq: index + 1,
+    signName: approver.status, 
+  }))
+
+  const requestData = { 
+  document:{// 서버로 보낼 데이터
       docTitle : docTitle.value,
       docCnEditor : editor.getHTML(),
-      mberId : 'sdfdsf',
+      mberId : '신강현',
       docKind : 'I01',
       formCd : formCd.value,
       deptNm : deptNm.value,
       formNm : formNm.value
-      };
+      },
+      approvalLine: formatApprovalLine,
+      reception: receivers.value,
+      file: fileList.value
+    };
 
       console.log(requestData);
       try {
          const response = await axios.post('/api/document/register', requestData);
-
-         if(response.data.result === true) {
+         if(response.status == 200) {
             Swal.fire({
                icon: "success",
                title: "등록 성공",
