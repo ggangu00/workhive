@@ -189,7 +189,7 @@ const routes = [
       component: RegisterTest
    },
    { //일정
-      path: '/schdule/calendar',
+      path: '/schdule/manage',
       name: 'Calendar',
       component: Calendar
    },

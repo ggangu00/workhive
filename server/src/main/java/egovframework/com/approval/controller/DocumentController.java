@@ -21,6 +21,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import egovframework.com.approval.service.ApprovalParentDTO;
 import egovframework.com.approval.service.DocumentDTO;
 import egovframework.com.approval.service.DocumentService;
 import egovframework.com.approval.service.FormDTO;
@@ -35,16 +36,27 @@ public class DocumentController {
 
 	@Resource DocumentService documentService;
 	
-	//문서기안
+	//문서기안(문서정보, 수신정보, 결재선정보, 첨부파일)
 	@PostMapping("/register")
-    public String register(@RequestBody DocumentDTO documentDTO) {
-        int result = documentService.documentInsert(documentDTO);
+    public String register(@RequestBody ApprovalParentDTO approvalParentDTO) {
+        int result = documentService.approvalInsert(approvalParentDTO);
 		if(result>0) {
 			return "success";
 		}else {
 			return "fail";
 		}
     }
+	
+	//문서기안
+//	@PostMapping("/register")
+//    public String register(@RequestBody DocumentDTO documentDTO) {
+//        int result = documentService.documentInsert(documentDTO);
+//		if(result>0) {
+//			return "success";
+//		}else {
+//			return "fail";
+//		}
+//    }
 	
 	//리스트조회(조건별)
 	@GetMapping("/list")
@@ -59,7 +71,7 @@ public class DocumentController {
 		searchDTO.setStartPage(searchDTO.getFirst());
 		searchDTO.setEndPage(searchDTO.getLast());
 		searchDTO.setStatus(status);
-
+		
 		// 페이징처리
 		searchDTO.setTotalRecord(documentService.getCount(searchDTO));
 		

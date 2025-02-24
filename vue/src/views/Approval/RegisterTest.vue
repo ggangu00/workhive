@@ -31,18 +31,28 @@
       case '초기화' :
         await resetBtn();
         break;
+
+      case '상신' :
+        await approvalBtn();
+        break;
     }
   }
   const approvalRegisterRef = ref(null);
   const formAdd = () =>{
-      if (approvalRegisterRef.value) {
+    if (approvalRegisterRef.value) {
       approvalRegisterRef.value.modalOpen(); 
     }
   }
 
   const resetBtn = () =>{
-      if (approvalRegisterRef.value) {
+    if (approvalRegisterRef.value) {
       approvalRegisterRef.value.conditionReset(); 
+    }
+  }
+
+  const approvalBtn = () =>{
+    if (approvalRegisterRef.value) {
+      approvalRegisterRef.value.approvalInfo(); 
     }
   }
   </script>

@@ -2,16 +2,28 @@ package egovframework.com.approval.mapper;
 
 import java.util.List;
 
+import egovframework.com.approval.service.ApprovalLine;
+import egovframework.com.approval.service.Document;
 import egovframework.com.approval.service.DocumentDTO;
+import egovframework.com.approval.service.File;
 import egovframework.com.approval.service.FormDTO;
 import egovframework.com.approval.service.MemberDTO;
+import egovframework.com.approval.service.Reception;
 import egovframework.com.approval.service.SearchDTO;
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 
 @Mapper("documentMapper")
 public interface DocumentMapper {
-	//등록
-	int insert(DocumentDTO documentDTO);
+	//문서등록
+	int documentInsert(Document document);
+	//첨부파일 등록(헤더)
+	int insertFileMaster(File file);
+	//첨부파일 등록(디테일)
+	int insertFileDetail(File file);
+	//결재자등록
+	int approvalInsert(ApprovalLine approvalLine);
+	//수신자등록
+	int receptionInsert(Reception reception);
 	
 	//전체조회
 	List<DocumentDTO> documentSelectAll(SearchDTO searchDTO);

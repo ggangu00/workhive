@@ -22,6 +22,7 @@
   const docCd = ref('');
   const docKind = ref('');
   const formNm = ref('');
+  const formCd = ref('');
   const deptNm = ref('');
   const docTitle = ref('');
   const docCnEditor = ref('');
@@ -31,6 +32,7 @@
     docCd.value = route.query.docCd || "";
     docKind.value = route.query.docKind || "";
     formNm.value = route.query.formNm || "";
+    formCd.value = route.query.formCd || "";
     deptNm.value = route.query.deptNm || "";
     docTitle.value = route.query.docTitle || "";
     docCnEditor.value = route.query.docCnEditor || "";
@@ -91,6 +93,7 @@
       docCd: docCd.value,
       docKind: docKind.value,
       formNm: formNm.value,
+      formCd: formCd.value,
       deptNm: deptNm.value,
       docTitle: docTitle.value,
       docCnEditor: docCnEditor.value
