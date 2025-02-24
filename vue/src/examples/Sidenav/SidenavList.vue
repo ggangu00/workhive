@@ -14,9 +14,12 @@
                      <li class="sub-li">{{ sub.menuNm }} <i class="fa-solid fa-chevron-down arrow-icon" v-if="sub.subSubMenus.length > 0"></i></li>
 
                      <template v-if="sub.subSubMenus.length > 0" >
-                        <li v-for="(child, k) in sub.subSubMenus" :key="k" @click.stop="childMovePage(child.routerNm)" class="sub2-item">
-                           {{ child.menuNm }}
-                        </li>
+                        <div v-show="isHidden">
+                           <li v-for="(child, k) in sub.subSubMenus" :key="k" @click.stop="childMovePage(child.routerNm)" class="sub2-item">
+                              {{ child.menuNm }}
+                           </li>
+                        </div>
+
                      </template>
 
                   </div>
@@ -113,12 +116,12 @@
       }));
    }
 
-   const isHide = ref(true)
+   const isHidden = ref(false)
 
    const movePage = (page) => {
       console.log("page => ", page)
       if (!page) {
-         isHide.value = !isHide.value
+         isHidden.value = !isHidden.value
          return;
       }
       if (router.hasRoute(page)) {
@@ -133,7 +136,7 @@
    const childMovePage = (page) => {
       console.log("page => ", page)
       if (!page) {
-         isHide.value = !isHide.value
+         isHidden.value = !isHidden.value
          return;
       }
       if (router.hasRoute(page)) {
