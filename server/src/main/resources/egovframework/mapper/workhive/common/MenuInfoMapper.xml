@@ -21,7 +21,6 @@
 		FROM
 		   menuinfo
 		ORDER BY
-		   TO_NUMBER(menu_cd),
 		   depth,
 		   seq
 	</select>
