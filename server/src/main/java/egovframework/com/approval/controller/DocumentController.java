@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import egovframework.com.approval.service.DocumentDTO;
 import egovframework.com.approval.service.DocumentService;
 import egovframework.com.approval.service.FormDTO;
+import egovframework.com.approval.service.MemberDTO;
 import egovframework.com.approval.service.SearchDTO;
 import lombok.extern.slf4j.Slf4j;
 
@@ -98,7 +99,13 @@ public class DocumentController {
 	public List<FormDTO> formList() {
 		return documentService.formSelectAll();
 	}
-	 
+	
+	//부서별사원조회
+	@GetMapping("/deptMember")
+	public List<MemberDTO> memberList(@ModelAttribute SearchDTO searchDTO) {
+		return documentService.memberSelectAll(searchDTO);
+	}
+	
 	//문서회수(상태변경회수 상태로)
 	@PutMapping("/retrieve/{docCd}")
 		public ResponseEntity<String> documentUpdate(

@@ -92,6 +92,17 @@
 		        ORDER BY draft_dt DESC
     </select>
 
+	<!-- 부서코드로 사원조회 -->
+	  <select id="memberSelectAll" resultType="egovframework.com.approval.service.MemberDTO" parameterType="egovframework.com.approval.service.SearchDTO">
+    	SELECT
+    		mber_id,
+    		mber_nm,
+    		resp_cd,
+    		dept_cd,
+    		(select dept_nm from department where dept_cd = #{deptCd}) as dept_nm
+    	FROM COMTNGNRLMBER
+    	WHERE dept_cd = #{deptCd}
+    </select>
 	<!-- 검색조건함수 -->
     <sql id="searchCriteria">
         <if test="status != null and status != ''">

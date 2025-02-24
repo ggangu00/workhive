@@ -2,12 +2,14 @@ package egovframework.com.project.service;
 
 import java.util.List;
 
+import egovframework.com.cmm.ComDefaultVO;
+
 public interface ProjectService {
 	
 	//======================프로젝트=====================
 	
 	//프로젝트 전체조회
-	public List<ProjectDTO> projectSelectAll();
+	public List<ProjectDTO> projectSelectAll(ComDefaultVO searchVO);
 	
 	//프로젝트 단건조회
 	public ProjectDTO projectSelect(String prCd);	

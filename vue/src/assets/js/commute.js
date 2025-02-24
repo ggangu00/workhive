@@ -94,6 +94,6 @@ export async function cmtCheck(goTimeInput, leaveTimeInput) {
     }
 
   }
-  
+
   return result;
 }

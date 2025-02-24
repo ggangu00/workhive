@@ -4,6 +4,7 @@ import java.util.List;
 
 import egovframework.com.approval.service.DocumentDTO;
 import egovframework.com.approval.service.FormDTO;
+import egovframework.com.approval.service.MemberDTO;
 import egovframework.com.approval.service.SearchDTO;
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 
@@ -26,4 +27,7 @@ public interface DocumentMapper {
 	
 	//문서삭제(delYN 변경)
 	int documentDelete(DocumentDTO documentDTO);
+	
+	//부서별 사원조회
+	List<MemberDTO> memberSelectAll(SearchDTO searchDTO);
 }

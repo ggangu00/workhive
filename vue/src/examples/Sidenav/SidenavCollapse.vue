@@ -5,12 +5,12 @@
     :aria-controls="collapseRef"
     :aria-expanded="isExpanded"
     class="nav-link"
-    :class="getRoute() === collapseRef ? `active bg-gradient-${color}` : ''"
+    :class="getRoute() === collapseRef ? 'active' : ''"
     v-bind="$attrs"
     @click="isExpanded = !isExpanded"
   >
     <div
-      class="text-center d-flex align-items-center justify-content-center"
+      class="text-center d-flex align-items-center justify-content-center nav-icon"
       :class="isRTL ? ' ms-2' : 'me-2'"
     >
       <slot name="icon"></slot>

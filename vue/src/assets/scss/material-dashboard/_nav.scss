@@ -2,17 +2,8 @@
   &.nav-pills {
     border-radius: $nav-pills-border-radius;
     position: relative;
-    &.nav-pills-vertical {
-      border-radius: $nav-pills-vertical-radius;
-      .nav-link {
-        &.active {
-          border-radius: $nav-pills-vertical-link-radius;
-        }
-      }
-    }
     .nav-link {
       z-index: 3;
-      border-radius: $nav-pills-link-border-radius;
       &.active {
         animation: $nav-pills-link-active-animation;
       }
