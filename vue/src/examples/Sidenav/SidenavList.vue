@@ -15,7 +15,7 @@
             <i class="fa-solid fa-chevron-down" v-if="sub.subSubMenus.length > 0"></i>
             <ul v-if="sub.subSubMenus.length > 0">
                <li class="sub2-item" v-for="(child, k) in sub.subSubMenus" :key="k" @click="movePage(child.routerNm)">
-                  {{ child.menuNm }}
+                  {{ child.menuNm }} 
                </li>
             </ul>
 
