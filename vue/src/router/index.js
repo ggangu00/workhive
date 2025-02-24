@@ -129,7 +129,7 @@ const routes = [
       component: FindPw,
    },
    { // 개인정보 설정
-      path: '/setting/personalInfo',
+      path: '/personal/setting',
       name: 'PersonalManage',
       component: PersonalManage
    },

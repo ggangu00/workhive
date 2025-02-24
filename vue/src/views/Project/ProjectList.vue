@@ -6,67 +6,68 @@
         <button class="btn btn-primary btn-sm btn-fill float-right" onclick="location.href ='/project/add'">프로젝트
           등록</button>
       </card>
-      <card>
-        <ul class="nav nav-pills">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page">전체(100)</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link">진행전(30)</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link">진행중(20)</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link">진행완료(50)</a>
-          </li>
-        </ul>
-      </card>
-      <card>
-        <form name="searchForm" method="get" action="/project/list">
+      <form @submit.prevent="projectGetList">
+        <card>
+          <ul class="nav nav-pills">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page">전체(100)</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link">진행전(30)</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link">진행중(20)</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link">진행완료(50)</a>
+            </li>
+          </ul>
+        </card>
+        <card>
           <div class="mb-3 row">
             <label for="staticEmail" class="col-sm-2 col-form-label">검색</label>
             <div class="col-auto">
-              <select class="form-select" name="searchCondition">
+              <select class="form-select" v-model="searchCondition">
                 <option value="0">프로젝트명</option>
                 <option value="1">거래처</option>
                 <option value="2">담당자</option>
               </select>
             </div>
+
             <div class="col-auto">
-              <input type="text" class="form-control" placeholder="검색어를 입력해주세요" name="searchKeyword">
+              <input type="text" class="form-control" placeholder="검색어를 입력해주세요" v-model="searchKeyword">
             </div>
           </div>
           <div class="mb-3 row">
             <label for="inputPassword" class="col-sm-2 col-form-label">프로젝트 기간</label>
             <div class="col-auto">
-              <input type="date" name="START_DT" class="form-control">
+              <input type="date" class="form-control" v-model="start_dt">
             </div>
             <div class="col-auto">~</div>
             <div class="col-auto">
-              <input type="date" name="END_DT" class="form-control">
+              <input type="date" class="form-control" v-model="end_dt">
             </div>
           </div>
           <div class="mb-3 row">
             <label for="inputPassword" class="col-sm-2 col-form-label">프로젝트 금액</label>
             <div class="col-auto">
-              <input type="number" name="PRICE_ST" class="form-control">
+              <input type="number" class="form-control" v-model="price_st">
             </div>
             <div class="col-auto">~</div>
             <div class="col-auto">
-              <input type="number" name="PRICE_END" class="form-control">
+              <input type="number" class="form-control" v-model="price_end">
             </div>
           </div>
           <div class="text-center">
-            <button type="submit" class="btn btn-secondary btn-fill">
+            <button type="reset" class="btn btn-secondary btn-fill">
               초기화
             </button>
-            <button class="btn btn-info btn-fill">
+            <button type="submit" class="btn btn-info btn-fill">
               검색
             </button>
           </div>
-        </form>
-      </card>
+        </card>
+      </form>
       <card>
         <div class="d-flex">
           <div class="p-2 w90">
@@ -117,7 +118,7 @@
                   <td>
                     <div class="category">{{ project.comNm }}</div>
                     <div class="subject"><a href="#" @click="modalOpen(project.prCd)" class="mrp5">{{ project.prNm
-                        }}</a>
+                    }}</a>
                       <span class="badge" :class="project.term > 10 ? 'badge-primary' : 'badge-danger'">
                         D{{ project.term > 0 ? "-" + project.term : "+" + project.term * (-1) }}</span>
                     </div>
@@ -144,6 +145,22 @@
             </tbody>
           </table>
         </div>
+        <nav aria-label="...">
+          <ul class="pagination">
+            <li class="page-item" :class="startPage == 1 ? 'disabled' : ''">
+              <a class="page-link" @click="gopage(startPage - 1)">Previous</a>
+            </li>
+
+            <li v-for="num in pageNumbers" :key="num" class="page-item" :class="num == page ? 'active' : ''">
+              <a class="page-link" @click="gopage(num)">{{ num }}</a>
+            </li>
+
+            <li class="page-item" :class="endPage >= lastPage ? 'disabled' : ''">
+              <a class="page-link" @click="gopage(endPage + 1)">Next</a>
+            </li>
+          </ul>
+        </nav>
+
       </card>
 
       <!--프로젝트 상세보기 모달[s]-->
@@ -238,6 +255,12 @@ import { dateTermCalc } from '../../assets/js/project'
 
 //---------------데이터-------------- 
 
+//검색조건
+const searchCondition = ref('');
+const searchKeyword = ref('');
+const startPage = ref('');
+const endPage = ref('');
+
 onBeforeMount(() => {
   projectGetList();
 });
@@ -292,9 +315,12 @@ const btnProjectRemove = (code) => {
 const projectList = ref([]);
 const projectCount = ref(0);
 const projectGetList = async () => { //프로젝트 전체조회
-  try {
-    const result = await axios.get('/api/project/list');
 
+  const params = new URLSearchParams({ searchKeyword: searchKeyword.value }).toString();
+
+  try {
+    const result = await axios.get(`/api/project/list?${params}`);
+console.log(result);
     projectCount.value = result.data.length;
     projectList.value = result.data.map(item => ({
       ...item,
