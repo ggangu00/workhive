@@ -18,7 +18,6 @@
                   {{ child.menuNm }} 
                </li>
             </ul>
-
          </li>
 </template>
 
