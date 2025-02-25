@@ -85,6 +85,7 @@
               </div>
             </div>
 
+            
             <!-- 댓글 목록 -->
             <div class="mb-3" v-for="(commentItem, index) in comments" :key="index">
               <div class="input-group mb-3" style="background-color: #f8f9fa; padding: 10px; border-radius: 5px;">

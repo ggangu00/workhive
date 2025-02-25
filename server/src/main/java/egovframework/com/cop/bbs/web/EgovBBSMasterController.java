@@ -447,7 +447,7 @@ public class EgovBBSMasterController {
      * @throws Exception
      */
     //@RequestMapping("/cop/bbs/updateBBSMaster.do")
-    @PostMapping("/boardUpdate")
+    @PostMapping("/boardModify")
     public String updateBBSMaster(@ModelAttribute("searchVO") BoardMasterVO boardMasterVO, @ModelAttribute("boardMaster") BoardMaster boardMaster,
 	    BindingResult bindingResult, ModelMap model) throws Exception {
 

@@ -138,7 +138,7 @@
     });
   
     try {
-      const result = await axios.post('/api/board/boardUpdate', addData);
+      const result = await axios.post('/api/board/boardModify', addData);
       responseMessage.value = result.data.message || "게시판이 성공적으로 등록되었습니다!";
       isSuccess.value = true;
   
