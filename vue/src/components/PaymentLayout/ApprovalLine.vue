@@ -83,9 +83,9 @@
             <div class="approval-box">
               <div v-for="(approver, index) in reversedApprovers" :key="index" class="approval-item">
                 <select v-model="approver.status" class="form-select form-select-sm">
-                  <option value="결정">결정</option>
-                  <option value="결재">결재</option>
-                  <option value="기안">기안</option>
+                  <option value = "결정" name="K04">결정</option>
+                  <option value = "결재" name="K02">결재</option>
+                  <option value = "기안" name="K01">기안</option>
                 </select>
                 [{{ approver.dept }}] {{ approver.name }} {{ approver.title }}
                 <button @click="removeApproval(index)" class="btn btn-sm btn-danger">삭제</button>
@@ -194,7 +194,8 @@ import axios from 'axios';
               name: empName,
               dept: emp.deptNm,  // 부서명도 같이 저장
               title: empTitle,
-              status: "수신"
+              status: "수신",
+
             });
           }
         });
@@ -215,7 +216,8 @@ import axios from 'axios';
             name: emp.mberNm || emp.name,  
             dept: emp.deptNm || emp.dept, 
             title: emp.respCd, 
-            status: '결재'});
+            status: '결재',
+          mberId: emp.mberId});
         }
       });
     };
@@ -261,9 +263,10 @@ import axios from 'axios';
 
     //로그인정보(임시)
     const login = ref({
-      name: "홍길동", 
+      name: "신강현", 
       dept: "총무팀",
       title: "대리",
+      mberId: "admin3"
     });
     //  모달이 열릴 때 Toast UI Grid를 다시 초기화
     const onModalOpen = () => {
@@ -284,7 +287,8 @@ import axios from 'axios';
         name: login.value.name,
         dept: login.value.dept,
         title: login.value.title,
-        status: "기안"
+        status: "기안",
+        mberId: login.value.mberId
       });
   }
     };

@@ -71,7 +71,7 @@
         return;
       }
         const response = await axios.put(`/api/document/retrieve/${docCd.value}`, {});
-        if (response.status === 200) {
+        if (response.status == 200) {
           alert("회수 성공");
         } else {
           alert("회수 실패");
