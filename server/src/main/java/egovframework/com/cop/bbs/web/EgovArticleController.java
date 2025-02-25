@@ -333,7 +333,8 @@ public class EgovArticleController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/cop/bbs/insertArticle.do")
+    //@RequestMapping("/cop/bbs/insertArticle.do")
+    @PostMapping("/bulletinAdd")
       public String insertArticle(final MultipartHttpServletRequest multiRequest, @ModelAttribute("searchVO") BoardVO boardVO,
 	    @ModelAttribute("bdMstr") BoardMaster bdMstr, @ModelAttribute("board") BoardVO board, BindingResult bindingResult, 
 	    ModelMap model) throws Exception {
