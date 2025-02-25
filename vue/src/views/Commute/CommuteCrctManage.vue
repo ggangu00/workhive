@@ -5,7 +5,7 @@
       <!-- 페이지 헤더 -->
       <div class="card">
         <div class="card-body">
-          <h4 class="card-title float-left mt-1">출퇴근 정정 요청 관리</h4>
+          <h4 class="card-title float-left">출퇴근 정정 요청 관리</h4>
         </div>
       </div>
   
@@ -182,21 +182,6 @@ const btnCrctCancle = () => { // 뒤로가기
 
 
 <style scoped>
-.header > hr {
-  height: 2px;
-  background-color: black;
-  border: none;
-}
-.vc-card hr {
-  border: 1px dashed gray;
-  margin: 3px 0;
-}
-.vc-header {
-  font-weight: bolder;
-  font-size: 18px;
-  margin-bottom: 15px;
-}
-
 th {
   background-color: #d2d6da !important;
   color: black !important;

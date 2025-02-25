@@ -5,16 +5,11 @@
       <!-- 페이지 헤더 -->
       <div class="card">
         <div class="card-body">
-          <div class="row">
-            <div class="col">
-              <h4 class="card-title float-left mt-1">출퇴근 정정 요청 결재</h4>
-            </div>
-            <div class="col-auto d-flex align-items-center">
-              <button class="btn btn-primary btn-header" value="D02" @click="btnCrctSign">승인</button>
-              <button class="btn btn-warning btn-header" value="D03" @click="btnCrctSign">보완</button>
-              <button class="btn btn-danger btn-header" value="D04" @click="btnCrctSign">반려</button>
-            </div>
-          </div>
+          <h4 class="card-title float-left">출퇴근 정정 요청 결재</h4>
+          
+          <button class="btn btn-primary btn-sm btn-fill float-right" value="D02" @click="btnCrctSign">승인</button>
+          <button class="btn btn-warning btn-sm btn-fill float-right" value="D03" @click="btnCrctSign">보완</button>
+          <button class="btn btn-danger btn-sm btn-fill float-right" value="D04" @click="btnCrctSign">반려</button>
         </div>
       </div>
 
@@ -22,7 +17,16 @@
       <div class="card">
         <div class="card-body">
 
-          <div class="row">
+          <!-- 조회 조건 -->
+          <div class="row search align-items-center justify-content-end">
+            <div class="col-auto">
+              <input type="date" id="startDate" class="input-custom" v-model="crctSrchData.startDate">
+              <a class="align-middle"> ~ </a>
+              <input type="date" id="endDate" class="input-custom" v-model="crctSrchData.endDate">
+            </div>
+          </div>
+
+          <div class="row mt-3">
             <div class="col">
               <!-- grid -->
               <div id="crctGrid"></div>
@@ -37,14 +41,8 @@
       <!-- 페이지 헤더 -->
       <div class="card">
         <div class="card-body">
-          <div class="row">
-            <div class="col">
-              <h4 class="card-title float-left mt-1">출퇴근 정정 요청 결재 내역</h4>
-            </div>
-            <div class="col-auto d-flex align-items-center">
-              <button class="btn btn-secondary btn-header" value="D01" @click="btnCrctSign">결재취소</button>
-            </div>
-          </div>
+          <h4 class="card-title float-left">출퇴근 정정 요청 결재 내역</h4>
+          <button class="btn btn-secondary btn-sm btn-fill float-right" value="D01" @click="btnCrctSign">결재취소</button>
         </div>
       </div>
 
@@ -52,7 +50,16 @@
       <div class="card">
         <div class="card-body">
 
-          <div class="row">
+          <!-- 조회 조건 -->
+          <div class="row search align-items-center justify-content-end">
+            <div class="col-auto">
+              <input type="date" id="startDate" class="input-custom" v-model="signSrchData.startDate">
+              <a class="align-middle"> ~ </a>
+              <input type="date" id="endDate" class="input-custom" v-model="signSrchData.endDate">
+            </div>
+          </div>
+
+          <div class="row mt-3">
             <div class="col">
               <!-- grid -->
               <div id="signGrid"></div>
@@ -90,25 +97,25 @@ let originSignList;
 
 // 그리드 컬럼 데이터
 let crctCol = [
-  { header: '근무일자', name: 'commuteDt'},
-  { header: '출근시간', name: 'preGoTime'},
-  { header: '퇴근시간', name: 'preLeaveTime'},
-  { header: '정정출근시간', name: 'crctGoTime'},
-  { header: '정정퇴근시간', name: 'crctLeaveTime'},
-  { header: '신청일', name: 'createDt'},
-  { header: '신청자', name: 'createId'},
-  { header: '결재상태', name: 'signState'},
+  { header: '근무일자', name: 'commuteDt', align: 'center'},
+  { header: '출근시간', name: 'preGoTime', align: 'center'},
+  { header: '퇴근시간', name: 'preLeaveTime', align: 'center'},
+  { header: '정정출근시간', name: 'crctGoTime', align: 'center'},
+  { header: '정정퇴근시간', name: 'crctLeaveTime', align: 'center'},
+  { header: '신청일', name: 'createDt', align: 'center'},
+  { header: '신청자', name: 'createId', align: 'center'},
+  { header: '결재상태', name: 'signState', align: 'center'},
 ];
 let signCol = [
-  { header: '근무일자', name: 'commuteDt'},
-  { header: '출근시간', name: 'preGoTime'},
-  { header: '퇴근시간', name: 'preLeaveTime'},
-  { header: '정정출근시간', name: 'crctGoTime'},
-  { header: '정정퇴근시간', name: 'crctLeaveTime'},
-  { header: '신청일', name: 'createDt'},
-  { header: '신청자', name: 'createId'},
-  { header: '결재일', name: 'signDt'},
-  { header: '결재상태', name: 'signState'},
+  { header: '근무일자', name: 'commuteDt', align: 'center'},
+  { header: '출근시간', name: 'preGoTime', align: 'center'},
+  { header: '퇴근시간', name: 'preLeaveTime', align: 'center'},
+  { header: '정정출근시간', name: 'crctGoTime', align: 'center'},
+  { header: '정정퇴근시간', name: 'crctLeaveTime', align: 'center'},
+  { header: '신청일', name: 'createDt', align: 'center'},
+  { header: '신청자', name: 'createId', align: 'center'},
+  { header: '결재일', name: 'signDt', align: 'center'},
+  { header: '결재상태', name: 'signState', align: 'center'},
 ];
 
 // 조회 조건
@@ -203,68 +210,6 @@ onBeforeUnmount(() => {
   if (signGridInstance.value) signGridInstance.value.destroy();
 });
 
-// // 결재 버튼
-// const btnCrctSign = async (e) => {
-//   let selectedRows;
-//   let originList;
-
-//   if (e.target.value == "D01") {
-//     selectedRows = signGridInstance.value.getCheckedRows();
-//     originList = originSignList;
-//   } else {
-//     selectedRows = crctGridInstance.value.getCheckedRows();
-//     originList = originCrctList;
-//   }
-
-//   for (const row of selectedRows) {
-//     let originalRow = originList.find(item => item.commuteCd === row.commuteCd);
-//     if (originalRow) {
-//       await signModify(originalRow, e.target.value);
-//     }
-//   }
-
-//   crctGetList();
-//   signGetList();
-// }
-// // 결재 처리 : 출퇴근 정정 수정
-// const signModify = async (row, signState) => {
-//   let signData = new FormData();
-//   signData.append("crctCd", row.crctCd);
-//   signData.append("signState", signState);
-
-//   if(signState == "D01") { // 결재취소(대기상태로 변경) => 결재 이전의 출퇴근 시간을 기반으로 출퇴근 수정, 정정 상태 수정
-//     let cmtData = new FormData();
-//     cmtData.append('commuteCd', row.commuteCd);
-//     cmtData.append('goTime', row.preGoTime);
-//     cmtData.append('leaveTime', row.preLeaveTime);
-
-//     let changeData = await cmtCheck(row.preGoTime, row.preLeaveTime);
-//     cmtData.append('goState', changeData.goState);
-//     cmtData.append('leaveState', changeData.leaveState);
-//     cmtData.append('workTime', changeData.workTime);
-//     cmtData.append('overWorkTime', changeData.overWorkTime);
-
-//     await axios.post('/api/commute/crctSignModify', cmtData); // 기존 출퇴근 시간 및 상태로 출퇴근 정보 되돌리기
-
-//   } else if(signState == "D02") { // 승인 => 현재 출퇴근 시간 정보를 출퇴근 정정에 추가(pre), 정정 시간을 출퇴근에 수정
-//     let cmtData = new FormData();
-//     cmtData.append('commuteCd', row.commuteCd);
-//     cmtData.append('goTime', row.crctGoTime);
-//     cmtData.append('leaveTime', row.crctLeaveTime);
-
-//     let changeData = await cmtCheck(row.crctGoTime, row.crctLeaveTime);
-//     cmtData.append('goState', changeData.goState);
-//     cmtData.append('leaveState', changeData.leaveState);
-//     cmtData.append('workTime', changeData.workTime);
-//     cmtData.append('overWorkTime', changeData.overWorkTime);
-    
-//     await axios.post('/api/commute/crctSignModify', cmtData); // 기존 출퇴근 시간 및 상태로 출퇴근 정보 되돌리기
-//   }
-
-//   await axios.post('/api/commute/signModify', signData); // 출퇴근 정정 결재 상태 변경
-
-// }
-
 const btnCrctSign = async (e) => {
   let selectedRows = e.target.value === 'D01' ? signGridInstance.value.getCheckedRows() : crctGridInstance.value.getCheckedRows();
   let originList = e.target.value === 'D01' ? originSignList : originCrctList;
@@ -286,7 +231,6 @@ const btnCrctSign = async (e) => {
       };
 
       let changeData = await cmtCheck(cmtData.goTime, cmtData.leaveTime);
-    //   Object.assign(cmtData, changeData);
       cmtData.goState = changeData.goState;
       cmtData.leaveState = changeData.leaveState;
       cmtData.workTime = changeData.workTime;
@@ -318,12 +262,6 @@ const btnCrctSign = async (e) => {
 
 
 <style scoped>
-.btn-header {
-  height: 30px;
-  width: 60px;
-  padding: 0;
-  margin: 2px !important;
-}
 </style>
 
 

@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -44,9 +45,43 @@ public class VacationController {
 	}
 	
 	// 휴가 단건 조회
+	@GetMapping("/vcInfo")
+	public VacationDTO vcInfo(@RequestParam(name="vcCd") String vcCd) {
+		return service.vcSelect(vcCd);
+	}
 	
-	// 휴가 목록 조회
+	// 휴가 전제 조회
+	@GetMapping("/vcList")
+	public List<VacationDTO> vcList(@ModelAttribute VacationDTO searchDTO) {
+		
+		List<VacationDTO> result = service.vcSelectAll(searchDTO);
+		
+		return result;
+	}
 	
+	// 사용 예정량 조회
+	@GetMapping("/expectInfo")
+	public VacationDTO expectInfo(@RequestParam(name="createId") String createId) {
+		return service.expectSelect(createId);
+	}
+	
+	// 휴가 신청 결재 요청 조회
+	@GetMapping("/signerList")
+	public List<VacationDTO> vcSignerList(@ModelAttribute VacationDTO searchDTO) {
+		
+		List<VacationDTO> result = service.vcSelectSigner(searchDTO);
+		
+		return result;
+	}
+	
+	// 휴가 신청 결재 내역 조회
+	@GetMapping("/signedList")
+	public List<VacationDTO> vcSignedList(@ModelAttribute VacationDTO searchDTO) {
+		
+		List<VacationDTO> result = service.vcSelectSigned(searchDTO);
+		
+		return result;
+	}
 	
 	
 	

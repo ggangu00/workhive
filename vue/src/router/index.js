@@ -283,7 +283,7 @@ const routes = [
             component: VcList,
          },
          {
-            path: 'vcManage/:isUpdate?', // 휴가 관리 페이지
+            path: 'vcManage', // 휴가 관리 페이지
             name: 'VcManage',
             component: VcManage,
          },

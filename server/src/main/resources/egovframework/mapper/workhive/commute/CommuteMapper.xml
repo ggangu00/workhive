@@ -78,12 +78,12 @@
 		where mber_id = #{mberId}
 		<if test='!startDate.isEmpty()'>
 			<![CDATA[
-			and to_char(commute_dt, 'yyyy-mm-dd') >= #{startDate}
+			and commute_dt >= to_date(#{startDate}, 'yyyy-mm-dd')
 			]]>
 		</if>
 		<if test='!endDate.isEmpty()'>
 			<![CDATA[
-			and to_char(commute_dt, 'yyyy-mm-dd') <= #{endDate}
+			and commute_dt < to_date(#{endDate}, 'yyyy-mm-dd') + 1
 			]]>
 		</if>
 		order by go_time desc

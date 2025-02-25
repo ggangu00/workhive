@@ -5,7 +5,7 @@
       <!-- 페이지 헤더 -->
       <div class="card">
         <div class="card-body">
-          <h4 class="card-title float-left mt-1">출퇴근 기록 조회</h4>
+          <h4 class="card-title float-left">출퇴근 기록 조회</h4>
         </div>
       </div>
   
@@ -179,29 +179,6 @@ const btnCrctAdd = (rowKey) => {
 
 
 <style scoped>
-.header > hr {
-  height: 2px;
-  background-color: black;
-  border: none;
-}
-.vc-card hr {
-  border: 1px dashed gray;
-  margin: 3px 0;
-}
-.vc-header {
-  font-weight: bolder;
-  font-size: 18px;
-  margin-bottom: 15px;
-}
-
-.search > * > input, select {
-  border: 1px solid #d2d6da;
-  border-radius: 5px;
-  font-size: 13px;
-  line-height: 30px;
-  height: 30px;
-  width: 100px;
-}
 
 </style>
 
