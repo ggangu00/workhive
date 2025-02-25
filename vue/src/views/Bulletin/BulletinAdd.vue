@@ -43,24 +43,35 @@
             <div class="mb-3">
               <label>비밀여부</label>
               <div class="form-check form-check-inline" style="margin-left: 10px;">
-                <input class="form-check-input" type="checkbox" v-model="secretAt" @click="togglePasswordField" />
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  v-model="secretAt"
+                  @click="togglePasswordField"
+                />
               </div>
             </div>
 
             <div class="mb-3" v-show="showPasswordField">
               <label>비밀번호 4자리를 입력해주세요</label>
-              <input type="password" class="form-control w30" placeholder="비밀번호 입력" maxlength="4" v-model="password" />
+              <input
+                type="password"
+                class="form-control w30"
+                placeholder="비밀번호 입력"
+                maxlength="4"
+                v-model="password"
+              />
             </div>
 
             <div class="mb-3">
               <label class="form-label">게시기간 <em class="point-red">*</em></label>
               <div class="row">
                 <div class="col-auto">
-                  <input type="date" v-model="frstRegistPnttm" class="form-control" required />
+                  <input type="date" v-model="ntceBgnde" class="form-control" required />
                 </div>
                 <div class="col-auto">~</div>
                 <div class="col-auto">
-                  <input type="date" v-model="lastUpdttPnttm" class="form-control" required />
+                  <input type="date" v-model="ntceEndde" class="form-control" required />
                 </div>
               </div>
             </div>
@@ -77,7 +88,12 @@
       </div>
 
       <!-- 응답 메시지 -->
-      <div v-if="responseMessage" class="alert" :class="isSuccess ? 'alert-success' : 'alert-danger'" style="margin-top: 15px;">
+      <div
+        v-if="responseMessage"
+        class="alert"
+        :class="isSuccess ? 'alert-success' : 'alert-danger'"
+        style="margin-top: 15px;"
+      >
         {{ responseMessage }}
       </div>
     </div>
@@ -91,17 +107,19 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 
+
 const router = useRouter();
 
 // 필드 데이터
+const bbsId = ref('');              //게시판id
 const nttSj = ref('');             // 제목
 const nttCn = ref('');             // 에디터의 HTML 내용 (게시글 내용)
 const noticeAt = ref(false);       // 공지여부
 const secretAt = ref(false);       // 비밀여부
 const anoAt = ref(false);          // 익명여부
 const password = ref('');          // 비밀번호 (비밀글일 경우)
-const frstRegistPnttm = ref('');   // 게시 시작일
-const lastUpdttPnttm = ref('');    // 게시 종료일
+const ntceBgnde = ref('');   // 게시 시작일
+const ntceEndde = ref('');    // 게시 종료일
 const showPasswordField = ref(false); // 비밀번호 입력 필드 노출 여부
 
 // TOAST UI Editor 인스턴스
@@ -144,17 +162,14 @@ const validateForm = () => {
     isSuccess.value = false;
     return false;
   }
+  // 에디터의 HTML 내용을 가져와 nttCn에 저장
   nttCn.value = editor.value.getHTML().trim();
   if (!nttCn.value) {
     responseMessage.value = "게시글 내용을 입력해주세요.";
     isSuccess.value = false;
     return false;
   }
-  if (!frstRegistPnttm.value || !lastUpdttPnttm.value) {
-    responseMessage.value = "게시기간을 선택해주세요.";
-    isSuccess.value = false;
-    return false;
-  }
+
   if (secretAt.value && password.value.trim().length !== 4) {
     responseMessage.value = "비밀글인 경우 4자리 비밀번호를 입력해주세요.";
     isSuccess.value = false;
@@ -162,49 +177,62 @@ const validateForm = () => {
   }
   return true;
 };
-
-// 게시글 등록 (폼 제출)
 const submitForm = async () => {
   if (!validateForm()) return;
-
-  const formattedFrstRegistPnttm = formatDate(frstRegistPnttm.value);
-  const formattedLastUpdttPnttm = formatDate(lastUpdttPnttm.value);
-
+  
   const formData = new FormData();
+
   formData.append('nttSj', nttSj.value);
   formData.append('nttCn', nttCn.value);
-  formData.append('noticeAt', noticeAt.value);
-  formData.append('secretAt', secretAt.value);
-  formData.append('anoAt', anoAt.value);
+  formData.append('noticeAt', noticeAt.value ? 'Y' : 'N');
+  formData.append('secretAt', secretAt.value ? 'Y' : 'N');
+  formData.append('anoAt', anoAt.value ? 'Y' : 'N');
   formData.append('password', password.value);
-  formData.append('frstRegistPnttm', formattedFrstRegistPnttm);
-  formData.append('lastUpdttPnttm', formattedLastUpdttPnttm);
+  formData.append('ntceBgnde', formatDate(ntceBgnde.value));
+  formData.append('ntceEndde', formatDate(ntceEndde.value));
+  formData.append('bbsId', bbsId.value);
 
   if (fileInput.value.files.length > 0) {
-    formData.append('file', fileInput.value.files[0]);
+    console.log("첨부 파일:", fileInput.value.files[0]);
+    formData.append('file_1', fileInput.value.files[0]);
   }
 
   try {
+    console.log("전송 데이터:", [...formData.entries()]);
+
     const response = await axios.post("/api/bulletin/bulletinAdd", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
-    responseMessage.value = response.data.message || "게시글이 성공적으로 등록되었습니다!";
+
+    console.log("서버 응답:", response.data);
+
+    responseMessage.value = response.data?.message ?? "게시글이 성공적으로 등록되었습니다!";
     isSuccess.value = true;
+
+    setTimeout(() => {
+      router.push({ path: '/bulletin/bulletinList', query: { bbsId: bbsId.value } });
+    }, 1000); // 등록 성공 후 1초 후 목록 페이지 이동
+
   } catch (error) {
     console.error("게시글 등록 실패", error);
+    if (error.response) {
+      console.error("서버 오류 응답:", error.response.data);
+      console.error("응답 상태 코드:", error.response.status);
+    }
     responseMessage.value = "게시글 등록에 실패했습니다. 다시 시도해주세요.";
     isSuccess.value = false;
   }
 };
 
-// 목록 버튼 클릭 시 bulletinList 페이지로 이동
-const goToBulletinList = () => {
-  router.push('/bulletin/bulletinList');
-};
+
+
+
+
 
 // 컴포넌트 마운트 시 에디터 초기화
 onMounted(() => {
   initEditor();
+
 });
 </script>
 

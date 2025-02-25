@@ -53,9 +53,15 @@
 
 
 
-   <!--게시판 목록 작업하는 곳[S]-->
+   <!--게시글 목록 작업하는 곳[S]-->
    <li class="nav-item">
-      <sidenav-collapse :aria-controls="''" collapse="false" navText="게시글 관리">
+      <sidenav-collapse
+      url="#"
+      :aria-controls="''"
+       v-bind:collapse="false"
+       collapseRef="/bulletin/bulletinList"
+       navText="게시글 관리"
+       >
          <template v-slot:icon>
             <i class="fa-solid fa-pen-to-square"></i>
          </template>
@@ -63,8 +69,8 @@
          <!-- 서브 메뉴 (Depth 2) -->
          <template v-slot:list>
             <div class="sub-item">
-                  <li class="sub-li">게시판 이름
-               </li>
+               <li class="sub-item" @click="movePage('bulletinList')">공지사항</li>
+               <li class="sub-item" @click="movePage('bulletinList')">사내게시판</li>                        
             </div>
          </template>
       </sidenav-collapse>
