@@ -59,7 +59,6 @@ export default {
 
 <style scoped>
    .collapse {
-      
       background-color: #454545;
    }
 </style>

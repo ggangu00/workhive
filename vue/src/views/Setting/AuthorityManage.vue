@@ -7,7 +7,7 @@
             </div>
          </div>
 
-         <div class="card">
+         <div class="card" @keydown.esc="modalClose">
             <div class="card-body">
                <div class="row m-0">
 
@@ -19,16 +19,16 @@
                         <div v-for="(role, idx) in roles" :key="idx">
                            <div class="d-flex justify-content-between align-items-center">
                               <span class="role-item">{{ role.authorityNm }}</span>
-                              <div class="options pe-2" @click.stop="optionsToggle(idx, role.authorityCd)">
+                              <div class="options pe-2" @click.stop="optionsToggle(idx)">
                                  <i class="fa-solid fa-ellipsis-vertical font-13"></i>
                               </div>
                            </div>
 
                            <!-- 드롭다운 메뉴 -->
-                           <div v-show="selectedRole === idx" class="editing-dropdown-menu">
+                           <di v-show="selectedRole == idx && isEditMenu == true" class="editing-dropdown-menu">
                               <div class="font-14 p-2" @click="btnAuthorityModify(role.authorityCd)">권한 수정</div>
                               <div class="font-14 p-2" @click="btnAuthorityRemove(role.authorityNm, role.authorityCd)">권한 삭제</div>
-                           </div>
+                           </di>
                         </div>
                      </div>
                   </div>
@@ -43,25 +43,25 @@
                         </div>
                      </div>
 
-                     <div v-for="(menu, index) in menus" :key="index" class="bottom-line">
+                     <div v-for="(menu, idx) in menus" :key="idx" class="bottom-line">
                         <div class="menu-title">
                            <div class="">
                               <div class="form-check form-check-inline">
-                                 <input class="form-check-input" type="checkbox" v-model="menu.selected" />
+                                 <input class="form-check-input" type="checkbox" v-model="menu.selected" @change="checkBoxSelectAll(menu)" />
+                                 <span class="ms-2 font-15">{{ menu.menuNm }}</span>
+                                 <span class="ms-2 font-14">({{ submenusSelected(menu) }}/{{ menu.submenus.length }})</span>
                               </div>
-                              <span class="me-2 font-15">{{ menu.title }}</span>
-                              <span class="font-14">({{ submenusSelected(menu) }}/{{ menu.submenus.length }})</span>
                            </div>
-                           <di @click="toggleMenu(index)">
+                           <div @click="toggleMenu(idx)">
                               <i class="fa-solid fa-angle-down" :class="{ 'rotated': menu.open }"></i>
-                           </di>
+                           </div>
                         </div>
                         <div v-if="menu.open" class="submenu px-4 py-2">
                            <div v-for="(sub, i) in menu.submenus" :key="i" class="px-4 py-2">
                               <div class="form-check form-check-inline">
-                                 <input class="form-check-input" type="checkbox" v-model="menu.submenus[i].selected" />
+                                 <input class="form-check-input sub-check" type="checkbox" v-model="menu.submenus[i].selected" />
+                                 <span class="ms-2 font-13">{{ sub.menuNm }}</span>
                               </div>
-                              <span class="font-13">{{ sub.title }}</span>
                            </div>
                         </div>
                      </div>
@@ -94,7 +94,7 @@
 
                   <!-- 모달 푸터 -->
                   <template v-slot:footer>
-                     <button type="button" class="btn btn-secondary btn-fill" @click="modalClose">닫기</button>
+                     <button type="button" class="btn btn-secondary btn-fill" @click="btnModalClose">닫기</button>
                      <!-- 등록 모드 -->
                      <button v-if="!isEditMode" type="button" class="btn btn-primary btn-fill" @click="authorityAdd">등록</button>
                      <!-- 수정 모드 -->
@@ -109,7 +109,7 @@
 </template>
 
 <script setup>
-   import { ref, onMounted, onBeforeMount } from 'vue';
+   import { ref, onMounted, onBeforeMount, onBeforeUnmount } from 'vue';
    import axios from "axios";
    import Swal from 'sweetalert2';
    import Card from '../../components/Cards/Card.vue'
@@ -117,13 +117,20 @@
 
    onBeforeMount(() => {
       authorityGetList();  // 권한 목록 조회
+      menuGetList();   // 메뉴 목록 조회
    });
 
    onMounted(() => {
-      document.addEventListener("click", outsideClickHandler);
+      document.addEventListener("click", outsideClickHandler); // 바깥 클릭 시 수정, 삭제 드롭다운 메뉴 꺼짐
+      document.addEventListener('keydown', modalClose);        // esc 클릭 시 모달 꺼짐
+   });
+
+   onBeforeUnmount(() => {
+      document.removeEventListener('keydown', modalClose);
    });
 // ================================================== Modal ==================================================
    const isShowModal = ref(false);
+   const isEditMenu = ref(false);
    let modalTitle = ref("");
    let isEditMode = ref(false);
 
@@ -141,9 +148,14 @@
          if(isShowModal.value) {
             isShowModal.value = !isShowModal.value
          }
-      } else {
-         modalReset();
-         isShowModal.value = false;
+         if(isEditMenu.value) {
+            isEditMenu.value = !isEditMenu.value
+         }
+      }
+      if(e === "remove") {
+         if(isShowModal.value) {
+            isShowModal.value = !isShowModal.value
+         }
       }
    };
 
@@ -153,9 +165,6 @@
       authorityNm.value = '';
       description.value = '';
    };
-
-   const roles = ref([]);
-   const selectedRole = ref(null);
 
 // ============================================= 버튼이벤트 =============================================
    // 권한추가 버튼
@@ -194,8 +203,14 @@
       });
    };
 
-// ============================================= Axios 통신 =============================================
+   // 모달 닫기 버튼
+   const btnModalClose = () => {
+      modalClose("remove")
+   }
+
+// ======================================== 권한 관리 Axios 통신 ========================================
    // 권한 전체 조회
+   const roles = ref([]);  // 권한 목록 배열
    const authorityGetList = async () => {
       try {
          const result = await axios.get('/api/authority');
@@ -309,53 +324,79 @@
          });
       }
    };
-
+// ======================================== 메뉴 Axios 통신 ========================================
+   // 메뉴 전체 조회
+   const menuGetList = async () => {
+      try {
+         const response = await axios.get('/api/menu');
+         console.log("response.data => ", response.data)
+      } catch (err) {
+         Swal.fire({
+            icon: "error",
+            title: "API 조회 오류",
+            text: "Error : " + err.response.data.error
+         });
+      }
+   }
 
 // ======================================== Menu ========================================
    const menus = ref([
       {
-         title: '대메뉴 1',
+         menuNm: '대메뉴 1',
          open: false,
          selected: false,
          submenus: [
-            { title: '소메뉴 1', selected: false },
-            { title: '소메뉴 2', selected: false },
-            { title: '소메뉴 3', selected: false },
-            { title: '소메뉴 4', selected: false }
+            { menuNm: '소메뉴 1', selected: false },
+            { menuNm: '소메뉴 2', selected: false },
+            { menuNm: '소메뉴 3', selected: false },
+            { menuNm: '소메뉴 4', selected: false }
          ]
       },
       {
-         title: '대메뉴 2',
+         menuNm: '대메뉴 2',
          open: false,
          selected: false,
          submenus: [
-            { title: '소메뉴 1', selected: false },
-            { title: '소메뉴 2', selected: false },
-            { title: '소메뉴 3', selected: false },
-            { title: '소메뉴 4', selected: false }
+            { menuNm: '소메뉴 1', selected: false },
+            { menuNm: '소메뉴 2', selected: false },
+            { menuNm: '소메뉴 3', selected: false },
+            { menuNm: '소메뉴 4', selected: false }
          ]
       },
    ]);
+
+   const checkBoxSelectAll = (menu) => {
+      menu.submenus.forEach(sub => {
+         sub.selected = menu.selected;
+      });
+   }
 
    const submenusSelected = (menu) => {
       return menu.submenus.filter(sub => sub.selected).length;
    };
 
 // ======================================== editing, delete Toggle Dropdown Menu ========================================
-   const toggleMenu = (index) => {
-      menus.value[index].open = !menus.value[index].open;
+   const toggleMenu = (idx) => {
+      menus.value[idx].open = !menus.value[idx].open;
    };
 
-
+   const selectedRole = ref(null); // 선택한 권한코드
+   /**
+    * @description 선택한 권한에 대한 수정 삭제 메뉴 토글
+    * @param role 토글할 권한명 index
+    */
    const optionsToggle = (role) => {
+      if(isEditMenu.value == false) {
+         isEditMenu.value = true;
+      }
       selectedRole.value = selectedRole.value === role ? null : role;
    };
 
-   // 바깥 클릭 시 dropdown 닫기
-   const outsideClickHandler = (event) => {
-      if (!event.target.closest(".editing-dropdown-menu") && !event.target.closest(".options")) {
-         selectedRole.value = null;
-      }
+   /**
+    * @description 드롭다운 메뉴가 나타났을 때 외부 클릭 시 드롭다운 메뉴 닫힘
+    */
+   const outsideClickHandler = () => {
+      selectedRole.value = null;
    };
 
 </script>

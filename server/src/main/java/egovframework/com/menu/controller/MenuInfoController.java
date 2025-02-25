@@ -27,4 +27,6 @@ public class MenuInfoController {
 		return menuService.menuSelectAll();
 	}
 	
+	
+	
 }	

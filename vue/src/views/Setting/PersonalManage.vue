@@ -2,76 +2,76 @@
    <div class="content">
       <div class="container-fluid">
          <div class="card">
-         <div class="card-header d-flex justify-content-between align-items-center">
-            <h4 class="card-title">개인정보 설정</h4>
-            <div class="button-group">
-               <button class="btn btn-secondary btn-fill mr-1">초기화</button>
-               <button class="btn btn-primary btn-fill mr-1">저장</button>
+            <div class="card-header d-flex justify-content-between align-items-center">
+               <h4 class="card-title">개인정보 설정</h4>
+               <div class="button-group">
+                  <button class="btn btn-secondary btn-fill mr-1">초기화</button>
+                  <button class="btn btn-primary btn-fill mr-1">저장</button>
+               </div>
             </div>
-         </div>
          </div>
 
          <div class="row">
-         <div class="col-12">
-            <div class="card">
-               <div class="card-body">
-               <div class="section">
-                  <div class="section-header">[ 소속정보 ]</div>
-                  <div class="row p-1">
-                     <div class="col-md-3">
-                     <label>소속부서 <i class="fa-solid fa-asterisk"></i></label>
-                     <input type="text" v-model="department" class="form-control readonly" />
+            <div class="col-12">
+               <div class="card">
+                  <div class="card-body">
+                     <div class="section">
+                        <div class="section-header">[ 소속정보 ]</div>
+                        <div class="row p-1">
+                           <div class="col-md-3">
+                              <label>소속부서 <i class="fa-solid fa-asterisk"></i></label>
+                              <input type="text" v-model="department" class="form-control readonly" />
+                           </div>
+                           <div class="col-md-3">
+                              <label>직급 <i class="fa-solid fa-asterisk"></i></label>
+                              <input type="text" v-model="position" class="form-control readonly" />
+                           </div>
+                           <div class="col-md-3">
+                              <label>직책</label>
+                              <input type="text" v-model="role" class="form-control readonly" />
+                           </div>
+                        </div>
                      </div>
-                     <div class="col-md-3">
-                     <label>직급 <i class="fa-solid fa-asterisk"></i></label>
-                     <input type="text" v-model="position" class="form-control readonly" />
-                     </div>
-                     <div class="col-md-3">
-                     <label>직책</label>
-                     <input type="text" v-model="role" class="form-control readonly" />
-                     </div>
-                  </div>
-               </div>
 
-               <div class="section">
-                  <div class="section-header">[ 기본정보 ]</div>
-                  <div class="row p-1">
-                     <div class="col-md-3">
-                     <label>아이디 <i class="fa-solid fa-asterisk"></i></label>
-                     <input type="text" v-model="userId" class="form-control readonly" />
+                     <div class="section">
+                        <div class="section-header">[ 기본정보 ]</div>
+                        <div class="row p-1">
+                           <div class="col-md-3">
+                              <label>아이디 <i class="fa-solid fa-asterisk"></i></label>
+                              <input type="text" v-model="userId" class="form-control readonly" />
+                           </div>
+                           <div class="col-md-3">
+                              <label>사번 <i class="fa-solid fa-asterisk"></i></label>
+                              <input type="text" v-model="employeeId" class="form-control readonly" />
+                           </div>
+                           <div class="col-md-3">
+                              <label>성명 <i class="fa-solid fa-asterisk"></i></label>
+                              <input type="text" v-model="name" class="editable" />
+                           </div>
+                        </div>
                      </div>
-                     <div class="col-md-3">
-                     <label>사번 <i class="fa-solid fa-asterisk"></i></label>
-                     <input type="text" v-model="employeeId" class="form-control readonly" />
-                     </div>
-                     <div class="col-md-3">
-                     <label>성명 <i class="fa-solid fa-asterisk"></i></label>
-                     <input type="text" v-model="name" class="editable" />
-                     </div>
-                  </div>
-               </div>
 
-               <div class="section">
-                  <div class="section-header">[ 연락처 ]</div>
-                  <div class="row p-1">
-                     <div class="col-md-3">
-                     <label class="align-items-center">이메일 <i class="fa-solid fa-asterisk"></i></label>
-                     <input type="text" v-model="email" class="editable" />
+                     <div class="section">
+                        <div class="section-header">[ 연락처 ]</div>
+                        <div class="row p-1">
+                           <div class="col-md-3">
+                              <label class="align-items-center">이메일 <i class="fa-solid fa-asterisk"></i></label>
+                              <input type="text" v-model="email" class="editable" />
+                           </div>
+                           <div class="col-md-3">
+                              <label>전화</label>
+                              <input type="text" v-model="phone" class="editable" />
+                           </div>
+                           <div class="col-md-3">
+                              <label>휴대폰</label>
+                              <input type="text" v-model="mobile" class="editable" />
+                           </div>
+                        </div>
                      </div>
-                     <div class="col-md-3">
-                     <label>전화</label>
-                     <input type="text" v-model="phone" class="editable" />
-                     </div>
-                     <div class="col-md-3">
-                     <label>휴대폰</label>
-                     <input type="text" v-model="mobile" class="editable" />
-                     </div>
-                  </div>
-               </div>
 
+                  </div>
                </div>
             </div>
-         </div>
          </div>
       </div>
    </div>
