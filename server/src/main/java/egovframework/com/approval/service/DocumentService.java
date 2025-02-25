@@ -24,5 +24,6 @@ public interface DocumentService {
 	//부서로 사원조회
 	public List<MemberDTO> memberSelectAll(SearchDTO searchDTO);
 	
-	
+	//결재선조회(문서번호로)
+	public List<ApprovalLine> approvalSelectAll(String docCd);
 }
