@@ -45,7 +45,7 @@
               <th>사용 일수</th>
               <td><input type="text" class="form-control" v-model="vcData.useDays"></td>
               <th>예상 잔여 일수</th>
-              <td><input type="text" class="form-control" v-model="vcData.remainDays"></td>
+              <td><input type="text" class="form-control" v-model="vcData.remainDays" readonly></td>
             </tr>
             <tr>
               <th>휴가 사유</th>
@@ -74,20 +74,52 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
+import { dateTimeFormat } from '../../assets/js/common';
 
-// params에서 isUpdate 받아오기
+// query에서 isUpdate 받아오기
 const route = useRoute();
 const router = useRouter();
-const isUpdate = ref(route.params.isUpdate === 'true');
+const isUpdate = ref(route.query.isUpdate === 'true');
+const vcCd = ref(route.query.vcCd);
 
 // 라우터 파라미터가 변경 감지
-watch(() => route.params.isUpdate, (newVal) => {
+watch(() => route.query.isUpdate, (newVal) => {
   isUpdate.value = newVal === 'true';
 });
 
+const props = defineProps({
+  vcInfo: Object,
+});
+
+// 받아온 vcCd가 있는 경우 단건조회
+onMounted(() => {
+  console.log("before : ", vcData.value);
+  if(vcCd.value != undefined) {
+    vcGetInfo();
+  }
+});
+
+const vcGetInfo = async () => {
+  let result = await axios.get(`/api/vacation/vcInfo?vcCd=${vcCd.value}`);
+  vcData.value = result.data;
+
+
+  vcData.value.vcStartDt = dateTimeFormat(vcData.value.vcStartDt, 'yyyy-MM-dd');
+  vcData.value.vcEndDt = dateTimeFormat(vcData.value.vcEndDt, 'yyyy-MM-dd');
+  vcData.value.vcType = result.data.vcType;
+  vcData.value.useDays = result.data.useDays;
+  vcData.value.vcReason = result.data.vcReason;
+  vcData.value.atchFileId = result.data.atchFileId;
+  vcData.value.signId = result.data.signId;
+  vcData.value.createId = result.data.createId;
+  
+  vcData.value.remainDays = '';
+
+  console.log("after : ", vcData.value);
+}
 
 // 입력 데이터
 let vcData = ref({
@@ -116,6 +148,10 @@ watch(() => [vcData.value.vcStartDt, vcData.value.vcEndDt, vcData.value.vcType],
       vcData.value.vcEndDt = vcData.value.vcStartDt;
   }
 })
+// 사용일수 감지 - 예상 잔여 일수 입력
+watch(() => vcData.value.useDays, (newVal) => {
+  vcData.value.remainDays = props.vcInfo.requestDays - newVal;
+})
 
 // 휴가 일수 계산
 const vcDateCalc = (startDt, endDt) => {
@@ -140,6 +176,7 @@ const vcDateCalc = (startDt, endDt) => {
 }
 
 // 등록 / 수정
+const emit = defineEmits(['manageClick']);
 const btnVcManage = async () => {
   let formData = new FormData();
   formData.append("vcStartDt", vcData.value.vcStartDt);
@@ -148,20 +185,27 @@ const btnVcManage = async () => {
   formData.append("useDays", vcData.value.useDays);
   formData.append("vcReason", vcData.value.vcReason);
   // formData.append("atchFileId", vcData.value.atchFileId);
-  formData.append("createId", 'user01');
   formData.append("signId", 'admin');
+  
+  if(!isUpdate.value) {
+    formData.append("createId", 'user01');
+    await axios.post('/api/vacation/vcAdd', formData);
 
-  let result = axios.post('/api/vacation/vcAdd', formData);
+  } else {
+    formData.append("vcCd", vcCd.value);
+    formData.append("updateId", "user01");
+    await axios.post('/api/vacation/vcModify', formData);
 
-  console.log(result.data);
+  }
 
+  emit('manageClick'); // 저장 동작 확인
+  router.push({name:"VcList"});
 }
 // 취소
 const btnVcManageCancle = () => {
   router.push({name:"VcList"});
 
 }
-
 
 </script>
 

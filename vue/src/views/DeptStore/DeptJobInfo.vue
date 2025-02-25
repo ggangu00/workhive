@@ -5,7 +5,7 @@
     <!-- 페이지 헤더 -->
     <div class="card">
       <div class="card-body">
-        <h4 class="card-title float-left mt-1">부서 업무 관리</h4>
+        <h4 class="card-title float-left">부서 업무 관리</h4>
       </div>
     </div>
 
@@ -118,7 +118,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue';
 import axios from 'axios';
 import Grid from 'tui-grid';
 import Swal from 'sweetalert2';
@@ -367,6 +367,13 @@ const modalCloseFunc = (e) => {
   }
 }
 
+// esc 키 포커스
+onMounted(() => {
+  document.addEventListener("keydown", modalCloseFunc);
+});
+onBeforeUnmount(() => {
+  document.removeEventListener("keydown", modalCloseFunc);
+})
 </script>
 
 

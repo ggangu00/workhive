@@ -18,6 +18,8 @@ public class CommuteCrctDTO {
 	private String atchFileId;
 	private String createId;
 	private String createDt;
+	private String updateId;
+	private String updateDt;
 	private String signId;
 	private String signDt;
 	private String signState;

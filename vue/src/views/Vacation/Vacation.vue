@@ -5,8 +5,8 @@
       <!-- 페이지 헤더 -->
       <div class="card">
         <div class="card-body">
-          <h4 v-if="route.name === 'VcList'" class="card-title float-left mt-1">휴가 조회</h4>
-          <h4 v-if="route.name === 'VcManage'" class="card-title float-left mt-1">휴가 신청 관리</h4>
+          <h4 v-if="route.name === 'VcList'" class="card-title float-left">휴가 조회</h4>
+          <h4 v-if="route.name === 'VcManage'" class="card-title float-left">휴가 신청 관리</h4>
         </div>
       </div>
   
@@ -66,28 +66,73 @@
           </div>
 
           <!-- 휴가 신청 리스트 / 휴가 신청 관리 -->
-          <router-view />
+          <router-view :vcInfo="vcInfo" @manageClick="yearVcGetInfo"/>
 
         </div>
       </div>
 
-      <!-- 임시 테스트 버튼 -->
-      <button @click="btnAddTest">등록</button>
-      <button @click="btnUpdateTest">수정</button>
     </div>
   </div>
 
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import { dateTimeFormat } from '../../assets/js/common';
+import axios from 'axios';
+
 
 const route = useRoute();
-const router = useRouter();
+
+// 사용자 연차 정보 조회(있으면 사용, 없으면 생성) => 로그인 완성되면 로그인 이후 동작하게 변경
+let searchData = {
+  mberId: 'user01',
+  targetYear: dateTimeFormat(new Date(), 'yyyy'),
+}
+onMounted(async () => {
+  yearVcGetInfo();
+});
+
+const yearVcGetInfo = async () => {
+  // 연차 정보 조회
+  let yearVcData = await axios.get('/api/yearVc/yearVcInfo', { params : searchData });
+  console.log("연차 조회 결과 : ", yearVcData.data);
+
+  // 연차 정보 없는 경우 - 연차 생성
+  if(yearVcData.data == '') {
+    let formData = new FormData();
+    formData.append("mberId", 'user01');
+    formData.append("targetYear", searchData.targetYear);
+    formData.append("giveDays", 15);
+    formData.append("useDays", 0);
+    
+    await axios.post('/api/yearVc/yearVcAdd', formData);
+
+    // 생성 후 재호출
+    yearVcData = await axios.get('/api/yearVc/yearVcInfo', { params : searchData });
+  }
+
+  // 사용 예정일 조회
+  let requestData = await axios.get(`/api/vacation/expectInfo?createId=${searchData.mberId}`);
+
+  // 휴가 정보 입력
+  vcInfo.value.yearVcCd = yearVcData.data.yearVcCd;
+  vcInfo.value.targetYear = yearVcData.data.targetYear;
+  vcInfo.value.giveDays = yearVcData.data.giveDays;
+  vcInfo.value.useDays = yearVcData.data.useDays;
+  vcInfo.value.remainDays = yearVcData.data.giveDays - yearVcData.data.useDays;
+  vcInfo.value.signWait = requestData.data.signWait;
+  vcInfo.value.signWaitDays = requestData.data.signWaitDays;
+  vcInfo.value.signSup = requestData.data.signSup;
+  vcInfo.value.signSupDays = requestData.data.signSupDays;
+  vcInfo.value.requestDays = vcInfo.value.remainDays - requestData.data.signWaitDays - requestData.data.signSupDays;
+}
+
 
 // 휴가 정보
 let vcInfo = ref({
+  yearVcCd: '',
   targetYear: 0, // 대상연도
   giveDays: 0, // 부여일수
   useDays: 0, // 사용일수
@@ -99,13 +144,6 @@ let vcInfo = ref({
   signSupDays: 0, // 보완 요청 일수
 });
 
-// 라우터 테스트용
-const btnAddTest = () => {
-  router.push({name:"VcManage"});
-}
-const btnUpdateTest = () => {
-  router.push({name:"VcManage", params: {isUpdate: true}});
-}
 </script>
 
 <style scoped>
