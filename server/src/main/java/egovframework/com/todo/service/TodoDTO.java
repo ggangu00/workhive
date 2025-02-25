@@ -1,6 +1,7 @@
 package egovframework.com.todo.service;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 
@@ -36,4 +37,22 @@ public class TodoDTO {
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date createDt;		// 프로젝트 등록일
 	private Long dateCnt;		// 날짜별 건수
+	
+	private List<String> todoArr;
+
+    public List<String> getTodoArr() {
+        return todoArr;
+    }
+
+    public void setTodoArr(List<String> todoArr) {
+        this.todoArr = todoArr;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
 }

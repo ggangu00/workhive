@@ -63,8 +63,7 @@
 		SELECT
 		COUNT(*) totcnt
 		FROM project
-		WHERE 1=1
-	 <if test="searchKeyword != null and searchKeyword != ''">
+		WHERE UPPER(del_yn) = UPPER('N')
 	 	
 		 <if test="searchCondition == 0">AND
               PR_NM LIKE '%' || #{searchKeyword} || '%'
@@ -88,8 +87,6 @@
          <if test="searchEndPrice != null and !searchEndPrice.equals('')">AND
             	 <![CDATA[price <= #{searchEndPrice}]]>
          </if>
-	 </if>
-	 
 	</select>
 	
 	<!-- 프로젝트 단건조회 -->

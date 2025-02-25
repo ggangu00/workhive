@@ -28,7 +28,7 @@ public class ProjectServiceImpl implements ProjectService{
 	//프로젝트 전체건수
 	@Override
 	public int projectSelectAllCnt(ComDefaultVO searchVO) {
-		return 0;
+		return projectMapper.projectSelectAllCnt(searchVO);
 	}
 	
 	//프로젝트 단건조회

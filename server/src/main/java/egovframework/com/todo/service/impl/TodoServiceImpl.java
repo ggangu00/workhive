@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 import egovframework.com.todo.mapper.TodoMapper;
 import egovframework.com.todo.service.TodoDTO;
 import egovframework.com.todo.service.TodoService;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service("TodoService")
 public class TodoServiceImpl implements TodoService{
 	
@@ -46,11 +48,22 @@ public class TodoServiceImpl implements TodoService{
 	public boolean todoUpdate(TodoDTO todo) {
 		return todoMapper.todoUpdate(todo) == 1 ? true : false;
 	}
+	
+	@Override
+	public boolean todoStateUpdate(List<String> todoArr, String state) {
+
+	    TodoDTO todo = new TodoDTO();
+	    todo.setTodoArr(todoArr);
+	    todo.setState(state);
+
+	    int updatedRows = todoMapper.todoStateUpdate(todo);
+
+	    return updatedRows > 0;
+	}
 
 	//일지 삭제
-	@Override
 	public boolean todoDelete(List<String> todoArr) {
-		return todoMapper.todoDelete(todoArr) == 1 ? true : false;
-	}
-	
+
+        return todoMapper.todoDelete(todoArr) == 1 ? true : false;
+    }
 }

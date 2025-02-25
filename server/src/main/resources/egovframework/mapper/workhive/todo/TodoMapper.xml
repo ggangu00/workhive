@@ -96,13 +96,23 @@
 			todo_cd = ${todoCd}				
 	</update>
 	
-	<!-- 일지 삭제 -->
-	<delete id="todoDelete" parameterType="java.util.List">
-	    DELETE FROM 
+	<!-- 일지 상태 수정 -->
+	<update id="todoStateUpdate" parameterType="todoDTO">
+	    UPDATE 
 	    	todo 
+	    SET STATE = #{state}
 	    WHERE 
 	    	todo_cd 
 	    IN
+	    <foreach collection="todoArr" item="todoCd" open="(" separator="," close=")">
+	        #{todoCd}
+	    </foreach>    
+	</update>
+	
+	<!-- 일지 삭제 -->
+	<delete id="todoDelete" parameterType="java.util.List">
+	    DELETE FROM todo 
+	    WHERE todo_cd IN
 	    <foreach collection="list" item="todoCd" separator="," open="(" close=")">
 	        #{todoCd}
 	    </foreach>
