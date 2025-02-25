@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.vacation.mapper.YearVcMapper">
+	
+	<!-- 연차 등록 -->
+	<insert id="yearVcInsert" parameterType="yearVcDTO">
+		insert into year_vacation(
+			  year_vc_cd
+			, mber_id
+			, target_year
+			, give_days
+			, use_days
+		)
+		values(
+			  seq_year_vc_cd.nextval
+			, #{mberId}
+			, #{targetYear}
+			, #{giveDays}
+			, #{useDays}
+		)		
+	</insert>
+	
+	<!-- 연차 수정 -->
+	<update id="yearVcUpdate" parameterType="yearVcDTO">
+		update year_vacation
+		set use_days = #{useDays}
+		where year_vc_cd = #{year_vc_cd}
+	</update>
+	
+	<!-- 연차 단건 조회 -->
+	<select id="yearVcSelect" parameterType="yearVcDTO">
+		select year_vc_cd
+			 , mber_id
+			 , target_year
+			 , give_days
+			 , use_days
+		from year_vacation
+		where mber_id = #{mberId}
+		and target_year = #{targetYear}
+	</select>
+	
+
+</mapper>

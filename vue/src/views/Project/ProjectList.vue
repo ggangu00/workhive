@@ -27,7 +27,7 @@
           <div class="mb-3 row">
             <label for="staticEmail" class="col-sm-2 col-form-label">검색</label>
             <div class="col-auto">
-              <select class="form-select" v-model="searchCondition">
+              <select class="form-select" v-model="searchData.searchCondition">
                 <option value="0">프로젝트명</option>
                 <option value="1">거래처</option>
                 <option value="2">담당자</option>
@@ -35,27 +35,27 @@
             </div>
 
             <div class="col-auto">
-              <input type="text" class="form-control" placeholder="검색어를 입력해주세요" v-model="searchKeyword">
+              <input type="text" class="form-control" placeholder="검색어를 입력해주세요" v-model="searchData.searchKeyword">
             </div>
           </div>
           <div class="mb-3 row">
             <label for="inputPassword" class="col-sm-2 col-form-label">프로젝트 기간</label>
             <div class="col-auto">
-              <input type="date" class="form-control" v-model="start_dt">
+              <input type="date" class="form-control" v-model="searchData.startDt">
             </div>
             <div class="col-auto">~</div>
             <div class="col-auto">
-              <input type="date" class="form-control" v-model="end_dt">
+              <input type="date" class="form-control" v-model="searchData.endDt">
             </div>
           </div>
           <div class="mb-3 row">
             <label for="inputPassword" class="col-sm-2 col-form-label">프로젝트 금액</label>
             <div class="col-auto">
-              <input type="number" class="form-control" v-model="price_st">
+              <input type="number" class="form-control" v-model="searchData.priceSt">
             </div>
             <div class="col-auto">~</div>
             <div class="col-auto">
-              <input type="number" class="form-control" v-model="price_end">
+              <input type="number" class="form-control" v-model="searchDatapriceEnd">
             </div>
           </div>
           <div class="text-center">
@@ -75,92 +75,8 @@
             <button class="btn btn-excel btn-sm"><img class="me-1" src="../../assets/img/icon/excel.svg" alt="xls">
               엑셀다운로드</button>
           </div>
-          <div class="p-2 flex-shrink-1">
-            <select class="form-select form-select-sm mt-1">
-              <option value="PA">프로젝트명 오름차순</option>
-              <option value="PD">프로젝트명 내림차순</option>
-              <option value="DA">프로젝트 기간 최신순</option>
-              <option value="DD">프로젝트 기간 오래된순</option>
-            </select>
-          </div>
         </div>
-        <div class="table-responsive">
-          <table class="table table-hover project">
-            <thead class="table-light">
-              <tr>
-                <th>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                  </div>
-                </th>
-                <th>번호</th>
-                <th>진행상태</th>
-                <th>프로젝트명</th>
-                <th>프로젝트 기간</th>
-                <th>금액</th>
-                <th>담당자</th>
-                <th>일정</th>
-                <th>등록일</th>
-                <th>관리</th>
-              </tr>
-            </thead>
-            <tbody>
-              <template v-if="projectCount > 0">
-                <tr :key="i" v-for="(project, i) in projectList"
-                  :class="projectInfo.state == 'A04' ? 'table-secondary' : ''">
-                  <td>
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                    </div>
-                  </td>
-                  <td>{{ i + 1 }}</td>
-                  <td>{{ projectInfo.state == 'A04' ? '완료' : '진행중' }}</td>
-                  <td>
-                    <div class="category">{{ project.comNm }}</div>
-                    <div class="subject"><a href="#" @click="modalOpen(project.prCd)" class="mrp5">{{ project.prNm
-                    }}</a>
-                      <span class="badge" :class="project.term > 10 ? 'badge-primary' : 'badge-danger'">
-                        D{{ project.term > 0 ? "-" + project.term : "+" + project.term * (-1) }}</span>
-                    </div>
-                  </td>
-                  <td>{{ project.startDt }} ~ {{ project.endDt }}</td>
-                  <td>{{ project.price ? project.price : "-" }}</td>
-                  <td>{{ project.entrprsMberId }}</td>
-                  <td><button class="btn btn-primary btn-sm" @click="btnPageMove('plan', project.prCd)">일정관리</button>
-                  </td>
-                  <td>{{ dateFormat(project.createDt) }}</td>
-                  <td>
-                    <button class="btn btn-success btn-fill btn-sm mr-1"
-                      @click="btnPageMove('add', project.prCd)">수정</button>
-                    <button class="btn btn-danger btn-fill btn-sm mr-1"
-                      @click="btnProjectRemove(project.prCd)">삭제</button>
-                  </td>
-                </tr>
-              </template>
-              <tr v-else class="list-nodata">
-                <td colspan="10">
-                  <div>등록된 프로젝트가 없습니다.</div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <nav aria-label="...">
-          <ul class="pagination">
-            <li class="page-item" :class="startPage == 1 ? 'disabled' : ''">
-              <a class="page-link" @click="gopage(startPage - 1)">Previous</a>
-            </li>
-
-            <li v-for="num in pageNumbers" :key="num" class="page-item" :class="num == page ? 'active' : ''">
-              <a class="page-link" @click="gopage(num)">{{ num }}</a>
-            </li>
-
-            <li class="page-item" :class="endPage >= lastPage ? 'disabled' : ''">
-              <a class="page-link" @click="gopage(endPage + 1)">Next</a>
-            </li>
-          </ul>
-        </nav>
-
+        <div id="tableGrid" class="toastui project"></div>
       </card>
 
       <!--프로젝트 상세보기 모달[s]-->
@@ -239,11 +155,12 @@
 
 <script setup>
 import axios from "axios";
-import { onBeforeMount, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useRouter } from "vue-router";
 
 //---------------컴포넌트-------------- 
 import Swal from 'sweetalert2';
+import Grid from 'tui-grid';
 import Card from '../../components/Cards/Card.vue'
 import Modal from '../../components/Modal.vue';
 
@@ -251,19 +168,151 @@ import Modal from '../../components/Modal.vue';
 import { dateFormat } from '../../assets/js/common'
 import { dateTermCalc } from '../../assets/js/project'
 
-
-
 //---------------데이터-------------- 
 
 //검색조건
-const searchCondition = ref('');
-const searchKeyword = ref('');
-const startPage = ref('');
-const endPage = ref('');
-
-onBeforeMount(() => {
-  projectGetList();
+const searchData = ref({
+  searchCondition: "",
+  searchKeyword: '',
+  startDt: '',
+  endDt: '',
+  priceSt : '',
+  priceEnd : ''
 });
+
+const grid = ref([]);
+watch(() => searchData, () => {
+  projectGetList();
+}, { deep: true });
+
+onMounted(() => {
+  projectGetList();
+
+  grid.value = new Grid({
+    el: document.getElementById("tableGrid"),
+    scrollX: true,
+    scrollY: true,
+    columns: [
+      { header: "진행상태", name: "state", align: "center", width:80, formatter: ( {row} ) => `${row.state == 'A04' ? '완료' : '진행중' }` },
+      { header: "프로젝트명", name: "prNm", align: "center", renderer: subjectRenderer },
+      { header: "프로젝트 기간", name: "startDt", align: "center", width:200, formatter: ({ row }) => `${row.startDt} ~ ${row.endDt}` },
+      { header: "금액", name: "price", align: "center", width:120, },
+      { header: "일정", name: "plan", align: "center", width:100, renderer: BtnRendererPlan },
+      { header: "등록일", name: "createDt", align: "center", width:100, formatter: ({ row }) => dateFormat(row.createDt) },
+      { header: "관리", name: "managementSetting", align: "center", width:150, renderer: BtnRendererSetting }
+    ],
+    pageOptions: {
+      useClient: false,
+      perPage: 5,
+    },
+    rowHeaders: ["checkbox"],
+    data: projectList.value,
+    rowHeight: 50
+  });
+});
+
+
+//--------------그리드 렌더링-------------
+
+//프로젝트 제목 
+class subjectRenderer {
+  constructor(props) {
+    const rowKey = props.row?.rowKey ?? props.grid.getRow(props.rowKey)?.rowKey;
+    const rowData = props.grid.getRow(rowKey);
+
+    const el = document.createElement("div");
+    el.className = "mlp10";
+    const termClass = ref('');
+    rowData.term > 10 ? termClass.value = 'badge-primary' : termClass.value = 'badge-danger';
+
+    el.innerHTML = `
+      <div class="category">${rowData.comNm}</div>
+      <div class="subject">
+        <a href="#" class="mrp5">${rowData.prNm}</a>
+        <span class="badge ${termClass.value}">
+          D ${rowData.term > 0 ? "-" + rowData.term : "+" + rowData.term * (-1)}</span>
+      </div>
+    `;
+
+    el.addEventListener("click", () => {
+      modalOpen(rowData.prCd)
+    });
+
+    this.el = el;
+  }
+
+  getElement() {
+    return this.el;
+  }
+}
+
+//프로젝트 수정/삭제 버튼
+class BtnRendererSetting {
+  constructor(props) {
+
+    const el = document.createElement("div");
+
+    el.innerHTML = `
+      <button class="btn btn-success btn-fill btn-sm mr-1" data-type="edit">수정</button>
+      <button class="btn btn-danger btn-fill btn-sm mr-1" data-type="del">삭제</button>
+    `;
+
+    el.addEventListener("click", (event) => {
+      const type = event.target.dataset.type;
+      const rowKey = props.row?.rowKey ?? props.grid.getRow(props.rowKey)?.rowKey;
+
+      if (rowKey === undefined) {
+        console.error("❌ BtnRenderer: rowKey를 가져올 수 없습니다.", props);
+        return;
+      }
+
+      const rowData = props.grid.getRow(rowKey);
+
+      if (type === "edit") {
+        btnPageMove("add", rowData.prCd);
+      } else if (type === "del") {
+        btnProjectRemove(rowData.prCd);
+      }
+    });
+
+    this.el = el;
+  }
+
+  getElement() {
+    return this.el;
+  }
+}
+
+//프로젝트 일정관리 버튼
+class BtnRendererPlan {
+  constructor(props) {
+
+    const el = document.createElement("div");
+
+    el.innerHTML = `
+      <button class="btn btn-primary btn-sm">일정관리</button>
+    `;
+
+    el.addEventListener("click", () => {
+      const rowKey = props.row?.rowKey ?? props.grid.getRow(props.rowKey)?.rowKey;
+
+      if (rowKey === undefined) {
+        console.error("❌ BtnRenderer: rowKey를 가져올 수 없습니다.", props);
+        return;
+      }
+
+      const rowData = props.grid.getRow(rowKey);
+
+      btnPageMove('plan', rowData.prCd)
+    });
+
+    this.el = el;
+  }
+
+  getElement() {
+    return this.el;
+  }
+}
 
 //---------------모달--------------
 
@@ -284,7 +333,6 @@ const modalClose = (e) => { //프로젝트 정보 모달 닫기
 }
 
 //-------------버튼이벤트------------
-
 const router = useRouter();
 const btnPageMove = (mode, code) => { //수정/일정관리 페이지로
   router.push({ path: `/project/${mode}`, query: { prCd: code } });
@@ -316,11 +364,10 @@ const projectList = ref([]);
 const projectCount = ref(0);
 const projectGetList = async () => { //프로젝트 전체조회
 
-  const params = new URLSearchParams({ searchKeyword: searchKeyword.value }).toString();
+  //const params = new URLSearchParams({ searchKeyword: searchKeyword.value }).toString();
 
   try {
-    const result = await axios.get(`/api/project/list?${params}`);
-console.log(result);
+    const result = await axios.get(`/api/project/list`, { params : searchData.value });
     projectCount.value = result.data.length;
     projectList.value = result.data.map(item => ({
       ...item,
@@ -338,6 +385,8 @@ console.log(result);
       text: "Error : " + err
     });
   }
+
+  grid.value.resetData(projectList.value);
 }
 
 const projectInfo = ref([]);

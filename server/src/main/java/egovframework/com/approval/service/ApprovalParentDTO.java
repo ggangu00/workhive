@@ -17,4 +17,5 @@ public class ApprovalParentDTO {
 		List<ApprovalLine> approvalLine;
 		List<Reception> reception;
 		List<File> file;
+		List<FileDetail> FileDetail;
 }

@@ -7,6 +7,9 @@ public interface VacationService {
 	public boolean vcInsert(VacationDTO vcDTO);
 	public boolean vcUpdate(VacationDTO vcDTO);
 	public boolean vcDelete(String vcCd);
-	public VacationDTO vcSelete(String vcCD);
+	public VacationDTO vcSelect(String vcCD);
 	public List<VacationDTO> vcSelectAll(VacationDTO vcDTO);
+	public VacationDTO expectSelect(String createId);
+	public List<VacationDTO> vcSelectSigner(VacationDTO vcDTO);
+	public List<VacationDTO> vcSelectSigned(VacationDTO vcDTO);
 }

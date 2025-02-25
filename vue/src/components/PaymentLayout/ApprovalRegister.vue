@@ -102,10 +102,10 @@
               <div class="d-flex flex-column flex-grow-1">
                <span>결재</span>    
                 <!-- 결재 목록 -->
-                <div class="approval-box">
+                <div  class="approval-box">
                   <div v-for="(approver, index) in reversedApprovers" :key="index" class="approval-item">
-                    <span class='badge bg-info text-dark'>{{ approver.status }}</span> 
-                    [{{ approver.dept }}] {{ approver.name }} {{ approver.title }}
+                      <span class='badge bg-info text-dark'>{{ getApprovalStatusName(approver.status) }}</span> 
+                      [{{ approver.dept }}] {{ approver.name }} {{ approver.title }}
                   </div>
                 </div>
                 <span>수신</span>
@@ -136,7 +136,7 @@
 
       <!-- 모달 바디 -->
       <div class="modal-body">
-        <ApprovalLine ref="approvalLineRef" />
+        <ApprovalLine ref="approvalLineRef" :approvers="approvers"/>
       </div>
 
       <!-- 모달 푸터 -->
@@ -239,6 +239,9 @@ onMounted(() => {
 
   initEditor();
 
+  if(docCd.value){
+    approvalList();
+  }
   //param값 제거
   window.history.replaceState({}, '', route.path);
 });
@@ -271,6 +274,7 @@ const approvalLineRef = ref(null);
 const handleModalOpen = () => {
   if (approvalLineRef.value) {
     approvalLineRef.value.onModalOpen();  // ApprovalLine의 onModalOpen() 실행
+    //approvalLineRef.value.setApprovals(reversedApprovers.value, receivers.value);
   }
 };
 
@@ -281,7 +285,7 @@ const receivers = ref([]);
 const registerApprovals = () => {
   if (approvalLineRef.value) {
     reversedApprovers.value = approvalLineRef.value.reversedApprovers;  // ApprovalLine의 approvers 데이터를 가져오기(화면에 보여주는)
-    approvers.value = approvalLineRef.value.approvers;
+    approvers.value = approvalLineRef.value.approvers;//이값으로 디비에넘기기
     console.log("결재자 => ", approvalLineRef.value.approvers);//이값으로 디비에넘기기
     console.log("결재자 => ", approvers.value);
     receivers.value = approvalLineRef.value.receivers;
@@ -289,7 +293,30 @@ const registerApprovals = () => {
     console.log("수신자 => ", receivers.value);
   }
 };
+/////////////////////결재선 가져오기/////////////////////
+const approvalList = async () => {
+  if (!docCd.value) return; // docCd가 없으면 실행하지 않음
 
+  try {
+    const response = await axios.get("/api/document/approvalList", {
+      params: { docCd: docCd.value }
+    });
+
+    console.log('response => ',response.data);
+    if (response.data) {
+      // 결재자 목록 설정
+      reversedApprovers.value = response.data.map((approver) => ({
+        mberId: approver.mberId,
+        name: approver.mberNm,
+        dept: approver.deptNm,
+        status: approver.signName, // 상태 코드 변환
+      }));
+    }
+    console.log('approvers.value => ', reversedApprovers.value);
+  } catch (error) {
+    console.error("결재선 정보 불러오기 실패:", error);
+  }
+};
 /////////////////////첨부파일/////////////////////////
 const addFileList = (target) => {
   const newFile = Array.from(target.files);
@@ -359,56 +386,117 @@ const conditionReset = () => { // 정보 리셋
 
 }
 
+//입력값 검사
+const inputCheck = () => {
+  if (docTitle.value.trim() == '' || formCd.value.trim() == '') {
+    Swal.fire({
+      icon: 'warning',
+      title: '필수 항목 누락',
+      text: '문서 제목과 양식 코드가 비어있습니다.'
+    });
+    return false;
+  }
+  return true;
+}
+
+// 결재선 포멧
+const approvalStatusMap = {
+  "K01": "기안",
+  "K02": "결재",
+  "K03": "전결",
+  "K04": "결정"
+};
+
+// 상태 코드 변환 함수
+const getApprovalStatusName = (code) => {
+  return approvalStatusMap[code] || code; // 코드가 없으면 기존 코드 그대로 표시
+};
+
 //const sessionId = this.$session.get('user_id');
 ///////////////////상신버튼////////////////////////////
 const approvalInfo = async() => {
+  if (!inputCheck()) return;
   console.log(editor.getHTML()); // 내용
   console.log(reversedApprovers.value);// 결재자정보
   console.log('결재자정보 =>',approvers.value);// 결재자정보
   console.log(receivers.value);// 수신자정보
   console.log(fileList.value);
 
-  //결재자정보포멧
-  const formatApprovalLine = approvers.value.map((approver, index)=>({
-    mberId: approver.mberId,
-    signSeq: index + 1,
-    signName: approver.status, 
-  }))
+  const formData = new FormData();
 
-  const requestData = { 
-  document:{// 서버로 보낼 데이터
+  formData.append(
+    "document", JSON.stringify({
       docTitle : docTitle.value,
       docCnEditor : editor.getHTML(),
-      mberId : '신강현',
+      mberId : 'admin3',
       docKind : 'I01',
       formCd : formCd.value,
       deptNm : deptNm.value,
       formNm : formNm.value
-      },
-      approvalLine: formatApprovalLine,
-      reception: receivers.value,
-      file: fileList.value
-    };
+    })
+  )
 
-      console.log(requestData);
-      try {
-         const response = await axios.post('/api/document/register', requestData);
-         if(response.status == 200) {
-            Swal.fire({
-               icon: "success",
-               title: "등록 성공",
-            });
+  formData.append("approvalLine", JSON.stringify(approvers.value));
 
-         }
-      } catch (err) {
-         Swal.fire({
-            icon: "error",
-            title: "등록 실패",
-            text:  "Error : " + err.response.data.error
-         });
-      }
+  formData.append("reception", JSON.stringify(receivers.value));
 
+  fileList.value.forEach((file) => {
+    formData.append("files[]", file);
+  });
+  
+  formData.forEach((value, key) => {
+  console.log(`${key}:`, value);
+});
+
+
+  //결재자정보포멧
+  // const formatApprovalLine = approvers.value.map((approver, index)=>({
+  //   mberId: approver.mberId,
+  //   signSeq: index + 1,
+  //   signName: approver.status, 
+  // }))
+
+  //
+  // const requestData = { 
+  // document:{// 서버로 보낼 데이터
+  //     docTitle : docTitle.value,
+  //     docCnEditor : editor.getHTML(),
+  //     mberId : 'admin3',
+  //     docKind : 'I01',
+  //     formCd : formCd.value,
+  //     deptNm : deptNm.value,
+  //     formNm : formNm.value
+  //     },
+  //     approvalLine: formatApprovalLine,
+  //     reception: receivers.value,
+  //     file: fileList.value
+  //   };
+
+  //     console.log(requestData);
+  //     try {
+  //        const response = await axios.post('/api/document/register', requestData);
+  //        if(response.status == 200) {
+  //           Swal.fire({
+  //              icon: "success",
+  //              title: "등록 성공",
+  //           });
+
+  //        }else if(formCd.value == ''){
+  //         Swal.fire({
+  //           icon: "error",
+  //           title: "등록 실패",
+  //           text:  "Error : "
+  //        });
+  //        }
+  //     } catch (err) {
+  //        Swal.fire({
+  //           icon: "error",
+  //           title: "등록 실패",
+  //           text:  "Error : " + err.response.data.error
+  //        });
+  //     }
 }
+
 
 defineExpose({  // modalOpen expose
   modalOpen,

@@ -5,21 +5,24 @@
         <div class="card">
           <div class="card-body">
             <h4 class="card-title float-left mt-1">게시판 목록</h4>           
-           
-
           </div>
         </div>
       </div>
 
       <div class="white-background">
         <div class="controls">
-          <select  v-model="searchColumn" class="custom-select">
+          <select v-model="searchColumn" class="custom-select">
             <option value="" disabled selected>선택하세요</option>
             <option value="bbsNm">게시판명</option>
             <option value="frstRegisterNm">작성자</option>
-            
           </select>
-          <input type="text" v-model="searchKeyword" @input="filterGrid" placeholder="검색어를 입력하세요" class="custom-input" />           
+          <input
+            type="text"
+            v-model="searchKeyword"
+            @input="filterGrid"
+            placeholder="검색어를 입력하세요"
+            class="custom-input"
+          />           
         </div>
 
         <!-- 업무 목록 -->
@@ -45,9 +48,7 @@ const router = useRouter();
 const gridInstance = ref(null);
 const BoardList = ref([]);
 
-
-
-//조회
+// 조회
 const BoardGetList = async () => {
   try {
     const { data } = await axios.get('/api/board/boardList');
@@ -55,15 +56,15 @@ const BoardGetList = async () => {
       rowNum: index + 1, // 1부터 시작하는 행번호 추가
       ...item
     }));
-    gridInstance.value?.resetData(BoardList.value); //  Grid에 데이터 업데이트
+    gridInstance.value?.resetData(BoardList.value); // Grid에 데이터 업데이트
   } catch (error) {
     console.error('게시글 목록 불러오는 중 오류 발생:', error);
     BoardList.value = [];
   }
-  console.log("테스트",BoardList.value);
+  console.log("테스트", BoardList.value);
 };
 
-// ✅ 조건 검색 필터링 함수
+// 조건 검색 필터링 함수
 const filterGrid = () => {
   const keyword = searchKeyword.value.trim().toLowerCase();
   const column = searchColumn.value;
@@ -75,10 +76,10 @@ const filterGrid = () => {
 
   const filteredData = BoardList.value.filter((item) => {
     if (column) {
-      // ✅ 특정 컬럼만 검색
+      // 특정 컬럼만 검색
       return String(item[column] ?? '').toLowerCase().includes(keyword);
     } else {
-      // ✅ 전체 컬럼 검색
+      // 전체 컬럼 검색
       return Object.values(item).some((value) =>
         String(value).toLowerCase().includes(keyword)
       );
@@ -88,7 +89,7 @@ const filterGrid = () => {
   gridInstance.value.resetData(filteredData); // 필터링된 데이터로 Grid 갱신
 };
 
-//  Grid 제거 함수
+// Grid 제거 함수
 const destroyGrid = () => {
   if (gridInstance.value) {
     gridInstance.value.destroy(); // 기존 Grid 제거
@@ -96,23 +97,21 @@ const destroyGrid = () => {
   }
 };
 
-
-
 const initializeGrid = () => {
   destroyGrid(); // 중복 방지 위해 기존 인스턴스 제거
   
   gridInstance.value = new window.tui.Grid({
     el: document.getElementById('boardGrid'),
     data: BoardList.value,
-    scrollX: false, // ✅ 수평 스크롤 제거 (열이 전체 너비 사용)
+    scrollX: false, // 수평 스크롤 제거 (열이 전체 너비 사용)
     scrollY: true,
-    bodyHeight: 480, // ✅ 표 높이 지정    
+    bodyHeight: 480, // 표 높이 지정    
     pageOptions: {
-      useClient: true, // ✅ 클라이언트 사이드 페이지네이션
+      useClient: true, // 클라이언트 사이드 페이지네이션
       perPage: 10,
     },
     columnOptions: {
-      resizable: true, // ✅ 사용자 열 너비 조정 가능
+      resizable: true, // 사용자 열 너비 조정 가능
     },
     columns: [
       { header: '번호', name: 'rowNum', align: 'center', width: 60, sortable: true },
@@ -121,7 +120,7 @@ const initializeGrid = () => {
         name: 'bbsNm', 
         sortable: true, 
         align: 'left', 
-        minWidth: 200, // ✅ 최소 너비 설정
+        minWidth: 200, // 최소 너비 설정
       },
       { 
         header: '작성자', 
@@ -149,16 +148,15 @@ const initializeGrid = () => {
         header: '관리', 
         name: 'action', 
         align: 'center', 
-        width: 150, // ✅ 버튼 공간 확보
+        width: 150, // 버튼 공간 확보
         renderer: BtnRenderer, 
       },
     ],
   });
   
-  // ✅ 열 너비 자동 맞춤
+  // 열 너비 자동 맞춤
   gridInstance.value.refreshLayout();
 };
-
 
 // 컴포넌트 마운트 시 초기화
 onMounted(async () => {
@@ -171,19 +169,17 @@ onBeforeUnmount(() => {
   destroyGrid(); // 중복 방지 및 메모리 해제
 });
 
-//  버튼 렌더러 클래스
+// 버튼 렌더러 클래스 (삭제 기능 제거)
 class BtnRenderer {
   constructor(props) {
     const el = document.createElement('div');
     el.className = 'btn-group';
     el.innerHTML = `
-    <button class="btn btn-success btn-fill me-2" data-type="edit">수정</button>      
+      <button class="btn btn-success btn-fill me-2" data-type="edit">수정</button>
     `;
-
-    // 버튼X <button class="btn btn-danger btn-fill cell-btn-custom" data-type="delete">삭제</button>
     
-    el.addEventListener('click', (event) => {
-      const type = event.target.dataset.type;
+    // 버튼 클릭 시 오직 수정 이벤트만 호출
+    el.addEventListener('click', () => {
       const rowKey = props.rowKey;
       
       if (rowKey === undefined) {
@@ -191,7 +187,7 @@ class BtnRenderer {
         return;
       }
       
-      type === 'edit' ? udtEvent(rowKey) : delEvent(rowKey);
+      udtEvent(rowKey);
     });
     
     this.el = el;
@@ -202,7 +198,7 @@ class BtnRenderer {
   }
 }
 
-// 수정 버튼 클릭 시 페이지 이동 (쿼리 파라미터로 여러 값 전달)
+// 수정 버튼 클릭 시 페이지 이동 (쿼리 파라미터로 값 전달)
 const udtEvent = (rowKey) => {
   const selectedRow = gridInstance.value?.getRow(rowKey); // 선택된 행 데이터 가져오기
 
@@ -212,34 +208,18 @@ const udtEvent = (rowKey) => {
   }
   console.log(`수정 버튼 클릭됨:`, selectedRow);  
   
-  //  쿼리 파라미터로 값 전달
   router.push({
-    path: '/board/boardUpdate',
+    path: '/board/boardModify',
     query: {
-      bbsId : selectedRow.bbsId,
+      bbsId: selectedRow.bbsId,
       bbsNm: selectedRow.bbsNm,
       bbsTyCode: selectedRow.bbsTyCode,
       fileAtchPosblAt: selectedRow.fileAtchPosblAt,
       answerAt: selectedRow.answerAt,
       useAt: selectedRow.useAt
     }    
-   
   });
 };
-
-// 삭제
-const delEvent = async (rowKey) => {
-  const selectedRowData = gridInstance.value?.getRow(rowKey);  
-    console.log(`삭제 버튼 클릭됨, 화면 표시 번호: ${rowKey}`,selectedRowData.bbsId);
-
-    await axios.post(`/api/board/boardRemove`,{params:{bbsId:selectedRowData.bbsId}});
-
-    await BoardGetList();
-  }
-
-
-
-
 </script>
 
 <style>
@@ -270,5 +250,4 @@ const delEvent = async (rowKey) => {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   margin-top: 10px;
 }
-
 </style>

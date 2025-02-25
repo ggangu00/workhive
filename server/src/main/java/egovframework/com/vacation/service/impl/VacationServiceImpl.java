@@ -32,13 +32,28 @@ public class VacationServiceImpl implements VacationService {
 	}
 
 	@Override
-	public VacationDTO vcSelete(String vcCD) {
-		return vacationMapper.vcSelete(vcCD);
+	public VacationDTO vcSelect(String vcCD) {
+		return vacationMapper.vcSelect(vcCD);
 	}
 
 	@Override
 	public List<VacationDTO> vcSelectAll(VacationDTO vcDTO) {
 		return vacationMapper.vcSelectAll(vcDTO);
+	}
+
+	@Override
+	public VacationDTO expectSelect(String createId) {
+		return vacationMapper.expectSelect(createId);
+	}
+
+	@Override
+	public List<VacationDTO> vcSelectSigner(VacationDTO vcDTO) {
+		return vacationMapper.vcSelectSigner(vcDTO);
+	}
+
+	@Override
+	public List<VacationDTO> vcSelectSigned(VacationDTO vcDTO) {
+		return vacationMapper.vcSelectSigned(vcDTO);
 	}
 
 }

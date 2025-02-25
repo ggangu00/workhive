@@ -70,7 +70,7 @@ import PaymentAdd from '../views/Payment/PaymentAdd.vue';
 import PaymentManage from '../views/Payment/PaymentManage.vue';
 import BoardList from '../views/Board/BoardList.vue';
 import BoardAdd from '../views/Board/BoardAdd.vue';
-import BoardUpdate from "../views/Board/BoardUpdate.vue";
+import BoardModify from "../views/Board/BoardModify.vue";
 import BulletinList from "../views/Bulletin/BulletinList.vue";
 import BulletinAdd from "../views/Bulletin/BulletinAdd.vue";
 import BulletinInfo from "../views/Bulletin/BulletinInfo.vue";
@@ -283,7 +283,7 @@ const routes = [
             component: VcList,
          },
          {
-            path: 'vcManage/:isUpdate?', // 휴가 관리 페이지
+            path: 'vcManage', // 휴가 관리 페이지
             name: 'VcManage',
             component: VcManage,
          },
@@ -323,9 +323,9 @@ const routes = [
       component : BoardAdd,
    },
    {//게시판 수정
-      path:'/setting/board/boardUpdate',
-      name: 'BoardUpdate',
-      component : BoardUpdate,
+      path:'/setting/board/boardModify',
+      name: 'BoardModify',
+      component : BoardModify,
    },
    {//게시글 목록
       path:'/bulletin/bulletinList',

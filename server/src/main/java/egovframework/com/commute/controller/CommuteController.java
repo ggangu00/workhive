@@ -64,10 +64,7 @@ public class CommuteController {
 	// 출퇴근 단건 조회
 	@GetMapping("/cmtInfo")
 	public CommuteDTO cmtInfo(@RequestParam(name="commuteCd") String commuteCd) {
-		System.out.println("cmtCd : " + commuteCd);
-		CommuteDTO result = service.cmtSelect(commuteCd);
-		System.out.println(result.getCommuteCd());
-		return result;
+		return service.cmtSelect(commuteCd);
 	}
 	
 	// 출퇴근 전체 조회

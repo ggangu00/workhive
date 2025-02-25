@@ -20,6 +20,8 @@ public class VacationDTO {
 	private String atchFileId;
 	private String createId;
 	private String createDt;
+	private String updateId;
+	private String updateDt;
 	private String signId;
 	private String signDt;
 	private String signState;
@@ -27,4 +29,11 @@ public class VacationDTO {
 	// 날짜 조회 조건
 	private String startDate;
 	private String endDate;
+	
+	// 사용 예정량 조회
+	private String signWait;
+	private String signWaitDays;
+	private String signSup;
+	private String signSupDays;
+	
 }

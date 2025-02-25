@@ -37,8 +37,9 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 
 
+
 const router = useRouter();
-let bbsId = "BBS001";//router.query.bbsId;
+let bbsId = "BBS001"; //router.query.bbsId;
 
 console.log("전체테스트:",router.params);
 

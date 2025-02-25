@@ -55,9 +55,11 @@ public class ProjectController {
 	  	searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
 	  	
 		List<ProjectDTO> projectList = projectService.projectSelectAll(searchVO);
-		
+				
 		int totCnt = projectService.projectSelectAllCnt(searchVO);
 		paginationInfo.setTotalRecordCount(totCnt);
+		
+		log.info("페이징 매개변수 ====>" + totCnt);
 		model.addAttribute("paginationInfo", paginationInfo);
 		model.addAttribute("list", projectList); 
 		

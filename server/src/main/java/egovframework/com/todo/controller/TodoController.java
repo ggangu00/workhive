@@ -64,7 +64,6 @@ public class TodoController {
         Map<String, Object> response = new HashMap<>();
         response.put("year", year);
         response.put("month", month);
-        log.info("12312323"+response.toString());
         
         return todoService.todoSelectCnt(response);
 	}	
@@ -87,7 +86,6 @@ public class TodoController {
 	//일지 수정
 	@PutMapping("")
 	public Map<String, Object> todoModify(@RequestBody TodoDTO todo) {
-		log.info("수정 권한 코드 출력 => " + todo.toString());
 		
 		Map<String, Object> map = new HashMap<>();
 		
@@ -100,10 +98,26 @@ public class TodoController {
 		return map;
 	}
 	
+	//일지 상태변경
+	@PutMapping("/state")
+	public boolean todoStateModify(@RequestBody TodoDTO todo) {		
+		List<String> todoArr = todo.getTodoArr();
+	    String state = todo.getState();
+	    log.info("결과아아ㅏㅏ ==> "+state);
+	    
+	    return todoService.todoStateUpdate(todoArr,state);
+	}
+	
 	//일지 삭제
 	@DeleteMapping("/delete")
 	public boolean todoRemove(@RequestBody Map<String, List<String>> requestBody) {
-		List<String> todoArr = requestBody.get("todoArr");
-		return todoService.todoDelete(todoArr);
-	}		
+
+	    List<String> todoArr = requestBody.get("todoArr");
+
+	    if (todoArr == null || todoArr.isEmpty()) {
+	        return false;
+	    }
+
+	    return todoService.todoDelete(todoArr);
+	}
 }

@@ -12,6 +12,7 @@ import egovframework.com.approval.service.ApprovalParentDTO;
 import egovframework.com.approval.service.Document;
 import egovframework.com.approval.service.DocumentDTO;
 import egovframework.com.approval.service.DocumentService;
+import egovframework.com.approval.service.File;
 import egovframework.com.approval.service.FormDTO;
 import egovframework.com.approval.service.MemberDTO;
 import egovframework.com.approval.service.Reception;
@@ -54,9 +55,21 @@ public class DocumentServiceImpl implements DocumentService{
 		return documentMapper.memberSelectAll(searchDTO);
 	}
 
+	
 	//문서기안
 	@Override
 	public int approvalInsert(ApprovalParentDTO approvalParentDTO) {
+		//첨부파일(헤더)
+      List<File> fileHeader = approvalParentDTO.getFile();
+//	      if(fileHeader != null && !fileHeader.isEmpty()) {
+//	   	   for (Reception files : fileHeader) {
+//	              reception.setDocCd(docCd);
+//	              documentMapper.receptionInsert(reception);
+//	          }
+//	   }
+		
+		
+		
 		//문서
         Document document = approvalParentDTO.getDocument();
         System.out.println(document.toString());
@@ -86,8 +99,14 @@ public class DocumentServiceImpl implements DocumentService{
                    documentMapper.receptionInsert(reception);
                }
         }
-		//첨부파일
+
 		return 1;
+	}
+
+	//결재선 조회
+	@Override
+	public List<ApprovalLine> approvalSelectAll(String docCd) {
+		return documentMapper.approvalSelectAll(docCd);
 	}
 
 }
