@@ -326,10 +326,12 @@
    };
 // ======================================== 메뉴 Axios 통신 ========================================
    // 메뉴 전체 조회
+   const menus = ref([]);
    const menuGetList = async () => {
       try {
          const response = await axios.get('/api/menu');
          console.log("response.data => ", response.data)
+         menus.value = response.data;
       } catch (err) {
          Swal.fire({
             icon: "error",
@@ -340,37 +342,45 @@
    }
 
 // ======================================== Menu ========================================
-   const menus = ref([
-      {
-         menuNm: '대메뉴 1',
-         open: false,
-         selected: false,
-         submenus: [
-            { menuNm: '소메뉴 1', selected: false },
-            { menuNm: '소메뉴 2', selected: false },
-            { menuNm: '소메뉴 3', selected: false },
-            { menuNm: '소메뉴 4', selected: false }
-         ]
-      },
-      {
-         menuNm: '대메뉴 2',
-         open: false,
-         selected: false,
-         submenus: [
-            { menuNm: '소메뉴 1', selected: false },
-            { menuNm: '소메뉴 2', selected: false },
-            { menuNm: '소메뉴 3', selected: false },
-            { menuNm: '소메뉴 4', selected: false }
-         ]
-      },
-   ]);
+   // const menus = ref([
+   //    {
+   //       menuNm: '대메뉴 1',
+   //       open: false,
+   //       selected: false,
+   //       submenus: [
+   //          { menuNm: '소메뉴 1', selected: false },
+   //          { menuNm: '소메뉴 2', selected: false },
+   //          { menuNm: '소메뉴 3', selected: false },
+   //          { menuNm: '소메뉴 4', selected: false }
+   //       ]
+   //    },
+   //    {
+   //       menuNm: '대메뉴 2',
+   //       open: false,
+   //       selected: false,
+   //       submenus: [
+   //          { menuNm: '소메뉴 1', selected: false },
+   //          { menuNm: '소메뉴 2', selected: false },
+   //          { menuNm: '소메뉴 3', selected: false },
+   //          { menuNm: '소메뉴 4', selected: false }
+   //       ]
+   //    },
+   // ]);
 
+   /**
+    * @description 헤더 체크 선택시 서브 체크 전체 선택
+    * @param menu 선택된 메뉴
+    */
    const checkBoxSelectAll = (menu) => {
       menu.submenus.forEach(sub => {
          sub.selected = menu.selected;
       });
    }
 
+   /**
+    * @description 체크된 메뉴 선택하는 함수
+    * @param menu 선택된 메뉴
+    */
    const submenusSelected = (menu) => {
       return menu.submenus.filter(sub => sub.selected).length;
    };
@@ -381,6 +391,7 @@
    };
 
    const selectedRole = ref(null); // 선택한 권한코드
+   
    /**
     * @description 선택한 권한에 대한 수정 삭제 메뉴 토글
     * @param role 토글할 권한명 index
