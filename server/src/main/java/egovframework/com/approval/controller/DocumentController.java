@@ -21,6 +21,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import egovframework.com.approval.service.ApprovalLine;
 import egovframework.com.approval.service.ApprovalParentDTO;
 import egovframework.com.approval.service.DocumentDTO;
 import egovframework.com.approval.service.DocumentService;
@@ -46,17 +47,12 @@ public class DocumentController {
 			return "fail";
 		}
     }
-	
-	//문서기안
-//	@PostMapping("/register")
-//    public String register(@RequestBody DocumentDTO documentDTO) {
-//        int result = documentService.documentInsert(documentDTO);
-//		if(result>0) {
-//			return "success";
-//		}else {
-//			return "fail";
-//		}
-//    }
+
+	//결재선정보 조회
+	@GetMapping("/approvalList")
+	public List<ApprovalLine> approvalList(@RequestParam(name="docCd") String docCd){
+		return documentService.approvalSelectAll(docCd);
+	}
 	
 	//리스트조회(조건별)
 	@GetMapping("/list")

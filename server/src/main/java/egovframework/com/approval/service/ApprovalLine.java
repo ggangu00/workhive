@@ -6,6 +6,8 @@ import lombok.Data;
 public class ApprovalLine {
 	
 	private String mberId;
+	private String mberNm;
+	private String deptNm;
 	private String docCd;
 	private int signSeq;
 	private String signStat;

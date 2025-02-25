@@ -81,11 +81,13 @@
           <div class="box">
             <h5>결재 목록</h5>
             <div class="approval-box">
-              <div v-for="(approver, index) in reversedApprovers" :key="index" class="approval-item">
+              <div v-for="(approver, index) in reversedApprovers " :key="index" class="approval-item">
                 <select v-model="approver.status" class="form-select form-select-sm">
-                  <option value = "결정" name="K04">결정</option>
-                  <option value = "결재" name="K02">결재</option>
-                  <option value = "기안" name="K01">기안</option>
+                  <option v-for="(data, idx) in selectedData" 
+                  :key="idx"
+                  :value="data.commDtlCd">
+                  {{ data.commDtlNm }}
+                  </option>
                 </select>
                 [{{ approver.dept }}] {{ approver.name }} {{ approver.title }}
                 <button @click="removeApproval(index)" class="btn btn-sm btn-danger">삭제</button>
@@ -114,6 +116,25 @@ import axios from 'axios';
     const approvers = ref([]);
     const employees = ref([]); // 직원 목록
     const departmentTree = ref([]);
+
+    // //모달에 결재선 불러넣기
+    // const localApprovers = ref([]);
+    // const localReceivers = ref([]);
+
+    // // 외부에서 데이터 설정하는 함수
+    // const setApprovals = (reversedApprovers, receivers) => {
+    //   localApprovers.value = [...reversedApprovers]; // 데이터 복사하여 저장
+    //   localReceivers.value = [...receivers];
+    // };
+
+    //공통코드 가져오기
+    const selectedData = ref([]); //결재상태(signname) 셀렉트박스
+    const commonDtlList = async () =>{
+      const docKind = await axios.get(`/api/comm/codeList`, {
+        params: {cd:'AN'}
+      });
+      selectedData.value = [...docKind.data]
+    }
 
     //부서정보가져오기
     const deptList = async () => {
@@ -173,7 +194,7 @@ import axios from 'axios';
     const addReceiver = () => {
       console.log(selectedDept);
       //부서추가
-      if (selectedDept.value && !receivers.value.some(receiver => receiver.dept === selectedDept.value)) {
+      if (selectedDept.value && !receivers.value.some(receiver => receiver.dept == selectedDept.value)) {
         receivers.value.push({
           dept: selectedDept.value, 
           name: "", 
@@ -216,8 +237,8 @@ import axios from 'axios';
             name: emp.mberNm || emp.name,  
             dept: emp.deptNm || emp.dept, 
             title: emp.respCd, 
-            status: '결재',
-          mberId: emp.mberId});
+            status: 'K02',
+            mberId: emp.mberId});
         }
       });
     };
@@ -225,7 +246,7 @@ import axios from 'axios';
     // 결재자 삭제 기능
     const removeApproval = (index) => {
       approvers.value.splice(index, 1);
-      if (approvers.value[index].status == "기안") {
+      if (approvers.value[index].status == "K01") {
         alert("기안자는 삭제불가");
         return;
       }
@@ -282,12 +303,12 @@ import axios from 'axios';
         }
       },300);
       //로그인 기안자
-      if (!approvers.value.find(a => a.status === "기안")) {
+      if (!approvers.value.find(a => a.status == "K01")) {
       approvers.value.push({
         name: login.value.name,
         dept: login.value.dept,
         title: login.value.title,
-        status: "기안",
+        status: "K01",
         mberId: login.value.mberId
       });
   }
@@ -295,7 +316,7 @@ import axios from 'axios';
 
     onMounted(() => {
       deptList();
-
+      commonDtlList();
     });
 
     defineExpose({onModalOpen, approvers, receivers, reversedApprovers});

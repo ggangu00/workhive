@@ -40,8 +40,8 @@
     </insert>
     <!-- 수신정보 등록 -->
 	  <insert id="receptionInsert" parameterType="egovframework.com.approval.service.Reception">
-    	INSERT INTO RECEPTION (recept_cd, recept_yn, doc_cd, mber_id, dept_cd)
-    	VALUES ('RCPTN' || seq_reception_cd.NEXTVAL, #{receptYn}, #{docCd}, #{mberId}, #{deptCd})
+    	INSERT INTO RECEPTION (recept_cd, doc_cd, mber_id, dept_cd)
+    	VALUES ('RCPTN' || seq_reception_cd.NEXTVAL, #{docCd}, #{mberId}, #{deptCd})
     </insert>
     
     <!-- 파일등록 -->
@@ -49,9 +49,14 @@
 			INSERT INTO COMTNFILE
 			(ATCH_FILE_ID, CREAT_DT, USE_AT)
 			VALUES
-			( #{atchFileId}, SYSDATE, 'Y')			
+			( 'FILE' || seq_file_cd, SYSDATE, 'Y')			
 		
 	</insert>
+	
+	  <!-- 파일 헤더 등록 후 파일코드가져오기 -->
+    <select id="lastFileCdGet" resultType="String">
+	    SELECT 'FILE' || seq_file_cd.CURRVAL FROM dual
+	</select>
 	
 	<insert id="insertFileDetail" parameterType="egovframework.com.approval.service.ApprovalParentDTO">
 		
@@ -64,6 +69,25 @@
 		
 	</insert>	
     
+    <!-- 결재선조회 -->
+    <select id="approvalSelectAll" resultType="egovframework.com.approval.service.ApprovalLine" parameterType="egovframework.com.approval.service.SearchDTO">
+    	SELECT 
+			mber_id,
+			fn_get_memnm(mber_id) as mber_nm,
+			doc_cd,
+			fn_get_deptnm(mber_id) as dept_nm,
+			sign_seq,
+			sign_stat,
+			sign_opn,
+			sign_dt,
+			sign_name
+		FROM approval_line
+		WHERE 1=1
+		 <if test="docCd != null and docCd != ''">
+            AND doc_cd = #{docCd}
+        </if>
+        order by sign_seq desc
+    </select>
     
     <!-- 문서회수(상태 회수로변경) -->
     <update id="documentUpdate">
@@ -149,6 +173,9 @@
         </if>
 		<if test="docKind != null and docKind != ''">
             AND doc_kind = #{docKind}
+        </if>
+        <if test="docCd != null and docCd != ''">
+            AND doc_cd = #{docCd}
         </if>
         <if test="deptNm != null and deptNm != ''">
             AND fn_get_deptNm(mber_id) = #{deptNm}

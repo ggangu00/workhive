@@ -24,7 +24,6 @@
                   {{ data.commDtlNm }}
                   </option>
                 </select>
-
                 <select class="form-select w10" name="dept_nm" v-model="deptNm">
                   <option v-for="(data, idx) in selectedDeptData" 
                   :key="idx"
@@ -166,10 +165,15 @@ const TueGrid = () => {
 
 // 행 클릭 이벤트 핸들러
 const handleRowClick = (e) => {
-  console.log(e.event);
-  if (!grid.value || !e.columnName) return;
+  console.log(e);
+  if (!grid.value || e.rowKey == null || e.rowKey == undefined ) return;
   const dataRow = grid.value.getRow(e.rowKey);
 
+  if (e.nativeEvent.target.type == "checkbox") {
+    console.log("체크박스 클릭 감지, 행 클릭 이벤트 무시");
+    return;
+  }
+  
   let routePath ='';
 
   // 특정 조건일 때 페이지 이동
@@ -211,7 +215,7 @@ onMounted(() => {
 watch([docKind, deptNm, formType, startDate, endDate], async ([newDodKind, newDeptNm, newFormType, newStartDate, newEndDate]) => {
     const response = await axios.get("/api/document/list", { params: {
       docKind : newDodKind,
-      deptNm : newDeptNm === "전체" ? "" : newDeptNm,
+      deptNm : newDeptNm == "전체" ? "" : newDeptNm,
       formCd : newFormType,
       startDate : newStartDate,
       endDate : newEndDate,

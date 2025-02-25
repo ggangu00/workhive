@@ -106,9 +106,10 @@
             <div class="d-flex flex-column flex-grow-1">
               <span class="mt-1 mb-1">결재</span>
               <div class="approval-box">
-                <div class="approval-item"><span class='badge bg-info'>결정</span> [총무팀] 홍길동 팀장</div>
-                <div class="approval-item"><span class='badge bg-info'>결정</span> [인사팀] 홍길순 과장</div>
-                <div class="approval-item"><span class='badge bg-info'>기안</span> [영업팀] 홍길권 대리</div>
+                <div v-for="(approver, index) in reversedApprovers" :key="index" class="approval-item">
+                    <span class='badge bg-info text-dark'>{{ getApprovalStatusName(approver.status) }}</span> 
+                    [{{ approver.dept }}] {{ approver.name }} {{ approver.title }}
+                </div>
               </div>
               <span class="mt-3 mb-1">수신</span>
               <div class="approval-box">
@@ -126,6 +127,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
+import axios from 'axios';
 
 const route = useRoute();
 //데이터받기
@@ -153,6 +155,10 @@ onMounted(() => {
   if (modalElement) {
     modalElement.addEventListener('shown.bs.modal', handleModalOpen);
   }
+
+  if(route.query.docCd ){
+    approvalList();
+  }
 });
 
 //  컴포넌트 언마운트 시 이벤트 리스너 제거
@@ -167,7 +173,44 @@ onUnmounted(() => {
 
 const fileList = ref([]);
 
+/////////////////////결재선 가져오기/////////////////////
+const reversedApprovers = ref([]);
+const approvalList = async () => {
+  if (!route.query.docCd) return; // docCd가 없으면 실행하지 않음
 
+  try {
+    const response = await axios.get("/api/document/approvalList", {
+      params: { docCd: route.query.docCd }
+    });
+
+    console.log('response => ',response.data);
+    if (response.data) {
+      // 결재자 목록 설정
+      reversedApprovers.value = response.data.map((approver) => ({
+        mberId: approver.mberId,
+        name: approver.mberNm,
+        dept: approver.deptNm,
+        status: approver.signName, // 상태 코드 변환
+      }));
+    }
+    console.log('approvers.value => ', reversedApprovers.value);
+  } catch (error) {
+    console.error("결재선 정보 불러오기 실패:", error);
+  }
+};
+
+// 결재선 포멧
+const approvalStatusMap = {
+  "K01": "기안",
+  "K02": "결재",
+  "K03": "전결",
+  "K04": "결정"
+};
+
+// 상태 코드 변환 함수
+const getApprovalStatusName = (code) => {
+  return approvalStatusMap[code] || code; // 코드가 없으면 기존 코드 그대로 표시
+};
 </script>
 <style>
 .modal-xl {
