@@ -44,61 +44,10 @@
             </div>
           </div>
           <div class="table-responsive">
-            <table class="table table-hover project" style="margin-bottom: 0;">
-              <thead class="table-secondary">
-                <tr>
-                  <th width="50px">
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                    </div>
-                  </th>
-                  <th>
-                    <button class="btn btn-secondary btn-fill btn-sm float-left">선택미완료</button>
-                    <button class="btn btn-secondary btn-fill btn-sm float-left">선택완료</button>
-                    <button class="btn btn-danger btn-fill btn-sm float-left" @click="btnSelectDelete">선택삭제</button>
-                  </th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                </tr>
-              </thead>
-            </table>
-            <table class="table table-hover project">
-              <colgroup>
-                <col width="50px">
-                <col width="6%">
-                <col width="5%">
-                <col>
-                <col width="13%">
-              </colgroup>
-              <tbody>
-                <template v-if="todoCount > 0">
-                  <tr :key="i" v-for="(todo, i) in todoList" :class="todo.state == 'A01' ? 'table-secondary' : ''">
-                    <td>
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="todoChk" :value="todo.todoCd" v-model="todoChk">
-                      </div>
-                    </td>
-                    <td>{{ todo.state == 'A01' ? '완료' : '미완료' }}</td>
-                    <td>{{ todo.typeCd }}</td>
-
-                    <td align="left" data-bs-toggle="tooltip" data-bs-html="true" :data-bs-title="todo.content">{{
-                      todo.title }} {{ todo.content != null ? '(+)' : '' }}</td>
-                    <td>
-                      <button class="btn btn-success btn-fill btn-sm mr-1"
-                        @click="btnSelectUpdate(todo.todoCd)">수정</button>
-                      <button class="btn btn-danger btn-fill btn-sm mr-1"
-                        @click="btnTodoRemove(todo.todoCd)">삭제</button>
-                    </td>
-                  </tr>
-                </template>
-                <tr v-else class="list-nodata">
-                  <td colspan="10">
-                    <div>등록된 일지가 없습니다.</div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <button class="btn btn-secondary btn-fill btn-sm float-left" @click="btnSelectChange('A02')">선택미완료</button>
+            <button class="btn btn-secondary btn-fill btn-sm float-left" @click="btnSelectChange('A01')">선택완료</button>
+            <button class="btn btn-danger btn-fill btn-sm float-left" @click="btnSelectChange('del')">선택삭제</button>
+            <div id="tableGrid" class="toastui project"></div>
           </div>
         </div>
       </div>
@@ -164,10 +113,11 @@
 
 <script setup>
 import axios from "axios";
-import { ref, computed, watch, watchEffect, onBeforeMount } from 'vue';
+import { ref, computed, watch, watchEffect, onBeforeMount, onMounted } from 'vue';
 
 //---------------컴포넌트-------------- 
 import Swal from 'sweetalert2';
+import Grid from 'tui-grid';
 import Card from '../../components/Cards/Card.vue'
 import Modal from '../../components/Modal.vue';
 
@@ -190,8 +140,68 @@ const todoDt = ref(dateFormat()); // 현재 선택된 날짜 (디폴트 : 오늘
 
 onBeforeMount(() => {
   nowDateInfo(); //해당 월의 일수 표출
+  todoGetListAll();
   getStatus(); //업무구분
 });
+
+const grid = ref([]);
+
+onMounted(() => {
+  todoGetListAll();
+
+  grid.value = new Grid({
+    el: document.getElementById("tableGrid"),
+    scrollX: true,
+    scrollY: true,
+    columns: [
+      { header: "업무구분", name: "state", align: "center", width: 80, formatter: ({ row }) => row.state == 'A01' ? '완료' : '미완료' },
+      { header: "완료여부", name: "typeNm", align: "center", width: 200 },
+      { header: "업무내용", name: "title", align: "center" },
+      { header: "관리", name: "managementSetting", align: "center", width: 150, renderer: BtnRendererSetting }
+    ],
+    pageOptions: {
+      useClient: false,
+      perPage: 5,
+    },
+    rowHeaders: ["checkbox"],
+    data: todoList.value,
+    rowHeight: 50
+  });
+});
+
+//--------------그리드 렌더링-------------
+
+//수정/삭제 버튼
+class BtnRendererSetting {
+  constructor(props) {
+
+    const el = document.createElement("div");
+
+    el.innerHTML = `
+      <button class="btn btn-success btn-fill btn-sm mr-1" data-type="edit">수정</button>
+      <button class="btn btn-danger btn-fill btn-sm mr-1" data-type="del">삭제</button>
+    `;
+
+    el.addEventListener("click", (event) => {
+      const type = event.target.dataset.type;
+      const rowKey = props.row?.rowKey ?? props.grid.getRow(props.rowKey)?.rowKey;
+
+      const rowData = props.grid.getRow(rowKey);
+
+      if (type === "edit") {
+        btnSelectUpdate(rowData.todoCd)
+      } else if (type === "del") {
+        btnTodoRemove(rowData.todoCd)
+      }
+    });
+
+    this.el = el;
+  }
+
+  getElement() {
+    return this.el;
+  }
+}
 
 //---------------모달-------------- 
 
@@ -275,22 +285,42 @@ const btnTodoRemove = (code) => {
       confirmButton: "btn btn-secondary btn-fill",
       cancelButton: "btn btn-danger btn-fill"
     },
-    confirmButtonText: "닫기",
-    cancelButtonText: "삭제",
+    confirmButtonText: "아니요",
+    cancelButtonText: "네",
   }).then((result) => {
     if (result.dismiss == Swal.DismissReason.cancel) {
-      todoRemove(code);
+      todoStateUpdate(code);
     }
   });
 };
 
-const todoChk = ref([]);
-const btnSelectDelete = () => {
-  if (todoChk.value.length === 0) {
-    alert("삭제할 항목을 선택하세요.");
+const btnSelectChange = (mode) => {
+  const checkedData = grid.value.getCheckedRows();
+  const modeText = ref('상태변경');
+  if (mode == 'del') {
+    modeText.value = '삭제';
+  }
+
+  if (checkedData.length === 0) {
+    alert("선택된 항목이 없습니다.");
     return;
-  }else{
-    todoRemove();
+  } else {
+    Swal.fire({
+      title: "해당 업무일지를 " + modeText.value + " 하시겠습니까?",
+      icon: "question",
+      showCancelButton: true,
+      customClass: {
+        confirmButton: "btn btn-secondary btn-fill",
+        cancelButton: "btn btn-danger btn-fill"
+      },
+      confirmButtonText: "아니요",
+      cancelButtonText: "네",
+    }).then((result) => {
+      if (result.dismiss == Swal.DismissReason.cancel) {
+        todoStateUpdate(mode);
+      }
+    });
+
   }
 }
 
@@ -305,7 +335,7 @@ const getStatus = async () => { //업무구분 목록 호출
 
 const todoList = ref([]);
 const todoCount = ref(0);
-watchEffect(async () => { //일지 전체조회
+const todoGetListAll = async () => { //일지 전체조회
 
   const date = dateFormat(todoDt.value).replaceAll("-", "");
 
@@ -314,6 +344,8 @@ watchEffect(async () => { //일지 전체조회
 
     todoList.value = result.data;
     todoCount.value = result.data.length;
+
+    grid.value.resetData(todoList.value);
 
   } catch (err) {
     todoList.value = [];
@@ -324,6 +356,10 @@ watchEffect(async () => { //일지 전체조회
       text: "Error : " + err
     });
   }
+}
+
+watchEffect(() => {
+  todoGetListAll();
 });
 
 const todoInfo = ref([]);
@@ -397,7 +433,8 @@ const todoAdd = async () => { //일지 등록
         title: "등록완료",
         text: "일지등록을 완료하였습니다",
       })
-      todoList.value = response.data.list;
+      todoGetListAll();
+
       formReset();
     }
   } catch (err) {
@@ -409,22 +446,40 @@ const todoAdd = async () => { //일지 등록
   }
 }
 
-const todoRemove = async () => { //일지 삭제
+const todoStateUpdate = async (mode) => { //일지 삭제
+  const checkedData = grid.value.getCheckedRows();
+
+  const modeText = ref('상태변경');
+  if (mode == 'del') {
+    modeText.value = '삭제';
+  }
 
   try {
-    const response = await axios.delete(`/api/todo/delete`, { data: { todoArr: todoChk.value }});
+    const response = ref([]);
+    if (mode == 'del') {
+      response.value = await axios.delete(`/api/todo/delete`, {
+        data: { todoArr: checkedData.map(row => row.todoCd) }
+      });
 
-    if (response.data === true) {
+    } else {
+      response.value = await axios.put(`/api/todo/state`, {
+        todoArr: checkedData.map(row => row.todoCd),
+        state: mode
+      });
+    }
+
+    if (response.value.statusText == "OK") {
       Swal.fire({
         icon: "success",
-        title: "삭제완료",
-        text: "선택한 일지를 삭제하였습니다",
+        title: modeText.value + "완료",
+        text: "선택한 일지를 " + modeText.value + "하였습니다",
       })
     }
+    todoGetListAll();
   } catch (err) {
     Swal.fire({
       icon: "error",
-      title: "삭제 실패",
+      title: modeText.value + "실패",
       text: "Error : " + err
     });
   }

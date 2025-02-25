@@ -24,6 +24,10 @@ public interface TodoMapper {
 	// 일지 수정
 	public int todoUpdate(TodoDTO todoDTO);
 	
+	// 일지 상태수정
+	public int todoStateUpdate(TodoDTO todoDTO);
+
 	// 일지 삭제
 	public int todoDelete(List<String> todoArr);
+
 }

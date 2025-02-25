@@ -20,6 +20,9 @@ public interface TodoService {
 	//일지 수정
 	public boolean todoUpdate(TodoDTO todo);
 	
+	//일지 상태 수정
+	public boolean todoStateUpdate(List<String> todoArr, String state);
+	
 	//일지 삭제
 	public boolean todoDelete(List<String> todoArr);
 }
