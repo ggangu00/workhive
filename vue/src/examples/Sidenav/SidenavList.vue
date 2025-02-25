@@ -50,13 +50,6 @@
 
 
 
-         <!--게시판 목록 작업하는 곳[S]-->
-         <li class="nav-item">
-            <sidenav-collapse :aria-controls="''" collapse="false" navText="게시글 관리">
-               <template v-slot:icon>
-                  <i class="fa-solid fa-pen-to-square"></i>
-               </template>
-
    <!--게시글 목록 작업하는 곳[S]-->
    <li class="nav-item">
       <sidenav-collapse
