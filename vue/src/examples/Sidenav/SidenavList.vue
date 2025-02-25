@@ -27,54 +27,51 @@
                <template v-if="item.subMenus.length" v-slot:list>
                   <div class="sub-item" v-for="(sub, j) in item.subMenus" :key="j"
                      @click="sub.subSubMenus.length > 0 ? toggleSubMenu(sub) : movePage(sub.routerNm)">
-         <li class="sub-li">
-            {{ sub.menuNm }}
-            <i v-if="sub.subSubMenus.length > 0"
-               :class="['fa-solid', 'arrow-icon', sub.isHidden ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
+                     <li class="sub-li">
+                        {{ sub.menuNm }}
+                        <i v-if="sub.subSubMenus.length > 0"
+                           :class="['fa-solid', 'arrow-icon', sub.isHidden ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
+                     </li>
+
+                     <div v-for="(child, k) in sub.subSubMenus" class="sub2-item" :key="k" v-show="sub.isHidden"
+                        :id="'menuDropdown' + sub.menuCd">
+                        <template v-if="sub.subSubMenus.length > 0">
+                           <li @click.stop="childMovePage(child.routerNm)">
+                              {{ child.menuNm }}
+                           </li>
+                        </template>
+                     </div>
+                  </div>
+               </template>
+
+            </sidenav-collapse>
          </li>
 
-         <div v-for="(child, k) in sub.subSubMenus" class="sub2-item" :key="k" v-show="sub.isHidden"
-            :id="'menuDropdown' + sub.menuCd">
-            <template v-if="sub.subSubMenus.length > 0">
-               <li @click.stop="childMovePage(child.routerNm)">
-                  {{ child.menuNm }}
-               </li>
-            </template>
-         </div>
 
 
 
+         <!--게시판 목록 작업하는 곳[S]-->
+         <li class="nav-item">
+            <sidenav-collapse :aria-controls="''" collapse="false" navText="게시글 관리">
+               <template v-slot:icon>
+                  <i class="fa-solid fa-pen-to-square"></i>
+               </template>
+
+               <!-- 서브 메뉴 (Depth 2) -->
+               <template v-slot:list>
+                  <div class="sub-item">
+                        <li class="sub-li">게시판 이름
+                     </li>
+                  </div>
+               </template>
+            </sidenav-collapse>
+         </li>
+         <!--게시판 목록 작업하는 곳[E]-->
+
+
+
+      </ul>
    </div>
-</template>
-
-</sidenav-collapse>
-</li>
-
-
-
-
-   <!--게시판 목록 작업하는 곳[S]-->
-   <li class="nav-item">
-      <sidenav-collapse :aria-controls="''" collapse="false" navText="게시글 관리">
-         <template v-slot:icon>
-            <i class="fa-solid fa-pen-to-square"></i>
-         </template>
-
-         <!-- 서브 메뉴 (Depth 2) -->
-         <template v-slot:list>
-            <div class="sub-item">
-                  <li class="sub-li">게시판 이름
-               </li>
-            </div>
-         </template>
-      </sidenav-collapse>
-   </li>
-   <!--게시판 목록 작업하는 곳[E]-->
-
-
-   
-</ul>
-</div>
 </template>
 
 <script setup>

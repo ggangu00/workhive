@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="egovframework.com.department.mapper.DepartmentMapper">
 
-	<!-- 권한 전체조회 -->
-	<select id="departmentSelectAll" resultType="departmentDTO">
+	<!-- 부서 전체조회 -->
+	<!--<select id="departmentSelectAll" resultType="departmentDTO">
 		SELECT
 		   dept_cd,
 		   depth,
@@ -23,6 +23,34 @@
 		   del_yn = UPPER('n')
 		AND
 		   <![CDATA[dept_cd > 0]]>
+   	</select> -->
+   	
+   	<select id="departmentSelectAll" resultType="departmentDTO">
+		SELECT
+		   LEVEL, <!-- 트리내에서 어떤 단계에 있는지 나타내는 값 --> 
+		   dept_cd,
+		   LPAD(' ', 10 * (LEVEL - 1)) || dept_nm AS dept_nm,
+		   description,
+		   manager,
+		   depth,
+		   parent_cd,
+		   seq,
+		   create_id,
+		   create_dt,
+		   update_id,
+		   update_dt,
+		   del_yn
+		FROM
+		   department
+		WHERE 
+		   UPPER(del_yn) = UPPER('n')
+		START WITH <!-- 최상위 루트노드 지정 -->
+		   parent_cd IS NULL  <!-- 최상위 루트노드의 부모는 NULL임 -->
+		<!-- CONNECT BY : 부모와 자식 노드를 찾아서 연결, PRIOR : 자식노드쪽에 붙여서 작성 -->
+		CONNECT BY PRIOR 
+		   TO_NUMBER(dept_cd) = TO_NUMBER(parent_cd)
+		ORDER SIBLINGS BY <!-- 형제 노드간의 정렬 -->
+		   seq ASC <!-- 정렬 기준 -->
    	</select>
    	
    	<select id="departmentSelect" resultType="departmentDTO" parameterType="int">

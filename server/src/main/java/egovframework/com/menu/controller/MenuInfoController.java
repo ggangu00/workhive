@@ -24,9 +24,7 @@ public class MenuInfoController {
 	@GetMapping("")
 	public List<MenuInfoDTO> menuList() {
 		log.info(menuService.menuSelectAll().toString());
-		return menuService.menuSelectAll();
+		return  menuService.menuSelectAll();
 	}
-	
-	
 	
 }	

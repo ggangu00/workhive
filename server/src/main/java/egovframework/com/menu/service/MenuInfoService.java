@@ -7,4 +7,5 @@ public interface MenuInfoService {
 	
 	// 메뉴 목록 조회
 	public List<MenuInfoDTO> menuSelectAll();
+	
 }

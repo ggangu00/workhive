@@ -40,17 +40,17 @@
                </div>
             </a>
             </li>
-            <li class="px-3 nav-item d-flex align-items-center">
-            <a
-               class="p-0 nav-link lh-1"
-               @click="toggleConfigurator"
-               :class="color ? color : 'text-body'"
-            >
-               <i class="material-icons fixed-plugin-button-nav cursor-pointer">
-                  settings
-               </i>
-            </a>
-            </li>
+            <!-- <li class="px-3 nav-item d-flex align-items-center">
+               <a
+                  class="p-0 nav-link lh-1"
+                  @click="toggleConfigurator"
+                  :class="color ? color : 'text-body'"
+               >
+                  <i class="material-icons fixed-plugin-button-nav cursor-pointer">
+                     settings
+                  </i>
+               </a>
+            </li> -->
             <li
             class="nav-item dropdown d-flex align-items-center"
             :class="isRTL ? 'ps-2' : 'pe-2'"
