@@ -43,17 +43,17 @@ public class ProjectController {
 		/** EgovPropertyService.sample */
     	searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
     	searchVO.setPageSize(propertiesService.getInt("pageSize"));
-
-    	/** pageing */
+  	  
+	  	//목록 조회
     	PaginationInfo paginationInfo = new PaginationInfo();
 		paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
 		paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());
 		paginationInfo.setPageSize(searchVO.getPageSize());
-
+		
 		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
 		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
-		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
-		
+	  	searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+	  	
 		List<ProjectDTO> projectList = projectService.projectSelectAll(searchVO);
 		
 		int totCnt = projectService.projectSelectAllCnt(searchVO);
