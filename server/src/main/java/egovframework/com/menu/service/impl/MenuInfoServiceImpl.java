@@ -10,7 +10,7 @@ import egovframework.com.menu.mapper.MenuInfoMapper;
 import egovframework.com.menu.service.MenuInfoDTO;
 import egovframework.com.menu.service.MenuInfoService;
 
-@Service("MenuInfoService")
+@Service("menuInfoService")
 public class MenuInfoServiceImpl implements MenuInfoService {
 
 	@Resource
@@ -21,5 +21,4 @@ public class MenuInfoServiceImpl implements MenuInfoService {
 	public List<MenuInfoDTO> menuSelectAll() {
 		return menuMapper.menuSelectAll();
 	}
-
 }

@@ -129,7 +129,7 @@ watch(() => props.selectedRowData, async (newVal) => {
   if (props.isUpdate) {
     // 업무 상세 정보 가져오기
     const result = await axios.get('/api/deptstore/jobInfo', { params: {deptJobId: newVal.deptJobId} });
-    
+
     formValues.value.deptJobBxId = result.data.deptJobBxId;
     formValues.value.deptJobId = result.data.deptJobId;
     formValues.value.priort = result.data.priort;
@@ -144,12 +144,12 @@ const modalCloseJob = () => {
   emit('modalCloseJob');
 }
 const modalConfirmJob = async () => {
-  if(!props.isUpdate) {
-    await jobAdd();
-  } else {
-    await jobUpdate();
-  }
-  emit('modalConfirmJob');
+   if(!props.isUpdate) {
+      await jobAdd();
+   } else {
+      await jobUpdate();
+   }
+   emit('modalConfirmJob');
 }
 
 // 등록
@@ -162,7 +162,7 @@ const jobAdd = async () => {
   addData.append("deptJobCn", formValues.value.deptJobCn);
   addData.append("chargerId", formValues.value.chargerId);
   // addData.append("", formValues.); 파일
-  
+
   await axios.post('/api/deptstore/jobAdd', addData);
 }
 
@@ -177,7 +177,7 @@ const jobUpdate = async () => {
   modifyData.append("deptJobCn", formValues.value.deptJobCn);
   modifyData.append("chargerId", formValues.value.chargerId);
   // modifyData.append("", formValues.); 파일
-  
+
   await axios.post('/api/deptstore/jobModify', modifyData);
 }
 </script>

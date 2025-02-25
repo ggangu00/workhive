@@ -7,8 +7,8 @@
             <!-- 버튼 & 필터 -->
             <div class="button-collection d-flex justify-content-between align-items-center flex-wrap" style="padding: 15px;">
               <div class="d-flex">
-                <button 
-                  v-for="(btn, index) in buttons" 
+                <button
+                  v-for="(btn, index) in buttons"
                   :key="index"
                   :class="['btn', btn.class]"
                   @click="$emit('button-click', btn.action)">
@@ -18,21 +18,21 @@
 
               <div class="selectbox d-flex">
                 <select class="form-select w10" name="doc_kind" v-model="docKind">
-                  <option v-for="(data, idx) in selectedData" 
+                  <option v-for="(data, idx) in selectedData"
                   :key="idx"
                   :value="data.commDtlCd">
                   {{ data.commDtlNm }}
                   </option>
                 </select>
                 <select class="form-select w10" name="dept_nm" v-model="deptNm">
-                  <option v-for="(data, idx) in selectedDeptData" 
+                  <option v-for="(data, idx) in selectedDeptData"
                   :key="idx"
                   :value="data.deptNm">
                   {{ data.deptNm }}
                   </option>
                 </select>
                 <select class="form-select w10" name="form_cd" v-model="formType">
-                  <option v-for="(data, idx) in selectedFormData" 
+                  <option v-for="(data, idx) in selectedFormData"
                   :key="idx"
                   :value="data.formCd">
                   {{ data.formType }}
@@ -49,7 +49,7 @@
                     <input type="date" class="form-control" v-model="endDate">
                   </div>
                 </div>
-                
+
                 <button class="btn btn-secondary btn-fill" @click="resetBtn">초기화</button>
               </div>
             </div>
@@ -72,6 +72,7 @@ import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import "tui-grid/dist/tui-grid.css";
 import axios from "axios";
+import Swal from 'sweetalert2';
 
 // Props 정의
 const props = defineProps({
@@ -107,8 +108,19 @@ const commonDtlList = async () =>{
 }
 //부서명 가져오기
 const deptList = async () =>{
-  const deptNm = await axios.get('/api/department')
-  selectedDeptData.value=[{ deptNm: "전체" } , ...deptNm.data]
+   try {
+      const deptNm = await axios.get('/api/department')
+      selectedDeptData.value=[{ deptNm: "전체" } , ...deptNm.data]
+      console.log("부서명 => ", deptNm.data)
+   } catch (err) {
+      Swal.fire({
+         icon: "error",
+         title: "조회 실패",
+         text:  "Error : " + err.response.data.error
+      });
+   }
+
+
 }
 //양식유형 가져오기
 const formList = async () =>{
@@ -207,7 +219,7 @@ const handleRowClick = (e) => {
 onMounted(() => {
   TueGrid(); // Grid 초기화 실행
   commonDtlList(); //공통코드
-  deptList(); //부서코드 
+  deptList(); //부서코드
   formList(); //문서유형
 });
 

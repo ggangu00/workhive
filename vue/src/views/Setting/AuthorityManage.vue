@@ -10,11 +10,12 @@
          <div class="card" @keydown.esc="modalClose">
             <div class="card-body">
                <div class="row m-0">
-
+                  <!-- 왼쪽 레이아웃 : 권한 목록  -->
                   <div class="col-3 treeview">
                      <div class="bottom-line p-2">
                         <button class="btn btn-success btn-sm" @click="btnAuthorityAdd"><i class="fa-solid fa-plus"></i> 권한 추가</button>
                      </div>
+
                      <div class="p-2">
                         <div v-for="(role, idx) in roles" :key="idx">
                            <div class="d-flex justify-content-between align-items-center">
@@ -33,7 +34,7 @@
                      </div>
                   </div>
 
-                  <!-- 오른쪽 패널 -->
+                  <!-- 오른쪽 레이아웃 : 메뉴목록 조회 -->
                   <div class="col-9 treeview">
                      <div class="d-flex justify-content-between align-items-center bottom-line p-2">
                         <span>권한명</span>
@@ -42,32 +43,11 @@
                            <button class="btn btn-success btn-sm btn-fill">저장</button>
                         </div>
                      </div>
-
-                     <div v-for="(menu, idx) in menus" :key="idx" class="bottom-line">
-                        <div class="menu-title">
-                           <div class="">
-                              <div class="form-check form-check-inline">
-                                 <input class="form-check-input" type="checkbox" v-model="menu.selected" @change="checkBoxSelectAll(menu)" />
-                                 <span class="ms-2 font-15">{{ menu.menuNm }}</span>
-                                 <span class="ms-2 font-14">({{ submenusSelected(menu) }}/{{ menu.submenus.length }})</span>
-                              </div>
-                           </div>
-                           <div @click="toggleMenu(idx)">
-                              <i class="fa-solid fa-angle-down" :class="{ 'rotated': menu.open }"></i>
-                           </div>
-                        </div>
-                        <div v-if="menu.open" class="submenu px-4 py-2">
-                           <div v-for="(sub, i) in menu.submenus" :key="i" class="px-4 py-2">
-                              <div class="form-check form-check-inline">
-                                 <input class="form-check-input sub-check" type="checkbox" v-model="menu.submenus[i].selected" />
-                                 <span class="ms-2 font-13">{{ sub.menuNm }}</span>
-                              </div>
-                           </div>
-                        </div>
+                     <div class="bottom-line">
+                        <menuTree v-for="(item, idx) in menuData" :key="idx" :item="item" ></menuTree>
                      </div>
 
                   </div>
-
                </div>
 
                <!-- [s]-->
@@ -114,6 +94,8 @@
    import Swal from 'sweetalert2';
    import Card from '../../components/Cards/Card.vue'
    import Modal from '../../components/Modal.vue';
+   import menuTree from './components/menuComponent.vue'
+
 
    onBeforeMount(() => {
       authorityGetList();  // 권한 목록 조회
@@ -128,6 +110,54 @@
    onBeforeUnmount(() => {
       document.removeEventListener('keydown', modalClose);
    });
+
+   const menuData = ref([]);
+   /**
+    * @description 메뉴 목록 조회 API
+    */
+   const menuGetList = async () => {
+      try {
+         const response = await axios.get('/api/menu');
+
+         menuData.value = treeBuild(response.data);
+         console.log("menuData.value => ", menuData.value);
+      } catch (err) {
+         Swal.fire({
+            icon: "error",
+            title: "API 조회 오류",
+            text: "Error : " + err.response.data
+         });
+      }
+   }
+
+   /**
+    * @description 서버에서 가져온 메뉴 리스트를 트리 형태로 변경해주는 함수
+    * @param {Array} menuArray - DB에서 불러온 메뉴 리스트
+    * @returns {Array} 트리 형태의 메뉴 배열
+    */
+   function treeBuild(menuArray) {
+      const map = new Map();
+      const tree = [];
+
+      // 1. 모든 항목을 맵에 저장 (하위 메뉴 배열, open, selected 속성 추가)
+      menuArray.forEach(item => {
+         map.set(item.menuCd, { ...item, subMenus: [], open: false, selected: false });
+      });
+
+      // 2. 부모-자식 관계를 설정
+      menuArray.forEach(item => {
+         if (item.parentMenuCd === null) {
+            tree.push(map.get(item.menuCd));  // 루트 노드
+         } else {
+            const parent = map.get(item.parentMenuCd);
+            if (parent) {
+               parent.subMenus.push(map.get(item.menuCd));  // 부모의 subMenus에 추가
+            }
+         }
+      });
+
+      return tree;
+   }
 // ================================================== Modal ==================================================
    const isShowModal = ref(false);
    const isEditMenu = ref(false);
@@ -324,74 +354,9 @@
          });
       }
    };
-// ======================================== 메뉴 Axios 통신 ========================================
-   // 메뉴 전체 조회
-   const menus = ref([]);
-   const menuGetList = async () => {
-      try {
-         const response = await axios.get('/api/menu');
-         console.log("response.data => ", response.data)
-         menus.value = response.data;
-      } catch (err) {
-         Swal.fire({
-            icon: "error",
-            title: "API 조회 오류",
-            text: "Error : " + err.response.data.error
-         });
-      }
-   }
 
-// ======================================== Menu ========================================
-   // const menus = ref([
-   //    {
-   //       menuNm: '대메뉴 1',
-   //       open: false,
-   //       selected: false,
-   //       submenus: [
-   //          { menuNm: '소메뉴 1', selected: false },
-   //          { menuNm: '소메뉴 2', selected: false },
-   //          { menuNm: '소메뉴 3', selected: false },
-   //          { menuNm: '소메뉴 4', selected: false }
-   //       ]
-   //    },
-   //    {
-   //       menuNm: '대메뉴 2',
-   //       open: false,
-   //       selected: false,
-   //       submenus: [
-   //          { menuNm: '소메뉴 1', selected: false },
-   //          { menuNm: '소메뉴 2', selected: false },
-   //          { menuNm: '소메뉴 3', selected: false },
-   //          { menuNm: '소메뉴 4', selected: false }
-   //       ]
-   //    },
-   // ]);
-
-   /**
-    * @description 헤더 체크 선택시 서브 체크 전체 선택
-    * @param menu 선택된 메뉴
-    */
-   const checkBoxSelectAll = (menu) => {
-      menu.submenus.forEach(sub => {
-         sub.selected = menu.selected;
-      });
-   }
-
-   /**
-    * @description 체크된 메뉴 선택하는 함수
-    * @param menu 선택된 메뉴
-    */
-   const submenusSelected = (menu) => {
-      return menu.submenus.filter(sub => sub.selected).length;
-   };
-
-// ======================================== editing, delete Toggle Dropdown Menu ========================================
-   const toggleMenu = (idx) => {
-      menus.value[idx].open = !menus.value[idx].open;
-   };
-
+// ======================================== edit, delete Toggle DropDown Menu ========================================
    const selectedRole = ref(null); // 선택한 권한코드
-   
    /**
     * @description 선택한 권한에 대한 수정 삭제 메뉴 토글
     * @param role 토글할 권한명 index
