@@ -1,40 +1,42 @@
 <template>
-   <div class="menu-title">
-      <div>
-         <div class="form-check form-check-inline">
-            <input
-               class="form-check-input"
-               type="checkbox"
-               v-model="menu.selected"
-               @change="checkBoxSelectAll(menu)"
-            />
-            <span class="ms-2 font-15">{{ menu.menuNm }}</span>
-            <span class="ms-2 font-14">({{ subMenusSelected(menu) }}/{{ menu.subMenus.length }})</span>
+   <div class="bottom-line">
+      <div class="menu-title">
+         <div>
+            <div class="form-check form-check-inline">
+               <input
+                  class="form-check-input"
+                  type="checkbox"
+                  v-model="menu.selected"
+                  @change="checkBoxSelectAll(menu)"
+               />
+               <span class="ms-2 font-15">{{ menu.menuNm }}</span>
+               <span class="ms-2 font-14">({{ subMenusSelected(menu) }}/{{ menu.subMenus.length }})</span>
+            </div>
+         </div>
+
+         <div v-if="menu.subMenus.length > 0" @click="toggleMenu">
+            <i class="fa-solid fa-angle-down" :class="{ rotated: menu.open }"></i>
          </div>
       </div>
 
-      <div v-if="menu.subMenus.length > 0" @click="toggleMenu">
-         <i class="fa-solid fa-angle-down" :class="{ rotated: menu.open }"></i>
-      </div>
-   </div>
-
-   <div v-if="menu.open && menu.subMenus.length > 0" class="submenu px-4 py-2" >
-      <!-- <menuTree v-for="(subItem, idx) in menu.subMenus" :key="idx" :item="subItem" /> -->
-      <div v-for="(sub, i) in menu.subMenus" :key="i" class="px-4 py-2">
-         <div class="form-check form-check-inline">
-            <input
-               class="form-check-input sub-check"
-               type="checkbox"
-               v-model="sub.selected"
-            />
-            <span class="ms-2 font-13">{{ sub.menuNm }}</span>
-         </div>
+      <div v-if="menu.open && menu.subMenus.length > 0" class="submenu px-4 py-2" >
+         <menuTree v-for="(subItem, idx) in menu.subMenus" :key="idx" :item="subItem" />
+         <!-- <div v-for="(sub, i) in menu.subMenus" :key="i" class="px-4 py-2">
+            <div class="form-check form-check-inline">
+               <input
+                  class="form-check-input sub-check"
+                  type="checkbox"
+                  v-model="sub.selected"
+               />
+               <span class="ms-2 font-13">{{ sub.menuNm }}</span>
+            </div>
+         </div> -->
       </div>
    </div>
 </template>
 
 <script setup>
-   // import menuTree from './menuComponent.vue'
+   import menuTree from './menuComponent.vue'
    // 부모에서 전달한 prop 이름을 item으로 변경합니다.
    const props = defineProps({
       item: { type: Object, required: true },

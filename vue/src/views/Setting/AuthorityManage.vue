@@ -43,7 +43,7 @@
                            <button class="btn btn-success btn-sm btn-fill">저장</button>
                         </div>
                      </div>
-                     <div class="bottom-line">
+                     <div>
                         <menuTree v-for="(item, idx) in menuData" :key="idx" :item="item" ></menuTree>
                      </div>
 
