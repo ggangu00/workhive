@@ -10,15 +10,19 @@
          <div class="card" @keydown.esc="modalClose">
             <div class="card-body">
                <div class="row m-0">
-                  <!-- 왼쪽 레이아웃 : 권한 목록  -->
+
+                  <!-- 왼쪽 레이아웃 : 권한 목록 -->
                   <div class="col-3 treeview">
                      <div class="bottom-line p-2">
-                        <button class="btn btn-success btn-sm" @click="btnAuthorityAdd"><i class="fa-solid fa-plus"></i> 권한 추가</button>
+                        <button class="btn btn-primary btn-sm" @click="btnAuthorityAdd">
+                           <i class="fa-solid fa-plus"></i> 권한 추가
+                        </button>
                      </div>
 
                      <div class="p-2">
-                        <div v-for="(role, idx) in roles" :key="idx">
-                           <div class="d-flex justify-content-between align-items-center">
+                        <div v-for="(role, idx) in roles" :key="idx" @click="authorityGet(role, idx)" class="role-wrapper">
+                           <div class="d-flex justify-content-between align-items-center"
+                                 :class="{ 'selected-role': selectedRoleIdx === idx }">
                               <span class="role-item">{{ role.authorityNm }}</span>
                               <div class="options pe-2" @click.stop="optionsToggle(idx)">
                                  <i class="fa-solid fa-ellipsis-vertical font-13"></i>
@@ -26,10 +30,10 @@
                            </div>
 
                            <!-- 드롭다운 메뉴 -->
-                           <di v-show="selectedRole == idx && isEditMenu == true" class="editing-dropdown-menu">
+                           <div v-show="selectedRoleIdx === idx && isEditMenu" class="editing-dropdown-menu">
                               <div class="font-14 p-2" @click="btnAuthorityModify(role.authorityCd)">권한 수정</div>
                               <div class="font-14 p-2" @click="btnAuthorityRemove(role.authorityNm, role.authorityCd)">권한 삭제</div>
-                           </di>
+                           </div>
                         </div>
                      </div>
                   </div>
@@ -37,17 +41,21 @@
                   <!-- 오른쪽 레이아웃 : 메뉴목록 조회 -->
                   <div class="col-9 treeview">
                      <div class="d-flex justify-content-between align-items-center bottom-line p-2">
-                        <span>권한명</span>
+                        <span>{{ selectedRole ? selectedRole.authorityNm : '' }}</span>
+                        <div class="button-group">
+                           <button class="btn btn-success btn-sm btn-fill">수정</button>
+                        </div>
                         <div class="button-group">
                            <button class="btn btn-secondary btn-sm btn-fill">취소</button>
                            <button class="btn btn-success btn-sm btn-fill">저장</button>
                         </div>
                      </div>
                      <div>
-                        <menuTree v-for="(item, idx) in menuData" :key="idx" :item="item" ></menuTree>
+                        <!-- <menuTree v-for="(item, idx) in menuData" :key="idx" :item="item" ></menuTree> -->
+                        <menuListView></menuListView>
                      </div>
-
                   </div>
+
                </div>
 
                <!-- [s]-->
@@ -94,7 +102,8 @@
    import Swal from 'sweetalert2';
    import Card from '../../components/Cards/Card.vue'
    import Modal from '../../components/Modal.vue';
-   import menuTree from './components/menuComponent.vue'
+   // import menuTree from './components/MenuComponent.vue'
+   import menuListView from './components/MenuListViewComponent.vue'
 
 
    onBeforeMount(() => {
@@ -111,53 +120,6 @@
       document.removeEventListener('keydown', modalClose);
    });
 
-   const menuData = ref([]);
-   /**
-    * @description 메뉴 목록 조회 API
-    */
-   const menuGetList = async () => {
-      try {
-         const response = await axios.get('/api/menu');
-
-         menuData.value = treeBuild(response.data);
-         console.log("menuData.value => ", menuData.value);
-      } catch (err) {
-         Swal.fire({
-            icon: "error",
-            title: "API 조회 오류",
-            text: "Error : " + err.response.data
-         });
-      }
-   }
-
-   /**
-    * @description 서버에서 가져온 메뉴 리스트를 트리 형태로 변경해주는 함수
-    * @param {Array} menuArray - DB에서 불러온 메뉴 리스트
-    * @returns {Array} 트리 형태의 메뉴 배열
-    */
-   function treeBuild(menuArray) {
-      const map = new Map();
-      const tree = [];
-
-      // 1. 모든 항목을 맵에 저장 (하위 메뉴 배열, open, selected 속성 추가)
-      menuArray.forEach(item => {
-         map.set(item.menuCd, { ...item, subMenus: [], open: false, selected: false });
-      });
-
-      // 2. 부모-자식 관계를 설정
-      menuArray.forEach(item => {
-         if (item.parentMenuCd === null) {
-            tree.push(map.get(item.menuCd));  // 루트 노드
-         } else {
-            const parent = map.get(item.parentMenuCd);
-            if (parent) {
-               parent.subMenus.push(map.get(item.menuCd));  // 부모의 subMenus에 추가
-            }
-         }
-      });
-
-      return tree;
-   }
 // ================================================== Modal ==================================================
    const isShowModal = ref(false);
    const isEditMenu = ref(false);
@@ -202,13 +164,20 @@
       modalOpen(false, "권한 등록")
    };
 
-   // 권한수정 버튼
+   /**
+    * @description 권한 수정 버튼 함수
+    * @param { String } role 권한 코드
+    */
    const btnAuthorityModify = (role) => {
       modalOpen(true, "권한 수정");
-      authorityGet(role);
+      authorityGet(role);  // 권한 단건조회
    };
 
-   // 권한삭제 버튼
+   /**
+    * @description 권한삭제 버튼 함수
+    * @param { String } name 권한명
+    * @param { String } code 권한코드
+    */
    const btnAuthorityRemove = (name, code) => {
       Swal.fire({
          title: `"${name}" 권한을 삭제 하시겠습니까?`,
@@ -218,8 +187,8 @@
             confirmButton: "btn btn-secondary btn-fill",
             cancelButton: "btn btn-danger btn-fill"
          },
-         confirmButtonText: "닫기", // "삭제" → "닫기"
-         cancelButtonText: "삭제", // "닫기" → "삭제"
+         confirmButtonText: "닫기",
+         cancelButtonText: "삭제",
       }).then((result) => {
          if (result.dismiss == Swal.DismissReason.cancel) {
             // 권한 삭제
@@ -233,14 +202,20 @@
       });
    };
 
-   // 모달 닫기 버튼
+   /**
+    * @description 모달 닫기
+    */
    const btnModalClose = () => {
       modalClose("remove")
    }
 
 // ======================================== 권한 관리 Axios 통신 ========================================
-   // 권한 전체 조회
+   //
+
    const roles = ref([]);  // 권한 목록 배열
+   /**
+    * @description 권한 전체 조회
+    */
    const authorityGetList = async () => {
       try {
          const result = await axios.get('/api/authority');
@@ -257,27 +232,39 @@
    };
 
    let authorityCd = ref(""); // 권한코드
-   // 권한 단건조회
-   const authorityGet = async (role) => {
+   /**
+    * @description 권한 단건조회
+    * @param { Object } role 권한정보
+    * @param { String } idx index
+    */
+   const authorityGet = async (role, idx) => {
       try {
-         const response = await axios.get(`/api/authority/${role}`);
-         if(response.data.result === true) {
+         selectedRole.value = role || {}; // 기본적으로 빈 객체 할당
+         selectedRoleIdx.value = idx;
+
+         const response = await axios.get(`/api/authority/${role.authorityCd}`);
+
+         if (response.data.result) {
             authorityCd.value = response.data.info.authorityCd;
             authorityNm.value = response.data.info.authorityNm;
             description.value = response.data.info.description;
          }
+
+         authorityMenuGetList(role.authorityCd);
       } catch (err) {
          Swal.fire({
             icon: "error",
             title: "API 조회 오류",
-            text:  "Error : " + err.response.data.error
+            text: "Error : " + err.response?.data?.error || "알 수 없는 오류"
          });
       }
    };
 
    let authorityNm = ref(''); // 모달 권한명
    let description = ref(''); // 모달 권한설명
-   // 권한 등록
+   /**
+    * @description 권한 등록
+    */
    const authorityAdd = async () => {
       const requestData = { // 서버로 보낼 데이터
          authorityNm: authorityNm.value,
@@ -308,13 +295,16 @@
       }
    };
 
-   //권한 수정
+   /**
+    * @description 권한 수정
+    * @param { String } code 권한 코드
+    */
    const authorityModify = async (code) => {
       const requestData = { // 요청 본문에 보낼 데이터
          authorityCd: code,
          authorityNm: authorityNm.value,
          description : description.value,
-         createId : "admin"
+         updateId : "admin"
       };
 
       try {
@@ -336,7 +326,10 @@
       }
    };
 
-   // 권한 삭제
+   /**
+    * @description 권한 삭제
+    * @param { String } code 권한 코드
+    */
    const authorityRemove = async (code) => {
       try {
          const response = await axios.delete(`/api/authority/${code}`);
@@ -355,24 +348,110 @@
       }
    };
 
+// ======================================== 메뉴 Axios 통신 ========================================
+   /**
+    * @description 메뉴 목록 조회 API
+    */
+   const menuData = ref([]);
+   const menuGetList = async () => {
+      try {
+         const response = await axios.get('/api/menu');
+
+         menuData.value = menuGetListCallbackTreeBuild(response.data);
+      } catch (err) {
+         Swal.fire({
+            icon: "error",
+            title: "API 조회 오류",
+            text: "Error : " + err.response.data
+         });
+      }
+   }
+
+   /**
+    * @description 권한에 대한 메뉴 목록 조회 API
+    * @param { String } code 권한 코드
+    */
+   const authorityMenuGetList = async (code) => {
+      try {
+         const response = await axios.get(`/api/menu/${code}`);
+         console.log(response.data)
+         // 메뉴 데이터 업데이트
+         menuData.value = menuGetListCallbackTreeBuild(response.data);
+
+      } catch (err) {
+         Swal.fire({
+            icon: "error",
+            title: "API 조회 오류",
+            text: "Error : " + err.response.data
+         });
+      }
+   }
+// ======================================== 메뉴 콜백 함수 ========================================
+   /**
+    * @description 서버에서 가져온 메뉴 리스트를 트리 형태로 변경해주는 함수
+    * @param {Array} menuArray - DB에서 불러온 메뉴 리스트
+    * @returns {Array} 트리 형태의 메뉴 배열
+    */
+   function menuGetListCallbackTreeBuild(menuArray) {
+      const map = new Map();
+      const tree = [];
+      menuData.value = "";
+      // 1. 모든 항목을 맵에 저장 (하위 메뉴 배열, open, selected 속성 추가)
+      menuArray.forEach(item => {
+         map.set(item.menuCd, { ...item, subMenus: [], open: false, selected: false });
+      });
+
+      // 2. 부모-자식 관계를 설정
+      menuArray.forEach(item => {
+         if (item.parentMenuCd === null) {
+            tree.push(map.get(item.menuCd));  // 루트 노드
+         } else {
+            const parent = map.get(item.parentMenuCd);
+            if (parent) {
+               parent.subMenus.push(map.get(item.menuCd));  // 부모의 subMenus에 추가
+            }
+         }
+      });
+
+      return tree;
+   }
 // ======================================== edit, delete Toggle DropDown Menu ========================================
    const selectedRole = ref(null); // 선택한 권한코드
+   const selectedRoleIdx = ref(null); // 선택된 권한의 인덱스
+
    /**
-    * @description 선택한 권한에 대한 수정 삭제 메뉴 토글
-    * @param role 토글할 권한명 index
+    * @description 수정/삭제 메뉴 토글
+    * @param { String } idx 토글할 권한 index
     */
-   const optionsToggle = (role) => {
-      if(isEditMenu.value == false) {
-         isEditMenu.value = true;
-      }
-      selectedRole.value = selectedRole.value === role ? null : role;
+   const optionsToggle = (idx) => {
+      isEditMenu.value = selectedRoleIdx.value === idx ? !isEditMenu.value : true;
+      selectedRoleIdx.value = idx;
    };
+
 
    /**
     * @description 드롭다운 메뉴가 나타났을 때 외부 클릭 시 드롭다운 메뉴 닫힘
     */
-   const outsideClickHandler = () => {
-      selectedRole.value = null;
+   // 외부 클릭 시 드롭다운 메뉴 닫기
+   const outsideClickHandler = (e) => {
+      if (!e.target.closest('.editing-dropdown-menu') && !e.target.closest('.role-wrapper')) {
+         selectedRoleIdx.value = null;
+         isEditMenu.value = false;
+      }
    };
 
 </script>
+
+<style>
+   .role-wrapper {
+      cursor: pointer;
+      padding: 5px;
+   }
+
+   .selected-role {
+      background-color: #fdf8e2;
+      font-weight: 600;
+      border: 2px solid #bcc1cb;
+      border-radius: 3px;
+   }
+</style>

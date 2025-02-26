@@ -111,7 +111,6 @@ const deptList = async () =>{
    try {
       const deptNm = await axios.get('/api/department')
       selectedDeptData.value=[{ deptNm: "전체" } , ...deptNm.data]
-      console.log("부서명 => ", deptNm.data)
    } catch (err) {
       Swal.fire({
          icon: "error",
@@ -124,8 +123,8 @@ const deptList = async () =>{
 }
 //양식유형 가져오기
 const formList = async () =>{
-  const formType = await axios.get('/api/document/form')
-  selectedFormData.value=[{ formCd:'', formType: "전체"}, ...formType.data]
+   const formType = await axios.get('/api/document/form')
+   selectedFormData.value=[{ formCd:'', formType: "전체"}, ...formType.data]
 }
 //초기화 버튼
 const resetBtn = () =>{
@@ -134,8 +133,10 @@ const resetBtn = () =>{
   startDate.value = "";     // 날짜 초기화
   endDate.value = "";       // 날짜 초기화
   formType.value = "";
-  }
+}
+
 //아이디정보 불러오서 밑에 있는 getparams에 아이디값 뿌려주기
+
 // API 요청 파라미터
 const getParams = ({
   status: props.status,
@@ -263,7 +264,7 @@ const handleRowClick = (e) => {
     console.log("체크박스 클릭 감지, 행 클릭 이벤트 무시");
     return;
   }
-  
+
   let routePath ='';
 
   // 특정 조건일 때 페이지 이동
