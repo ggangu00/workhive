@@ -71,7 +71,7 @@
       <card>
         <div class="d-flex">
           <div class="p-2 w90">
-            <button class="btn btn-danger btn-fill btn-sm">다중삭제</button>
+            <button class="btn btn-danger btn-fill btn-sm" @click="projectListRemove">다중삭제</button>
             <button class="btn btn-excel btn-sm"><img class="me-1" src="../../assets/img/icon/excel.svg" alt="xls">
               엑셀다운로드</button>
           </div>
@@ -176,8 +176,8 @@ const searchData = ref({
   searchKeyword: '',
   startDt: '',
   endDt: '',
-  priceSt : '',
-  priceEnd : ''
+  priceSt: '',
+  priceEnd: ''
 });
 
 const grid = ref([]);
@@ -193,13 +193,13 @@ onMounted(() => {
     scrollX: true,
     scrollY: true,
     columns: [
-      { header: "진행상태", name: "state", align: "center", width:80, formatter: ( {row} ) => `${row.state == 'A04' ? '완료' : '진행중' }` },
+      { header: "진행상태", name: "state", align: "center", width: 80, formatter: ({ row }) => `${row.state == 'A04' ? '완료' : '진행중'}` },
       { header: "프로젝트명", name: "prNm", align: "center", renderer: subjectRenderer },
-      { header: "프로젝트 기간", name: "startDt", align: "center", width:200, formatter: ({ row }) => `${row.startDt} ~ ${row.endDt}` },
-      { header: "금액", name: "price", align: "center", width:120, },
-      { header: "일정", name: "plan", align: "center", width:100, renderer: BtnRendererPlan },
-      { header: "등록일", name: "createDt", align: "center", width:100, formatter: ({ row }) => dateFormat(row.createDt) },
-      { header: "관리", name: "managementSetting", align: "center", width:150, renderer: BtnRendererSetting }
+      { header: "프로젝트 기간", name: "startDt", align: "center", width: 200, formatter: ({ row }) => `${row.startDt} ~ ${row.endDt}` },
+      { header: "금액", name: "price", align: "center", width: 120, },
+      { header: "일정", name: "plan", align: "center", width: 100, renderer: BtnRendererPlan },
+      { header: "등록일", name: "createDt", align: "center", width: 100, formatter: ({ row }) => dateFormat(row.createDt) },
+      { header: "관리", name: "managementSetting", align: "center", width: 150, renderer: BtnRendererSetting }
     ],
     pageOptions: {
       useClient: false,
@@ -207,7 +207,10 @@ onMounted(() => {
     },
     rowHeaders: ["checkbox"],
     data: projectList.value,
-    rowHeight: 50
+    rowHeight: 50,
+    rowClassName: (row) => {
+      return row.state == 'A04' ? 'table-white' : 'table-end';
+    }
   });
 });
 
@@ -230,7 +233,7 @@ class subjectRenderer {
       <div class="subject">
         <a href="#" class="mrp5">${rowData.prNm}</a>
         <span class="badge ${termClass.value}">
-          D ${rowData.term > 0 ? "-" + rowData.term : "+" + rowData.term * (-1)}</span>
+          D${rowData.term > 0 ? "+" + rowData.term : rowData.term}</span>
       </div>
     `;
 
@@ -260,11 +263,6 @@ class BtnRendererSetting {
     el.addEventListener("click", (event) => {
       const type = event.target.dataset.type;
       const rowKey = props.row?.rowKey ?? props.grid.getRow(props.rowKey)?.rowKey;
-
-      if (rowKey === undefined) {
-        console.error("❌ BtnRenderer: rowKey를 가져올 수 없습니다.", props);
-        return;
-      }
 
       const rowData = props.grid.getRow(rowKey);
 
@@ -367,13 +365,13 @@ const projectGetList = async () => { //프로젝트 전체조회
   //const params = new URLSearchParams({ searchKeyword: searchKeyword.value }).toString();
 
   try {
-    const result = await axios.get(`/api/project/list`, { params : searchData.value });
+    const result = await axios.get(`/api/project/list`, { params: searchData.value });
     projectCount.value = result.data.length;
     projectList.value = result.data.map(item => ({
       ...item,
       startDt: dateFormat(item.startDt),
       endDt: dateFormat(item.endDt),
-      term: dateTermCalc('', dateFormat(item.endDt))
+      term: dateTermCalc(dateFormat(item.endDt), dateFormat())
     }));
 
   } catch (err) {
@@ -418,6 +416,30 @@ const projectRemove = async (prCd) => { //프로젝트 삭제
         text: "선택한 프로젝트를 삭제하였습니다",
       })
       projectList.value = response.data.list;
+    }
+  } catch (err) {
+    Swal.fire({
+      icon: "error",
+      title: "삭제 실패",
+      text: "Error : " + err
+    });
+  }
+}
+
+const projectListRemove = async () => { //프로젝트 삭제
+  const checkedData = grid.value.getCheckedRows();
+  try {
+    const response = ref([]);
+    response.value = await axios.put(`/api/project/delete`, {
+      projectArr: checkedData.map(row => row.prCd) 
+    });
+
+    if (response.value.statusText == "OK") {
+      Swal.fire({
+        icon: "success",
+        title: "삭제완료",
+        text: "선택한 프로젝트를 삭제하였습니다",
+      })
     }
   } catch (err) {
     Swal.fire({

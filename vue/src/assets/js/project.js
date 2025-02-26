@@ -21,7 +21,7 @@ export function dateTermCalc(startDt, endDt) {
 
     const diff = endDate - today;
 
-    let diffDay = Math.floor(diff / (1000 * 60 * 60 * 24)) + 1;
+    let diffDay = Math.floor(diff / (1000 * 60 * 60 * 24)) + 0;
 
     return diffDay;
 }

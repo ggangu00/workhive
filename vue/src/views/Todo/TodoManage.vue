@@ -9,7 +9,9 @@
 
       <div class="card todo-container">
         <div class="todo-header">
-          <button>캘린더 펼침 <i class="fa-solid fa-angle-up"></i> <i class="fa-solid fa-angle-down"></i></button>
+          <button @click="toggleSubMenu">캘린더 펼침 
+            <i :class="['fa-solid', 'arrow-icon', isHidden ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
+          </button>
         </div>
         <div class="month">
           <button @click="monthMove('prev')"><i class="fa-solid fa-angle-left" style="float: left;"></i></button>
@@ -130,6 +132,7 @@ import { dateGetDay } from '../../assets/js/project'
 const year = ref(new Date().getFullYear()); // 현재 연도 기본값
 const month = ref(new Date().getMonth() + 1); // 현재 월 기본값 (1~12 범위)
 
+const isHidden = ref(false);
 const typeCd = ref('B01');
 const typeCdArr = ref([]);
 const title = ref('');
@@ -156,7 +159,7 @@ onMounted(() => {
     columns: [
       { header: "업무구분", name: "state", align: "center", width: 80, formatter: ({ row }) => row.state == 'A01' ? '완료' : '미완료' },
       { header: "완료여부", name: "typeNm", align: "center", width: 200 },
-      { header: "업무내용", name: "title", align: "center" },
+      { header: "업무내용", name: "title", align: "left", renderer: subjectRenderer },
       { header: "관리", name: "managementSetting", align: "center", width: 150, renderer: BtnRendererSetting }
     ],
     pageOptions: {
@@ -170,6 +173,28 @@ onMounted(() => {
 });
 
 //--------------그리드 렌더링-------------
+
+//일지 제목 
+class subjectRenderer {
+  constructor(props) {
+    const rowKey = props.row?.rowKey ?? props.grid.getRow(props.rowKey)?.rowKey;
+    const rowData = props.grid.getRow(rowKey);
+
+    const el = document.createElement("div");
+
+    el.innerHTML = `${rowData.title}`;
+
+    if(rowData.dateTerm > 0){
+      el.innerHTML += ` <span class="badge badge-danger"> D+${rowData.dateTerm} </span>`;
+    }
+
+    this.el = el;
+  }
+
+  getElement() {
+    return this.el;
+  }
+}
 
 //수정/삭제 버튼
 class BtnRendererSetting {
@@ -270,6 +295,10 @@ const formReset = () => { //입력정보 초기화
 }
 
 //-------------버튼이벤트------------
+
+const toggleSubMenu = () => {
+   isHidden.value = !isHidden.value;
+};
 
 const btnSelectUpdate = (code) => {
   openModal();
