@@ -30,7 +30,7 @@
                   <tbody>
                     <tr>
                       <th>근무 일자</th>
-                      <td><input type="date" id="wordDate" class="form-control" v-model="crctData.commuteDt" v-bind:readonly="isUpdate"></td>
+                      <td><input type="date" id="wordDate" class="form-control" v-model="crctData.commuteDt" :readonly="isUpdate"></td>
                       <th>출근 시간</th>
                       <td><input type="datetime-local" class="form-control" v-model="crctData.goTime" readonly></td>
                       <th>퇴근 시간</th>
@@ -77,13 +77,14 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
-import { ref, onBeforeMount , onMounted, watch } from 'vue';
+import { ref , onMounted, watch } from 'vue';
 import { dateTimeFormat } from '../../assets/js/common.js';
 
 const route = useRoute();
-let isUpdate;
+let isUpdate = ref(route.query.isUpdate === 'true');;
 let cmtCd;
 let crctCd;
+
 
 let crctData = ref({
   commuteCd: '',
@@ -130,19 +131,11 @@ const crctGetInfo = async () => {
   crctData.value.commuteDt = dateTimeFormat(result.data.commuteDt, 'yyyy-MM-dd');
 }
 
-onBeforeMount(() => {
-  let pageState = route.query.isUpdate;
-  if(pageState == 'true')
-    isUpdate = true;
-  else
-    isUpdate = false;
-  
-})
 onMounted(() => {
-  if(!isUpdate && route.query.cmtCd != undefined) {
+  if(route.query.cmtCd != undefined) {
     cmtCd = route.query.cmtCd;
     cmtGetInfo();
-  } else if(isUpdate && route.query.crctCd != undefined) {
+  } else if(route.query.crctCd != undefined) {
     crctCd = route.query.crctCd;
     crctGetInfo();
   }
@@ -162,7 +155,7 @@ const btnCrctManage = async () => {
   formData.append("createId", 'user01');
   formData.append("signId", crctData.value.signId);
   
-  if(!isUpdate) {
+  if(!isUpdate.value) {
     formData.append("preGoTime", crctData.value.goTime);
     formData.append("preLeaveTime", crctData.value.leaveTime);
     await axios.post('/api/commute/crctAdd', formData);

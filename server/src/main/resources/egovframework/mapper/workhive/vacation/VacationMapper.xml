@@ -109,14 +109,17 @@
 	</select>
 
 	<!-- 사용 예정일 조회 -->
-	<select id="expectSelect" parameterType="String">
+	<select id="expectSelect" parameterType="vacationDTO">
 		select count(case when sign_state = 'D01' then 1 end) as signWait,
 			   sum(case when sign_state = 'D01' then use_days else 0 end) as signWaitDays,
 			   count(case when sign_state = 'D03' then 1 end) as signSup,
 			   sum(case when sign_state = 'D03' then use_days else 0 end) as signSupDays
 		from vacation
 		where create_id = #{createId}
-		and to_char(create_dt, 'yyyy') = to_char(sysdate, 'yyyy')
+		<![CDATA[
+		and create_dt >= to_date(#{createDt} || '-01-01', 'yyyy-mm-dd')
+		and create_dt < to_date((TO_NUMBER(#{createDt}) + 1) || '-01-01', 'yyyy-mm-dd')
+		]]>
 		and del_yn = 'N'
 	</select>
 	
@@ -148,7 +151,7 @@
 			and create_dt < to_date(#{endDate}, 'yyyy-mm-dd') + 1
 			]]>
 		</if>
-		order by create_dt desc
+		order by create_dt
 	</select>
 	
 	<!-- 휴가 신청 결재 내역 조회 -->
@@ -181,6 +184,14 @@
 		</if>
 		order by create_dt desc
 	</select>
+	
+	<!-- 결재 처리 -->
+	<update id="signUpdate" parameterType="vacationDTO">
+		update vacation
+		set sign_state = #{signState}
+		  , sign_dt = sysdate
+		where vc_cd = #{vcCd}
+	</update>
 	
 	
 </mapper>

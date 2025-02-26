@@ -7,9 +7,9 @@
       <div class="card-body">
         <h4 class="card-title float-left">휴가 신청 결재</h4>
 
-        <button class="btn btn-primary btn-sm btn-fill float-right" value="D02" @click="btnVcSign">승인</button>
-        <button class="btn btn-warning btn-sm btn-fill float-right" value="D03" @click="btnVcSign">보완</button>
         <button class="btn btn-danger btn-sm btn-fill float-right" value="D04" @click="btnVcSign">반려</button>
+        <button class="btn btn-warning btn-sm btn-fill float-right" value="D03" @click="btnVcSign">보완</button>
+        <button class="btn btn-primary btn-sm btn-fill float-right" value="D02" @click="btnVcSign">승인</button>
       </div>
     </div>
 
@@ -98,15 +98,26 @@ let vcCol = [
   { header: '시작일', name: 'vcStartDt', align: 'center'},
   { header: '종료일', name: 'vcEndDt', align: 'center'},
   { header: '휴가종류', name: 'vcType', align: 'center'},
-  { header: '휴가일수', name: 'useDays', align: 'center'},
+  { header: '휴가일수', name: 'useDays', align: 'center',
+    formatter: ({ value }) => { // 소숫점 숫자 표시
+      const num = Number(value);
+      return num % 1 === 0 ? num : num.toFixed(1);
+    }
+  },
   { header: '신청일', name: 'createDt', align: 'center'},
   { header: '신청자', name: 'createId', align: 'center'},
+  { header: '결재상태', name: 'signState', align: 'center'},
 ];
 let signCol = [
   { header: '시작일', name: 'vcStartDt', align: 'center'},
   { header: '종료일', name: 'vcEndDt', align: 'center'},
   { header: '휴가종류', name: 'vcType', align: 'center'},
-  { header: '휴가일수', name: 'useDays', align: 'center'},
+  { header: '휴가일수', name: 'useDays', align: 'center',
+    formatter: ({ value }) => { // 소숫점 숫자 표시
+      const num = Number(value);
+      return num % 1 === 0 ? num : num.toFixed(1);
+    }
+  },
   { header: '신청일', name: 'createDt', align: 'center'},
   { header: '신청자', name: 'createId', align: 'center'},
   { header: '결재일', name: 'signDt', align: 'center'},
@@ -202,12 +213,12 @@ const initGrid = (gridInstance, gridDiv, rowData, colData) => {
 };
 
 // Toast Grid 초기화
-onMounted(() => {
+onMounted(async () => {
   initGrid(vcGridInstance, 'vcGrid', vcList, vcCol);
   initGrid(signGridInstance, 'signGrid', signList, signCol);
   
-  vcGetList();
-  signGetList();
+  await vcGetList();
+  await signGetList();
 });
 
 // 컴포넌트가 파괴될 때 기존 Grid 삭제
@@ -216,6 +227,7 @@ onBeforeUnmount(() => {
   if (signGridInstance.value) signGridInstance.value.destroy();
 });
 
+// 결재 - 휴가 신청자의 연차 정보, 신청일자의 대상 연도, -> 연차정보 없을시 생성, 
 const btnVcSign = async (e) => {
   let selectedRows = e.target.value === 'D01' ? signGridInstance.value.getCheckedRows() : vcGridInstance.value.getCheckedRows();
   let originList = e.target.value === 'D01' ? originSignList : originVcList;
@@ -230,15 +242,25 @@ const btnVcSign = async (e) => {
         signState: e.target.value
       };
 
-      signDataArray.push(signData);
+      console.log('originalRow : ', originalRow);
+      let yearVcData = {
+        mberId: originalRow.createId,
+        targetYear: dateTimeFormat(originalRow.vcStartDt, 'yyyy'),
+        useDays: e.target.value === 'D02' ? originalRow.useDays : 
+                 e.target.value === 'D01' && originalRow.signState === 'D02' ? -originalRow.useDays : 0
+      }
+
+      signDataArray.push({ signData, yearVcData });
     }
   }
+
+  console.log("전체 데이터 : ", signDataArray);
 
   // 해당 데이터들을 서버에 보내도록 수정
   if (signDataArray.length) {
     if(e.target.value == 'D01' || e.target.value == 'D02')
-      await axios.post('/api/', signDataArray.map(data => data.cmtData)); 
-    await axios.post('/api/', signDataArray.map(data => data.signData)); 
+      await axios.post('/api/yearVc/yearVcModify', signDataArray.map(data => data.yearVcData)); 
+    await axios.post('/api/vacation/signModify', signDataArray.map(data => data.signData)); 
   }
 
   // 리스트 새로 고침

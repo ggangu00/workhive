@@ -28,7 +28,9 @@ export default createStore({
 
       jobBxSelected: {
          searchDeptCd: '',
-         searchDeptjobBxId: ''
+         searchDeptNm: '',
+         searchDeptjobBxId: '',
+         searchDeptJobBxNm: '',
       },
       jobBxList: []
    },
