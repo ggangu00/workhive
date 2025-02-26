@@ -1,6 +1,7 @@
 package egovframework.com.project.service;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 
@@ -46,6 +47,16 @@ public class ProjectDTO {
 	private String entrprsMberId;	// 거래처
 	private String comNm;		// 거래처명
 	private String delYn;		// 삭제여부
+	
+	private List<String> projectArr; 	// 다중삭제 코드 배열
+
+    public List<String> getProjectArr() {
+        return projectArr;
+    }
+
+    public void setProjectArr(List<String> projectArr) {
+        this.projectArr = projectArr;
+    }
 	
 	//======================프로젝트 과업=====================
 	

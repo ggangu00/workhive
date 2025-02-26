@@ -10,46 +10,7 @@
             </div>
             <card>
                 <h5>금일 예정 회의 ({{ numberFormat(meetNowCount) }}건)</h5>
-                <div class="table-responsive">
-                    <table class="table table-hover project">
-                        <thead class="table-light">
-                            <tr>
-                                <th>번호</th>
-                                <th>구분</th>
-                                <th>회의주제</th>
-                                <th>회의일시</th>
-                                <th>회의실</th>
-                                <th>참여자</th>
-                                <th>관리</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <template v-if="meetNowCount > 0">
-                                <tr :key="i" v-for="(meet, i) in meetNowList">
-                                    <td>{{ i + 1 }}</td>
-                                    <td>{{ meet.typeCd }}</td>
-                                    <td>
-                                        <div class="subject">
-                                            <a href="#" @click="modalOpen(meet.mtgId)">{{ meet.mtgNm }}</a>
-                                        </div>
-                                    </td>
-                                    <td>{{ dateFormat(meet.mtgDe) }}({{ dateGetDay(meet.mtgDe) }}) {{ meet.mtgBeginTm }} ~ {{ meet.mtgEndTm }}</td>
-                                    <td>{{ meet.mtgPlace }}</td>
-                                    <td>김민진, 신강현, 박주현 외 3명</td>
-                                    <td>
-                                        <button class="btn btn-success btn-fill btn-sm mr-1">수정</button>
-                                        <button class="btn btn-danger btn-fill btn-sm mr-1">삭제</button>
-                                    </td>
-                                </tr>
-                            </template>
-                            <tr v-else class="list-nodata">
-                                <td colspan="8">
-                                    <div>등록된 프로젝트가 없습니다.</div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <div id="nowGrid" class="toastui project"></div>
             </card>
             <card>
                 <div class="d-flex">
@@ -64,48 +25,7 @@
                     </div>
                 </div>
 
-                <div class="table-responsive">
-                    <table class="table table-hover project">
-                        <thead class="table-light">
-                            <tr>
-                                <th>번호</th>
-                                <th>상태</th>
-                                <th>구분</th>
-                                <th>회의주제</th>
-                                <th>회의일시</th>
-                                <th>회의실</th>
-                                <th>참여자</th>
-                                <th>관리</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <template v-if="meetCount > 0">
-                                <tr :key="i" v-for="(meet, i) in meetList">
-                                    <td>{{ i + 1 }}</td>
-                                    <td>진행예정</td>
-                                    <td>{{ meet.typeCd }}</td>
-                                    <td>
-                                        <div class="subject">
-                                            <a href="#" @click="modalOpen(meet.mtgId)">{{ meet.mtgNm }}</a>
-                                        </div>
-                                    </td>
-                                    <td>{{ dateFormat(meet.mtgDe) }}({{ dateGetDay(meet.mtgDe) }}) {{ meet.mtgBeginTm }} ~ {{ meet.mtgEndTm }}</td>
-                                    <td>{{ meet.mtgPlace }}</td>
-                                    <td>김민진, 신강현, 박주현 외 3명</td>
-                                    <td>
-                                        <button class="btn btn-success btn-fill btn-sm mr-1">수정</button>
-                                        <button class="btn btn-danger btn-fill btn-sm mr-1">삭제</button>
-                                    </td>
-                                </tr>
-                            </template>
-                            <tr v-else class="list-nodata">
-                                <td colspan="8">
-                                    <div>등록된 프로젝트가 없습니다.</div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <div id="allGrid" class="toastui project"></div>
             </card>
 
             <!--회의 상세보기 모달[s]-->
@@ -126,7 +46,8 @@
                                     <tr>
                                         <th class="table-secondary">회의일시</th>
                                         <td class="text-start">{{ dateFormat(meetInfo.mtgDe) }}({{
-                                            dateGetDay(meetInfo.mtgDe) }}) {{ meetInfo.mtgBeginTm }} ~ {{ meetInfo.mtgEndTm }}
+                                            dateGetDay(meetInfo.mtgDe) }}) {{ meetInfo.mtgBeginTm }} ~ {{
+                                                meetInfo.mtgEndTm }}
                                         </td>
                                         <th class="table-secondary">회의실</th>
                                         <td class="text-start">{{ meetInfo.mtgPlace }}</td>
@@ -161,10 +82,12 @@
 
 <script setup>
 import axios from "axios";
-import { onBeforeMount, ref } from 'vue';
+import { useRouter } from "vue-router";
+import { onBeforeMount, ref, watch, onMounted } from 'vue';
 
 //---------------컴포넌트-------------- 
 import Swal from 'sweetalert2';
+import Grid from 'tui-grid';
 import Card from '../../components/Cards/Card.vue'
 import Modal from '../../components/Modal.vue';
 
@@ -177,6 +100,109 @@ import { dateGetDay } from '../../assets/js/project'
 onBeforeMount(() => {
     meetGetNowList();
     meetGetList();
+});
+
+//회의 상세보기 모달
+class BtnRendererModal {
+    constructor(props) {
+        const rowKey = props.row?.rowKey ?? props.grid.getRow(props.rowKey)?.rowKey;
+        const rowData = props.grid.getRow(rowKey);
+
+        const el = document.createElement("div");
+        el.className = "subject";
+
+        el.innerHTML = `
+           <a href="#">${rowData.mtgNm}</a>
+        `;
+
+        el.addEventListener("click", () => {
+            modalOpen(rowData.mtgId)
+        });
+
+        this.el = el;
+    }
+
+    getElement() {
+        return this.el;
+    }
+}
+
+//회의 수정/삭제 버튼
+class BtnRendererSetting {
+    constructor(props) {
+
+        const el = document.createElement("div");
+
+        el.innerHTML = `
+            <button class="btn btn-success btn-fill btn-sm mr-1" data-type="edit">수정</button>
+            <button class="btn btn-danger btn-fill btn-sm mr-1" data-type="del">삭제</button>
+            `;
+
+        el.addEventListener("click", (event) => {
+            const type = event.target.dataset.type;
+            const rowKey = props.row?.rowKey ?? props.grid.getRow(props.rowKey)?.rowKey;
+
+            const rowData = props.grid.getRow(rowKey);
+
+            if (type === "edit") {
+                btnPageMove("add", rowData.mtgId);
+            } else if (type === "del") {
+                btnMeetRemove(rowData.mtgId);
+            }
+        });
+
+        this.el = el;
+    }
+
+    getElement() {
+        return this.el;
+    }
+}
+
+// 그리드 컬럼 데이터
+let nowCol = [
+    { header: "구분", name: "typeCd", align: "center", formatter: ({ row }) => `${row.typeCd == 'A04' ? '완료' : '진행중'}` },
+    { header: "회의주제", name: "mtgNm", align: "center", renderer: BtnRendererModal },
+    { header: "회의일시", name: "mtgDe", align: "center", formatter: ({ row }) => `${dateFormat(row.mtgDe)} (${dateGetDay(row.mtgDe)}) ${row.mtgBeginTm} ~ ${row.mtgEndTm}` },
+    { header: "회의실", name: "mtgPlace", align: "center" },
+    { header: "참여자", name: "", align: "center" },
+    { header: "관리", align: "center", renderer: BtnRendererSetting },
+];
+let allCol = [
+    { header: "구분", name: "typeCd", align: "center", formatter: ({ row }) => `${row.typeCd == 'A04' ? '완료' : '진행중'}` },
+    { header: "회의주제", name: "mtgNm", align: "center", renderer: BtnRendererModal },
+    { header: "회의일시", name: "mtgDe", align: "center", formatter: ({ row }) => `${dateFormat(row.mtgDe)} (${dateGetDay(row.mtgDe)}) ${row.mtgBeginTm} ~ ${row.mtgEndTm}` },
+    { header: "회의실", name: "mtgPlace", align: "center" },
+    { header: "참여자", name: "", align: "center" },
+    { header: "관리", align: "center", renderer: BtnRendererSetting },
+];
+
+//검색조건
+const searchData = ref({
+    searchCondition: "",
+    searchKeyword: ''
+});
+
+watch(() => searchData, () => {
+    meetGetList();
+}, { deep: true });
+
+const initGrid = (gridInstance, gridDiv, rowData, colData) => {
+    gridInstance.value = new Grid({
+        el: document.getElementById(gridDiv),
+        data: rowData.value,
+        scrollX: false,
+        scrollY: true,
+        rowHeaders: ['checkbox'],
+        columns: colData,
+    });
+};
+
+let nowGridInstance = ref();
+let allGridInstance = ref();
+onMounted(() => {
+    initGrid(nowGridInstance, 'nowGrid', meetNowList, nowCol);
+    initGrid(allGridInstance, 'allGrid', meetList, allCol);
 });
 
 //---------------모달--------------
@@ -195,6 +221,33 @@ const modalClose = (e) => { //회의 정보 모달 닫기
     } else {
         isShowModal.value = false;
     }
+}
+
+//-------------버튼이벤트------------
+
+const router = useRouter();
+const btnPageMove = (mode, code) => { //수정/일정관리 페이지로
+    router.push({ path: `/project/${mode}`, query: { prCd: code } });
+}
+
+// 회의 삭제 버튼
+const btnMeetRemove = () => {
+    Swal.fire({
+        title: "해당 프로젝트를 삭제 하시겠습니까?",
+        icon: "question",
+        showCancelButton: true,
+        customClass: {
+            confirmButton: "btn btn-danger btn-fill",
+            cancelButton: "btn btn-secondary btn-fill"
+        },
+        cancelButtonText: "닫기",
+        confirmButtonText: "삭제",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // 프로젝트 삭제
+            //meetRemove(code);
+        }
+    });
 }
 
 //---------------axios--------------
@@ -216,6 +269,7 @@ const meetGetNowList = async () => { //금일 예정 회의 조회
             text: "Error : " + err
         });
     }
+    nowGridInstance.value.resetData(meetNowList.value);
 }
 
 const meetList = ref([]);
@@ -235,6 +289,7 @@ const meetGetList = async () => { //진행 예정 회의 전체출력
             text: "Error : " + err
         });
     }
+    allGridInstance.value.resetData(meetList.value);
 }
 
 const meetInfo = ref([]);

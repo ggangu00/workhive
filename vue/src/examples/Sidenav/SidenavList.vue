@@ -66,8 +66,8 @@
          <!-- 서브 메뉴 (Depth 2) -->
          <template v-slot:list>
             <div class="sub-item">
-               <li class="sub-item" @click="movePage('/bulletin/bulletinList/BBS001')">공지사항</li>
-               <li class="sub-item" @click="movePage('/bulletin/bulletinList/BBS001')">사내게시판</li>                        
+               <li class="sub-li" @click="movePage('/bulletin/bulletinList/BBS001')">공지사항</li>
+               <li class="sub-li" @click="movePage('/bulletin/bulletinList/BBS001')">사내게시판</li>           
             </div>
          </template>
       </sidenav-collapse>

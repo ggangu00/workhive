@@ -43,16 +43,13 @@
           <div class="card">
             <div class="home-container">
               <div class="home-container-header">참여예정 회의</div>
-              <template v-if="meetCount > 0">
                 <div class="meeting-item" :key="i" v-for="(meet, i) in meetList">
                   <div class="meeting-category">{{ meet.typeCd }}</div>
-                  <div class="meeting-title">{{ meet.mtgNm }} <span class="badge badge-warning">D{{
-                    dateTermCalc(dateFormat(meet.mtgDe)) }}</span></div>
+                  <div class="meeting-title">{{ meet.mtgNm }} <span class="badge badge-warning">D{{ dateTermCalc(dateFormat(meet.mtgDe), dateFormat()) }}</span></div>
                   <div class="meeting-date">{{ dateFormat(meet.mtgDe) }}({{ dateGetDay(meet.mtgDe) }}) {{
                     meet.mtgBeginTm }} ~ {{ meet.mtgEndTm }}</div>
                 </div>
-              </template>
-              <div v-else class="meeting-none">
+              <div class="meeting-none">
                 <div class="meeting-item" :key="i" v-for="i in 3">
                   <div class="meeting-category">-</div>
                   <div class="meeting-title">예정된 회의가 없습니다.</div>
@@ -185,7 +182,8 @@
 import axios from "axios";
 import Swal from 'sweetalert2';
 import { onBeforeMount, ref } from 'vue';
-import { numberFormat, dateFormat, dateGetDay, dateTermCalc } from '../assets/js/common.js'
+import { numberFormat, dateFormat } from '../assets/js/common.js'
+import { dateGetDay, dateTermCalc } from '../assets/js/project.js'
 
 //---------------데이터-------------- 
 

@@ -12,12 +12,13 @@
 			   content,		
 			   state,		
 			   todo_dt,		
-			   create_dt
+			   create_dt,
+			   TO_DATE(#{todoDt}, 'YYYYMMDD') - todo_dt as date_term
 		from todo
 		where 
-			todo_dt = TO_DATE(#{todoDt}, 'YYYY-MM-DD')
+			todo_dt = TO_DATE(#{todoDt}, 'YYYY-MM-DD') or <![CDATA[ (todo_dt < TO_DATE(#{todoDt}, 'YYYY-MM-DD') and state='A02') ]]>
 		order by 
-			create_dt desc
+			todo_dt asc, DECODE(state, 'A02', 1, 'A01', 2)
 	</select>
 	
 	<!-- 일지 단건조회 -->
