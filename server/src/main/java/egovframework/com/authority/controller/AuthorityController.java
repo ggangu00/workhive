@@ -31,7 +31,7 @@ public class AuthorityController {
 	// 권한 조회 처리
 	@GetMapping("")
 	public List<AuthorityDTO> authorityList() {
-		log.info(authService.authoritySelectAll().toString());
+		log.info("권한 목록 조회" + authService.authoritySelectAll().toString());
 		
 		return authService.authoritySelectAll();
 	}

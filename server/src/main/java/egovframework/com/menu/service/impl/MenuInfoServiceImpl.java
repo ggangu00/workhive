@@ -21,4 +21,11 @@ public class MenuInfoServiceImpl implements MenuInfoService {
 	public List<MenuInfoDTO> menuSelectAll() {
 		return menuMapper.menuSelectAll();
 	}
+	
+	// 권한에 대한 메뉴 목록 조회
+	@Override
+	public List<MenuInfoDTO> authorityMenuSelectAll(String authorityCd) {
+		
+		return menuMapper.authorityMenuSelectAll(authorityCd);
+	}
 }
