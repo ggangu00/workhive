@@ -29,7 +29,7 @@
 		SELECT
 		   LEVEL, <!-- 트리내에서 어떤 단계에 있는지 나타내는 값 --> 
 		   dept_cd,
-		   LPAD(' ', 10 * (LEVEL - 1)) || dept_nm AS dept_nm,
+		   dept_nm,
 		   description,
 		   manager,
 		   depth,
