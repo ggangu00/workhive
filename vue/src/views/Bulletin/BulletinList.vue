@@ -4,22 +4,28 @@
       <div>
         <div class="card">
           <div class="card-body">
-            <h4 class="card-title float-left mt-1">공지사항List</h4>      
-            <button class="btn btn-primary btn-sm btn-fill float-right" @click="goToBulletinAdd">등록</button>    
+            <h4 class="card-title float-left mt-1">공지사항 목록</h4>
+            <button class="btn btn-primary btn-sm btn-fill float-right" @click="goToBulletinAdd">등록</button>
           </div>
         </div>
       </div>
 
       <div class="white-background">
         <div class="controls">
-          <select  v-model="searchColumn" class="custom-select">
+          <select v-model="searchColumn" class="custom-select">
             <option value="" disabled selected>선택하세요</option>
             <option value="nttSj">제목</option>
           </select>
-          <input type="text" v-model="searchKeyword" @input="filterGrid" placeholder="검색어를 입력하세요" class="custom-input" />           
+          <input
+            type="text"
+            v-model="searchKeyword"
+            @input="filterGrid"
+            placeholder="검색어를 입력하세요"
+            class="custom-input"
+          />
         </div>
 
-        <!-- 업무 목록 -->
+        <!-- 게시글 목록 -->
         <div class="row mt-2">
           <div class="col" style="height: 550px;">
             <div id="bulletinGrid"></div>
@@ -33,15 +39,14 @@
 
 <script setup>
 import { onMounted, onBeforeUnmount, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 
-
-
+const route = useRoute();
 const router = useRouter();
-let bbsId = "BBS001"; //router.query.bbsId;
+const bbsId = ref(route.params.bbsId); // bbsId를 ref로 감싸서 반응형 처리
 
-console.log("전체테스트:",router.params);
+console.log('라우트 파라미터:', route.params);
 
 const gridInstance = ref(null);
 const BulletinList = ref([]);
@@ -50,35 +55,41 @@ const searchKeyword = ref('');
 
 // 등록 버튼 클릭 시 bulletinAdd 페이지로 이동
 const goToBulletinAdd = () => {
-  router.push('/bulletin/bulletinAdd');
+  router.push({
+    name: 'BulletinAdd',
+    query: { bbsId: bbsId.value}, // .value 사용하여 값 전달
+  });
 };
 
-// 조회 함수
+// 게시글 목록 조회 함수
 const BulletinGetList = async () => {
   try {
-    const { data } = await axios.get(`/api/bulletin/bulletinList?bbsId=${bbsId}`);
+    const { data } = await axios.get(`/api/bulletin/bulletinList?bbsId=${bbsId.value}`);
     BulletinList.value = (data.resultList || []).map((item, index) => ({
-      rowNum: index + 1, // 1부터 시작하는 행번호 추가
-      ...item
+      rowNum: index + 1,
+      ...item,
     }));
-    gridInstance.value?.resetData(BulletinList.value); // Grid에 데이터 업데이트
+
+    if (gridInstance.value) {
+      gridInstance.value.resetData(BulletinList.value); // 그리드 데이터 갱신
+    }
   } catch (error) {
-    console.error('게시글 목록 불러오는 중 오류 발생:', error);
+    console.error('게시글 목록 불러오기 오류:', error);
     BulletinList.value = [];
   }
-  console.log("테스트", BulletinList.value);
+  console.log('게시글 목록:', BulletinList.value);
 };
 
-// Grid 초기화
+// 그리드 초기화
 const initializeGrid = () => {
-  destroyGrid(); // 기존 인스턴스 제거
-  
+  destroyGrid(); // 기존 그리드 제거
+
   gridInstance.value = new window.tui.Grid({
     el: document.getElementById('bulletinGrid'),
     data: BulletinList.value,
     scrollX: false,
     scrollY: true,
-    bodyHeight: 480,  
+    bodyHeight: 480,
     pageOptions: {
       useClient: false,
       perPage: 10,
@@ -88,17 +99,14 @@ const initializeGrid = () => {
     },
     columns: [
       { header: '번호', name: 'rowNum', align: 'center', width: 60, sortable: true },
-      { header: '제목', name: 'nttSj', sortable: true, align: 'left', minWidth: 200 },
-      { header: '작성자', name: 'ntcrNm', sortable: true, align: 'center', width: 120 },
-      { header: '작성일', name: 'frstRegistPnttm', sortable: true, align: 'center', width: 140 },
-      { header: '조회수', name: 'inqireCo', sortable: true, align: 'center', width: 140 },
+      { header: '제목', name: 'nttSj', align: 'left', minWidth: 200, sortable: true },
+      { header: '작성자', name: 'ntcrNm', align: 'center', width: 120, sortable: true },
+      { header: '작성일', name: 'frstRegistPnttm', align: 'center', width: 140, sortable: true },
+      { header: '조회수', name: 'inqireCo', align: 'center', width: 100, sortable: true },
       { header: '관리', name: 'action', align: 'center', width: 150 },
     ],
   });
-  
-  gridInstance.value.refreshLayout();
 
-  // 제목 클릭 시 상세조회 페이지 이동 이벤트
   gridInstance.value.on('click', (e) => {
     if (e.columnName === 'nttSj') {
       const row = gridInstance.value.getRow(e.rowKey);
@@ -107,7 +115,14 @@ const initializeGrid = () => {
   });
 };
 
-// Grid 제거 함수
+// 게시글 상세 조회 이동 함수
+const goToBulletinInfo = (row) => {
+  console.log("테스트:",row.nttId);
+  router.push({ path: `/bulletin/bulletinInfo/${bbsId.value}/${row.nttId}`})//, params: { bulletinId: row.nttId, bbsId: bbsId.value } });
+};
+
+
+// 그리드 제거 함수
 const destroyGrid = () => {
   if (gridInstance.value) {
     gridInstance.value.destroy();
@@ -115,21 +130,30 @@ const destroyGrid = () => {
   }
 };
 
-// 상세조회 페이지 이동 함수
-const goToBulletinInfo = (row) => {
-  router.push({ name: 'BulletinInfo', params: { bulletinId: row.nttId } });
-};
-
-// 검색 필터 함수
+// 검색 필터링 함수
 const filterGrid = () => {
-  // 검색 로직 구현 (필요에 따라 그리드 API 활용)
+  if (!searchKeyword.value) {
+    gridInstance.value?.resetData(BulletinList.value);
+    return;
+  }
+
+  const filteredData = BulletinList.value.filter((item) => {
+    if (searchColumn.value && item[searchColumn.value]) {
+      return item[searchColumn.value].includes(searchKeyword.value);
+    }
+    return false;
+  });
+
+  gridInstance.value?.resetData(filteredData);
 };
 
+// 컴포넌트 마운트 시 실행
 onMounted(async () => {
   await BulletinGetList();
   initializeGrid();
 });
 
+// 컴포넌트 언마운트 시 그리드 제거
 onBeforeUnmount(() => {
   destroyGrid();
 });
@@ -138,8 +162,20 @@ onBeforeUnmount(() => {
 <style scoped>
 .custom-select {
   margin-right: 10px;
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
 }
+
 .custom-input {
   padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.white-background {
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 5px;
 }
 </style>

@@ -23,6 +23,8 @@ public interface DocumentMapper {
 	int insertFileMaster(File file);
 	//첨부파일 등록(디테일)
 	int insertFileDetail(FileDetail fileDetail);
+	//파일코드 갸저요기
+	String lastFileCdGet();
 	//결재자등록
 	int approvalInsert(ApprovalLine approvalLine);
 	//수신자등록
@@ -48,4 +50,7 @@ public interface DocumentMapper {
 	
 	//결재선 조회
 	List<ApprovalLine> approvalSelectAll(String docCd);
+	
+	//결재선 상태수정
+	public int approvalStateUpdate(ApprovalLine approvalLine);
 }

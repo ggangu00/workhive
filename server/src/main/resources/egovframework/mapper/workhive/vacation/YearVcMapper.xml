@@ -23,8 +23,9 @@
 	<!-- 연차 수정 -->
 	<update id="yearVcUpdate" parameterType="yearVcDTO">
 		update year_vacation
-		set use_days = #{useDays}
-		where year_vc_cd = #{year_vc_cd}
+		set use_days = use_days + #{useDays}
+		where mber_id = #{mberId}
+		and target_year = #{targetYear}
 	</update>
 	
 	<!-- 연차 단건 조회 -->

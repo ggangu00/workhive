@@ -64,24 +64,17 @@ const jobBxManage = (type, data) => {
   jobBxCheck(type, data); // 부모로 이벤트 전달
 };
 
-// const jobBxAdd = (dept) => { // 업무함 등록
-//   emit('jobBxAdd', dept); // 부서 정보 전달
-// };
-// const jobBxModify = (job) => { // 업무함 수정
-//   emit('jobBxModify', job); // 업무함 정보 전달
-// };
-// const jobBxRemove = (job) => { // 업무함 삭제
-//   emit('jobBxRemove', job);
-// };
-
 // 업무함 클릭시 vuex 정보 변경
 const store = useStore();
 const jobBoxClicked = (job) => {
   const relatedJobBoxes = props.jobBoxes.filter(j => j.deptCd === job.deptCd);
 
+  console.log("jobbx click : ", job);
   store.dispatch('jobBxSelectedUpdate', { 
     searchDeptCd: job.deptCd, 
-    searchDeptjobBxId: job.deptJobBxId
+    searchDeptNm: job.deptNm,
+    searchDeptjobBxId: job.deptJobBxId,
+    searchDeptJobBxNm: job.deptJobBxNm,
   });
   
   store.dispatch('jobBxListUpdate', relatedJobBoxes);

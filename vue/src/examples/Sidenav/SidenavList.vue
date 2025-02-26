@@ -66,8 +66,8 @@
          <!-- 서브 메뉴 (Depth 2) -->
          <template v-slot:list>
             <div class="sub-item">
-               <li class="sub-li" @click="movePage('bulletinList')">공지사항</li>
-               <li class="sub-li" @click="movePage('bulletinList')">사내게시판</li>                        
+               <li class="sub-li" @click="movePage('/bulletin/bulletinList/BBS001')">공지사항</li>
+               <li class="sub-li" @click="movePage('/bulletin/bulletinList/BBS001')">사내게시판</li>           
             </div>
          </template>
       </sidenav-collapse>
@@ -167,7 +167,7 @@ const movePage = (page) => {
       return;
    }
    if (router.hasRoute(page)) {
-      router.push({ name: page });
+      router.push( page );
    } else {
       console.warn("라우트가 존재하지 않습니다:", page);
       router.push(page);

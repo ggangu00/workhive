@@ -12,8 +12,9 @@ public interface VacationMapper {
 	int vcDelete(String vcCd);
 	VacationDTO vcSelect(String vcCD);
 	List<VacationDTO> vcSelectAll(VacationDTO vcDTO);
-	VacationDTO expectSelect(String createId);
+	VacationDTO expectSelect(VacationDTO vcDTO);
 	List<VacationDTO> vcSelectSigner(VacationDTO vcDTO);
 	List<VacationDTO> vcSelectSigned(VacationDTO vcDTO);
+	int signUpdate(VacationDTO vcDTO);
 	
 }

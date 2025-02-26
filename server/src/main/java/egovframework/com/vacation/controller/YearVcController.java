@@ -1,11 +1,13 @@
 package egovframework.com.vacation.controller;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,10 +27,13 @@ public class YearVcController {
 		return service.yearVcInsert(yearVcDTO);
 	}
 	
-	// 연차 수정
+	// 연차 수정 - 결재
 	@PostMapping("/yearVcModify")
-	public boolean yearVcModify(@Validated YearVcDTO yearVcDTO) {
-		return service.yearVcUpdate(yearVcDTO);
+	public void yearVcModify(@RequestBody List<YearVcDTO> yearVcList) {
+		yearVcList.forEach(yearVcDTO -> {
+			service.yearVcUpdate(yearVcDTO);
+		});
+		return;
 	}
 	
 	// 연차 단건 조회
@@ -37,6 +42,7 @@ public class YearVcController {
 		
 		return service.yearVcSelect(searchDTO);
 	}
+	
 	
 	
 	
