@@ -66,7 +66,7 @@
           </div>
 
           <!-- 휴가 신청 리스트 / 휴가 신청 관리 -->
-          <router-view :vcInfo="vcInfo" @manageClick="yearVcGetInfo"/>
+          <router-view :vcInfo="vcInfo" @manageClick="yearVcCheck"/>
 
         </div>
       </div>
@@ -80,7 +80,7 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { dateTimeFormat } from '../../assets/js/common';
-import axios from 'axios';
+import * as vacation from '../../assets/js/vacation';
 
 
 const route = useRoute();
@@ -90,59 +90,45 @@ let searchData = {
   mberId: 'user01',
   targetYear: dateTimeFormat(new Date(), 'yyyy'),
 }
-onMounted(async () => {
-  yearVcGetInfo();
-});
-
-const yearVcGetInfo = async () => {
-  // 연차 정보 조회
-  let yearVcData = await axios.get('/api/yearVc/yearVcInfo', { params : searchData });
-  console.log("연차 조회 결과 : ", yearVcData.data);
-
-  // 연차 정보 없는 경우 - 연차 생성
-  if(yearVcData.data == '') {
-    let formData = new FormData();
-    formData.append("mberId", 'user01');
-    formData.append("targetYear", searchData.targetYear);
-    formData.append("giveDays", 15);
-    formData.append("useDays", 0);
-    
-    await axios.post('/api/yearVc/yearVcAdd', formData);
-
-    // 생성 후 재호출
-    yearVcData = await axios.get('/api/yearVc/yearVcInfo', { params : searchData });
-  }
-
-  // 사용 예정일 조회
-  let requestData = await axios.get(`/api/vacation/expectInfo?createId=${searchData.mberId}`);
-
-  // 휴가 정보 입력
-  vcInfo.value.yearVcCd = yearVcData.data.yearVcCd;
-  vcInfo.value.targetYear = yearVcData.data.targetYear;
-  vcInfo.value.giveDays = yearVcData.data.giveDays;
-  vcInfo.value.useDays = yearVcData.data.useDays;
-  vcInfo.value.remainDays = yearVcData.data.giveDays - yearVcData.data.useDays;
-  vcInfo.value.signWait = requestData.data.signWait;
-  vcInfo.value.signWaitDays = requestData.data.signWaitDays;
-  vcInfo.value.signSup = requestData.data.signSup;
-  vcInfo.value.signSupDays = requestData.data.signSupDays;
-  vcInfo.value.requestDays = vcInfo.value.remainDays - requestData.data.signWaitDays - requestData.data.signSupDays;
-}
-
 
 // 휴가 정보
 let vcInfo = ref({
   yearVcCd: '',
-  targetYear: 0, // 대상연도
-  giveDays: 0, // 부여일수
-  useDays: 0, // 사용일수
-  remainDays: 0, // 잔여일수 = 부여일 - 사용일
-  requestDays: 0, // 신청가능일수 = 부여일 - 사용일 - 결재대기일수 - 보완 요청 일수
-  signWait: 0, // 결재 대기 숫자
-  signWaitDays: 0, // 결재 대기 일수
-  signSup: 0, // 보완 요청 숫자
-  signSupDays: 0, // 보완 요청 일수
+  targetYear: '',
+  giveDays: '',
+  useDays: '',
+  remainDays: '',
+  signWait: '',
+  signWaitDays: '',
+  signSup: '',
+  signSupDays: '',
+  requestDays: '',
 });
+
+onMounted(() => {
+  yearVcCheck();
+});
+
+const yearVcCheck = async () => {
+  // 연차 정보 조회
+  let yearVcData = await vacation.yearVcGetInfo(searchData.mberId, searchData.targetYear);
+
+  // 연차 정보 없는 경우 - 연차 생성
+  if(yearVcData == '') {
+    // 새 연차 정보 생성
+    await vacation.yearVcAdd(searchData.mberId, searchData.targetYear);
+    // 연차 정보 재조회
+    yearVcData = await vacation.yearVcGetInfo(searchData.mberId, searchData.targetYear);
+  }
+
+  // 사용 예정일 조회
+  let requestData = await vacation.reqVcGetInfo(searchData.mberId, searchData.targetYear);
+
+  // 휴가 정보 입력
+  vcInfo.value = vacation.vcGetInfo(yearVcData, requestData);
+  console.log(vcInfo);
+}
+
 
 </script>
 

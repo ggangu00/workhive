@@ -7,9 +7,9 @@
         <div class="card-body">
           <h4 class="card-title float-left">출퇴근 정정 요청 결재</h4>
           
-          <button class="btn btn-primary btn-sm btn-fill float-right" value="D02" @click="btnCrctSign">승인</button>
-          <button class="btn btn-warning btn-sm btn-fill float-right" value="D03" @click="btnCrctSign">보완</button>
           <button class="btn btn-danger btn-sm btn-fill float-right" value="D04" @click="btnCrctSign">반려</button>
+          <button class="btn btn-warning btn-sm btn-fill float-right" value="D03" @click="btnCrctSign">보완</button>
+          <button class="btn btn-primary btn-sm btn-fill float-right" value="D02" @click="btnCrctSign">승인</button>
         </div>
       </div>
 
@@ -210,6 +210,7 @@ onBeforeUnmount(() => {
   if (signGridInstance.value) signGridInstance.value.destroy();
 });
 
+// 정정 요청 결재 기능
 const btnCrctSign = async (e) => {
   let selectedRows = e.target.value === 'D01' ? signGridInstance.value.getCheckedRows() : crctGridInstance.value.getCheckedRows();
   let originList = e.target.value === 'D01' ? originSignList : originCrctList;
@@ -235,9 +236,6 @@ const btnCrctSign = async (e) => {
       cmtData.leaveState = changeData.leaveState;
       cmtData.workTime = changeData.workTime;
       cmtData.overWorkTime = changeData.overWorkTime;
-
-      // signData에 cmtData를 포함
-      signData.cmtData = cmtData;
 
       // signData와 cmtData를 모두 포함한 객체를 배열에 추가
       signDataArray.push({ signData, cmtData });

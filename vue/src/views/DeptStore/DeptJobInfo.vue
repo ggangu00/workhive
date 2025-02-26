@@ -137,7 +137,6 @@ let rowData = ref([]);
 
 // vuex 감지
 const store = useStore();
-const jobBxList = computed(() => store.state.jobBxList);
 const jobBxSelected = computed(() => store.state.jobBxSelected);
 
 // 선택한 업무함 변경시 업무 목록 갱신
@@ -190,21 +189,32 @@ const jobBxCheck = async (type, data) => {
   jobBxModalType = type;
   switch(type) {
     case 'add':
+      //부서 정보
       jobBxData.value.deptCd = data.deptCd;
-      jobBxData.value.deptNm = data.deptNm;
+      jobBxData.value.deptNm = data.deptNm.trim();
+
+      //초기화
+      jobBxData.value.indictOrdr = 0;
+      jobBxData.value.deptJobBxNm = '';
+      jobBxData.value.deptJobBxId = '';
       modalOpen();
       break;
     case 'modify':
       jobBxData.value.deptCd = data.deptCd;
-      jobBxData.value.deptNm = data.deptNm;
+      jobBxData.value.deptNm = data.deptNm.trim();
       jobBxData.value.indictOrdr = data.indictOrdr;
       jobBxData.value.deptJobBxId = data.deptJobBxId;
+      jobBxData.value.deptJobBxNm = data.deptJobBxNm.trim();
       modalOpen();
       break;
     case 'remove':
-      axios.delete('/api/deptstore/jobBxRemove', { params: { deptJobBxId: data.deptJobBxId } });
+      await axios.delete('/api/deptstore/jobBxRemove', { params: { deptJobBxId: data.deptJobBxId } });
+      deptGetList();
+      jobBxGetList();
       break;
   }
+  console.log(data);
+  
 }
 provide('jobBxCheck', jobBxCheck);
 
@@ -225,12 +235,16 @@ const modalConfirm = async () => {
   formData.append("lastUpdusrId", 'user01');
 
   if(jobBxModalType == 'add') {
-    axios.post('/api/deptstore/jobBxAdd', formData);
+    await axios.post('/api/deptstore/jobBxAdd', formData);
 
   } else if(jobBxModalType == 'modify') {
     formData.append("deptJobBxId", jobBxData.value.deptJobBxId);
-    axios.post('/api/deptstore/jobBxModify', formData);
+    await axios.post('/api/deptstore/jobBxModify', formData);
+
   }
+  deptGetList();
+  jobBxGetList();
+  modalClose();
 }
 
 
@@ -258,7 +272,6 @@ onMounted(() => {
         header: '관리', name: 'action', align: 'center',
         renderer: BtnRenderer,
       }
-
     ]
   })
   

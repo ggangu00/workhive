@@ -9,11 +9,13 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import egovframework.com.commute.service.CommuteCrctDTO;
 import egovframework.com.commute.service.CommuteDTO;
 import egovframework.com.vacation.service.VacationDTO;
 import egovframework.com.vacation.service.VacationService;
@@ -61,8 +63,8 @@ public class VacationController {
 	
 	// 사용 예정량 조회
 	@GetMapping("/expectInfo")
-	public VacationDTO expectInfo(@RequestParam(name="createId") String createId) {
-		return service.expectSelect(createId);
+	public VacationDTO expectInfo(@ModelAttribute VacationDTO searchDTO) {
+		return service.expectSelect(searchDTO);
 	}
 	
 	// 휴가 신청 결재 요청 조회
@@ -83,6 +85,13 @@ public class VacationController {
 		return result;
 	}
 	
-	
+	// 휴가 신청 결재
+	@PostMapping("/signModify")
+	public void signModify(@RequestBody List<VacationDTO> vcList) {
+		vcList.forEach(vcDTO -> {
+			service.signUpdate(vcDTO);
+		});
+		return;
+	}
 	
 }

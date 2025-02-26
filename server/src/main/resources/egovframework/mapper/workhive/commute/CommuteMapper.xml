@@ -34,7 +34,8 @@
 	<!-- 출퇴근 수정 : 결재 -->
 	<update id="crctSignUpdate" parameterType="commuteDTO">
 		update commute
-		set go_time = to_date(#{goTime}, 'YYYY-MM-DD HH24:MI:SS')
+		set commute_dt = to_date(#{goTime}, 'YYYY-MM-DD HH24:MI:SS')
+		  , go_time = to_date(#{goTime}, 'YYYY-MM-DD HH24:MI:SS')
 		  , go_state = #{goState}
 		  , leave_time = to_date(#{leaveTime}, 'YYYY-MM-DD HH24:MI:SS')
 		  , leave_state = #{leaveState}
