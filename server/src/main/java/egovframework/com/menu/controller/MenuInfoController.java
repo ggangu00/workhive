@@ -1,10 +1,13 @@
 package egovframework.com.menu.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,8 +26,16 @@ public class MenuInfoController {
 	// 메뉴정보
 	@GetMapping("")
 	public List<MenuInfoDTO> menuList() {
-		log.info(menuService.menuSelectAll().toString());
+		log.info("메뉴 목록 조회" + menuService.menuSelectAll().toString());
 		return  menuService.menuSelectAll();
+	}
+	
+	// 권한에 대한 메뉴 목록 조회
+	@GetMapping("/{authorityCd}")
+	public List<MenuInfoDTO> authorityMenuList(@PathVariable String authorityCd) {
+		log.info("권한에 대한 메뉴 목록 조회" + menuService.authorityMenuSelectAll(authorityCd).toString());
+		
+		return menuService.authorityMenuSelectAll(authorityCd);
 	}
 	
 }	

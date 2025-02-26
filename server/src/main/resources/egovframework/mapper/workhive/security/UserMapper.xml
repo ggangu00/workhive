@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.securing.mapper.UserMapper">
+
+	
+	<!-- 단건조회 -->
+	<!-- '{noop}' -> 암호화를 하지 않았다 -->
+	<select id="getUser" resultType="UserDTO">
+		SELECT 
+	         mber_id,
+	         password as password,
+	         mber_nm,
+	         dept_cd
+      	FROM   
+	         comtngnrlmber
+      	WHERE
+	         mber_id = #{mberId}
+			
+	</select>
+	
+	<!-- 권한조회 -->
+	<!-- <select id="getRole" resultType="RoleDTO">
+		SELECT 
+			role_name
+		FROM   
+			t_user_role u
+		JOIN
+			t_role r ON (u.ROLE_ID = r.id)
+		WHERE
+			id = #{id}
+	</select> -->
+</mapper>

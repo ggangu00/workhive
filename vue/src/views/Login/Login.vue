@@ -123,7 +123,7 @@
    // id, pass값 서버로 보내기
    const loginSelect = async () => {
       const requestData = {
-         id : userId.value,
+         username : userId.value,
          password : password.value,
       }
 
@@ -131,7 +131,7 @@
          method: 'POST',
          headers: { 'content-type': 'application/x-www-form-urlencoded' },
          data: qs.stringify(requestData),
-         url : '/api/login.do'
+         url : '/api/login'
       };
 
       try {

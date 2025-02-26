@@ -36,7 +36,7 @@
 </template>
 
 <script setup>
-   import menuTree from './menuComponent.vue'
+   import menuTree from '@/MenuComponent.vue'
    // 부모에서 전달한 prop 이름을 item으로 변경합니다.
    const props = defineProps({
       item: { type: Object, required: true },
@@ -72,7 +72,5 @@
 </script>
 
 <style lang="scss" scoped>
-   .rotated {
-      transform: rotate(180deg);
-   }
+
 </style>
