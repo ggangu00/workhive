@@ -14,7 +14,7 @@
                 <label>부서명</label>
                 <div class="row">
                   <div class="col-6">
-                    <input type="text" class="form-control" placeholder="부서명" v-model="localJobBxSelected.searchDeptId" readonly />
+                    <input type="text" class="form-control" placeholder="부서명" v-model="localJobBxSelected.searchDeptCd" readonly />
                   </div>
                 </div>
               </div>
@@ -93,20 +93,22 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import Modal from '../../components/Modal.vue';
 import axios from 'axios';
+import { useStore } from 'vuex';
 
 const props = defineProps({
   isShowJobModal: Boolean,
   isUpdate: Boolean,
   jobBxSelected: Object,
-  jobBxList: Array,
   selectedRowData: Object,
 });
 
 let localJobBxSelected = ref(props.jobBxSelected);
-let localJobBxList = ref(props.jobBxList);
+const store = useStore();
+let localJobBxList = computed(() => store.state.jobBxList);
+let test = computed(() => store.state.jobBxSelected);
 
 // 입력값 저장
 let formValues = ref({
@@ -119,10 +121,18 @@ let formValues = ref({
   chargerId: '',
 });
 
+watch(() => props.jobBxSelected, (newVal) => {
+  console.log('local watch', newVal);
+  formValues.value.deptJobBxId = newVal.searchDeptJobBxId;
+})
+watch(() => test, (newVal) => {
+  console.log('test : ', newVal);
+})
+
 // 업무함 리스트 변경시 모달에서도 변경
-watch(() => props.jobBxList, (newVal) => {
-  localJobBxList.value = newVal;
-}, { immediate: true });
+// watch(() => props.jobBxList, (newVal) => {
+//   localJobBxList.value = newVal;
+// }, { immediate: true });
 
 // 업무 수정으로 열린 경우
 watch(() => props.selectedRowData, async (newVal) => {
@@ -155,7 +165,7 @@ const modalConfirmJob = async () => {
 // 등록
 const jobAdd = async () => {
   const addData = new FormData();
-  addData.append("deptId", formValues.value.selectedData.searchDeptId);
+  addData.append("deptCd", formValues.value.selectedData.searchDeptCd);
   addData.append("deptJobBxId", formValues.value.deptJobBxId);
   addData.append("priort", formValues.value.priort);
   addData.append("deptJobNm", formValues.value.deptJobNm);
@@ -169,7 +179,7 @@ const jobAdd = async () => {
 // 수정
 const jobUpdate = async () => {
   const modifyData = new FormData();
-  modifyData.append("deptId", formValues.value.selectedData.searchDeptId);
+  modifyData.append("deptCd", formValues.value.selectedData.searchDeptCd);
   modifyData.append("deptJobBxId", formValues.value.deptJobBxId);
   modifyData.append("deptJobId", formValues.value.deptJobId);
   modifyData.append("priort", formValues.value.priort);

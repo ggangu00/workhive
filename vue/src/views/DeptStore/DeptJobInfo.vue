@@ -86,7 +86,6 @@
                   @modalCloseJob="modalCloseJob"
                   @modalConfirmJob="modalConfirmJob"
                   :jobBxSelected="jobBxSelected"
-                  :jobBxList="jobBxList"
                   :selectedRowData="selectedRowData"
                 />
               </div>
