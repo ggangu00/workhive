@@ -1,7 +1,10 @@
 package egovframework.com.approval.service;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.Data;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 public class Document {
 	//문서

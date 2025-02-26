@@ -1,8 +1,11 @@
 package egovframework.com.approval.service;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.Data;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Reception {
 
 	private String receptCd;

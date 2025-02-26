@@ -104,16 +104,16 @@
                 <!-- 결재 목록 -->
                 <div  class="approval-box">
                   <div v-for="(approver, index) in reversedApprovers" :key="index" class="approval-item">
-                      <span class='badge bg-info text-dark'>{{ getApprovalStatusName(approver.status) }}</span> 
-                      [{{ approver.dept }}] {{ approver.name }} {{ approver.title }}
+                      <span class='badge bg-info text-dark'>{{ getApprovalStatusName(approver.signName) }}</span> 
+                      [{{ approver.deptNm }}] {{ approver.mberNm }} {{ approver.respNm }}
                   </div>
                 </div>
                 <span>수신</span>
                   <div class="approval-box">
                   <div v-for="(receiver, index) in receivers" :key="index" class="approval-item">
                     <span class="badge bg-warning text-dark">수신</span>
-                    <span v-if="receiver.name">[{{ receiver.title }}] {{ receiver.name }}</span> <!-- 사원 -->
-                    <span v-else>[{{ receiver.dept }}]</span> <!-- 부서 -->
+                    <span v-if="receiver.mberNm">[{{ receiver.respNm }}] {{ receiver.mberNm }}</span> <!-- 사원 -->
+                    <span v-else>[{{ receiver.deptNm }}]</span> <!-- 부서 -->
                   </div>
                 </div>
               </div>
@@ -307,9 +307,9 @@ const approvalList = async () => {
       // 결재자 목록 설정
       reversedApprovers.value = response.data.map((approver) => ({
         mberId: approver.mberId,
-        name: approver.mberNm,
-        dept: approver.deptNm,
-        status: approver.signName, // 상태 코드 변환
+        mberNm: approver.mberNm,
+        deptNm: approver.deptNm,
+        signName: approver.signName, // 상태 코드 변환
       }));
     }
     console.log('approvers.value => ', reversedApprovers.value);
@@ -447,6 +447,29 @@ const approvalInfo = async() => {
   formData.forEach((value, key) => {
   console.log(`${key}:`, value);
 });
+  try {
+          const response = await axios.post('/api/document/register', formData,
+          {headers: { "Content-Type": "multipart/form-data" }});
+          if(response.status == 200) {
+              Swal.fire({
+                icon: "success",
+                title: "등록 성공",
+              });
+
+          }else if(formCd.value == ''){
+            Swal.fire({
+              icon: "error",
+              title: "등록 실패",
+              text:  "Error : "
+          });
+          }
+        } catch (err) {
+          Swal.fire({
+              icon: "error",
+              title: "등록 실패",
+              text:  "Error : " + err.response.data.error
+          });
+        }
 
 
   //결재자정보포멧
@@ -473,28 +496,6 @@ const approvalInfo = async() => {
   //   };
 
   //     console.log(requestData);
-  //     try {
-  //        const response = await axios.post('/api/document/register', requestData);
-  //        if(response.status == 200) {
-  //           Swal.fire({
-  //              icon: "success",
-  //              title: "등록 성공",
-  //           });
-
-  //        }else if(formCd.value == ''){
-  //         Swal.fire({
-  //           icon: "error",
-  //           title: "등록 실패",
-  //           text:  "Error : "
-  //        });
-  //        }
-  //     } catch (err) {
-  //        Swal.fire({
-  //           icon: "error",
-  //           title: "등록 실패",
-  //           text:  "Error : " + err.response.data.error
-  //        });
-  //     }
 }
 
 
