@@ -10,7 +10,9 @@ import egovframework.com.cmm.ComDefaultVO;
 import egovframework.com.project.mapper.ProjectMapper;
 import egovframework.com.project.service.ProjectDTO;
 import egovframework.com.project.service.ProjectService;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service("ProjectService")
 public class ProjectServiceImpl implements ProjectService{
 	
@@ -40,13 +42,6 @@ public class ProjectServiceImpl implements ProjectService{
 	//프로젝트 등록
 	@Override
 	public boolean projectInsert(ProjectDTO project) {
-		if (project.getPrNm() == null) {
-            throw new IllegalArgumentException("프로젝트명은 필수입니다.");
-        }else if (project.getTypeCd() == null) {
-            throw new IllegalArgumentException("프로젝트 구분값은 필수입니다.");
-        }else if (project.getStartDt() == null || project.getEndDt() == null) {
-            throw new IllegalArgumentException("프로젝트 기간은 필수입니다.");
-        }
 		return projectMapper.projectInsert(project) == 1 ? true : false;
 	}	
 
@@ -61,6 +56,12 @@ public class ProjectServiceImpl implements ProjectService{
 	public boolean projectDelete(String prCd) {
 		return projectMapper.projectDelete(prCd) == 1 ? true : false;
 	}
+	
+	//프로젝트 다중 삭제
+	public boolean projectListDelete(List<String> projectArr) {
+		log.info("123123123"+projectArr.toString());
+        return projectMapper.projectListDelete(projectArr) == 1 ? true : false;
+    }
 	
 	//======================프로젝트 과업=====================
 	

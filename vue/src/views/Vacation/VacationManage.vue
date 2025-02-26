@@ -78,6 +78,7 @@ import { ref, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import { dateTimeFormat } from '../../assets/js/common';
+import * as vacation from '../../assets/js/vacation';
 
 // query에서 isUpdate 받아오기
 const route = useRoute();
@@ -96,7 +97,6 @@ const props = defineProps({
 
 // 받아온 vcCd가 있는 경우 단건조회
 onMounted(() => {
-  console.log("before : ", vcData.value);
   if(vcCd.value != undefined) {
     vcGetInfo();
   }
@@ -105,7 +105,6 @@ onMounted(() => {
 const vcGetInfo = async () => {
   let result = await axios.get(`/api/vacation/vcInfo?vcCd=${vcCd.value}`);
   vcData.value = result.data;
-
 
   vcData.value.vcStartDt = dateTimeFormat(vcData.value.vcStartDt, 'yyyy-MM-dd');
   vcData.value.vcEndDt = dateTimeFormat(vcData.value.vcEndDt, 'yyyy-MM-dd');
@@ -118,7 +117,6 @@ const vcGetInfo = async () => {
   
   vcData.value.remainDays = '';
 
-  console.log("after : ", vcData.value);
 }
 
 // 입력 데이터
@@ -132,10 +130,21 @@ let vcData = ref({
   signId: '',
   
   remainDays: '',
-  createId: '',
+  createId: 'user01',
 })
 // 날짜 입력 감지 - 사용일수 계산
-watch(() => [vcData.value.vcStartDt, vcData.value.vcEndDt, vcData.value.vcType], (newVal) => {
+watch(() => [vcData.value.vcStartDt, vcData.value.vcEndDt, vcData.value.vcType], async (newVal) => {
+  
+  // 연차 정보 없는 경우 - 연차 생성
+  let startYear;
+  let startCheck;
+  if(newVal[0] != '') {
+    startYear = dateTimeFormat(newVal[0], 'yyyy');
+    startCheck = await vacation.yearVcGetInfo(vcData.value.createId, startYear);
+    if(startCheck == '') await vacation.yearVcAdd(vcData.value.createId, startYear);
+  }
+
+
   switch(newVal[2]) { // 연차 종류에 따른 동작
     case 'E01': // 연차
       vcData.value.useDays = vcDateCalc(newVal[0], newVal[1]);
@@ -148,9 +157,30 @@ watch(() => [vcData.value.vcStartDt, vcData.value.vcEndDt, vcData.value.vcType],
       vcData.value.vcEndDt = vcData.value.vcStartDt;
   }
 })
+
 // 사용일수 감지 - 예상 잔여 일수 입력
+let isFirstLoad = 0;
+let firstRemainDays;
 watch(() => vcData.value.useDays, (newVal) => {
-  vcData.value.remainDays = props.vcInfo.requestDays - newVal;
+  if(isUpdate.value) {
+    console.log("useDays 감지 : ", vcData.value.useDays);
+
+    // 처음 실행에만 실행되어야 하는 코드 시작
+    if (isFirstLoad < 2) {
+      console.log('요청 가능 일자', vcData.value.remainDays);
+      console.log('입력값', props.vcInfo.requestDays);
+      console.log('사용일', vcData.value.useDays);
+      vcData.value.remainDays = props.vcInfo.requestDays;
+      firstRemainDays = vcData.value.useDays;
+      isFirstLoad++; // 첫 로딩 이후 감지 시작
+  
+      return;
+    }
+
+    vcData.value.remainDays = (props.vcInfo.requestDays + firstRemainDays - newVal).toFixed(1);
+  } else {
+    vcData.value.remainDays = (props.vcInfo.requestDays - newVal).toFixed(1);
+  }
 })
 
 // 휴가 일수 계산
@@ -188,7 +218,7 @@ const btnVcManage = async () => {
   formData.append("signId", 'admin');
   
   if(!isUpdate.value) {
-    formData.append("createId", 'user01');
+    formData.append("createId", vcData.value.createId);
     await axios.post('/api/vacation/vcAdd', formData);
 
   } else {

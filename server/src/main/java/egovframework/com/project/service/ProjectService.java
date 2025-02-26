@@ -26,6 +26,9 @@ public interface ProjectService {
 	//프로젝트 삭제
 	public boolean projectDelete(String prCd);
 	
+	//프로젝트 다중 삭제
+	public boolean projectListDelete(List<String> projectArr);
+	
 	//======================프로젝트 과업=====================
 	
 	//프로젝트 과업 전체조회

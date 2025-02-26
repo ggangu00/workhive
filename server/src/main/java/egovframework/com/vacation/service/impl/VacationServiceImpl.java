@@ -42,8 +42,8 @@ public class VacationServiceImpl implements VacationService {
 	}
 
 	@Override
-	public VacationDTO expectSelect(String createId) {
-		return vacationMapper.expectSelect(createId);
+	public VacationDTO expectSelect(VacationDTO vcDTO) {
+		return vacationMapper.expectSelect(vcDTO);
 	}
 
 	@Override
@@ -54,6 +54,11 @@ public class VacationServiceImpl implements VacationService {
 	@Override
 	public List<VacationDTO> vcSelectSigned(VacationDTO vcDTO) {
 		return vacationMapper.vcSelectSigned(vcDTO);
+	}
+
+	@Override
+	public boolean signUpdate(VacationDTO vcDTO) {
+		return vacationMapper.signUpdate(vcDTO) == 1 ? true : false;
 	}
 
 }

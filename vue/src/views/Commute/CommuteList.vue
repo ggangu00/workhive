@@ -172,7 +172,7 @@ const router = useRouter();
 const btnCrctAdd = (rowKey) => {
   let selectedRowData = gridInstance.value.getRow(rowKey);
 
-  router.push({ name: 'CrctManage', query: { cmtCd: selectedRowData.commuteCd, isUpdate: false } });
+  router.push({ name: 'CrctManage', query: { cmtCd: selectedRowData.commuteCd, isUpdate: 'true' } });
 }
 
 </script>

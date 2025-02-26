@@ -117,7 +117,6 @@ public class ProjectController {
 	//프로젝트 삭제
 	@DeleteMapping("/{prCd}")
 	public Map<String, Object> projectRemove(@PathVariable(name="prCd") String prCd) {
-		log.info("삭제 권한 코드 출력 => " + prCd);
 	    
 	    // 서비스 로직 실행
 		boolean result = projectService.projectDelete(prCd);
@@ -127,6 +126,19 @@ public class ProjectController {
 		//map.put("list", projectService.projectSelectAll());
 		
 		return map;
+	}
+	
+	//프로젝트 다중 삭제
+	@PutMapping("/delete")
+	public boolean projectListRemove(@RequestBody Map<String, List<String>> requestBody) {
+		log.info("123123123!"+requestBody.get("projectArr"));
+	    List<String> projectArr = requestBody.get("projectArr");
+	    
+	    if (projectArr == null || projectArr.isEmpty()) {
+	        return false;
+	    }
+
+	    return projectService.projectListDelete(projectArr);
 	}
 	
 	//======================프로젝트 과업=====================

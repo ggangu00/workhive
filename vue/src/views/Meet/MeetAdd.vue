@@ -72,7 +72,7 @@
                 <div class="card-body">
                     <div class="mb-3">
                         <div class="form-group has-label">
-                            <label>회의 결과 내용 <em class="point-red">*</em></label>
+                            <label>회의 결과 내용</label>
                         </div>
                         <textarea type="text" :name="mtgResultCn" v-model="mtgResultCn" class="form-control"
                             placeholder="회의결과내용을 입력해주세요"></textarea>

@@ -229,14 +229,14 @@ public class EgovArticleController {
      */
     //@RequestMapping("/cop/bbs/selectArticleDetail.do")
     @GetMapping("bulletinInfo")
-    public String selectArticleDetail(@ModelAttribute("searchVO") BoardVO boardVO, ModelMap model) throws Exception {
+    public BoardMasterVO selectArticleDetail(@ModelAttribute("searchVO") BoardVO boardVO, ModelMap model) throws Exception {
 		LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
 		
-		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();	//KISA 보안취약점 조치 (2018-12-10, 이정은)
-
-        if(!isAuthenticated) {
-            return "redirect:/uat/uia/egovLoginUsr.do";
-        }
+//		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();	//KISA 보안취약점 조치 (2018-12-10, 이정은)
+//
+//        if(!isAuthenticated) {
+//            return "redirect:/uat/uia/egovLoginUsr.do";
+//        }
 
 	
 		boardVO.setLastUpdusrId((user == null || user.getUniqId() == null) ? "" : user.getUniqId());
@@ -245,10 +245,10 @@ public class EgovArticleController {
 		model.addAttribute("result", vo);
 		model.addAttribute("sessionUniqId", (user == null || user.getUniqId() == null) ? "" : user.getUniqId());
 		
-		//비밀글은 작성자만 볼수 있음 
-		if(!EgovStringUtil.isEmpty(vo.getSecretAt()) && vo.getSecretAt().equals("Y") && !((user == null || user.getUniqId() == null) ? "" : user.getUniqId()).equals(vo.getFrstRegisterId()))
-			return"forward:/cop/bbs/selectArticleList.do";
-		
+//		//비밀글은 작성자만 볼수 있음 
+//		if(!EgovStringUtil.isEmpty(vo.getSecretAt()) && vo.getSecretAt().equals("Y") && !((user == null || user.getUniqId() == null) ? "" : user.getUniqId()).equals(vo.getFrstRegisterId()))
+//			return"forward:/cop/bbs/selectArticleList.do";
+//		
 		//----------------------------
 		// template 처리 (기본 BBS template 지정  포함)
 		//----------------------------
@@ -259,9 +259,9 @@ public class EgovArticleController {
 		
 		BoardMasterVO masterVo = egovBBSMasterService.selectBBSMasterInf(master);
 	
-		if (masterVo.getTmplatCours() == null || masterVo.getTmplatCours().equals("")) {
-		    masterVo.setTmplatCours("/css/egovframework/com/cop/tpl/egovBaseTemplate.css");
-		}
+//		if (masterVo.getTmplatCours() == null || masterVo.getTmplatCours().equals("")) {
+//		    masterVo.setTmplatCours("/css/egovframework/com/cop/tpl/egovBaseTemplate.css");
+//		}
 	
 		////-----------------------------
 		
@@ -269,21 +269,22 @@ public class EgovArticleController {
 		// 2009.06.29 : 2단계 기능 추가
 		// 2011.07.01 : 댓글, 만족도 조사 기능의 종속성 제거
 		//----------------------------
-		if (egovArticleCommentService != null){
-			if (egovArticleCommentService.canUseComment(boardVO.getBbsId())) {
-			    model.addAttribute("useComment", "true");
-			}
-		}
-		if (bbsSatisfactionService != null) {
-			if (bbsSatisfactionService.canUseSatisfaction(boardVO.getBbsId())) {
-			    model.addAttribute("useSatisfaction", "true");
-			}
-		}
+//		if (egovArticleCommentService != null){
+//			if (egovArticleCommentService.canUseComment(boardVO.getBbsId())) {
+//			    model.addAttribute("useComment", "true");
+//			}
+//		}
+//		if (bbsSatisfactionService != null) {
+//			if (bbsSatisfactionService.canUseSatisfaction(boardVO.getBbsId())) {
+//			    model.addAttribute("useSatisfaction", "true");
+//			}
+//		}
 		////--------------------------
 		
 		model.addAttribute("boardMasterVO", masterVo);
 	
-		return "egovframework/com/cop/bbs/EgovArticleDetail";
+		//return "egovframework/com/cop/bbs/EgovArticleDetail";
+		return masterVo;
     }
 
     /**
@@ -335,79 +336,47 @@ public class EgovArticleController {
      */
     //@RequestMapping("/cop/bbs/insertArticle.do")
     @PostMapping("/bulletinAdd")
-      public String insertArticle(final MultipartHttpServletRequest multiRequest, @ModelAttribute("searchVO") BoardVO boardVO,
-	    @ModelAttribute("bdMstr") BoardMaster bdMstr, @ModelAttribute("board") BoardVO board, BindingResult bindingResult, 
-	    ModelMap model) throws Exception {
+    public String insertArticle(final MultipartHttpServletRequest multiRequest, 
+                                @ModelAttribute("board") BoardVO board, 
+                                ModelMap model) throws Exception {
 
-		LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-		
-		if(!isAuthenticated) {	//KISA 보안취약점 조치 (2018-12-10, 이정은)
-            return "redirect:/uat/uia/egovLoginUsr.do";
+        LoginVO user = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+        Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+
+        // 파일 업로드 처리
+        List<FileVO> result = null;
+        String atchFileId = "";
+
+        final List<MultipartFile> files = multiRequest.getFiles("file_1");
+        if (!files.isEmpty()) {
+            result = fileUtil.parseFileInf(files, "BBS_", 0, "", "");
+            atchFileId = fileMngService.insertFileInfs(result);
         }
-	
-		beanValidator.validate(board, bindingResult);
-		if (bindingResult.hasErrors()) {
-	
-		    BoardMasterVO master = new BoardMasterVO();
-		    
-		    master.setBbsId(boardVO.getBbsId());
-		    master.setUniqId((user == null || user.getUniqId() == null) ? "" : user.getUniqId());
-	
-		    master = egovBBSMasterService.selectBBSMasterInf(master);
-		    
-	
-		    //----------------------------
-		    // 기본 BBS template 지정 
-		    //----------------------------
-		    if (master.getTmplatCours() == null || master.getTmplatCours().equals("")) {
-			master.setTmplatCours("css/egovframework/com/cop/tpl/egovBaseTemplate.css");
-		    }
-	
-		    model.addAttribute("boardMasterVO", master);
-		    ////-----------------------------
-	
-		    return "egovframework/com/cop/bbs/EgovArticleRegist";
-		}
+        board.setAtchFileId(atchFileId);
 
-		 //2022.11.11 시큐어코딩 처리
-		List<FileVO> result = null;
-	    String atchFileId = "";
-	    
-	    //final Map<String, MultipartFile> files = multiRequest.getFileMap();
-	    final List<MultipartFile> files = multiRequest.getFiles("file_1");
-	    if (!files.isEmpty()) {
-	    	result = fileUtil.parseFileInf(files, "BBS_", 0, "", "");
-	    	atchFileId = fileMngService.insertFileInfs(result);
-	    }
-	    board.setAtchFileId(atchFileId);
-	    board.setFrstRegisterId((user == null || user.getUniqId() == null) ? "" : user.getUniqId());
-	    board.setBbsId(boardVO.getBbsId());
-	    board.setBlogId(boardVO.getBlogId());
-	    
-	    
-	    //익명등록 처리 
-	    if(board.getAnonymousAt() != null && board.getAnonymousAt().equals("Y")){
-	    	board.setNtcrId("anonymous"); //게시물 통계 집계를 위해 등록자 ID 저장
-	    	board.setNtcrNm("익명"); //게시물 통계 집계를 위해 등록자 Name 저장
-	    	board.setFrstRegisterId("anonymous");
-	    	
-	    } else {
-	    	board.setNtcrId((user == null || user.getUniqId() == null) ? "" : user.getUniqId()); //게시물 통계 집계를 위해 등록자 ID 저장
-	    	board.setNtcrNm((user == null || user.getName() == null) ? "" : user.getName()); //게시물 통계 집계를 위해 등록자 Name 저장
-	    	
-	    }
-	    
-	    board.setNttCn(unscript(board.getNttCn()));	// XSS 방지
-	    egovArticleService.insertArticle(board);
+        // 작성자 및 게시판 정보 설정
+        board.setFrstRegisterId((user == null || user.getUniqId() == null) ? "" : user.getUniqId());
+        board.setBbsId(board.getBbsId());
+        board.setBlogId(board.getBlogId());
 
-		if(boardVO.getBlogAt().equals("Y")){
-			return "forward:/cop/bbs/selectArticleBlogList.do";
-		}else{
-			return "forward:/cop/bbs/selectArticleList.do";
-		}
-		
+        // 익명 등록 처리
+        if ("Y".equals(board.getAnonymousAt())) {
+            board.setNtcrId("anonymous");
+            board.setNtcrNm("익명");
+            board.setFrstRegisterId("anonymous");
+        } else {
+            board.setNtcrId((user == null || user.getUniqId() == null) ? "" : user.getUniqId());
+            board.setNtcrNm((user == null || user.getName() == null) ? "" : user.getName());
+        }
+
+        // XSS 방지 및 게시글 내용 등록
+        board.setNttCn(unscript(board.getNttCn()));
+        egovArticleService.insertArticle(board);
+
+        return "forward:/cop/bbs/selectArticleList.do";
     }
+
+
 
     /**
      * 게시물에 대한 답변 등록을 위한 등록페이지로 이동한다.

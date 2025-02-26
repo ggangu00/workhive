@@ -166,8 +166,8 @@ class BtnRenderer {
 const router = useRouter();
 const btnCrctUpdate = (rowKey) => {
   let selectedRowData = gridInstance.value.getRow(rowKey);
-
-  router.push({ name: 'CrctManage', query: { crctCd: selectedRowData.crctCd, isUpdate: true } });
+  
+  router.push({ name: 'CrctManage', query: { crctCd: selectedRowData.crctCd, isUpdate: 'true' } });
 };
 const btnCrctDelete = async (rowKey) => {
   let crctCd = gridInstance.value.getRow(rowKey).crctCd;

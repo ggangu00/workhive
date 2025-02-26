@@ -11,7 +11,7 @@
                   v-for="(btn, index) in buttons"
                   :key="index"
                   :class="['btn', btn.class]"
-                  @click="$emit('button-click', btn.action)">
+                  @click="$emit('button-click', btn.label)">
                   {{ btn.label }}
                 </button>
               </div>
@@ -135,6 +135,8 @@ const resetBtn = () =>{
   formType.value = "";
 }
 
+//아이디정보 불러오서 밑에 있는 getparams에 아이디값 뿌려주기
+
 // API 요청 파라미터
 const getParams = ({
   status: props.status,
@@ -155,6 +157,84 @@ const dataSource = {
   },
 }
 
+//결재 버튼 기능(다중)
+const btnSelectChange = () => {
+  const checkedData = grid.value.getCheckedRows();
+
+  Swal.fire({
+    title: "결재 진행",
+    text: "승인하시겠습니까? 아니면 반려하시겠습니까?",
+    showDenyButton: true,
+    showCancelButton: true,
+    confirmButtonText: "승인",
+    denyButtonText: "반려"
+  }).then(async (result) => {
+    let modeText = '';
+    let newSignStat = '';
+    if (result.isConfirmed) {
+      modeText = "승인";
+      newSignStat = "D02";
+    } else if (result.isDenied) {
+      modeText = "반려";
+      newSignStat = "D04";
+    } else {
+      return; // 취소 시 함수 종료
+    }
+    
+    try {
+      const response = await axios.put(`/api/document/state`, {
+        approvalArr: checkedData.map(row => row.docCd),
+        mberId: 'admin8', // 실제 로그인 아이디로 변경
+        signStat: newSignStat
+      });
+      
+      if (response.statusText == "OK") {
+        Swal.fire({
+          icon: "success",
+          title: modeText + " 완료",
+          text: "선택한 문서를 " + modeText + "하였습니다",
+        });
+      }
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: modeText + " 실패",
+        text: "Error : " + err,
+      });
+    }
+  });
+}
+
+// //상태 수정 통신
+// const approvalStateUpdate = async () => { //일지 삭제
+//   const checkedData = grid.value.getCheckedRows();
+
+//   const modeText = ref('승인');
+//   try {
+//     const response = ref([]);
+//       response.value = await axios.put(`/api/document/state`, {
+//         approvalArr: checkedData.map(row => row.docCd),
+//         mberId: 'admin3', //임시
+//         signStat: 'D02'
+//       });
+//     console.log(response.value)
+
+//     if (response.value.statusText == "OK") {
+//       Swal.fire({
+//         icon: "success",
+//         title: modeText.value + "완료",
+//         text: "선택한 문서를 " + modeText.value + "하였습니다",
+//       })
+//     }
+
+//   } catch (err) {
+//     Swal.fire({
+//       icon: "error",
+//       title: modeText.value + "실패",
+//       text: "Error : " + err
+//     });
+//   }
+// }
 // Toast Grid 초기화
 const TueGrid = () => {
   grid.value = new window.tui.Grid({
@@ -200,7 +280,6 @@ const handleRowClick = (e) => {
     routePath = "/approval/restartDraft"
   }
 
-  console.log(dataRow)
   router.push({
     path: routePath,
     query :{
@@ -242,6 +321,7 @@ watch([docKind, deptNm, formType, startDate, endDate], async ([newDodKind, newDe
     }
 });
 
+defineExpose({btnSelectChange})
 </script>
 
 <style scoped>

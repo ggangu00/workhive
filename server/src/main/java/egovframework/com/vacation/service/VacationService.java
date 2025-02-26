@@ -9,7 +9,8 @@ public interface VacationService {
 	public boolean vcDelete(String vcCd);
 	public VacationDTO vcSelect(String vcCD);
 	public List<VacationDTO> vcSelectAll(VacationDTO vcDTO);
-	public VacationDTO expectSelect(String createId);
+	public VacationDTO expectSelect(VacationDTO vcDTO);
 	public List<VacationDTO> vcSelectSigner(VacationDTO vcDTO);
 	public List<VacationDTO> vcSelectSigned(VacationDTO vcDTO);
+	public boolean signUpdate(VacationDTO vcDTO);
 }

@@ -23,7 +23,7 @@
             <div class="col-12">
               <div id="editor"></div>
               <!-- 에디터의 HTML 내용을 내부적으로 관리 (DB 컬럼과 매핑) -->
-              <input type="hidden" v-model="nttCn" />
+              <input type="hidden" v-model="nttCn"/>
             </div>
 
             <div class="mb-3">
@@ -105,13 +105,21 @@ import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor } from '@toast-ui/editor';
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import { useRouter } from 'vue-router';
+import { useRoute,useRouter } from 'vue-router';
 
-
+const route = useRoute();
 const router = useRouter();
 
+
+console.log("전체테스트:",route.params);
+
+
+
+
 // 필드 데이터
-const bbsId = ref('');              //게시판id
+const bbsId = ref(route.query.bbsId);              //게시판id
+console.log(bbsId.value);
+
 const nttSj = ref('');             // 제목
 const nttCn = ref('');             // 에디터의 HTML 내용 (게시글 내용)
 const noticeAt = ref(false);       // 공지여부
@@ -179,9 +187,8 @@ const validateForm = () => {
 };
 const submitForm = async () => {
   if (!validateForm()) return;
-  
-  const formData = new FormData();
 
+  const formData = new FormData();
   formData.append('nttSj', nttSj.value);
   formData.append('nttCn', nttCn.value);
   formData.append('noticeAt', noticeAt.value ? 'Y' : 'N');
@@ -190,7 +197,7 @@ const submitForm = async () => {
   formData.append('password', password.value);
   formData.append('ntceBgnde', formatDate(ntceBgnde.value));
   formData.append('ntceEndde', formatDate(ntceEndde.value));
-  formData.append('bbsId', bbsId.value);
+  formData.append('bbsId', bbsId.value);  // 확인 필요
 
   if (fileInput.value.files.length > 0) {
     console.log("첨부 파일:", fileInput.value.files[0]);
@@ -199,10 +206,9 @@ const submitForm = async () => {
 
   try {
     console.log("전송 데이터:", [...formData.entries()]);
+    console.log("bbsId 값:", bbsId?.value);
 
-    const response = await axios.post("/api/bulletin/bulletinAdd", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+    const response = await axios.post("/api/bulletin/bulletinAdd", formData);
 
     console.log("서버 응답:", response.data);
 
@@ -210,13 +216,13 @@ const submitForm = async () => {
     isSuccess.value = true;
 
     setTimeout(() => {
-      router.push({ path: '/bulletin/bulletinList', query: { bbsId: bbsId.value } });
-    }, 1000); // 등록 성공 후 1초 후 목록 페이지 이동
+      router.push({ path: '/bulletin/bulletinList/'+ bbsId.value});
+    }, 1000); // 1초 후 페이지 이동
 
   } catch (error) {
     console.error("게시글 등록 실패", error);
     if (error.response) {
-      console.error("서버 오류 응답:", error.response.data);
+      console.error("서버 오류 응답:", error.response.data);  // 서버 오류 내용 확인
       console.error("응답 상태 코드:", error.response.status);
     }
     responseMessage.value = "게시글 등록에 실패했습니다. 다시 시도해주세요.";
@@ -231,8 +237,7 @@ const submitForm = async () => {
 
 // 컴포넌트 마운트 시 에디터 초기화
 onMounted(() => {
-  initEditor();
-
+  initEditor(); 
 });
 </script>
 
