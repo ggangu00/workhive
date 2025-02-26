@@ -130,6 +130,7 @@ public class Board implements Serializable {
 	 * 블로그 게시판 여부 
 	 */
 	
+	
 	private String blogAt = "";
 	/** 블로그 ID */
     private String blogId = "";

@@ -44,30 +44,6 @@
     	VALUES ('RCPTN' || seq_reception_cd.NEXTVAL, #{docCd}, #{mberId}, #{deptCd})
     </insert>
     
-    <!-- 파일등록 -->
-    <insert id="insertFileMaster" parameterType="egovframework.com.approval.service.File">
-			INSERT INTO COMTNFILE
-			(ATCH_FILE_ID, CREAT_DT, USE_AT)
-			VALUES
-			( 'FILE' || seq_file_cd, SYSDATE, 'Y')			
-		
-	</insert>
-	
-	  <!-- 파일 헤더 등록 후 파일코드가져오기 -->
-    <select id="lastFileCdGet" resultType="String">
-	    SELECT 'FILE' || seq_file_cd.CURRVAL FROM dual
-	</select>
-	
-	<insert id="insertFileDetail" parameterType="egovframework.com.approval.service.ApprovalParentDTO">
-		
-			INSERT INTO COMTNFILEDETAIL
-			( ATCH_FILE_ID, FILE_SN, FILE_STRE_COURS, STRE_FILE_NM, 
-			  ORIGNL_FILE_NM, FILE_EXTSN, FILE_SIZE, FILE_CN )
-			VALUES
-			( #{atchFileId}, #{fileSn}, #{fileStreCours}, #{streFileNm}, 
-			  #{orignlFileNm}, #{fileExtsn}, #{fileMg}, #{fileCn} )			
-		
-	</insert>	
     
     <!-- 결재선조회 -->
     <select id="approvalSelectAll" resultType="egovframework.com.approval.service.ApprovalLine" parameterType="egovframework.com.approval.service.SearchDTO">
@@ -121,6 +97,32 @@
 	  <include refid="searchCriteria" />
 	</select>
 	
+<!-- 	  SELECT d.*
+  FROM document d
+  JOIN approvalLine al ON d.docCd = al.docCd
+  WHERE al.userId = #{userId}
+    AND EXISTS (
+      SELECT 1
+      FROM approvalLine al_prev
+      WHERE al_prev.docCd = al.docCd
+        AND al_prev.sign_seq = al.sign_seq - 1
+        AND al_prev.sign_stat = '승인'
+    ) -->
+	
+	<!-- 결재선 수정 -->
+		<update id="approvalStateUpdate" parameterType="todoDTO">
+	    UPDATE 
+	    	approval_line 
+	    SET sign_stat = #{signStat}
+	    WHERE 
+	    	doc_cd 
+	    IN
+	    <foreach collection="approvalArr" item="docCd" open="(" separator="," close=")">
+	        #{docCd}
+	    </foreach>    
+	    AND mber_id = #{mberId}
+	</update>
+	
     <!-- 문서조회 -->
     <select id="documentSelectAll" resultType="egovframework.com.approval.service.DocumentDTO" parameterType="egovframework.com.approval.service.SearchDTO">
 		 SELECT * FROM (
@@ -155,6 +157,7 @@
     		mber_id,
     		mber_nm,
     		resp_cd,
+    		fn_get_respnm(resp_cd) as resp_nm,
     		dept_cd,
     		(select dept_nm from department where dept_cd = #{deptCd}) as dept_nm
     	FROM COMTNGNRLMBER

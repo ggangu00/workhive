@@ -171,15 +171,16 @@
 			 NTCE_BGNDE, NTCE_ENDDE, ANSWER_AT,  			   
 			 PARNTSCTT_NO, NTT_NO, ANSWER_LC, ATCH_FILE_ID,
 			 FRST_REGISTER_ID, FRST_REGIST_PNTTM, USE_AT,
-			 SJ_BOLD_AT, NOTICE_AT, SECRET_AT, BLOG_ID,LAST_UPDT_PNTTM,ANO_AT
+			 SJ_BOLD_AT, NOTICE_AT, SECRET_AT, LAST_UPDT_PNTTM,ANO_AT
 			 )
 			VALUES
-			( #{nttId}, #{bbsId}, #{nttSj}, #{nttCn}, #{nttId}, 
+			(
+			 #{nttId}, #{bbsId}, #{nttSj}, #{nttCn}, #{nttId}, 
 			  #{ntcrId}, #{ntcrNm}, #{password}, #{inqireCo}, 
 			  #{ntceBgnde}, #{ntceEndde}, #{replyAt}, 
 			  #{parnts}, 1, #{replyLc}, #{atchFileId},
 			  #{frstRegisterId}, SYSDATE, 'Y',
-			  #{sjBoldAt}, #{noticeAt}, #{secretAt}, #{blogId},#{lastUpdtPnttm},#{anoAt}
+			  #{sjBoldAt}, #{noticeAt}, #{secretAt}, #{lastUpdtPnttm},#{anoAt}
 			)
 		
 	</insert>

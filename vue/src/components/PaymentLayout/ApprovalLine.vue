@@ -12,7 +12,7 @@
                 <li v-for="dept in departmentTree" :key="dept.deptCd">
                   <span @click="toggleDept(dept), selectDept(dept)" class="tree-node">
                     <i :class="dept.expanded ? 'fa-solid fa-folder-open' : 'fa-solid fa-folder'"></i>
-                    {{ dept.name }}
+                    {{ dept.deptNm }}
                   </span>
 
                   <!-- 하위 부서 렌더링 -->
@@ -20,7 +20,7 @@
                     <li v-for="subDept in dept.children || []" :key="subDept.deptCd">
                       <span @click="toggleDept(subDept), selectDept(subDept)" class="tree-node">
                         <i :class="subDept.expanded ? 'fa-solid fa-folder-open' : 'fa-solid fa-folder'"></i>
-                        {{ subDept.name }}
+                        {{ subDept.deptNm }}
                       </span>
 
                       <!-- 하위-하위 부서도 렌더링  -->
@@ -28,7 +28,7 @@
                         <li v-for="subSubDept in subDept.children || []" :key="subSubDept.deptCd">
                           <span @click="selectDept(subSubDept)">
                             <i class="fa-solid fa-folder" ></i>
-                            {{ subSubDept.name }}
+                            {{ subSubDept.deptNm }}
                           </span>
                         </li>
                       </ul>
@@ -53,8 +53,8 @@
             <div class="approval-box">
               <div v-for="(receiver, index) in receivers" :key="index" class="approval-item">
                 <span class="badge bg-warning text-dark">수신</span>
-                <span v-if="receiver.name">[{{ receiver.title }}] {{ receiver.name }}<button @click="removeReceiver(index)" class="btn btn-sm btn-danger">삭제</button></span> <!-- [직책]사원 -->
-                <span v-else>[{{ receiver.dept }}]<button @click="removeReceiver(index)" class="btn btn-sm btn-danger">삭제</button></span> <!-- 부서 -->                
+                <span v-if="receiver.mberNm">[{{ receiver.respNm }}] {{ receiver.mberNm }}<button @click="removeReceiver(index)" class="btn btn-sm btn-danger">삭제</button></span> <!-- [직책]사원 -->
+                <span v-else>[{{ receiver.deptNm }}]<button @click="removeReceiver(index)" class="btn btn-sm btn-danger">삭제</button></span> <!-- 부서 -->                
               </div>
             </div>
           </div>
@@ -82,14 +82,14 @@
             <h5>결재 목록</h5>
             <div class="approval-box">
               <div v-for="(approver, index) in reversedApprovers " :key="index" class="approval-item">
-                <select v-model="approver.status" class="form-select form-select-sm">
+                <select v-model="approver.signName" class="form-select form-select-sm">
                   <option v-for="(data, idx) in selectedData" 
                   :key="idx"
                   :value="data.commDtlCd">
                   {{ data.commDtlNm }}
                   </option>
                 </select>
-                [{{ approver.dept }}] {{ approver.name }} {{ approver.title }}
+                [{{ approver.deptNm }}] {{ approver.mberNm }} {{ approver.respNm }}
                 <button @click="removeApproval(index)" class="btn btn-sm btn-danger">삭제</button>
               </div>
             </div>
@@ -141,7 +141,7 @@ import axios from 'axios';
       try {
         const response = await axios.get('/api/department');
         const deptData = response.data;
-
+        console.log(deptData)
         const departmentsTree = (deptList, parentCd = null, depth = 0) => {
           if (depth > 10) return [];
 
@@ -149,14 +149,14 @@ import axios from 'axios';
             .filter(dept => dept.parentCd == parentCd)
             .map(dept => ({
               deptCd: dept.deptCd,
-              name: dept.deptNm,
+              deptNm: dept.deptNm,
               expanded: false,
               children: departmentsTree(deptList, dept.deptCd, depth + 1) || []
             }));
         };
 
         departmentTree.value = departmentsTree(deptData);
-        console.log(deptData);
+
       } catch (error) {
         console.error("부서 목록 불러오기 실패:", error);
       }
@@ -184,7 +184,7 @@ import axios from 'axios';
     };
 
     const selectDept = (dept) => {
-      selectedDept.value = dept.name;
+      selectedDept.value = dept;
       getDeptMembers(dept.deptCd) ;
 
       updateGridData() ;
@@ -192,29 +192,30 @@ import axios from 'axios';
 
     //수신자추가기능
     const addReceiver = () => {
-      console.log(selectedDept);
+
       //부서추가
       if (selectedDept.value && !receivers.value.some(receiver => receiver.dept == selectedDept.value)) {
         receivers.value.push({
-          dept: selectedDept.value, 
-          name: "", 
-          title: "", 
+          deptNm: selectedDept.value.deptNm, 
+          deptCd: selectedDept.value.deptCd, 
           status: "수신" 
         });
       }
       //사원추가
       const selectedData = gridInstance.getCheckedRows();
-      console.log(selectedData)
 
       selectedData.forEach(emp => {
         const empName = emp.mberNm;  
-        const empTitle = emp.respCd
+        const empTitle = emp.respNm
 
         if (!receivers.value.some(receiver => receiver.name == empName)) {
             receivers.value.push({
-              name: empName,
-              dept: emp.deptNm,  // 부서명도 같이 저장
-              title: empTitle,
+              mberNm: empName,
+              mberId: emp.mberId,
+              deptNm: emp.deptNm,  // 부서명도 같이 저장
+              deptCd: emp.deptCd,
+              respNm: empTitle,
+              respCd: emp.respCd,
               status: "수신",
 
             });
@@ -230,14 +231,16 @@ import axios from 'axios';
     const addApproval = () => {
       if (!gridInstance) return;
       const selectedData = gridInstance.getCheckedRows();
-      console.log(selectedData)
+      console.log('결재를정보=> ', selectedData)
       selectedData.forEach(emp => {
         if (!approvers.value.find(appr => appr.mberNm == emp.mberNm)) {
           approvers.value.push({ 
-            name: emp.mberNm || emp.name,  
-            dept: emp.deptNm || emp.dept, 
-            title: emp.respCd, 
-            status: 'K02',
+            mberNm: emp.mberNm || emp.name,  
+            deptNm: emp.deptNm || emp.dept, 
+            deptCd: emp.deptCd,
+            respNm: emp.respNm, 
+            respCd: emp.respCd,
+            signName: 'K02',
             mberId: emp.mberId});
         }
       });
@@ -246,7 +249,7 @@ import axios from 'axios';
     // 결재자 삭제 기능
     const removeApproval = (index) => {
       approvers.value.splice(index, 1);
-      if (approvers.value[index].status == "K01") {
+      if (approvers.value[index].signName == "K01") {
         alert("기안자는 삭제불가");
         return;
       }
@@ -261,7 +264,7 @@ import axios from 'axios';
         rowHeaders: ['checkbox'],
         columns: [
           { header: '이름', name: 'mberNm' },
-          { header: '직책', name: 'respCd' },
+          { header: '직책', name: 'respNm' },
           { header: '부서', name: 'deptNm' },
         ]
       });
@@ -284,9 +287,9 @@ import axios from 'axios';
 
     //로그인정보(임시)
     const login = ref({
-      name: "신강현", 
-      dept: "총무팀",
-      title: "대리",
+      mberNm: "신강현", 
+      deptNm: "총무팀",
+      respNm: "대리",
       mberId: "admin3"
     });
     //  모달이 열릴 때 Toast UI Grid를 다시 초기화
@@ -303,12 +306,12 @@ import axios from 'axios';
         }
       },300);
       //로그인 기안자
-      if (!approvers.value.find(a => a.status == "K01")) {
+      if (!approvers.value.find(a => a.signName == "K01")) {
       approvers.value.push({
-        name: login.value.name,
-        dept: login.value.dept,
-        title: login.value.title,
-        status: "K01",
+        mberNm: login.value.mberNm,
+        deptNm: login.value.deptNm,
+        respNm: login.value.respNm,
+        signName: "K01",
         mberId: login.value.mberId
       });
   }
