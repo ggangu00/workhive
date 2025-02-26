@@ -51,7 +51,7 @@ public class WebSecurityConfig {
 
     @Bean
     public AuthenticationFailureHandler suthenticationFaildHandler() {
-        return new CustomLoginFailedHandler(); // 로그인 실패 시 실행할 커스텀 핸들러 반환 (현재 @Bean 미적용)
+        return new CustomLoginFailedHandler(); // 로그인 실패 시 실행할 커스텀 핸들러 반환
     }
 
     @Bean
