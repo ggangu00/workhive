@@ -77,6 +77,7 @@ import BulletinInfo from "../views/Bulletin/BulletinInfo.vue";
 
 
 
+
 const routes = [
    {
       path: "/",
@@ -328,7 +329,7 @@ const routes = [
       component : BoardModify,
    },
    {//게시글 목록
-      path:'/bulletin/bulletinList',
+      path:'/bulletin/bulletinList/:bbsId',
       name: 'BulletinList',
       component : BulletinList,
    },
@@ -338,10 +339,11 @@ const routes = [
       component : BulletinAdd,
    },
    {//게시글 상세조회
-      path:'/bulletin/bulletinInfo',
+      path:'/bulletin/bulletinInfo/:bbsId/:bulletinId',
       name: 'BulletinInfo',
       component : BulletinInfo,
    },
+
 
 
    //pjh

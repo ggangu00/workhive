@@ -5,34 +5,40 @@
       <div class="card">
         <div class="card-body">
           <h4 class="card-title float-left mt-1">게시글 상세조회</h4>
-          <button class="btn btn-danger btn-fill float-right">삭제</button>
-          <button class="btn btn-success btn-fill float-right">수정</button>
+          <button class="btn btn-danger btn-fill float-right" @click="deleteBulletin">삭제</button>
+          <button class="btn btn-success btn-fill float-right" @click="editBulletin">수정</button>
         </div>
       </div>
 
       <!-- 상세조회 내용 영역 -->
-      <div class="card">
+      <div class="card" v-if="bulletinInfo">
         <div class="card-body">
-          <form action="BoardAdd" method="post">
+          <form>
             <!-- 제목 및 작성정보 영역 -->
             <div class="mb-3" style="text-align: center;">
               <label style="font-size: 30px;">{{ bulletinInfo.nttSj || '게시글 제목' }}</label>
             </div>
 
             <div style="background-color: #f4f4f4; padding: 10px; text-align: center; font-size: 14px; color: #555; margin-bottom: 20px;">
-              <span style="font-weight: bold;">작성자: {{ bulletinInfo.ntcrNm || '홍길동' }}</span>
+              <span style="font-weight: bold;">작성자:</span>
+              <input type="text" v-model="bulletinInfo.ntcrNm" style="font-weight: bold; text-align: center; width: 150px; margin-left: 5px;"  v-bind:readonly="isUpdate">
+
               <span style="margin: 0 15px;">|</span>
-              <span style="font-weight: bold;">등록일: {{ bulletinInfo.frstRegistPnttm || '2025.02.05' }}</span>
+
+              <span style="font-weight: bold;">등록일:</span>
+              <input type="date" v-model="bulletinInfo.frstRegistPnttm" style="text-align: center; width: 150px; margin-left: 5px;">
+
               <span style="margin: 0 15px;">|</span>
-              <span style="font-weight: bold;">조회수: {{ bulletinInfo.inqireCo || 0 }}</span>
+
+              <span style="font-weight: bold;">조회수:</span>
+              <input type="number" v-model="bulletinInfo.inqireCo" style="text-align: center; width: 80px; margin-left: 5px;">
             </div>
 
             <!-- 게시글 내용 -->
             <div class="mb-3">
               <textarea
                 class="form-control w100"
-                v-model="bulletinInfo.nttCn"
-                placeholder="내용을 입력해주세요"
+                v-model="bulletinInfo.nttCn"                
                 rows="10"
                 style="margin-top: 20px;">
               </textarea>
@@ -43,20 +49,20 @@
               <label class="form-label">게시기간 <em class="point-red">*</em></label>
               <div class="row">
                 <div class="col-auto">
-                  <input type="date" name="start_dt" class="form-control">
+                  <input type="date" v-model="bulletinInfo.ntceBgnde" class="form-control">
                 </div>
                 <div class="col-auto">~</div>
                 <div class="col-auto">
-                  <input type="date" name="end_dt" class="form-control">
+                  <input type="date" v-model="bulletinInfo.ntceEndde" class="form-control">
                 </div>
               </div>
             </div>
 
             <!-- 파일첨부 -->
-            <div class="mb-3">
-              <label>파일첨부 <em class="point-red">*</em></label>
-              <div class="input-group w30" style="border: 1px solid #ccc; border-radius: 3px; background-color: #fff;">
-                <input type="file" class="form-control" ref="fileInput" />
+            <div class="mb-3" v-if="bulletinInfo.attachFileName">
+              <label>파일첨부</label>
+              <div>
+                <a :href="bulletinInfo.attachFileUrl" target="_blank">{{ bulletinInfo.attachFileName }}</a>
               </div>
             </div>
 
@@ -64,7 +70,6 @@
             <div class="mb-3">
               <label>댓글 등록</label>
               <div class="input-group mb-3" style="background-color: #f8f9fa; padding: 10px; border-radius: 5px;">
-                <!-- v-model 이름을 script와 일치시킵니다. -->
                 <input
                   type="text"
                   class="form-control"
@@ -77,15 +82,10 @@
                   placeholder="작성자"
                   v-model="newComment.wrterNm"
                   style="border-radius: 5px; margin-right: 10px;">
-                <button class="btn btn-success btn-fill" 
-                        @click.prevent="addComment" 
-                        style="border-radius: 5px; margin-right: 10px;">
-                  등록
-                </button>
+                <button class="btn btn-success btn-fill" @click.prevent="addComment" style="border-radius: 5px; margin-right: 10px;">등록</button>
               </div>
             </div>
 
-            
             <!-- 댓글 목록 -->
             <div class="mb-3" v-for="(commentItem, index) in comments" :key="index">
               <div class="input-group mb-3" style="background-color: #f8f9fa; padding: 10px; border-radius: 5px;">
@@ -94,37 +94,23 @@
                   class="form-control"
                   v-model="commentItem.commentCn"
                   placeholder="내용을 입력해주세요"
+                  :readonly="!commentItem.isEditing"
                   style="border-radius: 5px; margin-right: 10px;">
                 <input
                   type="text"
                   class="form-control"
                   v-model="commentItem.wrterNm"
                   placeholder="작성자"
+                  :readonly="!commentItem.isEditing"
                   style="border-radius: 5px; margin-right: 10px;">
-                  
+                
                 <template v-if="!commentItem.isEditing">
-                  <button class="btn btn-success btn-fill"
-                          @click="enterEdit(index)"
-                          style="border-radius: 5px; margin-right: 10px;">
-                    수정
-                  </button>
-                  <button class="btn btn-danger btn-fill"
-                          @click="deleteComment(index)"
-                          style="border-radius: 5px;">
-                    삭제
-                  </button>
+                  <button class="btn btn-success btn-fill" @click="enterEdit(index)" style="border-radius: 5px; margin-right: 10px;">수정</button>
+                  <button class="btn btn-danger btn-fill" @click="deleteComment(index)" style="border-radius: 5px;">삭제</button>
                 </template>
                 <template v-else>
-                  <button class="btn btn-success btn-fill" 
-                          @click="saveEdit(index)"  
-                          style="border-radius: 5px; margin-right: 10px;">
-                    저장
-                  </button>
-                  <button class="btn btn-secondary btn-fill" 
-                          @click="cancelEdit(index)" 
-                          style="border-radius: 5px;">
-                    취소
-                  </button>
+                  <button class="btn btn-success btn-fill" @click="saveEdit(index)" style="border-radius: 5px; margin-right: 10px;">저장</button>
+                  <button class="btn btn-secondary btn-fill" @click="cancelEdit(index)" style="border-radius: 5px;">취소</button>
                 </template>
               </div>
             </div>
@@ -140,56 +126,82 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
-// 라우터에서 게시글 ID를 가져옵니다.
+
+const isUpdate = ref(true);
 const route = useRoute();
-const bulletinId = route.params.bulletinId || 'defaultId';
+const router = useRouter();
+const nttId = route.params.nttId
+const bbsId = route.params.bbsId
+console.log("아이디:",nttId);
 
-// 게시글 상세 데이터와 조회수를 저장할 변수
-const bulletinInfo = ref({
+
+
+
+// 게시글 상세 데이터
+const bulletinInfo = ref({ 
   nttSj: '',
   ntcrNm: '',
   frstRegistPnttm: '',
   nttCn: '',
-  inqireCo: 0
+  inqireCo: 0,
+  ntceBgnde: '',
+  ntceEndde: '',
+  attachFileName: '',
+  attachFileUrl: ''
 });
 
+// 댓글 목록
+const comments = ref([]);
 
-onMounted(() => {
-  
-});
-
-// 새 댓글 등록을 위한 데이터 (서버와 통신 시 필드명에 주의)
+// 새 댓글 등록 데이터
 const newComment = ref({
   commentCn: '',
   wrterNm: ''
 });
 
-// 댓글 목록 (실제 서비스라면 API 호출로 가져오겠지만 예제에서는 하드코딩)
-const comments = ref([
-  {
-    commentCn: '댓글 내용 예시',
-    wrterNm: '작성자 예시',
-    isEditing: false
+// 게시글 상세 조회 API 호출
+
+const fetchBulletinInfo = async () => {
+  const route = useRoute(); // 현재 라우트 정보 가져오기
+  const bulletinId = route.params.bulletinId; // URL에서 bulletinId 추출
+
+  try {
+    const response = await axios.get(`/api/bulletin/bulletinInfo?bulletinId=${bulletinId}&bbsId=${bbsId}`);
+    bulletinInfo.value = response.data;
+  } catch (error) {
+    console.error('게시글 상세 조회 오류:', error.response || error);
+   
   }
-]);
+};
 
-// 댓글 등록 함수 (axios POST 요청)
-// 댓글 등록 버튼 클릭 시 addComment()가 호출되어 서버에 댓글 데이터를 전송합니다.
+
+// 댓글 목록 조회
+const fetchComments = async () => {
+  try {
+    const response = await axios.get('/api/comment/commentList', {
+      params: { nttId },
+    });
+    comments.value = response.data.map(comment => ({ ...comment, isEditing: false }));
+  } catch (error) {
+    console.error('댓글 조회 오류:', error.response || error);
+   
+  }
+};
+
+// 댓글 등록
 const addComment = async () => {
-  const { commentCn, wrterNm } = newComment.value;
-
-  if (!commentCn.trim() || !wrterNm.trim()) {
+  if (!newComment.value.commentCn.trim() || !newComment.value.wrterNm.trim()) {
     alert('댓글 내용과 작성자를 입력해주세요.');
     return;
   }
 
   try {
     const response = await axios.post('/api/comment/commentAdd', {
-      commentCn,
-      wrterNm,
-      nttId: bulletinId,
+      commentCn: newComment.value.commentCn,
+      wrterNm: newComment.value.wrterNm,
+      nttId,
     });
 
     comments.value.push({
@@ -206,27 +218,68 @@ const addComment = async () => {
   }
 };
 
-
-// 댓글 수정 모드 전환
+// 댓글 수정
 const enterEdit = (index) => {
   comments.value[index].isEditing = true;
 };
 
-// 수정 취소 시 수정 모드 해제
+const saveEdit = async (index) => {
+  const { commentCn, wrterNm } = comments.value[index];
+  try {
+    await axios.put('/api/comment/commentUpdate', { commentCn, wrterNm, nttId });
+    comments.value[index].isEditing = false;
+    alert('댓글이 수정되었습니다.');
+  } catch (error) {
+    console.error('댓글 수정 오류:', error.response || error);
+    alert(`댓글 수정 실패: ${error.response?.statusText || '서버 오류'}`);
+  }
+};
+
 const cancelEdit = (index) => {
   comments.value[index].isEditing = false;
 };
 
-// 댓글 수정 저장 (추후 서버 전송 기능 추가 가능)
-const saveEdit = (index) => {
-  console.log('수정된 댓글:', comments.value[index]);
-  comments.value[index].isEditing = false;
+// 댓글 삭제
+const deleteComment = async (index) => {
+  if (!confirm('정말 삭제하시겠습니까?')) return;
+
+  try {
+    await axios.delete('/api/comment/commentDelete', {
+      data: { nttId, commentId: comments.value[index].commentId },
+    });
+    comments.value.splice(index, 1);
+    alert('댓글이 삭제되었습니다.');
+  } catch (error) {
+    console.error('댓글 삭제 오류:', error.response || error);
+    alert(`댓글 삭제 실패: ${error.response?.statusText || '서버 오류'}`);
+  }
 };
 
-// 댓글 삭제 함수
-const deleteComment = (index) => {
-  comments.value.splice(index, 1);
+// 게시글 삭제
+const deleteBulletin = async () => {
+  if (!confirm('게시글을 삭제하시겠습니까?')) return;
+
+  try {
+    await axios.delete('/api/bulletin/bulletinDelete', { data: { nttId } });
+    alert('게시글이 삭제되었습니다.');
+    router.push('/bulletin-list'); // 삭제 후 목록으로 이동
+  } catch (error) {
+    console.error('게시글 삭제 오류:', error.response || error);
+    alert(`게시글 삭제 실패: ${error.response?.statusText || '서버 오류'}`);
+  }
 };
+
+// 게시글 수정 (예시: 수정 페이지로 이동)
+const editBulletin = () => {
+  router.push({ name: 'BulletinEdit', params: { nttId } });
+};
+
+// 페이지 로드 시 데이터 가져오기
+onMounted(() => {
+ 
+  fetchBulletinInfo();
+  fetchComments();
+});
 </script>
 
 <style scoped>
