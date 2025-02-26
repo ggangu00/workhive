@@ -14,7 +14,7 @@
       <!-- 조회 조건 -->
       <div class="row search align-items-center justify-content-end">
         <div class="col-auto">
-          <select class="select-custom" v-model="searchData.vcType">
+          <select class="input-custom" v-model="searchData.vcType">
             <option value="" selected>휴가종류</option>
             <option value="E01">연차</option>
             <option value="E02">오전반차</option>
@@ -24,7 +24,7 @@
         </div>
 
         <div class="col-auto">
-          <select class="select-custom" v-model="searchData.signState">
+          <select class="input-custom" v-model="searchData.signState">
             <option value="" selected>결재상태</option>
             <option value="D01">대기</option>
             <option value="D02">승인</option>

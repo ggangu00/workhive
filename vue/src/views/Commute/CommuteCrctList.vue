@@ -18,7 +18,7 @@
               <!-- 조회 조건 -->
               <div class="row search align-items-center justify-content-end">
                 <div class="col-auto">
-                  <select class="select-custom" v-model="searchData.searchState">
+                  <select class="input-custom" v-model="searchData.searchState">
                     <option value="" selected>결재상태</option>
                     <option value="D01">결재대기</option>
                     <option value="D02">승인</option>
