@@ -28,7 +28,7 @@ public class UserDTO {
 	private String endTelno;		// 끝 전화번호
 	private String mbtlnum;			// 이동전화번호
 	private String groupId;			// 그룹ID
-	private String mberFxnum;		// 회원 팩스 번호
+	private String mberFxnum;		// 회원 팩스 번
 	
 	@Email(message = "올바른 이메일 형식이 아닙니다.")
 	private String mberEmailAdres;	// 회원 이메일 주소
@@ -59,7 +59,7 @@ public class UserDTO {
   private String respNm;      // 직책명
 	private String gradeCd;			// 직급코드
 	private String deptCd;			// 부서코드
-  private String deptNm;      // 
+  private String deptNm;      // 부서명
 	
 	// 직급정보
 	private String gradeNm;

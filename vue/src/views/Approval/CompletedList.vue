@@ -3,6 +3,7 @@
     :buttons="buttons" 
     :columnDefs="columnDefs" 
     :status="status"
+
     @button-click="linkButton"
   />
 </template>

@@ -114,20 +114,9 @@
 	  COUNT(*) 
 	  FROM document
 	  where 1=1
+	  AND mber_id = #{mberId} 
 	  <include refid="searchCriteria" />
 	</select>
-	
-<!-- 	  SELECT d.*
-  FROM document d
-  JOIN approvalLine al ON d.docCd = al.docCd
-  WHERE al.userId = #{userId}
-    AND EXISTS (
-      SELECT 1
-      FROM approvalLine al_prev
-      WHERE al_prev.docCd = al.docCd
-        AND al_prev.sign_seq = al.sign_seq - 1
-        AND al_prev.sign_stat = '승인'
-    ) -->
 	
 	<!-- 결재선 수정 -->
 		<update id="approvalStateUpdate" parameterType="egovframework.com.approval.service.ApprovalLine">
@@ -143,7 +132,7 @@
 	    AND mber_id = #{mberId}
 	</update>
 	
-    <!-- 문서조회 -->
+    <!-- 문서조회(완료, 진행, 반려) -->
     <select id="documentSelectAll" resultType="egovframework.com.approval.service.DocumentDTO" parameterType="egovframework.com.approval.service.SearchDTO">
 		 SELECT * FROM (
 		            SELECT 
@@ -164,13 +153,83 @@
 		            FROM DOCUMENT
 		                WHERE 1=1
 		                AND del_yn = UPPER('N')
+		              	AND mber_id = #{mberId} 
 		                <include refid="searchCriteria"/>
 		            <![CDATA[AND ROWNUM <= #{end}]]>
 		        ) 
 		        WHERE rn >= #{start}
 		        ORDER BY draft_dt DESC
     </select>
-
+		<select id="pendingDocumentSelectAll" 
+		        resultType="egovframework.com.approval.service.DocumentDTO"
+		        parameterType="egovframework.com.approval.service.SearchDTO">
+		    SELECT *
+		      FROM (
+		            SELECT ROWNUM AS rn,
+		                   d.doc_cd,
+		                   d.doc_title,
+		                   d.doc_cn_editor,
+		                   fn_get_memnm(d.mber_id)     AS mber_nm,
+		                   fn_get_deptNm(d.mber_id)    AS dept_nm,
+		                   fn_get_codename(d.CRNT_SIGN_STAT) AS crnt_sign_stat,
+		                   d.draft_dt,
+		                   d.complete_dt,
+		                   fn_get_codename(d.DOC_KIND) AS doc_kind,
+		                   d.atch_file_id,
+		                   d.form_cd,
+		                   fn_get_formnm(d.form_cd)    AS form_type,
+		                   d.del_yn
+		              FROM DOCUMENT d
+		                   JOIN approval_line a
+		                     ON d.doc_cd = a.doc_cd
+		             WHERE 1=1
+		               AND d.del_yn = 'N'
+		               AND a.mber_id = #{mberId}
+		               AND a.sign_stat = 'D01'
+		               AND ( a.sign_seq = 1
+						     OR EXISTS (
+						         SELECT 1
+						           FROM approval_line a2
+						          WHERE a2.doc_cd = a.doc_cd
+						            AND a2.sign_seq = a.sign_seq - 1
+						            AND a2.sign_stat = 'D02'
+						     )
+		               )
+		    <include refid="searchCriteria"/>
+		    <![CDATA[
+		               AND ROWNUM <= #{end}
+		           )
+		     WHERE rn >= #{start}
+		     ORDER BY draft_dt DESC
+		    ]]>
+		</select>
+		
+		<!-- 미결문서카운트 -->
+		<select id="pendingDocCount" resultType="int" parameterType="egovframework.com.approval.service.SearchDTO">
+		  
+		    SELECT COUNT(*)
+		      FROM (
+		           SELECT d.doc_cd
+		             FROM DOCUMENT d
+		                  JOIN approval_line a
+		                    ON d.doc_cd = a.doc_cd
+		            WHERE 1=1
+		              AND d.del_yn = 'N'
+		              AND a.mber_id = #{mberId}
+		              AND a.sign_stat = 'D01'
+		              AND (
+		                    a.sign_seq = 1
+		                    OR EXISTS (
+		                        SELECT 1
+		                          FROM approval_line a2
+		                         WHERE a2.doc_cd = a.doc_cd
+		                           AND a2.sign_seq = a.sign_seq - 1
+		                           AND a2.sign_stat = 'D02'
+		                    )
+		              )
+		              <include refid="searchCriteria" />
+		      )
+</select>
 	<!-- 부서코드로 사원조회 -->
 	  <select id="memberSelectAll" resultType="egovframework.com.approval.service.MemberDTO" parameterType="egovframework.com.approval.service.SearchDTO">
     	SELECT

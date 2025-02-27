@@ -78,7 +78,6 @@ import { useUserInfoStore } from '../../store/userStore.js';
 
 const userInfoStore = useUserInfoStore();
 let loginUser = userInfoStore.user ? userInfoStore.user.mberId : ""; // 로그인한 사용자 정보 가져오기
-
 // Props 정의
 const props = defineProps({
   buttons: { type: Array, required: true },
@@ -144,20 +143,19 @@ const resetBtn = () =>{
 
 // API 요청 파라미터
 const getParams = ({
-  status: props.status,
+  status: '',
   deptNm: '',
   docKind: '',
   formCd: '',
   startDate: '',
   endDate: '',
-  mberId:loginUser,
-
+  mberId: loginUser,
 });
 
 const dataSource = {
   api: {
     readData: {
-      url: "/api/document/list",
+      url: "/api/document/pendingList",
       method: "GET",
       initParams: getParams, // 페이지, 상태코드(미결, 반려, 진행완료)
     },
@@ -191,7 +189,7 @@ const btnSelectChange = () => {
     try {
       const response = await axios.put(`/api/document/state`, {
         approvalArr: checkedData.map(row => row.docCd),
-        mberId: loginUser, // 실제 로그인 아이디로 변경
+        mberId: 'admin8', // 실제 로그인 아이디로 변경
         signStat: newSignStat
       });
       

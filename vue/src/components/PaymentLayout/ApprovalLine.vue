@@ -105,6 +105,11 @@ import { ref, onMounted, watch, toRefs } from 'vue';
 import "tui-grid/dist/tui-grid.css";
 import Grid from "tui-grid";
 import axios from 'axios';
+import { useUserInfoStore } from '../../store/userStore.js';
+
+
+const userInfoStore = useUserInfoStore();
+let loginUser = userInfoStore.user ? userInfoStore.user.mberId : ""; // 로그인한 사용자 정보 가져오기
 
   let gridInstance = null; 
 
@@ -272,14 +277,14 @@ import axios from 'axios';
 
     //로그인정보(임시)
     const login = ref({
-      mberNm: "신강현", 
-      deptNm: "총무팀",
-      gradeNm: "대리",
-      mberId: "admin3"
+      mberNm: userInfoStore.user.mberNm, 
+      deptNm: userInfoStore.user.deptNm,
+      gradeNm: userInfoStore.user.gradeNm,
+      mberId: loginUser
     });
     //  모달이 열릴 때 Toast UI Grid를 다시 초기화
     const onModalOpen = async() => {
-
+      console.log(userInfoStore.user)
       setTimeout(() => {
         if (!gridInstance) {
           initGrid();

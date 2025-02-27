@@ -38,6 +38,7 @@
 		     resp_cd,
 		     grade_cd,
 		     FN_GET_GRADENM(grade_cd) AS grade_nm,
+			 fn_get_deptNm(mber_id) AS dept_nm,
 		     dept_cd
       	FROM   
 	         comtngnrlmber
