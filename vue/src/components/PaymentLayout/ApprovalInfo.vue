@@ -113,10 +113,12 @@
               </div>
               <span class="mt-3 mb-1">수신</span>
               <div class="approval-box">
-                <div class="approval-item"><span class="badge bg-warning">수신</span> [총무팀]</div>
-                <div class="approval-item"><span class="badge bg-warning">수신</span> [인사팀]</div>
-                <div class="approval-item"><span class="badge bg-warning">수신</span> [영업팀]</div>
-              </div>
+                  <div v-for="(receiver, index) in receivers" :key="index" class="approval-item">
+                    <span class="badge bg-warning text-dark">수신</span>
+                    <span v-if="receiver.mberNm">[{{ receiver.respNm }}] {{ receiver.mberNm }}</span> <!-- 사원 -->
+                    <span v-else>[{{ receiver.deptNm }}]</span> <!-- 부서 -->
+                  </div>
+                </div>
             </div>
           </div>
         </div>
