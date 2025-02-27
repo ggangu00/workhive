@@ -76,6 +76,7 @@ import BoardModify from "../views/Board/BoardModify.vue";
 import BulletinList from "../views/Bulletin/BulletinList.vue";
 import BulletinAdd from "../views/Bulletin/BulletinAdd.vue";
 import BulletinInfo from "../views/Bulletin/BulletinInfo.vue";
+import BulletinModify from "../views/Bulletin/BulletinModify.vue";
 
 
 
@@ -341,9 +342,14 @@ const routes = [
       component : BulletinAdd,
    },
    {//게시글 상세조회
-      path:'/bulletin/bulletinInfo/:bbsId/:bulletinId',
+      path:'/bulletin/bulletinInfo/:bbsId/:nttId',
       name: 'BulletinInfo',
       component : BulletinInfo,
+   },
+    {//게시글 수정
+      path:'/bulletin/bulletinModify/:bbsId/:nttId',
+      name: 'BulletinModify',
+      component : BulletinModify,
    },
 
 
