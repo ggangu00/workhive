@@ -67,7 +67,7 @@
          <template v-slot:list>
             <div class="sub-item">
                <li class="sub-li" @click="movePage('/bulletin/bulletinList/BBS001')">공지사항</li>
-               <li class="sub-li" @click="movePage('/bulletin/bulletinList/BBS001')">사내게시판</li>           
+               <li class="sub-li" @click="movePage('/bulletin/bulletinList/BBS001')">사내게시판</li>
             </div>
          </template>
       </sidenav-collapse>
@@ -93,7 +93,7 @@ const menus = ref([]);
 const menuGetList = async () => {
    try {
       const response = await axios.get('/api/menu');
-
+      
       menuBuildTree(response.data);
    } catch (err) {
       Swal.fire({
