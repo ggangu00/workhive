@@ -6,57 +6,63 @@
         <div class="card-body">
           <h4 class="card-title float-left mt-1">게시글 상세조회</h4>
           <button class="btn btn-danger btn-fill float-right" @click="deleteBulletin">삭제</button>
-          <button class="btn btn-success btn-fill float-right" @click="editBulletin">수정</button>
+          <button class="btn btn-success btn-fill float-right" @click="goToBulletinModify">수정</button>
+          <button @click="goToBulletinList" class="btn btn-secondary btn-sm btn-fill float-right">목록</button>
         </div>
       </div>
 
-      <!-- 상세조회 내용 영역 -->
-      <div class="card" v-if="bulletinInfo">
+     <!-- 상세조회 내용 영역 -->
+     <div class="card" v-if="bulletinInfo">
         <div class="card-body">
           <form>
             <!-- 제목 및 작성정보 영역 -->
             <div class="mb-3" style="text-align: center;">
-              <label style="font-size: 30px;">{{ bulletinInfo.nttSj || '게시글 제목' }}</label>
+              <label style="font-size: 30px;">{{ bulletinInfo.nttSj || '-' }}</label>
             </div>
 
             <div style="background-color: #f4f4f4; padding: 10px; text-align: center; font-size: 14px; color: #555; margin-bottom: 20px;">
               <span style="font-weight: bold;">작성자:</span>
-              <input type="text" v-model="bulletinInfo.ntcrNm" style="font-weight: bold; text-align: center; width: 150px; margin-left: 5px;"  v-bind:readonly="isUpdate">
+              <span style="font-weight: bold; text-align: center; width: 150px; display: inline-block; margin-left: 5px;">
+              {{ bulletinInfo.frstRegisterId || '-' }}
+              </span>
 
               <span style="margin: 0 15px;">|</span>
 
               <span style="font-weight: bold;">등록일:</span>
-              <input type="date" v-model="bulletinInfo.frstRegistPnttm" style="text-align: center; width: 150px; margin-left: 5px;">
+              <span style="text-align: center; width: 150px; display: inline-block; margin-left: 5px;">
+              {{ bulletinInfo.frstRegistPnttm || '-' }}
+              </span>
 
               <span style="margin: 0 15px;">|</span>
 
               <span style="font-weight: bold;">조회수:</span>
-              <input type="number" v-model="bulletinInfo.inqireCo" style="text-align: center; width: 80px; margin-left: 5px;">
+              <span style="text-align: center; width: 80px; display: inline-block; margin-left: 5px;">
+                {{ bulletinInfo.inqireCo ?? 0 }}
+              </span>
             </div>
 
-            <!-- 게시글 내용 -->
-            <div class="mb-3">
-              <textarea
-                class="form-control w100"
-                v-model="bulletinInfo.nttCn"                
-                rows="10"
-                style="margin-top: 20px;">
-              </textarea>
-            </div>
 
-            <!-- 게시기간 -->
-            <div class="mb-3">
-              <label class="form-label">게시기간 <em class="point-red">*</em></label>
-              <div class="row">
-                <div class="col-auto">
-                  <input type="date" v-model="bulletinInfo.ntceBgnde" class="form-control">
-                </div>
-                <div class="col-auto">~</div>
-                <div class="col-auto">
-                  <input type="date" v-model="bulletinInfo.ntceEndde" class="form-control">
+           <!-- 게시글 내용 -->
+              <div class="mb-3">
+                <div class="content-box">
+                  <span v-html="bulletinInfo.nttCn || '내용이 없습니다.'"></span>
                 </div>
               </div>
-            </div>
+
+                          <!-- 게시기간 -->
+                          <div class="mb-3">
+                <label class="form-label">게시기간 <em class="point-red">*</em></label>
+                <div class="row">
+                  <div class="col-auto">
+                    <span class="info-box">{{ formatDate(bulletinInfo.ntceBgnde) }}</span>
+                  </div>
+                  <div class="col-auto">~</div>
+                  <div class="col-auto">
+                    <span class="info-box">{{ formatDate(bulletinInfo.ntceEndde) }}</span>
+                  </div>
+                </div>
+              </div>
+
 
             <!-- 파일첨부 -->
             <div class="mb-3" v-if="bulletinInfo.attachFileName">
@@ -129,13 +135,20 @@ import axios from 'axios';
 import { useRoute, useRouter } from 'vue-router';
 
 
-const isUpdate = ref(true);
+
 const route = useRoute();
 const router = useRouter();
 const nttId = route.params.nttId
 const bbsId = route.params.bbsId
-console.log("아이디:",nttId);
 
+console.log("수정할 게시판 ID:", bbsId);
+console.log("수정할 게시글 ID:", nttId);
+
+const formatDate = (date) => {
+  if (!date) return '-'; // 날짜가 없으면 대체 텍스트 출력
+  const d = new Date(date);
+  return d.toISOString().split('T')[0]; // YYYY-MM-DD 형식
+};
 
 
 
@@ -165,11 +178,11 @@ const newComment = ref({
 
 const fetchBulletinInfo = async () => {
   const route = useRoute(); // 현재 라우트 정보 가져오기
-  const bulletinId = route.params.bulletinId; // URL에서 bulletinId 추출
+  const nttId = route.params.nttId; // URL에서 bulletinId 추출
 
   try {
-    const response = await axios.get(`/api/bulletin/bulletinInfo?bulletinId=${bulletinId}&bbsId=${bbsId}`);
-    bulletinInfo.value = response.data;
+    const response = await axios.get(`/api/bulletin/bulletinInfo?nttId=${nttId}&bbsId=${bbsId}`);
+    bulletinInfo.value = response.data.result;
   } catch (error) {
     console.error('게시글 상세 조회 오류:', error.response || error);
    
@@ -255,23 +268,36 @@ const deleteComment = async (index) => {
   }
 };
 
-// 게시글 삭제
+// 📌 게시글 삭제
 const deleteBulletin = async () => {
   if (!confirm('게시글을 삭제하시겠습니까?')) return;
 
   try {
-    await axios.delete('/api/bulletin/bulletinDelete', { data: { nttId } });
+    await axios.delete(`/api/bulletin/bulletinRemove/${nttId}`);
+
     alert('게시글이 삭제되었습니다.');
-    router.push('/bulletin-list'); // 삭제 후 목록으로 이동
+
+    // 📌 삭제 후, 해당 게시판 목록으로 이동
+    router.push({ path: `/bulletin/bulletinList/${bbsId}` });
   } catch (error) {
     console.error('게시글 삭제 오류:', error.response || error);
-    alert(`게시글 삭제 실패: ${error.response?.statusText || '서버 오류'}`);
+    alert(`게시글 삭제 실패: ${error.response?.data?.message || '서버 오류'}`);
   }
 };
 
-// 게시글 수정 (예시: 수정 페이지로 이동)
-const editBulletin = () => {
-  router.push({ name: 'BulletinEdit', params: { nttId } });
+
+
+const goToBulletinModify = () => {
+  router.push({
+    name: "BulletinModify",
+    params: { bbsId: route.params.bbsId, nttId: route.params.nttId },
+  });
+};
+
+
+//게시글 목록으로 이동
+const goToBulletinList = () => {
+  router.push({ path: `/bulletin/bulletinList/${bbsId}` });
 };
 
 // 페이지 로드 시 데이터 가져오기
@@ -300,5 +326,26 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.info-box {
+  font-weight: bold;
+  text-align: center;
+  width: 150px;
+  padding: 5px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  display: inline-block;
+}
+.content-box {
+  width: 100%;
+  min-height: 200px;
+  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  white-space: pre-wrap; /* 개행 유지 */
+  word-wrap: break-word; /* 긴 단어 줄바꿈 */
 }
 </style>

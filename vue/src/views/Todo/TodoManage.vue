@@ -9,7 +9,7 @@
 
       <div class="card todo-container">
         <div class="todo-header">
-          <button @click="toggleSubMenu">캘린더 펼침 
+          <button @click="toggleSubMenu">캘린더 펼침
             <i :class="['fa-solid', 'arrow-icon', isHidden ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
           </button>
         </div>
@@ -115,7 +115,7 @@
 
 <script setup>
 import axios from "axios";
-import { ref, computed, watch, watchEffect, onBeforeMount, onMounted } from 'vue';
+import { ref, computed, watch, watchEffect, onBeforeMount, onMounted, nextTick } from 'vue';
 
 //---------------컴포넌트-------------- 
 import Swal from 'sweetalert2';
@@ -150,7 +150,6 @@ onBeforeMount(() => {
 const grid = ref([]);
 
 onMounted(() => {
-  todoGetListAll();
 
   grid.value = new Grid({
     el: document.getElementById("tableGrid"),
@@ -158,7 +157,7 @@ onMounted(() => {
     scrollY: true,
     columns: [
       { header: "업무구분", name: "state", align: "center", width: 80, formatter: ({ row }) => row.state == 'A01' ? '완료' : '미완료' },
-      { header: "완료여부", name: "typeNm", align: "center", width: 200 },
+      { header: "완료여부", name: "typeNm", align: "center", width: 100 },
       { header: "업무내용", name: "title", align: "left", renderer: subjectRenderer },
       { header: "관리", name: "managementSetting", align: "center", width: 150, renderer: BtnRendererSetting }
     ],
@@ -168,7 +167,7 @@ onMounted(() => {
     },
     rowHeaders: ["checkbox"],
     data: todoList.value,
-    rowHeight: 50
+    rowHeight: 50,
   });
 });
 
@@ -182,10 +181,15 @@ class subjectRenderer {
 
     const el = document.createElement("div");
 
-    el.innerHTML = `${rowData.title}`;
+    el.innerHTML = `${rowData.title}`;  //제목
 
-    if(rowData.dateTerm > 0){
-      el.innerHTML += ` <span class="badge badge-danger"> D+${rowData.dateTerm} </span>`;
+    if (rowData.dateTerm > 0) {
+      el.innerHTML += ` <span class="badge badge-danger"> D+${rowData.dateTerm} </span>`; //작성일자로부터 초과된 일수
+    }
+
+    if (rowData.content) {
+      el.setAttribute("title", rowData.content); //툴팁
+      el.innerHTML += ` ( + )`;
     }
 
     this.el = el;
@@ -297,7 +301,7 @@ const formReset = () => { //입력정보 초기화
 //-------------버튼이벤트------------
 
 const toggleSubMenu = () => {
-   isHidden.value = !isHidden.value;
+  isHidden.value = !isHidden.value;
 };
 
 const btnSelectUpdate = (code) => {
@@ -374,7 +378,16 @@ const todoGetListAll = async () => { //일지 전체조회
     todoList.value = result.data;
     todoCount.value = result.data.length;
 
-    grid.value.resetData(todoList.value);
+    grid.value.resetData(todoList.value); //grid에 결과값 넣기
+    await nextTick(); //그리드가 완료될때까지 기다리기
+ 
+    todoList.value.forEach((row, index) => {
+      if (row.state == "A01") {
+        grid.value.addRowClassName(index, "table-end"); // 완료된 행 스타일 적용
+      } else {
+        grid.value.addRowClassName(index, "table-white"); // 미완료된 행 스타일 적용
+      }
+    });
 
   } catch (err) {
     todoList.value = [];
@@ -514,3 +527,13 @@ const todoStateUpdate = async (mode) => { //일지 삭제
   }
 }
 </script>
+<style>
+.table-white {
+  background-color: white !important;
+}
+
+.table-end {
+  background-color: #e7e7e7 !important;
+  color:#969696 !important;
+}
+</style>

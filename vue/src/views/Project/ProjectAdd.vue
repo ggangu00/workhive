@@ -315,7 +315,12 @@ const projectAdd = async () => { //프로젝트 등록
   const newData = modifiedRows.createdRows; // 새로 추가된 데이터만 추출
 
   const requestData = {
-    newData: newData, // 배열 데이터
+    workArr: newData.map(row => ({
+      prWorkNm: row.prWorkNm,
+      progress: row.progress,
+      state: row.state,
+      seq: row.rowKey
+    })),
     prNm: prNm.value, 
     typeCd: typeCd.value,
     startDt: startDt.value,
@@ -327,11 +332,7 @@ const projectAdd = async () => { //프로젝트 등록
   };
 
   try {
-    const response = await axios.post("/api/project", requestData, {
-      headers: {
-        "Content-Type": "application/json",
-      }
-    });
+    const response = await axios.post("/api/project", requestData);
 
     if (response.data.result === true) {
       Swal.fire({

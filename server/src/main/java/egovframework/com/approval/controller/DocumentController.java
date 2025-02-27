@@ -45,6 +45,7 @@ public class DocumentController {
 
 	@Resource DocumentService documentService;
 	
+	//문서기안
 	@PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public String register(
 	        @RequestParam("document") String documentJson,
@@ -71,18 +72,7 @@ public class DocumentController {
 	        approvalParentDTO.setReception(receptions);
 
 	        // 파일 처리
-	        List<FileVO> fileVOList = new ArrayList<>();
-	        if (files != null && !files.isEmpty()) {
-	            for (MultipartFile file : files) {
-	                FileVO fileVO = new FileVO();
-	                fileVO.setOrignlFileNm(file.getOriginalFilename()); // 원본 파일명
-	                fileVO.setFileMg(String.valueOf(file.getSize())); // 파일 크기
-	                fileVO.setFileExtsn(getFileExtension(file.getOriginalFilename())); // 확장자 추출
-	                fileVO.setFileCn(new String(file.getBytes())); // 파일 내용을 문자열로 저장 (DB 저장 시 필요)
-	                fileVOList.add(fileVO);
-	            }
-	            approvalParentDTO.setFileList(fileVOList);
-	        }
+	        approvalParentDTO.setMultipartFileList(files);
 
 	    } catch (Exception e) {
 	        e.printStackTrace();
@@ -94,36 +84,24 @@ public class DocumentController {
 	    return result > 0 ? "success" : "fail";
 	}
 
-	// 파일 확장자 추출 유틸리티 메소드
-	private String getFileExtension(String fileName) {
-	    return fileName.contains(".") ? fileName.substring(fileName.lastIndexOf(".") + 1) : "";
-	}
-
-
-	
-//	//문서기안(문서정보, 수신정보, 결재선정보, 첨부파일)
-//	@PostMapping("/register")
-//    public String register(@RequestBody ApprovalParentDTO approvalParentDTO) {
-//        int result = documentService.approvalInsert(approvalParentDTO);
-//		if(result>0) {
-//			return "success";
-//		}else {
-//			return "fail";
-//		}
-//    }
-	
-//	@PostMapping(value="/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//	public String register(@ModelAttribute ApprovalParentDTO approvalParentDTO) {
-//	    // ServiceImpl의 approvalInsert 메소드 호출
-//	    int result = documentService.approvalInsert(approvalParentDTO);
-//	    return result > 0 ? "success" : "fail";
+//	// 파일 확장자 추출 유틸리티 메소드
+//	private String getFileExtension(String fileName) {
+//	    return fileName.contains(".") ? fileName.substring(fileName.lastIndexOf(".") + 1) : "";
 //	}
+
 
 	//결재선정보 조회
 	@GetMapping("/approvalList")
 	public List<ApprovalLine> approvalList(@RequestParam(name="docCd") String docCd){
 		return documentService.approvalSelectAll(docCd);
 	}
+	
+	//수신자조횜
+	@GetMapping("/receiverList")
+	public List<Reception> receiverList(@RequestParam(name="docCd") String docCd){
+		return documentService.receiverSelecteAll(docCd);
+	}
+	
 	
 	//리스트조회(조건별)
 	@GetMapping("/list")

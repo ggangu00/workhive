@@ -20,5 +20,5 @@ public class Document {
     private String formCd;
     private String deptNm;
     private String delYn;
-    private String formNm;
+    private String formType;
 }

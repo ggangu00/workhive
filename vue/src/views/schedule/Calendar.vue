@@ -36,13 +36,13 @@
             <div class="card-body">
               <div class="mb-3">
                 <label class="form-label">일정유형 <em class="point-red">*</em></label>
-                <select class="form-select w30" aria-label="Default select example" v-model="schedule.type">
-                  <option value="L02">세미나</option>
-                  <option value="L03">강의</option>
-                  <option value="L04">교육</option>
-                  <option value="L05">기타</option>
-                  <option value="L06">휴일</option>
-                </select>
+                  <select class="form-select w30" aria-label="Default select example" v-model="schedule.type">
+                    <option v-for="(data, idx) in selectedData" 
+                    :key="idx"
+                    :value="data.commDtlCd">
+                    {{ data.commDtlNm }}
+                    </option>
+                  </select>
               </div>
               <div class="mb-3">
                 <div class="form-group has-label">
@@ -141,6 +141,7 @@ export default {
           right: 'dayGridMonth,timeGridWeek,timeGridDay'  
         },
         events: [],
+        selectedData:[],
         dateClick: this.handleDateClick, //연결헤ㅐ줘야함 이벤트
         eventClick: this.handleEventClick,  
       },
@@ -164,6 +165,7 @@ export default {
   mounted() {
     this.scheduleGetList();
     this.dataReset();
+    this.commonDtlList();
   },
   methods: {
     //종일버튼시 시간값 초기화
@@ -192,10 +194,19 @@ export default {
       })
     },
 
+    // 공통코드 가져오기
+    async commonDtlList(){
+      const docKind = await axios.get(`/api/comm/codeList`, {
+        params: {cd:'SK'}
+      });
+      console.log("공통코드 => [" + docKind.data + "]");
+     
+      this.selectedData = [...docKind.data]
+    },
 
     //달력 클릭이벤트
     async handleEventClick(e){
-      console.log(e.event.id)
+      console.log("이벤트 유형 => [" + e.event.extendedProps.type + "]");
       const modal = new Modal(document.getElementById("scheduleModal"));
       modal.show();
       
@@ -220,7 +231,6 @@ export default {
 
       this.selectedEventId = e.event.id;//수정용 스케쥴아이디
 
-      console.log(e.event)
     },
 
 
@@ -239,8 +249,10 @@ export default {
           register: event.mberId,
           kind: event.schdulKndCode,
           name: event.mberId,
-          type: event.schdulSe
+          type: event.schdulSe,
+          dept: event.deptNm
         }));
+        console.log(response.data)
     },
 
     //등록 메소드

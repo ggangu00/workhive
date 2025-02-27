@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,6 +33,7 @@ import egovframework.com.cmm.service.EgovFileMngUtil;
 import egovframework.com.cmm.service.EgovProperties;
 import egovframework.com.cmm.service.FileVO;
 import egovframework.com.cmm.util.EgovUserDetailsHelper;
+import egovframework.com.common.util.GridUtil;
 import egovframework.com.cop.smt.djm.service.ChargerVO;
 import egovframework.com.cop.smt.djm.service.DeptJob;
 import egovframework.com.cop.smt.djm.service.DeptJobBx;
@@ -40,6 +42,8 @@ import egovframework.com.cop.smt.djm.service.DeptJobVO;
 import egovframework.com.cop.smt.djm.service.DeptVO;
 import egovframework.com.cop.smt.djm.service.EgovDeptJobService;
 import egovframework.com.utl.fcc.service.EgovStringUtil;
+import egovframework.com.vacation.service.YearVcDTO;
+
 import org.egovframe.rte.fdl.property.EgovPropertyService;
 import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 
@@ -480,7 +484,9 @@ public class EgovDeptJobController {
 	@IncludedInfo(name="부서업무정보", order = 401 ,gid = 40)
 //	@RequestMapping("/cop/smt/djm/selectDeptJobList.do")
 	@GetMapping("/jobList")
-	public Map<String, Object> selectDeptJobList(@ModelAttribute("searchVO") DeptJobVO deptJobVO, ModelMap model) throws Exception{
+	public Map<String, Object> selectDeptJobList(@ModelAttribute("searchVO") DeptJobVO deptJobVO
+			,@RequestParam(name = "page", required = false, defaultValue = "1") int page
+												,@RequestParam(name = "perPage", required = false, defaultValue = "5") int perPage, ModelMap model) throws Exception{
 		//로그인 객체 선언
 		LoginVO loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
    	 	// KISA 보안취약점 조치 (2018-12-10, 신용호)
@@ -490,33 +496,53 @@ public class EgovDeptJobController {
 //            return "redirect:/uat/uia/egovLoginUsr.do";
 //        }
 
-		deptJobVO.setPageUnit(propertyService.getInt("pageUnit"));
-		deptJobVO.setPageSize(propertyService.getInt("pageSize"));
-
+//		deptJobVO.setPageUnit(propertyService.getInt("pageUnit"));
+//		deptJobVO.setPageSize(propertyService.getInt("pageSize"));
+        
 		PaginationInfo paginationInfo = new PaginationInfo();
-		paginationInfo.setCurrentPageNo(deptJobVO.getPageIndex());
-		paginationInfo.setRecordCountPerPage(deptJobVO.getPageUnit());
-		paginationInfo.setPageSize(deptJobVO.getPageSize());
+//		paginationInfo.setCurrentPageNo(deptJobVO.getPageIndex());
+		paginationInfo.setCurrentPageNo(page);
+//		paginationInfo.setRecordCountPerPage(deptJobVO.getPageUnit());
+		paginationInfo.setRecordCountPerPage(perPage);
+//		paginationInfo.setPageSize(deptJobVO.getPageSize());
 
 		deptJobVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
 		deptJobVO.setLastIndex(paginationInfo.getLastRecordIndex());
 		deptJobVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
 
+        System.out.println("----------------------------------------------------");
+        System.out.println("paginationInfo = " + paginationInfo.getCurrentPageNo()
+        + " : " + paginationInfo.getRecordCountPerPage() + " : " + paginationInfo.getPageSize()
+        + " : " + paginationInfo.getFirstRecordIndex() + " : " + paginationInfo.getLastRecordIndex());
+        System.out.println("deptJobVO set : " + deptJobVO.toString());
+        System.out.println("----------------------------------------------------");
+        
 		if(deptJobVO.getSearchDeptCd() == null || deptJobVO.getSearchDeptCd().equals("")){
 			deptJobVO.setSearchDeptCd(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getOrgnztId()));
 		}
 
 		Map<String, Object> map = deptJobService.selectDeptJobList(deptJobVO);
 		int totCnt = Integer.parseInt((String)map.get("resultCnt"));
-		paginationInfo.setTotalRecordCount(totCnt);
+		//paginationInfo.setTotalRecordCount(totCnt);
 
-		model.addAttribute("resultBxList", deptJobService.selectDeptJobBxListAll());
-		model.addAttribute("resultList", map.get("resultList"));
-		model.addAttribute("resultCnt", map.get("resultCnt"));
-		model.addAttribute("paginationInfo", paginationInfo);
+//		model.addAttribute("resultBxList", deptJobService.selectDeptJobBxListAll());
+//		model.addAttribute("resultList", map.get("resultList"));
+//		model.addAttribute("resultCnt", map.get("resultCnt"));
+//		model.addAttribute("paginationInfo", paginationInfo);
 
 //		return "egovframework/com/cop/smt/djm/EgovDeptJobList";
-		return map;
+		
+	    // PaginationInfo와 다른 데이터를 map에 추가
+	    map.put("paginationInfo", paginationInfo);
+	    map.put("resultBxList", deptJobService.selectDeptJobBxListAll());
+	    map.put("resultList", map.get("resultList"));
+	    map.put("resultCnt", map.get("resultCnt"));
+
+        System.out.println("----------------------------------------------------");
+        System.out.println("map : " + map.toString());
+        System.out.println("----------------------------------------------------");
+        
+		return GridUtil.responseData(page, totCnt, (List)map.get("resultList"));
 	}
 
 	/**
@@ -771,6 +797,35 @@ public class EgovDeptJobController {
 
     	deptJobService.deleteDeptJob(deptJob);
 		return "forward:/cop/smt/djm/selectDeptJobList.do";
+	}
+	
+	// 업무 전체 삭제
+	@PostMapping("/jobListRemove")
+	public void deleteDeptJobList(@RequestBody List<DeptJob> jobList) throws Exception {
+		System.out.println("delete test : " + jobList);
+		jobList.forEach(deptJob -> {
+			System.out.println("job : " + deptJob);
+			try {
+				deleteDeptJob(deptJob);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
+		return;
+	}
+
+	// Model 없이 호출하는 버전
+	public void deleteDeptJob(DeptJob deptJob) throws Exception {
+	    String _atchFileId = deptJob.getAtchFileId();
+
+	    if (_atchFileId != null && !_atchFileId.isEmpty()) {
+	        FileVO fvo = new FileVO();
+	        fvo.setAtchFileId(_atchFileId);
+	        fileMngService.deleteAllFileInf(fvo);
+	    }
+
+	    deptJobService.deleteDeptJob(deptJob);
 	}
 
 }

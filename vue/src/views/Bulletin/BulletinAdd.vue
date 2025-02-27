@@ -29,7 +29,7 @@
             <div class="mb-3">
               <label>공지여부</label>
               <div class="form-check form-check-inline" style="margin-left: 10px;">
-                <input class="form-check-input" type="checkbox" v-model="noticeAt" />
+                <input class="form-check-input" type="checkbox" v-model="noticeAt" @change="handleNoticeChange" />
               </div>
             </div>
 
@@ -230,7 +230,20 @@ const submitForm = async () => {
   }
 };
 
+const goToBulletinList = () => {
+  router.push({ path: '/bulletin/bulletinList/'+ bbsId.value});
+};
 
+const handleNoticeChange = () => {
+  if (noticeAt.value) {
+    // 공지사항이 체크되면 페이지 상단으로 이동
+    scrollToTop();
+  }
+};
+
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
 
 
 

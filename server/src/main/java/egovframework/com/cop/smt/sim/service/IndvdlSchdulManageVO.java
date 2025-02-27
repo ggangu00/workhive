@@ -96,6 +96,8 @@ public class IndvdlSchdulManageVO implements Serializable {
 	/** 담당자명 */
 	private String schdulChargerName = "";
 
+	//부서이름
+	private String deptNm;
 	/**
 	 * schdulId attribute 를 리턴한다.
 	 * @return the String
@@ -494,6 +496,14 @@ public class IndvdlSchdulManageVO implements Serializable {
 	 */
 	public void setSchdulChargerName(String schdulChargerName) {
 		this.schdulChargerName = schdulChargerName;
+	}
+
+	public String getDeptNm() {
+		return deptNm;
+	}
+
+	public void setDeptNm(String deptNm) {
+		this.deptNm = deptNm;
 	}
 
 

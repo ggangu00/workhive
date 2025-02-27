@@ -26,7 +26,7 @@
                <!-- 서브 메뉴 (Depth 2) -->
                <template v-if="item.subMenus.length" v-slot:list>
                   <div class="sub-item" v-for="(sub, j) in item.subMenus" :key="j"
-                     @click="sub.subSubMenus.length > 0 ? toggleSubMenu(sub) : movePage(sub.routerNm)">
+                     @click="sub.subSubMenus.length > 0 ? toggleSubMenu(sub) : movePage(sub.url)">
                      <li class="sub-li">
                         {{ sub.menuNm }}
                         <i v-if="sub.subSubMenus.length > 0"
@@ -47,33 +47,29 @@
             </sidenav-collapse>
          </li>
 
+         <!--게시글 목록 작업하는 곳[S]-->
+         <li class="nav-item">
+            <sidenav-collapse
+            url="#"
+            :aria-controls="''"
+            v-bind:collapse="false"
+            collapseRef="/bulletin/bulletinList"
+            navText="게시글 관리"
+            >
+               <template v-slot:icon>
+                  <i class="fa-solid fa-pen-to-square"></i>
+               </template>
 
-
-
-   <!--게시글 목록 작업하는 곳[S]-->
-   <li class="nav-item">
-      <sidenav-collapse
-      url="#"
-      :aria-controls="''"
-       v-bind:collapse="false"
-       collapseRef="/bulletin/bulletinList"
-       navText="게시글 관리"
-       >
-         <template v-slot:icon>
-            <i class="fa-solid fa-pen-to-square"></i>
-         </template>
-
-         <!-- 서브 메뉴 (Depth 2) -->
-         <template v-slot:list>
-            <div class="sub-item">
-               <li class="sub-li" @click="movePage('/bulletin/bulletinList/BBS001')">공지사항</li>
-               <li class="sub-li" @click="movePage('/bulletin/bulletinList/BBS001')">사내게시판</li>           
-            </div>
-         </template>
-      </sidenav-collapse>
-   </li>
-   <!--게시판 목록 작업하는 곳[E]-->
-
+               <!-- 서브 메뉴 (Depth 2) -->
+               <template v-slot:list>
+                  <div class="sub-item">
+                     <li class="sub-li" @click="movePage('/bulletin/bulletinList/BBS001')">공지사항</li>
+                     <li class="sub-li" @click="movePage('/bulletin/bulletinList/BBS001')">사내게시판</li>
+                  </div>
+               </template>
+            </sidenav-collapse>
+         </li>
+         <!--게시판 목록 작업하는 곳[E]-->
 
       </ul>
    </div>
@@ -199,7 +195,7 @@ onMounted(() => {
 </script>
 
 
-<style scoped>
+<style lang="scss" scoped>
 .sub-item {
    color: #cfcfcf;
    font-size: 13px;

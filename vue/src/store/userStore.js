@@ -1,20 +1,21 @@
-// stores/counter.js
+// stores/userInfo.js
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
+export const useUserInfoStore = defineStore('userInfo', () => { // 함수명 수정
+   const user = ref(JSON.parse(localStorage.getItem("user"))); // 새로고침 시 유지
 
-export const useUserStore = defineStore('user', () => {
-   const user = ref(null); // 사용자 정보
-   const token = ref(null); // JWT 토큰(API 요청 시 사용)
+   const isAuthenticated = computed(() => !!user.value); // 로그인 여부 체크
 
-   // 로그인 처리
-   const login = (userData, authToken) => {
-      // 로그인 성공시 사용자 정보, 토큰 저장
-      user.value = userData; // 사용자 정보
-      token.value = authToken; // 토큰
-   };
+   function setUser(userData) {
+      user.value = userData;
+      localStorage.setItem("user", JSON.stringify(userData)); // 로컬 스토리지에 저장
+   }
 
-   return { user, token, login };
-}, {
-   persist : true, // 새로고침시에도 데이터 유지 !!
-})
+   function logout() {
+      user.value = null;
+      localStorage.removeItem("user");
+   }
+
+   return { user, isAuthenticated, setUser, logout };
+});

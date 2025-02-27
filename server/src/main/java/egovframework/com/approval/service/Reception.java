@@ -14,4 +14,8 @@ public class Reception {
 	private String docCd;
 	private String mberId;
 	private String deptCd;
+	private String mberNm;
+	private String deptNm;
+	private String respNm;
+	private String gradeNm;
 }

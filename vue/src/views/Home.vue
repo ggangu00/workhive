@@ -37,7 +37,6 @@
         </div>
       </div>
 
-
       <div class="row" style="background-color: transparent;">
         <div class="col-5">
           <div class="card">
@@ -179,52 +178,56 @@
 </template>
 
 <script setup>
-import axios from "axios";
-import Swal from 'sweetalert2';
-import { onBeforeMount, ref } from 'vue';
-import { numberFormat, dateFormat } from '../assets/js/common.js'
-import { dateGetDay, dateTermCalc } from '../assets/js/project.js'
+   import axios from "axios";
+   import Swal from 'sweetalert2';
+   import { onBeforeMount, ref } from 'vue';
+   import { numberFormat, dateFormat } from '../assets/js/common.js'
+   import { dateGetDay, dateTermCalc } from '../assets/js/project.js'
+   import { useUserInfoStore } from '../store/userStore';
 
-//---------------데이터-------------- 
+   const userInfoStore = useUserInfoStore();
+   let loginUser = userInfoStore.user ? userInfoStore.user.mberId : ""; // 로그인한 사용자 정보 사용
 
-onBeforeMount(() => {
-  homeGetInfo();
-  meetGetList();
-});
+   //---------------데이터--------------
 
-//---------------axios--------------
-const homeInfo = ref([]);
-const homeGetInfo = async () => { // 대시보드 건수 조회
-  try {
-    const result = await axios.get(`/api/comm/homeInfo/2025001`);
-    homeInfo.value = result.data.info;
-  } catch (err) {
-    homeInfo.value = [];
+      onBeforeMount(() => {
+         homeGetInfo();
+         meetGetList();
+      });
 
-    Swal.fire({
-      icon: "error",
-      title: "API 조회 오류",
-      text: "Error : " + err
-    });
-  }
-}
+   //---------------axios--------------
+   const homeInfo = ref([]);
+   const homeGetInfo = async () => { // 대시보드 건수 조회
+      try {
+         const result = await axios.get(`/api/comm/homeInfo/${loginUser}`);
+         homeInfo.value = result.data.info;
+      } catch (err) {
+         homeInfo.value = [];
 
-const meetList = ref([]);
-const meetCount = ref(0);
-const meetGetList = async () => { //회의 최신 3건 조회
-  try {
-    const result = await axios.get('/api/meet/list?rowCtn=3&state=ing');
+         Swal.fire({
+            icon: "error",
+            title: "API 조회 오류",
+            text: "Error : " + err
+         });
+      }
+   }
 
-    meetList.value = result.data;
-    meetCount.value = result.data.length;
-  } catch (err) {
-    meetList.value = [];
+   const meetList = ref([]);
+   const meetCount = ref(0);
+   const meetGetList = async () => { //회의 최신 3건 조회
+      try {
+         const result = await axios.get('/api/meet/list?rowCtn=3&state=ing');
 
-    Swal.fire({
-      icon: "error",
-      title: "API 조회 오류",
-      text: "Error : " + err
-    });
-  }
-}
+         meetList.value = result.data;
+         meetCount.value = result.data.length;
+      } catch (err) {
+         meetList.value = [];
+
+         Swal.fire({
+            icon: "error",
+            title: "API 조회 오류",
+            text: "Error : " + err
+         });
+      }
+   }
 </script>

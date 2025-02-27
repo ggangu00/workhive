@@ -10,11 +10,11 @@ import org.slf4j.LoggerFactory;
 class EgovAtchFileIdPropertyEditor extends PropertyEditorSupport {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EgovAtchFileIdPropertyEditor.class);
-	
+
 	public void setAsText(String text) throws IllegalArgumentException {
-		LOGGER.debug("===>>> setText : "+text);
+		LOGGER.debug("===>>> setText : " + text);
 		String decryptText = "";
-		if (text != null && !"".equals(text) ) {
+		if (text != null && !"".equals(text)) {
 			try {
 				String encText = URLEncoder.encode(text, StandardCharsets.UTF_8.name());
 				decryptText = EgovFileMngController.decrypt(encText);
@@ -27,11 +27,10 @@ class EgovAtchFileIdPropertyEditor extends PropertyEditorSupport {
 
 	}
 
-
 	public String getAsText() {
-		LOGGER.debug("===>>> getText : "+getValue());
+		LOGGER.debug("===>>> getText : " + getValue());
 		return String.valueOf(getValue());
 
-	}		
+	}
 
 }

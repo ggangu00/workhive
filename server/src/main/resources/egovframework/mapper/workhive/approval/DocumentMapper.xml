@@ -38,6 +38,7 @@
     	INSERT INTO APPROVAL_LINE (doc_cd, mber_id, sign_seq, sign_opn, sign_dt, sign_name)
     	VALUES (#{docCd}, #{mberId}, #{signSeq}, #{signOpn}, sysdate, #{signName})
     </insert>
+    
     <!-- 수신정보 등록 -->
 	  <insert id="receptionInsert" parameterType="egovframework.com.approval.service.Reception">
     	INSERT INTO RECEPTION (recept_cd, doc_cd, mber_id, dept_cd)
@@ -63,6 +64,25 @@
             AND doc_cd = #{docCd}
         </if>
         order by sign_seq desc
+    </select>
+    
+    <!-- 수신자조회 -->
+    <select id="receiverSelecteAll" resultType="egovframework.com.approval.service.Reception">	
+    	SELECT
+    		recept_cd
+			recept_dt,
+			recept_yn,
+			doc_cd,
+			fn_get_deptnmDeptCd(dept_cd) as dept_nm,
+			mber_id,
+			fn_get_memnm(mber_id) as mber_nm,
+			fn_get_grademberid(mber_id) as grade_nm,
+			dept_cd
+		FROM reception
+		WHERE 1=1
+		<if test="docCd != null and docCd != ''">
+            AND doc_cd = #{docCd}
+        </if>
     </select>
     
     <!-- 문서회수(상태 회수로변경) -->
@@ -110,7 +130,7 @@
     ) -->
 	
 	<!-- 결재선 수정 -->
-		<update id="approvalStateUpdate" parameterType="todoDTO">
+		<update id="approvalStateUpdate" parameterType="egovframework.com.approval.service.ApprovalLine">
 	    UPDATE 
 	    	approval_line 
 	    SET sign_stat = #{signStat}
@@ -139,7 +159,7 @@
 		                fn_get_codename(DOC_KIND) as doc_kind,
 		                atch_file_id,
 		                form_cd,
-		                fn_get_formnm(form_cd) as form_nm,
+		                fn_get_formnm(form_cd) as form_type,
 		                del_yn
 		            FROM DOCUMENT
 		                WHERE 1=1
@@ -156,8 +176,8 @@
     	SELECT
     		mber_id,
     		mber_nm,
-    		resp_cd,
-    		fn_get_respnm(resp_cd) as resp_nm,
+    		grade_cd,
+    		fn_get_gradenm(grade_cd) as grade_nm,
     		dept_cd,
     		(select dept_nm from department where dept_cd = #{deptCd}) as dept_nm
     	FROM COMTNGNRLMBER
