@@ -26,7 +26,7 @@
                <!-- 서브 메뉴 (Depth 2) -->
                <template v-if="item.subMenus.length" v-slot:list>
                   <div class="sub-item" v-for="(sub, j) in item.subMenus" :key="j"
-                     @click="sub.subSubMenus.length > 0 ? toggleSubMenu(sub) : movePage(sub.routerNm)">
+                     @click="sub.subSubMenus.length > 0 ? toggleSubMenu(sub) : movePage(sub.url)">
                      <li class="sub-li">
                         {{ sub.menuNm }}
                         <i v-if="sub.subSubMenus.length > 0"

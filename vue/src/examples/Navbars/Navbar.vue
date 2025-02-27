@@ -21,11 +21,11 @@
          <ul class="navbar-nav justify-content-end">
 
             <!-- 출퇴근 버튼 추가 - 토글식으로 변경 예정 -->
-            <li class="px-3 nav-item d-flex align-items-center">
+            <li class="nav-item d-flex align-items-center">
                <button class="btn btn-primary" @click="btnCommuteAdd" v-if="!lastCmt">출근</button>
                <button class="btn btn-danger" @click="btnCommuteModify" v-else>퇴근</button>
             </li>
-
+            
             <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
             <a
                href="#"
@@ -51,8 +51,79 @@
                   </i>
                </a>
             </li> -->
+
             <li
-            class="nav-item dropdown d-flex align-items-center"
+            class="nav-item dropdown ps-3 d-flex align-items-center"
+            >
+            <a
+               href="#"
+               class="p-0 nav-link lh-1"
+               :class="[color ? color : 'text-body', showProfile ? 'show' : '']"
+               id="dropdownMenuButton"
+               data-bs-toggle="dropdown"
+               aria-expanded="false"
+               @click="showProfile = !showProfile"
+            >
+               <i class="fa-solid fa-user"></i>
+            </a>
+            <ul
+               class="px-2 py-3 dropdown-menu dropdown-menu-end me-sm-n4"
+               :class="showProfile ? 'show' : ''"
+               aria-labelledby="dropdownMenuButton"
+            >
+              <li class="mb-2">
+                  <a class="dropdown-item border-radius-md" href="/login">
+                  <div class="py-1 d-flex">
+                     <div class="d-flex flex-column justify-content-center">
+                        <h6 class="mb-1 text-sm font-weight-normal">
+                           <i class="fa-solid fa-right-from-bracket"></i>  
+                           <span class="font-weight-bold"> 로그인</span>            
+                        </h6>
+                     </div>
+                  </div>
+                  </a>
+               </li>
+               <li class="mb-2">
+                  <a class="dropdown-item border-radius-md" href="javascript:;">
+                  <div class="py-1 d-flex">
+                     <div class="d-flex flex-column justify-content-center">
+                        <h6 class="mb-1 text-sm font-weight-normal">
+                           <i class="fa-solid fa-right-to-bracket"></i>
+                           <span class="font-weight-bold"> 로그아웃</span>            
+                        </h6>
+                     </div>
+                  </div>
+                  </a>
+               </li>
+               <li class="mb-2">
+                  <a class="dropdown-item border-radius-md" href="/personal/manage">
+                  <div class="py-1 d-flex">
+                     <div class="d-flex flex-column justify-content-center">
+                        <h6 class="mb-1 text-sm font-weight-normal">
+                           <i class="fa-solid fa-user-pen"></i>
+                           <span class="font-weight-bold"> 개인정보수정</span>            
+                        </h6>
+                     </div>
+                  </div>
+                  </a>
+               </li>
+               <li class="mb-2">
+                  <a class="dropdown-item border-radius-md" href="javascript:;">
+                  <div class="py-1 d-flex">
+                     <div class="d-flex flex-column justify-content-center">
+                        <h6 class="mb-1 text-sm font-weight-normal">
+                           <i class="fa-solid fa-user-group"></i>
+                           <span class="font-weight-bold"> 조직도</span>            
+                        </h6>
+                     </div>
+                  </div>
+                  </a>
+               </li>
+            </ul>
+            </li>
+
+            <li
+            class="nav-item dropdown ps-3 d-flex align-items-center"
             :class="isRTL ? 'ps-2' : 'pe-2'"
             >
             <a
@@ -195,6 +266,7 @@ export default {
    data() {
       return {
          showMenu: false,
+         showProfile: false
       };
    },
    props: ["minNav", "color"],
