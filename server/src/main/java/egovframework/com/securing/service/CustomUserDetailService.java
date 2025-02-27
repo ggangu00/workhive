@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import egovframework.com.authority.mapper.AuthorityMapper;
 import egovframework.com.securing.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 
@@ -17,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 public class CustomUserDetailService implements UserDetailsService {
 
 	private final UserMapper uMapper;
-	private final AuthorityMapper authMapper;
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

@@ -66,6 +66,7 @@
    import { useRouter } from "vue-router";
    import axios from "axios";
    import Swal from 'sweetalert2';
+   import { useUserInfoStore  } from '../../store/userStore';
 
 // ================================================== side, header 숨기기 ==================================================
    const store = useStore();
@@ -121,11 +122,6 @@
 // ============================================= Axios Event =============================================
    // id, pass값 서버로 보내기
    const loginSelect = async () => {
-      // const requestData = {
-      //    username : userId.value,
-      //    password : password.value,
-      // }
-
       const options = {
          method: 'POST',
          headers: { 'content-type': 'application/x-www-form-urlencoded' },
@@ -136,9 +132,11 @@
       try {
          const result = await axios(options);
 
-         console.log("로그인 성공 => ", result.data);
-
          if(result.data.result == "success") {
+
+            const userInfoStore = useUserInfoStore(); // ✅ Pinia Store를 올바르게 호출
+            userInfoStore.setUser(result.data.user);
+
             Swal.fire({
                icon: "success",
                title: "Login 성공 !!!",
@@ -147,12 +145,16 @@
          }
 
       } catch (err) {
-         console.log("로그인 실패 => ", err)
-         Swal.fire({
-            icon: "error",
-            title: "Login 실패",
-            text:  "Error : " + err.response.data.error
-         });
+         console.log("로그인 실패 => ", err);
+         console.log("err.result => ", err.response.data.result);
+         if(err.status == 401 && err.response.data.result == "failed") {
+            Swal.fire({
+               icon: "error",
+               title: "Login 실패",
+               text:  "아이디 또는 비밀번호를 확인하세요"
+            });
+         }
+
       }
    }
 
