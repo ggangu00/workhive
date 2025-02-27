@@ -128,11 +128,6 @@ import { provide } from 'vue'; // 자식에게 전달
 import DeptJobBx from "./DeptJobBx.vue";
 import JobManage from "./JobManage.vue";
 import Modal from '../../components/Modal.vue';
-import { useUserInfoStore } from '../../store/userStore.js';
-
-const userInfoStore = useUserInfoStore();
-let loginUser = userInfoStore.user;
-console.log("로그인 정보 : ", loginUser);
 
 let gridInstance = ref();
 
