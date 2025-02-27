@@ -186,7 +186,7 @@ const routes = [
       component: RestartDraft
    },
    {
-      path: '/registerTest',
+      path: '/approval/registerTest',
       name: 'RegisterTest',
       component: RegisterTest
    },
