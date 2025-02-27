@@ -2,6 +2,8 @@ package egovframework.com.approval.service;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import egovframework.com.cmm.service.FileVO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,4 +22,5 @@ public class ApprovalParentDTO {
 	private List<FileVO> fileList; 
 
 	private FileVO fileVO;
+	private List<MultipartFile> multipartFileList;
 }

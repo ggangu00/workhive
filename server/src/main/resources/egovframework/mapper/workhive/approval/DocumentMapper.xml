@@ -110,7 +110,7 @@
     ) -->
 	
 	<!-- 결재선 수정 -->
-		<update id="approvalStateUpdate" parameterType="todoDTO">
+		<update id="approvalStateUpdate" parameterType="egovframework.com.approval.service.ApprovalLine">
 	    UPDATE 
 	    	approval_line 
 	    SET sign_stat = #{signStat}

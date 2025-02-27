@@ -4,9 +4,10 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.egovframe.rte.fdl.property.EgovPropertyService;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import egovframework.com.approval.mapper.DocumentMapper;
 import egovframework.com.approval.service.ApprovalLine;
@@ -21,7 +22,6 @@ import egovframework.com.approval.service.SearchDTO;
 import egovframework.com.cmm.service.EgovFileMngService;
 import egovframework.com.cmm.service.EgovFileMngUtil;
 import egovframework.com.cmm.service.FileVO;
-import lombok.Value;
 
 @Configuration
 @Service
@@ -38,6 +38,9 @@ public class DocumentServiceImpl implements DocumentService{
     @Resource(name = "EgovFileMngUtil")
     private EgovFileMngUtil fileMngUtil;
     
+    /** EgovPropertyService */
+    @Resource(name = "propertiesService")
+    protected EgovPropertyService propertiesService;
 //    // 파일 저장 경로 (global.properties 또는 EgovProperties에서 가져옴)
 //    @org.springframework.beans.factory.annotation.Value("${Globals.fileStorePath}")
 //    private String fileStorePath;
@@ -79,25 +82,28 @@ public class DocumentServiceImpl implements DocumentService{
 	@Override
 	public int approvalInsert(ApprovalParentDTO approvalParentDTO) {
         //  첨부파일 처리 (eGovFrame 파일업로드 사용)
-        List<FileVO> fileVOList = approvalParentDTO.getFileList();
-        if (fileVOList != null && !fileVOList.isEmpty()) {
-
+		List<MultipartFile> files = approvalParentDTO.getMultipartFileList();
+        List<FileVO> fileVOList = null;
+        String atchFileId = "";
+        
+        if (files != null && !files.isEmpty()) {
             try {
-				String uploadedFiles = fileMngService.insertFileInfs(fileVOList);
-			
-				System.out.println("asfdfdas"+uploadedFiles.toString());
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-            // 첨부파일 정보는 파일 마스터/상세 테이블에 자동 등록됨.
-            // 필요 시, uploadedFiles에서 생성된 atchFileId 값을 문서나 결재/수신 정보에 연동할 수 있음.
+                // 파일을 변환하여 저장할 준비
+                fileVOList = fileMngUtil.parseFileInf(files, "DSCH_", 0, "", "");
+
+                // 파일을 DB에 저장하고 생성된 첨부파일 ID를 가져옴
+                atchFileId = fileMngService.insertFileInfs(fileVOList);
+                System.out.println("생성된 첨부파일 ID: " + atchFileId);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return 0; // 파일 저장 중 오류 발생 시 중단
+            }
         }
 		
 		//문서
         Document document = approvalParentDTO.getDocument();
         documentMapper.documentInsert(document);
-        
+        document.setAtchFileId(atchFileId);
         //문서코드가져오기
         
         String docCd = documentMapper.lastDocCdGet();
