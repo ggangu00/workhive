@@ -18,7 +18,7 @@
           {{ year }}.{{ month }}
           <button @click="monthMove('next')"><i class="fa-solid fa-angle-right" style="float: left;"></i></button>
         </div>
-        <div class="days" :class="'day' + dateArr.length">
+        <div class="days mt-3 mb-3" :class="'day' + dateArr.length">
           <button class="day" :key="i" v-for="i in dateArr" :class="{
             'point-red': i.dateDay === '일',
             'point-blue': i.dateDay === '토',
@@ -464,7 +464,6 @@ const todoAdd = async () => { //일지 등록
   formData.append("content", content.value);
   formData.append("state", state.value);
   formData.append("todoDt", todoDt.value);
-
 
   try {
     const response = await axios.post('/api/todo', formData);

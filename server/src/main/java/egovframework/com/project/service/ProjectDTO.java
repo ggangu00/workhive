@@ -62,6 +62,14 @@ public class ProjectDTO {
 	
     private List<ProjectWorkDTO> workArr;		// 프로젝트 코드
     
+    public List<ProjectWorkDTO> getWorkArr() {
+        return workArr;
+    }
+
+    public void setWorkArr(List<ProjectWorkDTO> workArr) {
+        this.workArr = workArr;
+    }
+    
 	//======================프로젝트 일정=====================
 	
 	private String prPlanCd;	// 일정코드

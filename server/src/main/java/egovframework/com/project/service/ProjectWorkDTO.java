@@ -16,6 +16,4 @@ public class ProjectWorkDTO {
 	private Long seq;			// 과업순서
 	private Long progress;		// 과업 진행률
 	private String state;		// 과업 완료여부
-	
-	public void setPrCd(String prCd) {}
 }

@@ -334,7 +334,7 @@ const projectAdd = async () => { //프로젝트 등록
   try {
     const response = await axios.post("/api/project", requestData);
 
-    if (response.data.result === true) {
+    if (response.data === true) {
       Swal.fire({
         icon: "success",
         title: "등록완료",

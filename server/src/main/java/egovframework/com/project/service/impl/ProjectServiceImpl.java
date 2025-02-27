@@ -1,8 +1,6 @@
 package egovframework.com.project.service.impl;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -57,19 +55,15 @@ public class ProjectServiceImpl implements ProjectService{
 		        String prCd = projectMapper.getLastInsertedPrCd();
 		        project.setPrCd(prCd);  // DTO에 prCd 설정
 
+		        // 작업 리스트가 존재할 경우
 		        if (project.getWorkArr() != null && !project.getWorkArr().isEmpty()) {
-		        	log.info(prCd);
-		            Map<String, Object> paramMap = new HashMap<>();
-		            paramMap.put("prCd", prCd);
-		            paramMap.put("list", project.getWorkArr());  // 리스트 바인딩
-
-		            projectMapper.projectWorkInsert(paramMap);
 		            
+		            for (ProjectWorkDTO work : project.getWorkArr()) {
+		                work.setPrCd(prCd);  // 각 작업 항목에 prCd 설정
+		                projectMapper.projectWorkInsert(work);  // 개별 INSERT 실행
+		            }
 		        }
-		        
-
 		        return true; 
-
 		    } catch (Exception e) {
 		        e.printStackTrace();
 		        return false;
