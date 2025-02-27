@@ -136,6 +136,36 @@
 		
 	</insert>
 	
+	<!-- 마지막삽입된 코드 찾기 -->
+	<select id="getLastInsertedPrCd" resultType="string">
+	    SELECT seq_pr_cd.CURRVAL FROM dual
+	</select>
+		
+	
+	<!-- 프로젝트 과업등록 -->
+
+	<insert id="projectWorkInsert" parameterType="map">
+	     INSERT INTO project_work (
+			pr_work_cd, --과업코드
+			pr_cd,		--프로젝트 코드
+			pr_work_nm, --과업명
+			seq, 		--순서
+			progress,	--진행률
+			state		--완료여부
+		)
+		VALUES
+	    <foreach collection="list" item="item" separator=",">
+	        (
+				seq_pr_work_cd.nextval,
+				#{prCd},
+				#{item.prWorkNm},
+				#{item.seq},				
+				#{item.progress},
+				#{item.state}
+			)	
+	    </foreach>
+	</insert>
+	
 	<!-- 프로젝트 수정 -->
 	<update id="projectUpdate" parameterType="projectDTO">
 		update project
@@ -192,28 +222,6 @@
 		where 
 			pr_cd = #{prCd}
 	</select>	
-	
-	<!-- 프로젝트 과업등록 -->
-	<insert id="projectWorkInsert" parameterType="java.util.List">
-	    INSERT INTO project_work (
-			pr_work_cd, --과업코드
-			pr_cd,		--프로젝트 코드
-			pr_work_nm, --과업명
-			seq, 		--순서
-			progress,	--진행률
-			state		--완료여부
-		)
-		VALUES
-	    <foreach collection="list" item="todo" separator=",">
-	       (
-				seq_pr_work_cd.nextval,
-				#{prCd},
-				#{prWorkNm},			
-				#{progress},
-				#{state}
-			)		
-	    </foreach>
-	</insert>
 	
 	<!-- ======================프로젝트 일정=====================  -->
 	

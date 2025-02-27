@@ -1,15 +1,19 @@
 package egovframework.com.project.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import egovframework.com.cmm.ComDefaultVO;
 import egovframework.com.project.mapper.ProjectMapper;
 import egovframework.com.project.service.ProjectDTO;
 import egovframework.com.project.service.ProjectService;
+import egovframework.com.project.service.ProjectWorkDTO;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -44,6 +48,33 @@ public class ProjectServiceImpl implements ProjectService{
 	public boolean projectInsert(ProjectDTO project) {
 		return projectMapper.projectInsert(project) == 1 ? true : false;
 	}	
+	
+	@Transactional
+    public boolean saveProject(ProjectDTO project) {
+		 try {
+		        projectMapper.projectInsert(project);
+		        
+		        String prCd = projectMapper.getLastInsertedPrCd();
+		        project.setPrCd(prCd);  // DTO에 prCd 설정
+
+		        if (project.getWorkArr() != null && !project.getWorkArr().isEmpty()) {
+		        	log.info(prCd);
+		            Map<String, Object> paramMap = new HashMap<>();
+		            paramMap.put("prCd", prCd);
+		            paramMap.put("list", project.getWorkArr());  // 리스트 바인딩
+
+		            projectMapper.projectWorkInsert(paramMap);
+		            
+		        }
+		        
+
+		        return true; 
+
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		        return false;
+		    }
+    }
 
 	//프로젝트 수정
 	@Override
@@ -59,7 +90,6 @@ public class ProjectServiceImpl implements ProjectService{
 	
 	//프로젝트 다중 삭제
 	public boolean projectListDelete(List<String> projectArr) {
-		log.info("123123123"+projectArr.toString());
         return projectMapper.projectListDelete(projectArr) == 1 ? true : false;
     }
 	
@@ -67,20 +97,14 @@ public class ProjectServiceImpl implements ProjectService{
 	
 	//프로젝트 과업 전체조회
 	@Override
-	public List<ProjectDTO> projectWorkSelectAll(String prCd) {
+	public List<ProjectWorkDTO> projectWorkSelectAll(String prCd) {
 		return projectMapper.projectWorkSelectAll(prCd);
 	}
 	
 	//프로젝트 과업 단건조회
 	@Override
-	public ProjectDTO projectWorkSelect(String prWorkCd) {
+	public ProjectWorkDTO projectWorkSelect(String prWorkCd) {
 		return projectMapper.projectWorkSelect(prWorkCd);
-	}
-
-	//프로젝트 과업등록
-	@Override
-	public boolean projectWorkInsert(ProjectDTO project) {
-		return projectMapper.projectWorkInsert(project) == 1 ? true : false;
 	}
 	
 	//프로젝트 과업삭제

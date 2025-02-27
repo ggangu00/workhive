@@ -37,15 +37,23 @@
                     <div class="mb-3">
                         <label class="form-label">회의실 구분 <em class="point-red">*</em></label>
                         <select class="form-select w30" :name="mtgPlace" v-model="mtgPlace">
-                            <option :key="place" v-for="place in mtgPlaceArr" :value="place.commDtlCd">{{place.commDtlNm}}</option>
+                            <option :key="place" v-for="place in mtgPlaceArr" :value="place.commDtlCd">
+                                {{ place.commDtlNm }}</option>
                         </select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">회의 구분 <em class="point-red">*</em></label>
                         <select class="form-select w30" aria-label="Default select example" :name="typeCd"
                             v-model="typeCd">
-                            <option :key="type" v-for="type in typeCdArr" :value="type.commDtlCd">{{type.commDtlNm}}</option>
+                            <option :key="type" v-for="type in typeCdArr" :value="type.commDtlCd">{{ type.commDtlNm }}
+                            </option>
                         </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">회의 참여자 <em class="point-red">*</em></label>
+                        <Multiselect class="w50" v-model="selected" :options="options" label="label"
+                        track-by="value" :multiple="true" placeholder="참여자를 검색해주세요" />
                     </div>
                 </div>
             </div>
@@ -91,6 +99,12 @@ import Card from '../../components/Cards/Card.vue'
 import { useRouter } from 'vue-router';
 import { getComm } from '../../assets/js/common.js'
 
+import Multiselect from "vue-multiselect";
+import "vue-multiselect/dist/vue-multiselect.css";
+
+const selected = ref(null);
+const options = ref([]);
+
 //---------------데이터-------------- 
 
 const typeCd = ref('B01');
@@ -108,17 +122,41 @@ const router = useRouter()
 
 onBeforeMount(() => {
     getStatus();
+    memberGetList();
 });
 
-const getStatus = async() => { //회의실 목록 호출
+
+const getStatus = async () => { //회의실 목록 호출
     let arr = await getComm("MP");
-    let arrAdd = {comm_dtl_cd: '', comm_dtl_nm: '전체'};
+    let arrAdd = { comm_dtl_cd: '', comm_dtl_nm: '전체' };
     mtgPlaceArr.value.unshift(arrAdd);
     mtgPlaceArr.value = arr;
 
     let arr2 = await getComm("WT");
     typeCdArr.value.unshift(arrAdd);
     typeCdArr.value = arr2;
+}
+
+const memList = ref([]);
+const memberGetList = async () => { //프로젝트 전체조회
+
+    try {
+        const result = await axios.get(`/api/member/memList`);
+        memList.value = result.data;
+        options.value = result.data.map((row) => ({
+            label: `[${row.deptNm}] ${row.mberNm} ${row.respNm}`, // 드롭다운에 표시될 값
+            value: row.mberId // 선택 시 바인딩할 값 (사원코드)
+        }));
+
+    } catch (err) {
+        memList.value = [];
+
+        Swal.fire({
+            icon: "error",
+            title: "API 조회 오류",
+            text: "Error : " + err
+        });
+    }
 }
 
 const meetAdd = async () => { //회의 등록
