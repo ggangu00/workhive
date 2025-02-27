@@ -132,7 +132,6 @@ public class ProjectController {
 	//프로젝트 다중 삭제
 	@PutMapping("/delete")
 	public boolean projectListRemove(@RequestBody Map<String, List<String>> requestBody) {
-		log.info("123123123!"+requestBody.get("projectArr"));
 	    List<String> projectArr = requestBody.get("projectArr");
 	    
 	    if (projectArr == null || projectArr.isEmpty()) {

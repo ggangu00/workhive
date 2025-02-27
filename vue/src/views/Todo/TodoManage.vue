@@ -9,7 +9,7 @@
 
       <div class="card todo-container">
         <div class="todo-header">
-          <button @click="toggleSubMenu">캘린더 펼침 
+          <button @click="toggleSubMenu">캘린더 펼침
             <i :class="['fa-solid', 'arrow-icon', isHidden ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
           </button>
         </div>
@@ -182,10 +182,15 @@ class subjectRenderer {
 
     const el = document.createElement("div");
 
-    el.innerHTML = `${rowData.title}`;
+    el.innerHTML = `${rowData.title}`;  //제목
 
-    if(rowData.dateTerm > 0){
-      el.innerHTML += ` <span class="badge badge-danger"> D+${rowData.dateTerm} </span>`;
+    if (rowData.dateTerm > 0) {
+      el.innerHTML += ` <span class="badge badge-danger"> D+${rowData.dateTerm} </span>`; //작성일자로부터 초과된 일수
+    }
+
+    if (rowData.content) {
+      el.setAttribute("title", rowData.content); //툴팁
+      el.innerHTML += ` ( + )`;
     }
 
     this.el = el;
@@ -297,7 +302,7 @@ const formReset = () => { //입력정보 초기화
 //-------------버튼이벤트------------
 
 const toggleSubMenu = () => {
-   isHidden.value = !isHidden.value;
+  isHidden.value = !isHidden.value;
 };
 
 const btnSelectUpdate = (code) => {
@@ -514,3 +519,12 @@ const todoStateUpdate = async (mode) => { //일지 삭제
   }
 }
 </script>
+<style>
+.table-white {
+  background-color: white !important;
+}
+
+.table-end {
+  background-color: #d6d6d6 !important;
+}
+</style>
