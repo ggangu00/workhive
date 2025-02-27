@@ -45,6 +45,7 @@ public class DocumentController {
 
 	@Resource DocumentService documentService;
 	
+	//문서기안
 	@PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public String register(
 	        @RequestParam("document") String documentJson,
@@ -94,6 +95,13 @@ public class DocumentController {
 	public List<ApprovalLine> approvalList(@RequestParam(name="docCd") String docCd){
 		return documentService.approvalSelectAll(docCd);
 	}
+	
+	//수신자조횜
+	@GetMapping("/receiverList")
+	public List<Reception> receiverList(@RequestParam(name="docCd") String docCd){
+		return documentService.receiverSelecteAll(docCd);
+	}
+	
 	
 	//리스트조회(조건별)
 	@GetMapping("/list")

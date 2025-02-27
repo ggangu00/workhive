@@ -99,13 +99,13 @@ public class DocumentServiceImpl implements DocumentService{
                 return 0; // 파일 저장 중 오류 발생 시 중단
             }
         }
-		
+        
 		//문서
         Document document = approvalParentDTO.getDocument();
-        documentMapper.documentInsert(document);
         document.setAtchFileId(atchFileId);
-        //문서코드가져오기
+        documentMapper.documentInsert(document);
         
+        //문서코드가져오기
         String docCd = documentMapper.lastDocCdGet();
         
         System.out.println("생성된 문서 코드: " + docCd);
@@ -148,6 +148,11 @@ public class DocumentServiceImpl implements DocumentService{
 		int updatedRows = documentMapper.approvalStateUpdate(approvalLine); 
 		
 		return updatedRows >0;
+	}
+
+	@Override
+	public List<Reception> receiverSelecteAll(String docCd) {
+		return documentMapper.receiverSelecteAll(docCd);
 	}
 	
 	

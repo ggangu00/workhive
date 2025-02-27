@@ -53,4 +53,7 @@ public interface DocumentMapper {
 	
 	//결재선 상태수정
 	public int approvalStateUpdate(ApprovalLine approvalLine);
+	
+	//수신자 조회
+	List<Reception> receiverSelecteAll(String docCd);
 }

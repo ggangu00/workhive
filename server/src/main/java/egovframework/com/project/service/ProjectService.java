@@ -20,6 +20,9 @@ public interface ProjectService {
 	//프로젝트 등록
 	public boolean projectInsert(ProjectDTO project);
 	
+	//프로젝트 헤더/디테일 등록
+	public boolean saveProject(ProjectDTO project);
+	
 	//프로젝트 수정
 	public boolean projectUpdate(ProjectDTO project);
 	
@@ -32,13 +35,11 @@ public interface ProjectService {
 	//======================프로젝트 과업=====================
 	
 	//프로젝트 과업 전체조회
-	public List<ProjectDTO> projectWorkSelectAll(String prCd);
+	public List<ProjectWorkDTO> projectWorkSelectAll(String prCd);
 	
 	//프로젝트 과업 단건조회
-	public ProjectDTO projectWorkSelect(String prWorkCd);	
+	public ProjectWorkDTO projectWorkSelect(String prWorkCd);	
 		
-	//프로젝트 과업 등록
-	public boolean projectWorkInsert(ProjectDTO project);
 	
 	//프로젝트 과업 삭제
 	public boolean projectWorkDelete(String prWorkCd);

@@ -19,7 +19,7 @@
   const route = useRoute();
   const docCd = ref('');
   const docKind = ref('');
-  const formNm = ref('');
+  const formType = ref('');
   const deptNm = ref('');
   const docTitle = ref('');
   const docCnEditor = ref('');
@@ -28,7 +28,7 @@
   onMounted(()=>{
     docCd.value = route.query.docCd || "";
     docKind.value = route.query.docKind || "";
-    formNm.value = route.query.formNm || "";
+    formType.value = route.query.formType || "";
     deptNm.value = route.query.deptNm || "";
     docTitle.value = route.query.docTitle || "";
     docCnEditor.value = route.query.docCnEditor || "";

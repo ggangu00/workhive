@@ -22,7 +22,7 @@ const buttonClick = async (buttonName)=>{
     switch(buttonName){
       case '기안' :       
         {
-          const registerPage = 'http://localhost:8077/registerTest';
+          const registerPage = 'http://localhost:8077/approval/registerTest';
           window.location.href = registerPage;
           break;
         }
@@ -44,14 +44,14 @@ const buttonClick = async (buttonName)=>{
   }
 
       const columnDefs = ref([
-        { header: '문서번호', name: 'docCd' },
-        { header: '현재결재상태', name: 'crntSignStat' },
-        { header: '종류', name: 'docKind' },
-        { header: '양식', name: 'formCd' },
-        { header: '제목', name: 'docTitle' },
-        { header: '기안부서', name: 'deptNm' },
-        { header: '기안자', name: 'mberId' },
-        { header: '기안일시', name: 'draftDt' },
+        { header: '문서번호', name: 'docCd',sortable: true },
+        { header: '현재결재상태', name: 'crntSignStat',sortable: true },
+        { header: '종류', name: 'docKind',sortable: true },
+        { header: '양식', name: 'formCd',sortable: true },
+        { header: '제목', name: 'docTitle' ,sortable: true},
+        { header: '기안부서', name: 'deptNm',sortable: true },
+        { header: '기안자', name: 'mberId' ,sortable: true},
+        { header: '기안일시', name: 'draftDt' ,sortable: true},
       ])
 
       const status = "H01";

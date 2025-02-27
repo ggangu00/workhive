@@ -204,38 +204,6 @@ const btnSelectChange = () => {
     }
   });
 }
-
-// //상태 수정 통신
-// const approvalStateUpdate = async () => { //일지 삭제
-//   const checkedData = grid.value.getCheckedRows();
-
-//   const modeText = ref('승인');
-//   try {
-//     const response = ref([]);
-//       response.value = await axios.put(`/api/document/state`, {
-//         approvalArr: checkedData.map(row => row.docCd),
-//         mberId: 'admin3', //임시
-//         signStat: 'D02'
-//       });
-//     console.log(response.value)
-
-//     if (response.value.statusText == "OK") {
-//       Swal.fire({
-//         icon: "success",
-//         title: modeText.value + "완료",
-//         text: "선택한 문서를 " + modeText.value + "하였습니다",
-//       })
-//     }
-
-//   } catch (err) {
-//     Swal.fire({
-//       icon: "error",
-//       title: modeText.value + "실패",
-//       text: "Error : " + err
-//     });
-//   }
-// }
-// Toast Grid 초기화
 const TueGrid = () => {
   grid.value = new window.tui.Grid({
     el: document.getElementById("tableGrid"),
@@ -256,10 +224,8 @@ const TueGrid = () => {
 
 // 행 클릭 이벤트 핸들러
 const handleRowClick = (e) => {
-  console.log(e);
   if (!grid.value || e.rowKey == null || e.rowKey == undefined ) return;
   const dataRow = grid.value.getRow(e.rowKey);
-
   if (e.nativeEvent.target.type == "checkbox") {
     console.log("체크박스 클릭 감지, 행 클릭 이벤트 무시");
     return;
@@ -280,16 +246,17 @@ const handleRowClick = (e) => {
     routePath = "/approval/restartDraft"
   }
 
+  console.log(dataRow)
   router.push({
     path: routePath,
     query :{
       docCd : dataRow.docCd,
       docKind : dataRow.docKind,
-      formNm : dataRow.formNm,
+      formType : dataRow.formType,
       formCd : dataRow.formCd,
       deptNm : dataRow.deptNm,
       docTitle : dataRow.docTitle,
-      docCnEditor : dataRow.docCnEditor
+      docCnEditor : dataRow.docCnEditor,
     }
   });
 };

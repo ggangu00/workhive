@@ -60,14 +60,13 @@ public class ProjectDTO {
 	
 	//======================프로젝트 과업=====================
 	
-	private String prWorkCd;	// 과업코드
-	private String prWorkNm;	// 과업명
-	private Long seq;			// 과업순서
-	private Long progress;		// 과업 진행률
-	
+    private List<ProjectWorkDTO> workArr;		// 프로젝트 코드
+    
 	//======================프로젝트 일정=====================
 	
 	private String prPlanCd;	// 일정코드
 	private String planNm;		// 일정명
 	private String color;		// 일정 색상
+
+	public void setPrCd(String prCd) {}
 }

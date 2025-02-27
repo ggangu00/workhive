@@ -2,15 +2,43 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="egovframework.com.securing.mapper.UserMapper">
 
-	
 	<!-- 단건조회 -->
 	<!-- '{noop}' -> 암호화를 하지 않았다 -->
 	<select id="getUser" resultType="UserDTO">
 		SELECT 
 	         mber_id,
-	         password as password,
-	         mber_nm,
-	         dept_cd
+	         password,
+		     password_hint,
+		     password_cnsr,
+		     ihidnum,
+		     mber_nm,
+		     zip,
+		     adres,
+		     area_no,
+		     mber_sttus,
+		     detail_adres,
+		     end_telno,
+		     mbtlnum,
+		     group_id,
+		     mber_fxnum,
+		     mber_email_adres,
+		     meddle_telno,
+		     sbscrb_de,
+		     quit_dt,
+		     sexdstn_code,
+		     esntl_id,
+		     lock_at,
+		     lock_cnt,
+		     lock_last_pnttm,
+		     create_dt,
+		     create_id,
+		     update_dt,
+		     update_id,
+		     del_yn,
+		     resp_cd,
+		     grade_cd,
+		     FN_GET_GRADENM(grade_cd) AS grade_nm,
+		     dept_cd
       	FROM   
 	         comtngnrlmber
       	WHERE
