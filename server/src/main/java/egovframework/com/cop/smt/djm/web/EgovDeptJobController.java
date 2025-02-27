@@ -485,8 +485,9 @@ public class EgovDeptJobController {
 //	@RequestMapping("/cop/smt/djm/selectDeptJobList.do")
 	@GetMapping("/jobList")
 	public Map<String, Object> selectDeptJobList(@ModelAttribute("searchVO") DeptJobVO deptJobVO
-			,@RequestParam(name = "page", required = false, defaultValue = "1") int page
-												,@RequestParam(name = "perPage", required = false, defaultValue = "5") int perPage, ModelMap model) throws Exception{
+												,@RequestParam(name = "page", required = false, defaultValue = "1") int page
+												,@RequestParam(name = "perPage", required = false, defaultValue = "5") int perPage
+												,ModelMap model) throws Exception{
 		//로그인 객체 선언
 		LoginVO loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
    	 	// KISA 보안취약점 조치 (2018-12-10, 신용호)
@@ -500,23 +501,17 @@ public class EgovDeptJobController {
 //		deptJobVO.setPageSize(propertyService.getInt("pageSize"));
         
 		PaginationInfo paginationInfo = new PaginationInfo();
-//		paginationInfo.setCurrentPageNo(deptJobVO.getPageIndex());
 		paginationInfo.setCurrentPageNo(page);
-//		paginationInfo.setRecordCountPerPage(deptJobVO.getPageUnit());
 		paginationInfo.setRecordCountPerPage(perPage);
+		
+//		paginationInfo.setCurrentPageNo(deptJobVO.getPageIndex());
+//		paginationInfo.setRecordCountPerPage(deptJobVO.getPageUnit());
 //		paginationInfo.setPageSize(deptJobVO.getPageSize());
 
 		deptJobVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
 		deptJobVO.setLastIndex(paginationInfo.getLastRecordIndex());
 		deptJobVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
 
-        System.out.println("----------------------------------------------------");
-        System.out.println("paginationInfo = " + paginationInfo.getCurrentPageNo()
-        + " : " + paginationInfo.getRecordCountPerPage() + " : " + paginationInfo.getPageSize()
-        + " : " + paginationInfo.getFirstRecordIndex() + " : " + paginationInfo.getLastRecordIndex());
-        System.out.println("deptJobVO set : " + deptJobVO.toString());
-        System.out.println("----------------------------------------------------");
-        
 		if(deptJobVO.getSearchDeptCd() == null || deptJobVO.getSearchDeptCd().equals("")){
 			deptJobVO.setSearchDeptCd(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getOrgnztId()));
 		}
@@ -531,17 +526,7 @@ public class EgovDeptJobController {
 //		model.addAttribute("paginationInfo", paginationInfo);
 
 //		return "egovframework/com/cop/smt/djm/EgovDeptJobList";
-		
-	    // PaginationInfo와 다른 데이터를 map에 추가
-	    map.put("paginationInfo", paginationInfo);
-	    map.put("resultBxList", deptJobService.selectDeptJobBxListAll());
-	    map.put("resultList", map.get("resultList"));
-	    map.put("resultCnt", map.get("resultCnt"));
 
-        System.out.println("----------------------------------------------------");
-        System.out.println("map : " + map.toString());
-        System.out.println("----------------------------------------------------");
-        
 		return GridUtil.responseData(page, totCnt, (List)map.get("resultList"));
 	}
 
