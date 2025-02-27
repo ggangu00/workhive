@@ -17,11 +17,11 @@
             <div class="form-group has-label">
               <label>프로젝트명 <em class="point-red">*</em></label>
             </div>
-            <input type="text" :name="prNm" v-model="prNm" class="form-control" placeholder="프로젝트명을 입력해주세요">
+            <input type="text" v-model="prNm" class="form-control" placeholder="프로젝트명을 입력해주세요">
           </div>
           <div class="mb-3">
             <label class="form-label">프로젝트 구분 <em class="point-red">*</em></label>
-            <select class="form-select w30" :name="typeCd" v-model="typeCd" aria-label="Default select example">
+            <select class="form-select w30" v-model="typeCd" aria-label="Default select example">
               <option value="A03">내부프로젝트</option>
               <option value="A04">외부프로젝트</option>
             </select>
@@ -30,11 +30,11 @@
             <label class="form-label">프로젝트 기간 <em class="point-red">*</em></label>
             <div class="row">
               <div class="col-auto">
-                <input type="date" :name="startDt" v-model="startDt" :max="endDt" class="form-control">
+                <input type="date" v-model="startDt" :max="endDt" class="form-control">
               </div>
               <div class="col-auto p-none">~</div>
               <div class="col-auto">
-                <input type="date" :name="endDt" v-model="endDt" :min="startDt" class="form-control">
+                <input type="date" v-model="endDt" :min="startDt" class="form-control">
               </div>
             </div>
           </div>
@@ -42,8 +42,8 @@
             <label class="form-label">프로젝트 금액</label>
             <div class="row">
               <div class="col-auto">
-                <input type="text" :name="price" v-model="price" class="form-control" placeholder="0"
-                  style="text-align: right;" @keyup="numberAutoFormat()">
+                <input type="text" v-model="price" class="form-control" placeholder="0" style="text-align: right;"
+                  @keyup="numberAutoFormat()">
               </div>
               <div class="col-auto p-none">
                 <span class="form-text">
@@ -54,15 +54,14 @@
           </div>
           <div class="mb-3">
             <label class="form-label">내부완료일</label>
-            <input type="date" :name="aheadDt" v-model="aheadDt" class="form-control w30">
+            <input type="date" v-model="aheadDt" class="form-control w30">
           </div>
           <div class="mb-3">
             <label class="form-label">거래처</label>
             <div class="row">
               <div class="col-auto">
-                <input type="hidden" :name="entrprsMberId" v-model="entrprsMberId">
-                <input type="text" :name="cmpnyNm" v-model="cmpnyNm" class="form-control" placeholder="거래처를 선택해주세요"
-                  readonly>
+                <input type="hidden" v-model="entrprsMberId">
+                <input type="text" v-model="cmpnyNm" class="form-control" placeholder="거래처를 선택해주세요" readonly>
               </div>
               <div class="col-auto p-none">
                 <button class="btn btn-info btn-fill" @click="modalOpen">검색</button>
@@ -254,7 +253,7 @@ const modalClose = (e) => { //프로젝트 정보 모달 닫기
 const projectInfo = ref([]);
 const projectGetInfo = async (prCd) => { //프로젝트 단건조회
   try {
-    const result = await axios.get(`/api/project/info?prCd=${prCd}`);
+    const result = await axios.get(`/api/project/info/${prCd}`);
     projectInfo.value = result.data.info;
 
     prNm.value = projectInfo.value.prNm;
@@ -310,32 +309,30 @@ const projectAdd = async () => { //프로젝트 등록
       title: "프로젝트 구분을 선택하세요"
     });
     return;
-  } else if (!startDt.value) {
-    Swal.fire({
-      icon: "info",
-      title: "프로젝트 시작일을 선택하세요"
-    });
-    return;
-  } else if (!endDt.value) {
-    Swal.fire({
-      icon: "info",
-      title: "프로젝트 종료일을 선택하세요"
-    });
-    return;
   }
 
-  const formData = new FormData();
-  formData.append("prNm", prNm.value);
-  formData.append("typeCd", typeCd.value);
-  formData.append("startDt", startDt.value);
-  formData.append("endDt", endDt.value);
-  formData.append("price", price.value);
-  formData.append("aheadDt", aheadDt.value);
-  formData.append("entrprsMberId", entrprsMberId.value);
-  formData.append("createId", createId.value);
+  const modifiedRows = gridInstance.value.getModifiedRows(); // 변경된 데이터 가져오기
+  const newData = modifiedRows.createdRows; // 새로 추가된 데이터만 추출
+
+  const requestData = {
+    workArr: newData.map(row => ({
+      prWorkNm: row.prWorkNm,
+      progress: row.progress,
+      state: row.state,
+      seq: row.rowKey
+    })),
+    prNm: prNm.value, 
+    typeCd: typeCd.value,
+    startDt: startDt.value,
+    endDt: endDt.value,
+    price: price.value,
+    aheadDt: aheadDt.value,
+    entrprsMberId: entrprsMberId.value,
+    createId: createId.value
+  };
 
   try {
-    const response = await axios.post('/api/project', formData);
+    const response = await axios.post("/api/project", requestData);
 
     if (response.data.result === true) {
       Swal.fire({

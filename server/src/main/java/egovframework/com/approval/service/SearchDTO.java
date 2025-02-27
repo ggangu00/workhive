@@ -18,6 +18,9 @@ public class SearchDTO {
 	String deptNm;
 	String startDate;
 	String endDate;
+	String deptCd;
+	String docCd;
+	
 	int pageUnit = 10; // 한페이지 출력할 레코드 건수
 	int pageSize = 10; // 페이지번호 수 (5) 1~ 5까지
 	int lastPage; // 마지막 페이지번호

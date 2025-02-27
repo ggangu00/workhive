@@ -14,5 +14,7 @@ public interface CommuteCrctMapper {
 	int crctDelete(String crctCd);
 	CommuteCrctDTO crctSelect(String crctCd);
 	List<CommuteCrctDTO> crctSelectAll(CommuteCrctDTO crctDTO);
-	
+	List<CommuteCrctDTO> crctSelectSigner(CommuteCrctDTO crctDTO);
+	List<CommuteCrctDTO> crctSelectSigned(CommuteCrctDTO crctDTO);
+	int signUpdate(CommuteCrctDTO crctDTO);
 }

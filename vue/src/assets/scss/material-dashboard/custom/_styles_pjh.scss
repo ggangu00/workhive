@@ -11,7 +11,7 @@
    }
 
    td {
-      height: 60px;
+      height: 46px;
    }
 
    th,
@@ -19,8 +19,10 @@
       border: 1px solid #ddd;
       padding: 10px;
       text-align: center;
-      min-width: 80px;
+      min-width: 90px;
       position: relative;
+      font-size: 14px;
+      color: #777777;
    }
 
    .task {
@@ -30,26 +32,29 @@
       display: flex;
       align-items: center;
       justify-content: left;
-      padding: 8px 12px;
-      border-radius: 5px;
+      padding: 5px 11px;
+      border-radius: 18px;
       color: white;
-      font-weight: bold;
+      font-size: 12px;
       white-space: nowrap;
       text-align: left;
       box-sizing: border-box;
       margin-left: 5%;
-      bottom: 15%;
+      bottom: 17%;
    }
 
    .task .close {
       position: absolute;
       right: 10px;
-      top: 9px;
+      top: 7px;
       cursor: pointer;
-      font-size: 12px;
+      font-size: 9px;
       background: rgba(255, 255, 255, 0.5);
-      padding: 2px 9px;
+      padding: 1px 4px;
       border-radius: 50%;
+      z-index: 99;
+      border: none;
+      color: #fff;
    }
 
    .task.red {
@@ -71,18 +76,18 @@
 
    @media screen and (max-width: 768px) {
       table {
-            min-width: 100%;
+         min-width: 100%;
       }
 
       th,
       td {
-            font-size: 14px;
-            padding: 8px;
+         font-size: 14px;
+         padding: 8px;
       }
 
       .task {
-            font-size: 12px;
-            padding: 6px 10px;
+         font-size: 12px;
+         padding: 6px 10px;
       }
    }
 
@@ -165,20 +170,20 @@
 
    @media (max-width: 800px) {
       .status-box {
-            width: 40vw;
+         width: 40vw;
       }
    }
 
    @media (max-width: 600px) {
       .status-box {
-            width: 60vw;
+         width: 60vw;
       }
    }
 
    @media (max-width: 400px) {
       .status-box {
-            width: 90%;
-            text-align: center;
+         width: 90%;
+         text-align: center;
       }
    }
 }
@@ -337,22 +342,38 @@
    padding: 10px;
    text-align: center;
 
-   $day-per : 3.22% !default;
+   $day-per : 3.22%;
 
    .day28 {
-      $day-per : 3.57% !default;
+
+      .day,
+      i {
+         width: 3.57% !important;
+      }
    }
 
    .day29 {
-      $day-per : 3.44% !default;
+
+      .day,
+      i {
+         width: 3.44% !important;
+      }
    }
 
    .day30 {
-      $day-per : 3.33% !default;
+
+      .day,
+      i {
+         width: 3.33% !important;
+      }
    }
 
    .day31 {
-      $day-per : 3.22% !default;
+
+      .day,
+      i {
+         width: 3.22% !important;
+      }
    }
 
    .month {
@@ -362,6 +383,7 @@
       justify-content: center;
       align-items: center;
       gap: 10px;
+      color: #606266;
    }
 
    .days {
@@ -370,18 +392,10 @@
       gap: 1px;
    }
 
-   .day {
-      width: $day-per;
+   .day,
+   i {
       text-align: center;
-      color: black;
-   }
-
-   .red {
-      color: red;
-   }
-
-   .blue {
-      color: blue;
+      color: #606266;
    }
 
    .todo-header {
@@ -389,7 +403,35 @@
       justify-content: flex-end;
       align-items: center;
       font-size: 14px;
-      color: gray;
+      color: #606266;
+   }
+
+   .highlight,
+   .today {
+      position: relative;
+   }
+
+   .highlight::before,
+   .today::before {
+      content: '';
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+      background-color: transparent;
+   }
+
+   .highlight::before {
+      border: 2px solid $primary;
+      background-color: transparent;
+   }
+
+   .today::before {
+      border: 2px solid $danger;
    }
 
    button {
@@ -403,4 +445,110 @@
 
 .bg-gradient-main {
    background: $main;
+}
+
+
+.login-container-fluid {
+   position: relative;
+   width: 100%;
+   height: 100vh;
+   background: url('/src/assets/img/background.jpg') no-repeat center center/cover;
+   background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
+      url('/src/assets/img/background.jpg') no-repeat center center/cover;
+   background-blend-mode: lighten;
+   /* 배경과 섞이도록 설정 */
+}
+
+
+.tooltip {
+   display: block !important;
+   z-index: 10000;
+
+   .tooltip-inner {
+      background: black;
+      color: white;
+      border-radius: 16px;
+      padding: 5px 10px 4px;
+   }
+
+   .tooltip-arrow {
+      width: 0;
+      height: 0;
+      border-style: solid;
+      position: absolute;
+      margin: 5px;
+      border-color: black;
+   }
+
+   &[x-placement^="top"] {
+      margin-bottom: 5px;
+
+      .tooltip-arrow {
+         border-width: 5px 5px 0 5px;
+         border-left-color: transparent !important;
+         border-right-color: transparent !important;
+         border-bottom-color: transparent !important;
+         bottom: -5px;
+         left: calc(50% - 5px);
+         margin-top: 0;
+         margin-bottom: 0;
+      }
+   }
+
+   &[x-placement^="bottom"] {
+      margin-top: 5px;
+
+      .tooltip-arrow {
+         border-width: 0 5px 5px 5px;
+         border-left-color: transparent !important;
+         border-right-color: transparent !important;
+         border-top-color: transparent !important;
+         top: -5px;
+         left: calc(50% - 5px);
+         margin-top: 0;
+         margin-bottom: 0;
+      }
+   }
+
+   &[x-placement^="right"] {
+      margin-left: 5px;
+
+      .tooltip-arrow {
+         border-width: 5px 5px 5px 0;
+         border-left-color: transparent !important;
+         border-top-color: transparent !important;
+         border-bottom-color: transparent !important;
+         left: -5px;
+         top: calc(50% - 5px);
+         margin-left: 0;
+         margin-right: 0;
+      }
+   }
+
+   &[x-placement^="left"] {
+      margin-right: 5px;
+
+      .tooltip-arrow {
+         border-width: 5px 0 5px 5px;
+         border-top-color: transparent !important;
+         border-right-color: transparent !important;
+         border-bottom-color: transparent !important;
+         right: -5px;
+         top: calc(50% - 5px);
+         margin-left: 0;
+         margin-right: 0;
+      }
+   }
+
+   &[aria-hidden='true'] {
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity .15s, visibility .15s;
+   }
+
+   &[aria-hidden='false'] {
+      visibility: visible;
+      opacity: 1;
+      transition: opacity .15s;
+   }
 }

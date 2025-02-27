@@ -129,6 +129,8 @@ public class Board implements Serializable {
 	/**
 	 * 블로그 게시판 여부 
 	 */
+	
+	
 	private String blogAt = "";
 	/** 블로그 ID */
     private String blogId = "";
@@ -192,7 +194,7 @@ public class Board implements Serializable {
 	 * frstRegisterPnttm attribute 값을 설정한다.
 	 * @param frstRegisterPnttm the frstRegisterPnttm to set
 	 */
-	public void setFrstRegistPnttm(String frstRegisterPnttm) {
+	public void setFrstRegisterPnttm(String frstRegisterPnttm) {
 		this.frstRegistPnttm = frstRegisterPnttm;
 	}
 

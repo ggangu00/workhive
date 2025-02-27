@@ -28,6 +28,11 @@ public class CommuteServiceImpl implements CommuteService {
 	}
 
 	@Override
+	public boolean crctSignUpdate(CommuteDTO commuteDTO) {
+		return commuteMapper.crctSignUpdate(commuteDTO) == 1 ? true : false;
+	}
+	
+	@Override
 	public boolean cmtDelete(String commuteCd) {
 		return commuteMapper.cmtDelete(commuteCd) == 1 ? true : false;
 	}
@@ -43,8 +48,19 @@ public class CommuteServiceImpl implements CommuteService {
 	}
 
 	@Override
-	public CommuteDTO lastCmtSelect(String memCd) {
-		return commuteMapper.lastCmtSelect(memCd);
+	public CommuteDTO lastCmtSelect(String mberId) {
+		return commuteMapper.lastCmtSelect(mberId);
 	}
+
+	@Override
+	public CommuteDTO dateCmtSelect(String commuteDt) {
+		return commuteMapper.dateCmtSelect(commuteDt);
+	}
+
+	@Override
+	public CommuteDTO cmtTimeSelect() {
+		return commuteMapper.cmtTimeSelect();
+	}
+
 	
 }

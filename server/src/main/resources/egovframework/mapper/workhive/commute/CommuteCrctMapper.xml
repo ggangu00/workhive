@@ -15,6 +15,8 @@
 			 , create_id
 			 , create_dt
 			 , sign_id
+			 , pre_go_time
+			 , pre_leave_time
 		)
 		values (
 			   seq_crct_cd.nextval
@@ -26,38 +28,32 @@
 			 , #{createId}
 			 , sysdate
 			 , #{signId}
+			 , to_date(#{preGoTime}, 'YYYY-MM-DD HH24:MI:SS')
+			 , to_date(#{preLeaveTime}, 'YYYY-MM-DD HH24:MI:SS')
 		)
 	</insert>
 	
 	<!-- 출퇴근 정정 수정 -->
 	<update id="crctUpdate" parameterType="commuteCrctDTO">
+		update commute_correction
+		set crct_go_time = to_date(#{crctGoTime}, 'YYYY-MM-DD HH24:MI:SS')
+		  , crct_leave_time = to_date(#{crctLeaveTime}, 'YYYY-MM-DD HH24:MI:SS')
+		  , crct_reason = #{crctReason}
+		  , atch_file_id = #{atchFileId}
+		  , create_dt = sysdate
+		  , sign_id = #{signId}
+		where crct_cd = #{crctCd}
 	</update>
 	
 	<!-- 출퇴근 정정 삭제 -->
-	<delete id="crctDelete" parameterType="String">
-	
-	</delete>
+	<update id="crctDelete" parameterType="String">
+		update commute_correction
+		set del_yn = 'Y'
+		where crct_cd = #{crctCd}
+	</update>
 	
 	<!-- 출퇴근 정정 단건 조회 -->
-	<select id="crctSelect" parameterType="String">
-		select crct_cd
-			 , commute_cd
-			 , crct_go_time
-			 , crct_leave_time
-			 , crct_reason
-			 , atch_file_id
-			 , create_id
-			 , create_dt
-			 , sign_id
-			 , sign_dt
-			 , sign_state
-		from commute_correction
-		where crct_cd = #{crct_cd}
-	</select>
-	
-	<!-- 출퇴근 정정 전체 조회 -->
-	<select id="crctSelectAll" parameterType="commuteCrctDTO" resultType="commuteCrctDTO">
-	//근무일자 / 출근시간 / 퇴근시간 / 정정출근시간 / 정정퇴근시간 / 신청일 / 결재자
+	<select id="crctSelect" parameterType="String" resultType="commuteCrctDTO">
 		select crct_cd
 			 , crct.commute_cd
 			 , cmt.commute_dt
@@ -72,19 +68,130 @@
 			 , sign_id
 			 , sign_dt
 			 , sign_state
+			 , pre_go_time
+			 , pre_leave_time
+		from commute_correction crct join commute cmt on (crct.commute_cd = cmt.commute_cd)
+		where crct_cd = #{crct_cd}
+		and del_yn = 'N'
+	</select>
+	
+	<!-- 출퇴근 정정 전체 조회 : 사용자 -->
+	<select id="crctSelectAll" parameterType="commuteCrctDTO" resultType="commuteCrctDTO">
+		select crct_cd
+			 , crct.commute_cd
+			 , cmt.commute_dt
+			 , cmt.go_time
+			 , cmt.leave_time
+			 , crct_go_time
+			 , crct_leave_time
+			 , crct_reason
+			 , atch_file_id
+			 , create_id
+			 , create_dt
+			 , sign_id
+			 , sign_dt
+			 , sign_state
+			 , pre_go_time
+			 , pre_leave_time
 		from commute_correction crct join commute cmt on (crct.commute_cd = cmt.commute_cd)
 		where create_id = #{createId}
+		and del_yn = 'N'
+		<if test='!searchState.isEmpty()'>
+			<![CDATA[
+			and sign_state = #{searchState}
+			]]>
+		</if>
 		<if test='!startDate.isEmpty()'>
 			<![CDATA[
-			and to_char(commute_dt, 'yyyy-mm-dd') >= #{startDate}
+			and cmt.commute_dt >= to_date(#{startDate}, 'yyyy-mm-dd')
 			]]>
 		</if>
 		<if test='!endDate.isEmpty()'>
 			<![CDATA[
-			and to_char(commute_dt, 'yyyy-mm-dd') <= #{endDate}
+			and cmt.commute_dt < to_date(#{endDate}, 'yyyy-mm-dd') + 1
 			]]>
 		</if>
 		order by create_dt desc
 	</select>
 
+
+	<!-- 출퇴근 정정 요청 조회 : 결재자 -->
+	<select id="crctSelectSigner" parameterType="commuteCrctDTO" resultType="commuteCrctDTO">
+		select crct_cd
+			 , crct.commute_cd
+			 , cmt.commute_dt
+			 , cmt.go_time
+			 , cmt.leave_time
+			 , crct_go_time
+			 , crct_leave_time
+			 , crct_reason
+			 , atch_file_id
+			 , create_id
+			 , create_dt
+			 , sign_id
+			 , sign_dt
+			 , sign_state
+			 , pre_go_time
+			 , pre_leave_time
+		from commute_correction crct join commute cmt on (crct.commute_cd = cmt.commute_cd)
+		where sign_id = #{signId}
+		and sign_state in ('D01', 'D03')
+		and del_yn = 'N'
+		<if test='!startDate.isEmpty()'>
+			<![CDATA[
+			and cmt.create_id >= to_date(#{startDate}, 'yyyy-mm-dd')
+			]]>
+		</if>
+		<if test='!endDate.isEmpty()'>
+			<![CDATA[
+			and cmt.create_id < to_date(#{endDate}, 'yyyy-mm-dd') + 1
+			]]>
+		</if>
+		order by create_dt
+	</select>
+	
+	<!-- 출퇴근 정정 결재 내역 조회 -->
+	<select id="crctSelectSigned" parameterType="commuteCrctDTO" resultType="commuteCrctDTO">
+		select crct_cd
+			 , crct.commute_cd
+			 , cmt.commute_dt
+			 , cmt.go_time
+			 , cmt.leave_time
+			 , crct_go_time
+			 , crct_leave_time
+			 , crct_reason
+			 , atch_file_id
+			 , create_id
+			 , create_dt
+			 , sign_id
+			 , sign_dt
+			 , sign_state
+			 , pre_go_time
+			 , pre_leave_time
+		from commute_correction crct join commute cmt on (crct.commute_cd = cmt.commute_cd)
+		where sign_id = #{signId}
+		and sign_state not in ('D01', 'D03')
+		and del_yn = 'N'
+		<if test='!startDate.isEmpty()'>
+			<![CDATA[
+			and cmt.create_id >= to_date(#{startDate}, 'yyyy-mm-dd')
+			]]>
+		</if>
+		<if test='!endDate.isEmpty()'>
+			<![CDATA[
+			and cmt.create_id < to_date(#{endDate}, 'yyyy-mm-dd') + 1
+			]]>
+		</if>
+		order by create_dt desc
+	</select>
+	
+	<!-- 결재 처리 -->
+	<update id="signUpdate" parameterType="commuteCrctDTO">
+		update commute_correction
+		set sign_state = #{signState}
+		  , sign_dt = sysdate
+		where crct_cd = #{crctCd}
+	</update>
+	
+	
 </mapper>

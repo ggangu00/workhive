@@ -36,13 +36,13 @@
             <div class="card-body">
               <div class="mb-3">
                 <label class="form-label">일정유형 <em class="point-red">*</em></label>
-                <select class="form-select w30" aria-label="Default select example" v-model="schedule.type">
-                  <option value="L02">세미나</option>
-                  <option value="L03">강의</option>
-                  <option value="L04">교육</option>
-                  <option value="L05">기타</option>
-                  <option value="L06">휴일</option>
-                </select>
+                  <select class="form-select w30" aria-label="Default select example" v-model="schedule.type">
+                    <option v-for="(data, idx) in selectedData" 
+                    :key="idx"
+                    :value="data.commDtlCd">
+                    {{ data.commDtlNm }}
+                    </option>
+                  </select>
               </div>
               <div class="mb-3">
                 <div class="form-group has-label">
@@ -89,7 +89,7 @@
                 <label class="form-label">부서</label>
                 <div class="row">
                   <div class="col-auto">
-                    <input type="text" class="form-control" v-model="dept">
+                    <input type="text" class="form-control" v-model="schedule.dept">
                   </div>
                 </div>
               </div>
@@ -97,7 +97,7 @@
                 <label class="form-label">담당자</label>
                 <div class="row">
                   <div class="col-auto">
-                    <input type="text" class="form-control" v-model="name">
+                    <input type="text" class="form-control" v-model="schedule.name">
                   </div>
                 </div>
               </div>
@@ -122,6 +122,7 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import axios from "axios";
 import { Modal } from "bootstrap";
+import Swal from 'sweetalert2'
 
 
 export default {
@@ -140,6 +141,7 @@ export default {
           right: 'dayGridMonth,timeGridWeek,timeGridDay'  
         },
         events: [],
+        selectedData:[],
         dateClick: this.handleDateClick, //연결헤ㅐ줘야함 이벤트
         eventClick: this.handleEventClick,  
       },
@@ -163,6 +165,7 @@ export default {
   mounted() {
     this.scheduleGetList();
     this.dataReset();
+    this.commonDtlList();
   },
   methods: {
     //종일버튼시 시간값 초기화
@@ -191,10 +194,19 @@ export default {
       })
     },
 
+    // 공통코드 가져오기
+    async commonDtlList(){
+      const docKind = await axios.get(`/api/comm/codeList`, {
+        params: {cd:'SK'}
+      });
+      console.log("공통코드 => [" + docKind.data + "]");
+     
+      this.selectedData = [...docKind.data]
+    },
 
     //달력 클릭이벤트
     async handleEventClick(e){
-      console.log(e.event.id)
+      console.log("이벤트 유형 => [" + e.event.extendedProps.type + "]");
       const modal = new Modal(document.getElementById("scheduleModal"));
       modal.show();
       
@@ -219,7 +231,6 @@ export default {
 
       this.selectedEventId = e.event.id;//수정용 스케쥴아이디
 
-      console.log(e.event)
     },
 
 
@@ -235,12 +246,13 @@ export default {
           schdulCn: event.schdulCn,
           place: event.schdulPlace,
           charger: event.schdulChargerId,
-          register: event.memCd,
+          register: event.mberId,
           kind: event.schdulKndCode,
-          name: event.memCd,
-          type: event.schdulSe
+          name: event.mberId,
+          type: event.schdulSe,
+          dept: event.deptNm
         }));
-        
+        console.log(response.data)
     },
 
     //등록 메소드
@@ -257,13 +269,29 @@ export default {
       addList.append("schdulPlace", this.schedule.place);
       addList.append("schdulBgnde", this.schedule.start.replace(/-/g, '')  + bgndeTime);
       addList.append("schdulEndde", this.schedule.end.replace(/-/g, '') + enddeTime);
+      addList.append("schdulPlace", this.schedule.place);
 
       if(this.selectedEventId){
         addList.append("schdulId", this.selectedEventId);
-        await axios.post('/api/schedule/modify', addList );
-      }else{
-        await axios.post('/api/schedule/register', addList );
+        const response = await axios.post('/api/schedule/modify', addList );
+        console.log(response)
+        if(response.request.status==200){
+          Swal.fire({
+          icon: "success",
+          title: "일정 수정완료",
+        })
       }
+      }else{
+        const response = await axios.post('/api/schedule/register', addList );
+        console.log(response)
+        if(response.request.status==200){
+          Swal.fire({
+          icon: "success",
+          title: "일정 등록완료",
+          
+        })
+      }
+    }
 
     //다시불러오기
     this.scheduleGetList();
@@ -287,6 +315,18 @@ export default {
   async scheduleRemove(){
     let response = await axios.delete(`/api/schedule/delete/${this.selectedEventId}`);
     if(response.data == "success"){
+      Swal.fire({
+          title: "삭제 완료",
+          icon: "success",
+          buttons: {
+            cancel : "취소", 
+            catch: {
+                text: "확인",
+                value: "catch"
+            }, 
+          }
+
+      });
       this.scheduleGetList();
     }
   },

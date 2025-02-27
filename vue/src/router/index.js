@@ -1,3 +1,5 @@
+import { useUserInfoStore } from "../store/userStore"; // Pinia Store 가져오기
+
 import { createRouter, createWebHistory } from "vue-router";
 import Dashboard from "../views/Dashboard.vue";
 import Tables from "../views/Tables.vue";
@@ -9,11 +11,12 @@ import Layout from '../views/Layout.vue';
 
 // kmj
 import Login from "../views/Login/Login.vue";
+import FindPw from '../views/Login/findPassword.vue';
 import PersonalManage from '../views/Setting/PersonalManage.vue';
 import MemberManage from '../views/Setting/MemberManage.vue'
 import DepartmentManage from "../views/Setting/DepartmentManage.vue";
 import AuthorityManage from "../views/Setting/AuthorityManage.vue";
-import SignIn from "../views/Login/SignIn.vue";
+
 
 
 
@@ -22,16 +25,21 @@ import SignIn from "../views/Login/SignIn.vue";
 import ApprovalList from "../components/PaymentLayout/ApprovalList.vue";
 import ApprovalLine from "../components/PaymentLayout/ApprovalLine.vue";
 import ApprovalRegister from "../components/PaymentLayout/ApprovalRegister.vue";
+import ApprovalInfo from "../components/PaymentLayout/ApprovalInfo.vue";
 //skh
-import Test from "../views/Approval/test.vue";
 import RegisterTest from "../views/Approval/RegisterTest.vue";
 import CompletedList from "../views/Approval/CompletedList.vue";
-import Register from "../views/Approval/Register.vue";
 import Calendar from "../views/schedule/Calendar.vue";
 import PendingList from "../views/Approval/PendingList.vue";
 import ProceedList from "../views/Approval/ProceedList.vue";
 import RejectedList from "../views/Approval/RejectedList.vue";
 import RejectedInfo from "../views/Approval/RejectedInfo.vue";
+import RestartDraft from "../views/Approval/RestartDraft.vue";
+import CompletedInfo from "../views/Approval/CompletedInfo.vue";
+import PendingInfo from "../views/Approval/PendingInfo.vue";
+import ProceedInfo from "../views/Approval/ProceedInfo.vue";
+import RetrieveList from "../views/Approval/RetrieveList.vue";
+import ReceivedList from "../views/Approval/ReceivedList.vue";
 
 
 // pjh
@@ -50,12 +58,13 @@ import Home from '../views/Home.vue'
 // ksy
 import KsyTest from '../views/DeptStore/Test.vue';
 import DeptjobInfo from '../views/DeptStore/DeptJobInfo.vue';
-import VcList from '../views/Vacation/VacationInfo.vue';
-import VcManage from '../views/Vacation/VacationManage.vue';
+import Vacation from '../views/Vacation/Vacation.vue';
+import VcList from "../views/Vacation/VacationList.vue";
+import VcManage from "../views/Vacation/VacationManage.vue";
 import VcSignManage from '../views/Vacation/VacationSign.vue';
-import CmtList from '../views/Commute/CommuteInfo.vue';
+import CmtList from '../views/Commute/CommuteList.vue';
 import CrctManage from '../views/Commute/CommuteCrctManage.vue';
-import CrctList from '../views/Commute/CommuteCrctInfo.vue';
+import CrctList from '../views/Commute/CommuteCrctList.vue';
 import CrctSignManage from '../views/Commute/CommuteCrctSign.vue';
 
 // kjg
@@ -64,9 +73,12 @@ import PaymentAdd from '../views/Payment/PaymentAdd.vue';
 import PaymentManage from '../views/Payment/PaymentManage.vue';
 import BoardList from '../views/Board/BoardList.vue';
 import BoardAdd from '../views/Board/BoardAdd.vue';
+import BoardModify from "../views/Board/BoardModify.vue";
 import BulletinList from "../views/Bulletin/BulletinList.vue";
 import BulletinAdd from "../views/Bulletin/BulletinAdd.vue";
 import BulletinInfo from "../views/Bulletin/BulletinInfo.vue";
+import BulletinModify from "../views/Bulletin/BulletinModify.vue";
+
 
 
 
@@ -114,32 +126,32 @@ const routes = [
 
    // kmj
    {  // 로그인
-      path: '/signIn',
-      name: 'SignIn',
-      component: SignIn,
-   },
-   {  // 로그인
       path: '/login',
       name: 'Login',
       component: Login,
    },
+   {  // 패스워드 찾기
+      path: '/findPw',
+      name: 'FindPw',
+      component: FindPw,
+   },
    { // 개인정보 설정
-      path: '/setting/personalInfo',
+      path: '/personal/manage',
       name: 'PersonalManage',
       component: PersonalManage
    },
    { // 부서 구성원 관리
-      path: '/setting/member/users',
+      path: '/setting/organization/member',
       name: 'MemberManage',
       component: MemberManage
    },
    { // 부서 관리
-      path: '/setting/department',
+      path: '/setting/organization/department',
       name: 'DepartmentManage',
       component: DepartmentManage
    },
-   { // 부서 관리
-      path: '/setting/authority',
+   { // 권한 관리
+      path: '/setting/organization/authority',
       name: 'AuthorityManage',
       component: AuthorityManage
    },
@@ -165,20 +177,25 @@ const routes = [
       name: 'ApprovalRegister',
       component: ApprovalRegister
    },
+   {
+      path: '/approvalInfo',
+      name: 'ApprovalInfo',
+      component: ApprovalInfo
+   },
    //skh
 
    { //
-      path: '/schdule/test',
-      name: 'Test',
-      component: Test
+      path: '/approval/restartDraft',
+      name: 'RestartDraft',
+      component: RestartDraft
    },
    {
-      path: '/registerTest',
+      path: '/approval/registerTest',
       name: 'RegisterTest',
       component: RegisterTest
    },
-   {
-      path: '/schdule/calendar',
+   { //일정
+      path: '/schdule/manage',
       name: 'Calendar',
       component: Calendar
    },
@@ -187,15 +204,30 @@ const routes = [
       name: 'PendingList',
       component : PendingList
    },
+   { //미결문서 상세보기
+      path: '/approval/pendingInfo',
+      name: 'PendingInfo',
+      component : PendingInfo
+   },
    { // 완료함
       path: '/approval/completedList',
       name: 'CompletedList',
       component : CompletedList
    },
+   {//완료문서 상세보기
+      path: '/approval/completedInfo',
+      name: 'CompletedInfo',
+      component : CompletedInfo
+   },
    { // 진행함
       path: '/approval/proceedList',
       name: 'ProceedList',
       component : ProceedList
+   },
+   { // 진행문서 상세보기
+      path: '/approval/proceedInfo',
+      name: 'ProceedInfo',
+      component : ProceedInfo
    },
    { // 반려함
       path: '/approval/rejectedList',
@@ -207,11 +239,17 @@ const routes = [
       name: 'RejectedInfo',
       component:RejectedInfo
    },
-   { // 문서 기안
-      path: '/approval/register',
-      name: 'Register',
-      component : Register
+   {//임시함
+      path: '/approval/retrieveList',
+      name: 'RetrieveList',
+      component : RetrieveList
    },
+   {//수신함
+      path: '/approval/receivedList',
+      name: 'ReceivedList',
+      component : ReceivedList
+   },
+
 
    //ksy
    { // 테스트
@@ -245,14 +283,21 @@ const routes = [
       component: CrctSignManage,
    },
    { // 휴가 조회
-      path: '/vacation/vcList',
-      name: 'VcList',
-      component: VcList,
-   },
-   { // 휴가 신청 관리(등록, 수정 등)
-      path: '/vacation/vcManage',
-      name: 'VcManage',
-      component: VcManage,
+      path: '/vacation',
+      name: 'Vacation',
+      component: Vacation,
+      children: [
+         {
+            path: 'vcList', // 기본 페이지로 'VacationList'를 표시
+            name: 'VcList',
+            component: VcList,
+         },
+         {
+            path: 'vcManage', // 휴가 관리 페이지
+            name: 'VcManage',
+            component: VcManage,
+         },
+      ],
    },
    { // 휴가 신청 결재
       path: '/vacation/vcSignManage',
@@ -278,17 +323,22 @@ const routes = [
       },
 
    {//게시판 목록
-      path:'/board/boardList',
+      path:'/setting/board/boardList',
       name: 'BoardList',
       component : BoardList,
    },
    {//게시판 등록
-      path:'/board/boardAdd',
+      path:'/setting/board/boardAdd',
       name: 'BoardAdd',
       component : BoardAdd,
    },
+   {//게시판 수정
+      path:'/setting/board/boardModify',
+      name: 'BoardModify',
+      component : BoardModify,
+   },
    {//게시글 목록
-      path:'/bulletin/bulletinList',
+      path:'/bulletin/bulletinList/:bbsId',
       name: 'BulletinList',
       component : BulletinList,
    },
@@ -298,10 +348,16 @@ const routes = [
       component : BulletinAdd,
    },
    {//게시글 상세조회
-      path:'/bulletin/bulletinInfo',
+      path:'/bulletin/bulletinInfo/:bbsId/:nttId',
       name: 'BulletinInfo',
       component : BulletinInfo,
    },
+    {//게시글 수정
+      path:'/bulletin/bulletinModify/:bbsId/:nttId',
+      name: 'BulletinModify',
+      component : BulletinModify,
+   },
+
 
 
    //pjh
@@ -353,9 +409,20 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
-  routes,
-  linkActiveClass: "active",
+   history: createWebHistory(process.env.BASE_URL),
+   routes,
+   linkActiveClass: "active",
+});
+
+// ✅ **전역 네비게이션 가드 설정**
+router.beforeEach((to, from, next) => {
+   const store = useUserInfoStore(); // 🔥 여기서 `useUserInfoStore()` 호출
+
+   if (to.path !== "/login" && !store.isAuthenticated) {
+   next("/login"); // 로그인 안 된 경우 로그인 페이지로 이동
+   } else {
+   next(); // 정상 이동
+   }
 });
 
 export default router;

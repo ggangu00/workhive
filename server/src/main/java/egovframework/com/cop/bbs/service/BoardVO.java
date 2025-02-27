@@ -100,7 +100,7 @@ public class BoardVO extends Board implements Serializable {
     private boolean plusCount = false;
     
     /** 익명등록 여부 */
-    private String anonymousAt = "";
+    private String anoAt = "";
     
     /** 하위 페이지 인덱스 (댓글 및 만족도 조사 여부 확인용) */
     private String subPageIndex = "";
@@ -116,6 +116,40 @@ public class BoardVO extends Board implements Serializable {
     
     /** 비밀글 여부 */
     private String secretAt;
+    
+	/** 게시글 제목 */
+    private String nttSj;
+    
+    /** 게시글 내용 */
+    private String nttCn;
+    
+    
+    public int getInqireCo() {
+		return inqireCo;
+	}
+
+	public void setInqireCo(int inqireCo) {
+		this.inqireCo = inqireCo;
+	}
+
+	private int inqireCo = 0;
+    
+    public String getNttSj() {
+		return nttSj;
+	}
+
+	public void setNttSj(String nttSj) {
+		this.nttSj = nttSj;
+	}
+
+	public String getNttCn() {
+		return nttCn;
+	}
+
+	public void setNttCn(String nttCn) {
+		this.nttCn = nttCn;
+	}
+
     
     /**
      * searchBgnDe attribute를 리턴한다.
@@ -610,7 +644,7 @@ public class BoardVO extends Board implements Serializable {
      * @return the anonymousAt
      */
     public String getAnonymousAt() {
-        return anonymousAt;
+        return anoAt;
     }
 
     /**
@@ -618,7 +652,7 @@ public class BoardVO extends Board implements Serializable {
      * @param anonymousAt the anonymousAt to set
      */
     public void setAnonymousAt(String anonymousAt) {
-        this.anonymousAt = anonymousAt;
+        this.anoAt = anoAt;
     }
     
     /**

@@ -5,7 +5,7 @@
       <!-- 페이지 헤더 -->
       <div class="card">
         <div class="card-body">
-          <h4 class="card-title float-left mt-1">출퇴근 정정 요청 관리</h4>
+          <h4 class="card-title float-left">출퇴근 정정 요청 관리</h4>
         </div>
       </div>
   
@@ -30,11 +30,11 @@
                   <tbody>
                     <tr>
                       <th>근무 일자</th>
-                      <td><input type="date" id="wordDate" class="form-control" v-model="crctData.commuteDt"></td>
+                      <td><input type="date" id="wordDate" class="form-control" v-model="crctData.commuteDt" :readonly="isUpdate"></td>
                       <th>출근 시간</th>
-                      <td><input type="datetime-local" class="form-control" v-model="crctData.goTime"></td>
+                      <td><input type="datetime-local" class="form-control" v-model="crctData.goTime" readonly></td>
                       <th>퇴근 시간</th>
-                      <td><input type="datetime-local" class="form-control" v-model="crctData.leaveTime"></td>
+                      <td><input type="datetime-local" class="form-control" v-model="crctData.leaveTime" readonly></td>
                     </tr>
                     <tr>
                       <th>정정 출근 시간</th>
@@ -75,16 +75,17 @@
 </template>
 
 <script setup>
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
-import { ref, onMounted } from 'vue';
-import { dateFormat, dateTimeFormat } from '../../assets/js/common.js';
+import { ref , onMounted, watch } from 'vue';
+import { dateTimeFormat } from '../../assets/js/common.js';
 
 const route = useRoute();
-// 넘겨받은 출퇴근 코드
-let cmtCd = route.query.cmtCd;
+let isUpdate = ref(route.query.isUpdate === 'true');;
+let cmtCd;
+let crctCd;
 
-// 등록 화면 데이터
+
 let crctData = ref({
   commuteCd: '',
   commuteDt: '',
@@ -95,60 +96,85 @@ let crctData = ref({
   crctReason: '',
   atchFileId: '',
   signId: '',
+  preGoTime: '',
+  preLeaveTime: '',
 });
+
+// 날짜 변경 감지(등록용 데이터 가져오기)
+watch (() => crctData.value.commuteDt, async () => {
+  if(cmtCd == null) {
+    let result = await axios.get(`/api/commute/dateCmtInfo`, {params: {commuteDt: crctData.value.commuteDt}});
+    
+    crctData.value.commuteCd = result.data.commuteCd;
+    crctData.value.goTime = result.data.goTime;
+    crctData.value.leaveTime = result.data.leaveTime;
+    crctData.value.crctGoTime = result.data.goTime;
+    crctData.value.crctLeaveTime = result.data.leaveTime;
+  }
+}, {deep:true});
+// 등록 화면 데이터 가져오기
 const cmtGetInfo = async () => {
   let result = await axios.get(`/api/commute/cmtInfo?commuteCd=${cmtCd}`);
 
-  console.log("cmtCd : ", result);
   crctData.value.commuteCd = result.data.commuteCd;
-  crctData.value.commuteDt = dateFormat(result.data.commuteDt, 'yyyy-MM-dd hh:mm:ss');
+  crctData.value.commuteDt = dateTimeFormat(result.data.commuteDt, 'yyyy-MM-dd');
   crctData.value.goTime = result.data.goTime;
   crctData.value.leaveTime = result.data.leaveTime;
   crctData.value.crctGoTime = result.data.goTime;
   crctData.value.crctLeaveTime = result.data.leaveTime;
 }
+// 수정 화면 데이터 가져오기
+const crctGetInfo = async () => {
+  let result = await axios.get(`/api/commute/crctInfo?crctCd=${crctCd}`);
+
+  crctData.value = result.data;
+  crctData.value.commuteDt = dateTimeFormat(result.data.commuteDt, 'yyyy-MM-dd');
+}
 
 onMounted(() => {
-  cmtGetInfo();
+  if(route.query.cmtCd != undefined) {
+    cmtCd = route.query.cmtCd;
+    cmtGetInfo();
+  } else if(route.query.crctCd != undefined) {
+    crctCd = route.query.crctCd;
+    crctGetInfo();
+  }
 });
 
 // 저장/취소
+const router = useRouter();
 const btnCrctManage = async () => {
-  const addData = new FormData();
-  addData.append("commuteCd", crctData.value.commuteCd);
-  addData.append("crctGoTime", dateTimeFormat(crctData.value.crctGoTime, 'yyyy-MM-dd hh:mm:ss'));
-  addData.append("crctLeaveTime", dateTimeFormat(crctData.value.crctLeaveTime, 'yyyy-MM-dd hh:mm:ss'));
-  addData.append("crctReason", crctData.value.crctReason);
-  // addData.append("atchFileId", );
-  addData.append("createId", 'user01');
-  addData.append("signId", crctData.value.signId);
+  let formData = new FormData();
+
+  formData.append("crctCd", crctData.value.crctCd);
+  formData.append("commuteCd", crctData.value.commuteCd);
+  formData.append("crctGoTime", dateTimeFormat(crctData.value.crctGoTime, 'yyyy-MM-dd hh:mm:ss'));
+  formData.append("crctLeaveTime", dateTimeFormat(crctData.value.crctLeaveTime, 'yyyy-MM-dd hh:mm:ss'));
+  formData.append("crctReason", crctData.value.crctReason);
+  // formData.append("atchFileId", );
+  formData.append("createId", 'user01');
+  formData.append("signId", crctData.value.signId);
   
-  await axios.post('/api/commute/crctAdd', addData);
+  if(!isUpdate.value) {
+    formData.append("preGoTime", crctData.value.goTime);
+    formData.append("preLeaveTime", crctData.value.leaveTime);
+    await axios.post('/api/commute/crctAdd', formData);
+  }
+  else {
+    
+    await axios.post('/api/commute/crctModify', formData);
+  }
 
+  router.push({ name: 'CrctList' });
 }
-const btnCrctCancle = () => {
-
+const btnCrctCancle = () => { // 뒤로가기
+  router.go(-1);
 }
 
 </script>
 
 
 <style scoped>
-.header > hr {
-  height: 2px;
-  background-color: black;
-  border: none;
-}
-.vc-card hr {
-  border: 1px dashed gray;
-  margin: 3px 0;
-}
-.vc-header {
-  font-weight: bolder;
-  font-size: 18px;
-  margin-bottom: 15px;
-}
-
 th {
   background-color: #d2d6da !important;
   color: black !important;

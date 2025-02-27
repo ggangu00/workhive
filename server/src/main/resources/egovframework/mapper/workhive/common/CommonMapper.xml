@@ -5,7 +5,7 @@
 	<!-- 공통코드 디테일 전체조회 -->
 	<select id="commonSelectAll" parameterType="String" resultType="commonDTO">
 		SELECT
-		    comm_dtl_nm,
+		    comm_dtl_nm, 
 		    comm_dtl_cd
 		  FROM
 		    common_detail
@@ -22,21 +22,48 @@
 	<!-- 거래처 전체조회 -->
 	<select id="comSelectAll" parameterType="String" resultType="commonDTO">
 		SELECT
-		    entrprs_mber_id,
-		    cmpny_nm,
-		    bizrno,
-		    cxfc,
-		    zip,
-		    area_no,
-		    entrprs_middle_telno,
-		    entrprs_end_telno,
-		    fxnum,
-		    update_id,
+		    entrprs_mber_id,		 --거래처 id
+		    cmpny_nm,				 --거래처명
+		    bizrno,			 		 --사업자등록번호
+		    cxfc,				  	 --대표자
+		    zip,					 --우편번호
+		    area_no,				 --지역번호
+		    entrprs_middle_telno,	 --중간번호
+		    entrprs_end_telno,		 --끝번호
+		    fxnum,					 --팩스
+		    update_id,	
 		    update_dt,
 		    create_id,
 		    create_dt,
 		    del_yn
-		  FROM comtnentrprsmber
+		  FROM 
+		  	comtnentrprsmber
+		  ORDER BY 
+		  	create_dt desc
+	</select>
+	
+	<!-- 로그인 로그 전체조회 -->
+	<select id="loginLogSelectAll" parameterType="String" resultType="commonDTO">
+		SELECT
+		    log_cd, 	--로그 코드
+		    log_id,	 	--로그인 아이디
+		    log_ip, 	--로그인 ip
+		    state,		--성공여부
+		    create_dt
+		  FROM login_log
 		  ORDER BY create_dt desc
+	</select>
+	
+	<!-- 홈 대시보드 건수 조회 (진행중인 프로젝트, 금일 예정 일정, 미완료 일지) -->
+	<select id="homeInfo" parameterType="String">
+	<![CDATA[
+	select
+	    NVL((select count(*) from project project join project_mem pm on project.pr_cd=pm.pr_cd where project.state='A02' and pm.mber_id=m.mber_id),0) as project_cnt, --참여자로 등록된 프로젝트 갯수
+	    NVL((select count(*) from todo todo where todo.state='A02' and mber_id=m.mber_id),0) as todo_cnt,	--금일 예정 일지 갯수
+	    NVL((select count(*) from COMTNSCHDULINFO sch WHERE TRUNC(TO_DATE(SCHDUL_BGNDE, 'YYYYMMDDHH24MI')) <= TRUNC(SYSDATE) and TRUNC(TO_DATE(SCHDUL_ENDDE, 'YYYYMMDDHH24MI')) >= TRUNC(SYSDATE)),0) as sch_cnt --금일 일정 갯수
+	from COMTNGNRLMBER m 
+	where mber_id=#{mberId}
+	]]>
+	
 	</select>
 </mapper>

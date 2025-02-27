@@ -1,173 +1,114 @@
 <template>
-  <ul class="dept-list">
-    <li v-for="dept in departments" :key="dept.id">
-      <div @click="toggleDept(dept)" class="flex-container">
-        <i :class="dept.open ? 'fa-regular fa-folder-open' : 'fa-solid fa-folder'"></i>
-        <span :data-id="dept.id">{{ dept.name }}</span>
-        <i class="fa-solid fa-plus" @click.stop="addDept(dept)"></i>
-      </div>
-      <ul v-if="dept.open">
-        <li v-for="sub in dept.subDepartments" :key="sub.id">
-          <div @click="toggleDept(sub)" class="flex-container">
-            <i :class="sub.open ? 'fa-regular fa-folder-open' : 'fa-solid fa-folder'"></i>
-            <span :data-id="dept.id">{{ sub.name }}</span>
-            <i class="fa-solid fa-plus" @click.stop="addDept(sub)"></i>
-          </div>
-          <ul v-if="sub.open">
-            <li v-for="job in sub.jobs" :key="job.id" class="flex-container">
-              <i class="fa-solid fa-file"></i>
-              <span :data-id="job.id">{{ job.name }}</span>
-              <i class="fa-solid fa-pen" @click.stop="editJob(job)"></i>
-              <i class="fa-solid fa-x" @click.stop="removeJob(job)"></i>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </li>
-  </ul>
+  <li>
+    <div class="flex-container">
+      <!-- 부서 열기/닫기 아이콘 -->
+      <i :class="isOpen ? 'fa-regular fa-folder-open' : 'fa-solid fa-folder'" @click="toggle"></i>
+      <span @click="toggle">{{ dept.deptNm }}</span>
+      <i class="fa-solid fa-plus" @click.stop="jobBxManage('add', dept)"></i>
+    </div>
 
-  <Modal
-    :isShowModal="isShowModal"
-    :modalTitle="'업무함 관리'"
-    @click.self="modalClose"
-  >
-    <template v-slot:body>
-      <div class="content">
-        <div class="container-fluid">
-          <div class="card">
-            <div class="card-body">
+    <!-- 하위 부서 및 업무함을 같은 위치에 배치 -->
+    <ul v-if="isOpen">
+      <!-- 하위 부서 렌더링 -->
+      <li v-for="child in children" :key="child.deptCd">
+        <DeptJobBx
+          :dept="child"
+          :departments="departments"
+          :jobBoxes="jobBoxes"
+        />
+      </li>
 
-              <div class="col mb-3">
-                <div class="row">
-                  <div class="col">
-                    <label>부서명</label>
-                  </div>
-                  <div class="col">
-                    <label>표시순서<em class="point-red">*</em></label>
-                  </div>
-                </div>
-                <div class="row align-items-center">
-                  <div class="col-6">
-                    <input type="text" class="form-control" placeholder="부서명" readonly>
-                  </div>
-                  <div class="col-6">
-                    <input type="number" class="form-control" placeholder="0">
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      </div>
-    </template>
-
-    <template v-slot:footer>
-      <button class="btn btn-secondary btn-fill mx-2" @click="modalClose">닫기</button>
-      <button class="btn btn-success btn-fill mx-2" @click="modalConfirm">저장</button>
-    </template>
-  </Modal>
-
-  <button @click="datareturn">임시</button>
+      <!-- 업무함 렌더링 -->
+      <li v-for="job in deptJobBoxes" :key="job.deptJobBxId" class="job-box">
+        <i class="fa-solid fa-file" @click="jobBoxClicked(job)"></i>
+        <span @click="jobBoxClicked(job)">{{ job.deptJobBxNm }}</span>
+        <i class="fa-solid fa-pen" @click.stop="jobBxManage('modify', job)"></i>
+        <i class="fa-solid fa-x" @click.stop="jobBxManage('remove', job)"></i>
+      </li>
+    </ul>
+  </li>
 </template>
-  
+
 <script setup>
-  import { ref, onMounted } from 'vue';
-  import axios from 'axios';
+import { ref, computed } from 'vue';
+import { useStore } from 'vuex';
+import { inject } from 'vue'; // 부모에게 받아오기
 
-  import Modal from '../../components/Modal.vue';
+const props = defineProps({
+  dept: Object,
+  departments: Array,
+  jobBoxes: Array,
+});
 
+// 상태: 트리 노드 열기/닫기
+const isOpen = ref(false);
+const toggle = () => {
+  isOpen.value = !isOpen.value;
+};
 
-  let deptList = [];
-  let jobBxList = [];
-  // 부서 목록 조회  
-  const deptGetList = async () => {
-    let result = await axios.get('/api/deptstore/deptList')
-                            .catch(error => console.error("에러 :", error));
-    
-    deptList = result.data.resultList;
-  };
-  // 업무함 목록 조회
-  const jobBxGetList = async () => {
-    let result = await axios.get('/api/deptstore/jobBxList')
-                            .catch(error => console.error("에러 :", error));
-    
-    jobBxList = result.data;
-  };
+// 현재 부서의 하위 부서 필터링
+const children = computed(() =>
+  props.departments.filter(d => d.parentCd === props.dept.deptCd)
+);
 
-  const departments = ref([
-    {
-      id: 1, name: "개발팀", open: false,
-      subDepartments: [
-        { id: 2, name: "서버팀", open: false, jobs: [{ id: 101, name: "서버 유지보수" }] }
-      ]
-    },
-    {
-      id: 3, name: "디자인팀", open: false,
-      subDepartments: [
-        { id: 4, name: "UI 디자인팀", open: false, jobs: [{ id: 102, name: "앱 UI 개선" }] }
-      ]
-    }
-  ]);
+// 현재 부서의 업무함 필터링
+const deptJobBoxes = computed(() =>
+  props.jobBoxes.filter(j => j.deptCd === props.dept.deptCd)
+);
 
-  const toggleDept = (dept) => {
-    dept.open = !dept.open;
-  };
-  const addDept = (parent) => {
-    console.log("부서 추가", parent);
-  };
-  const editJob = (job) => {
-    console.log("업무 수정", job);
-  };
-  const removeJob = (job) => {
-    console.log("업무 삭제", job);
-  };
+// 부모로부터 jobBxManage 함수 받아오기
+const jobBxCheck = inject('jobBxCheck');
 
-  // 모달
-  const isShowModal = ref(false);
-  const modalOpen = () => {
-    isShowModal.value = true;
-  }
-  const modalClose = () => {
-    isShowModal.value = false;
-  }
-  const modalConfirm = () => {
-    isShowModal.value = false;
-  }
+// 자식에서 발생한 이벤트 처리
+const jobBxManage = (type, data) => {
+  jobBxCheck(type, data); // 부모로 이벤트 전달
+};
 
-  const deptName = ref();
-  onMounted(() => {
-    document.querySelector('.dept-list').addEventListener('click', (e) => {
-      if (e.target.classList.contains('fa-plus')) {
-        deptName.value = e.target.previousElementSibling.dataset.id;
-        
-        modalOpen();
-      }
-    })
+// 업무함 클릭시 vuex 정보 변경
+const store = useStore();
+const jobBoxClicked = (job) => {
+  const relatedJobBoxes = props.jobBoxes.filter(j => j.deptCd === job.deptCd);
 
-    deptGetList();
-    jobBxGetList();
-  })
-
-  // 업무함 클릭시 부서/업무함 정보 전달
-  const emit = defineEmits(['datareturn']);
-  const datareturn = () => {
-    emit('datareturn', { deptId: deptList[0].orgnztId, jobBxId: jobBxList[0].deptjobBxId, jobBxList: jobBxList });
-  };
+  store.dispatch('jobBxSelectedUpdate', { 
+    searchDeptCd: job.deptCd, 
+    searchDeptNm: job.deptNm,
+    searchDeptJobBxId: job.deptJobBxId,
+    searchDeptJobBxNm: job.deptJobBxNm,
+  });
+  
+  store.dispatch('jobBxListUpdate', relatedJobBoxes);
+};
 
 </script>
-  
-<style>
-  ul {
-    list-style-type: none;
-    padding: 5px 8px !important;
-  }
-  .flex-container {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
+
+<style scoped>
+.flex-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+span {
+  font-weight: bold;
+  cursor: pointer;
+}
+
+i {
+  margin-right: 8px;
+}
+
+/* 아이콘 스타일 */
+.job-box {
+  color: blue;
+  font-style: italic;
+}
+
+ul {
+  list-style-type: none;
+  padding-left: 15px;
+}
+
+li {
+  margin: 5px 0;
+}
 </style>
-  
-  
-  

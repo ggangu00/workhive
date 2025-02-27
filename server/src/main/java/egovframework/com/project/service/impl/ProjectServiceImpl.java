@@ -1,25 +1,40 @@
 package egovframework.com.project.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import egovframework.com.cmm.ComDefaultVO;
 import egovframework.com.project.mapper.ProjectMapper;
 import egovframework.com.project.service.ProjectDTO;
 import egovframework.com.project.service.ProjectService;
+import egovframework.com.project.service.ProjectWorkDTO;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service("ProjectService")
 public class ProjectServiceImpl implements ProjectService{
 	
 	@Resource
 	private ProjectMapper projectMapper;
 	
+	//======================프로젝트=====================
+	
 	//프로젝트 전체조회
 	@Override
-	public List<ProjectDTO> projectSelectAll() {
-		return projectMapper.projectSelectAll();
+	public List<ProjectDTO> projectSelectAll(ComDefaultVO searchVO) {
+		return projectMapper.projectSelectAll(searchVO);
+	}
+	
+	//프로젝트 전체건수
+	@Override
+	public int projectSelectAllCnt(ComDefaultVO searchVO) {
+		return projectMapper.projectSelectAllCnt(searchVO);
 	}
 	
 	//프로젝트 단건조회
@@ -31,15 +46,35 @@ public class ProjectServiceImpl implements ProjectService{
 	//프로젝트 등록
 	@Override
 	public boolean projectInsert(ProjectDTO project) {
-		if (project.getPrNm() == null) {
-            throw new IllegalArgumentException("프로젝트명은 필수입니다.");
-        }else if (project.getTypeCd() == null) {
-            throw new IllegalArgumentException("프로젝트 구분값은 필수입니다.");
-        }else if (project.getStartDt() == null || project.getEndDt() == null) {
-            throw new IllegalArgumentException("프로젝트 기간은 필수입니다.");
-        }
 		return projectMapper.projectInsert(project) == 1 ? true : false;
 	}	
+	
+	@Transactional
+    public boolean saveProject(ProjectDTO project) {
+		 try {
+		        projectMapper.projectInsert(project);
+		        
+		        String prCd = projectMapper.getLastInsertedPrCd();
+		        project.setPrCd(prCd);  // DTO에 prCd 설정
+
+		        if (project.getWorkArr() != null && !project.getWorkArr().isEmpty()) {
+		        	log.info(prCd);
+		            Map<String, Object> paramMap = new HashMap<>();
+		            paramMap.put("prCd", prCd);
+		            paramMap.put("list", project.getWorkArr());  // 리스트 바인딩
+
+		            projectMapper.projectWorkInsert(paramMap);
+		            
+		        }
+		        
+
+		        return true; 
+
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		        return false;
+		    }
+    }
 
 	//프로젝트 수정
 	@Override
@@ -53,27 +88,55 @@ public class ProjectServiceImpl implements ProjectService{
 		return projectMapper.projectDelete(prCd) == 1 ? true : false;
 	}
 	
-	//프로젝트 과업조회
+	//프로젝트 다중 삭제
+	public boolean projectListDelete(List<String> projectArr) {
+        return projectMapper.projectListDelete(projectArr) == 1 ? true : false;
+    }
+	
+	//======================프로젝트 과업=====================
+	
+	//프로젝트 과업 전체조회
 	@Override
-	public List<ProjectDTO> projectWorkSelect(String prCd) {
-		return projectMapper.projectWorkSelect(prCd);
-	}
-
-	//프로젝트 과업 등록
-	@Override
-	public boolean projectWorkInsert(ProjectDTO project) {
-		return projectMapper.projectWorkInsert(project) == 1 ? true : false;
+	public List<ProjectWorkDTO> projectWorkSelectAll(String prCd) {
+		return projectMapper.projectWorkSelectAll(prCd);
 	}
 	
-	//프로젝트 일정조회
+	//프로젝트 과업 단건조회
 	@Override
-	public List<ProjectDTO> projectPlanSelect(String prCd) {
-		return projectMapper.projectPlanSelect(prCd);
+	public ProjectWorkDTO projectWorkSelect(String prWorkCd) {
+		return projectMapper.projectWorkSelect(prWorkCd);
+	}
+	
+	//프로젝트 과업삭제
+	@Override
+	public boolean projectWorkDelete(String prWorkCd) {
+		return projectMapper.projectPlanDelete(prWorkCd) == 1 ? true : false;
+	}
+	
+	//======================프로젝트 일정=====================
+	
+	//프로젝트 일정 전체조회
+	@Override
+	public List<ProjectDTO> projectPlanSelectAll(String prCd) {
+		return projectMapper.projectPlanSelectAll(prCd);
+	}
+	
+	//프로젝트 일정 단건조회
+	@Override
+	public ProjectDTO projectPlanSelect(String prPlanCd) {
+		return projectMapper.projectPlanSelect(prPlanCd);
 	}
 
-	//프로젝트 일정 등록
+	//프로젝트 일정등록
 	@Override
 	public boolean projectPlanInsert(ProjectDTO project) {
 		return projectMapper.projectPlanInsert(project) == 1 ? true : false;
 	}	
+	
+	//프로젝트 일정삭제
+	@Override
+	public boolean projectPlanDelete(String prPlanCd) {
+		return projectMapper.projectPlanDelete(prPlanCd) == 1 ? true : false;
+	}
+
 }

@@ -75,13 +75,13 @@
 		
 		
 			INSERT INTO COMTNCOMMENT
-			(ANSWER_NO, NTT_ID, BBS_ID, WRTER_ID, WRTER_NM, PASSWORD, 
+			(ANSWER_NO, NTT_ID, BBS_ID, WRTER_ID, WRTER_NM, COMMENT_CN, PASSWORD, 
 			 ANSWER, USE_AT, 
 			 FRST_REGISTER_ID, FRST_REGIST_PNTTM
 			 )
 			VALUES
-			( #{commentNo}, #{nttId}, #{bbsId}, #{wrterId}, #{wrterNm}, #{commentPassword}, 
-			  #{commentCn}, 'Y',
+			( #{commentNo}, #{nttId}, #{bbsId}, #{wrterId}, #{wrterNm},#{commentCn} #{commentPassword}, 
+			  'Y',
 			  #{frstRegisterId}, SYSDATE
 			 )
 		

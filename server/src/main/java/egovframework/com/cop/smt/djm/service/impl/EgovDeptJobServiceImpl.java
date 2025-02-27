@@ -294,4 +294,10 @@ public class EgovDeptJobServiceImpl extends EgovAbstractServiceImpl implements E
 		deptJobDAO.deleteDeptJob(deptJob);
 	}
 
+	// 업무 목록 삭제.
+	@Override
+	public void deleteDeptJobList(List<DeptJob> jobList) {
+		return;
+	}
+
 }

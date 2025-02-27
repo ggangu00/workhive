@@ -10,4 +10,7 @@ public interface CommuteCrctService {
 	public boolean crctDelete(String crctCd);
 	public CommuteCrctDTO crctSelect(String crctCd);
 	public List<CommuteCrctDTO> crctSelectAll(CommuteCrctDTO crctDTO);
+	public List<CommuteCrctDTO> crctSelectSigner(CommuteCrctDTO crctDTO);
+	public List<CommuteCrctDTO> crctSelectSigned(CommuteCrctDTO crctDTO);
+	public boolean signUpdate(CommuteCrctDTO crctDTO);
 }

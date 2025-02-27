@@ -158,7 +158,7 @@ public abstract class EgovComAbstractDAO extends EgovAbstractMapper{
 	 */
 	@Override
 	public <T> T selectOne(String queryId, Object parameterObject) {
-		LOGGER.debug("queryId = "+queryId);
+		LOGGER.debug("queryId = " + queryId);
 		return getSqlSession().selectOne(queryId, parameterObject);
 	}
 

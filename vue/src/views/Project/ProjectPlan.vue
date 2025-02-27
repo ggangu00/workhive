@@ -2,62 +2,59 @@
   <div class="content" @keydown.esc="modalClose">
     <div class="container-fluid schedule-container">
       <Card>
-        <h4 class="card-title float-left">프로젝트 조회</h4>
+        <h4 class="card-title float-left">프로젝트 일정관리</h4>
       </Card>
 
       <div class="card border-primary">
         <div class="card-body">
-          <p class="card-sub">대구사람이좋다협회</p>
-          <h5 class="card-title mb-3">{{ projectInfo.prNm }} <span class="badge badge-danger">D-10</span></h5>
-          <p class="card-sub"><b>기간 : </b> {{ dateFormat(projectInfo.startDt) }} ~ {{ dateFormat(projectInfo.endDt) }}
+          <p class="card-sub">{{ projectInfo.comNm }}</p>
+          <h5 class="card-title mb-3">
+            {{ projectInfo.prNm }}
+            <span class="badge" :class="projectInfo.term > 10 ? 'badge-primary' : 'badge-danger'">D{{ term }}</span>
+          </h5>
+          <p class="card-sub"><b>기간 : </b> {{ projectInfo.startDt }} ~ {{ projectInfo.endDt }}
           </p>
           <p class="card-sub"><b>참여자 : </b> 박주현, 박지훈, 정수민, 박명식</p>
         </div>
       </div>
-
       <Card>
         <button class="btn btn-primary btn-fill float-right" @click="modalOpen">일정등록</button>
-        <table class="table-responsive">
-          <tr>
-            <th>1주차</th>
-            <th>2주차</th>
-            <th>3주차</th>
-            <th>4주차</th>
-            <th>5주차</th>
-            <th>6주차</th>
-            <th>7주차</th>
-            <th>8주차</th>
-          </tr>
-          <tr>
-            <td>
-              <div class="task red" style="width:190%">화면설계 및 데이터베이스 정리 <span class="close">×</span></div>
-            </td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td>
-              <div class="task blue" style="width:290%">화면설계 및 데이터베이스 정리 <span class="close">×</span></div>
-            </td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-        </table>
+
+        <div style="width:100%; overflow:auto">
+          <table>
+            <thead>
+              <tr>
+                <th :key="date" v-for="date in dateTermArr">
+                  <span :class="dateGetDay(date) == '일' ? 'point-red' : dateGetDay(date) == '토' ? 'point-blue' : ''">{{
+                    dateFormatDay(date) }}</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <template v-if="planCount > 0">
+                <tr :key="plan" v-for="plan in planList"> <!--등록된 일정갯수만큼-->
+                  <td :key="date" v-for="date in dateTermArr"> <!--시작일 ~ 종료일 날짜 기간만큼-->
+                    <div class="task" v-if="date == plan.startDt"
+                      :style="'width: ' + (dateTermCalc(plan.startDt, plan.endDt) * 100 - 10) + '%; background-color:' + plan.color">
+                      <span @click="btnProjectPlanUpdate(plan.prPlanCd)">{{ plan.planNm }}</span>
+                      <button class="close" @click="btnProjectPlanRemove(plan.prPlanCd)">×</button>
+                    </div>
+                  </td>
+                </tr>
+              </template>
+              <tr v-else class="list-nodata">
+                <td :colspan="dateTermArr.length">
+                  <div>등록된 일정이 없습니다.</div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </Card>
     </div>
   </div>
 
-  <!--업무등록 모달[s]-->
+  <!--일정등록 모달[s]-->
   <Modal :isShowModal="isShowModal" :modalTitle="'일정등록'" @click.self="modalClose">
     <!-- 모달 바디 -->
     <template v-slot:body>
@@ -66,26 +63,20 @@
           <div class="form-group has-label">
             <label>일정색상</label>
           </div>
-          <input type="color" class="form-control form-control-color" id="exampleColorInput" value="#563d7c"
-            title="Choose your color">
+          <input type="color" :name="color" v-model="color" class="form-control form-control-color"
+            id="exampleColorInput" title="Choose your color">
         </div>
         <div class="mb-3">
           <label class="form-label">기간 <em class="point-red">*</em></label>
           <div class="row">
             <div class="col-auto">
-              <select class="form-select" :name="startWeek" v-model="startWeek">
-                <option value="1">1주차</option>
-                <option value="2">2주차</option>
-                <option value="3">3주차</option>
-              </select>
+              <input type="date" :name="startDt" v-model="startDt" :min="dateFormat(projectInfo.startDt)"
+                class="form-control">
             </div>
-            <div class="col-auto">~</div>
+            <div class="col-auto p-none">~</div>
             <div class="col-auto">
-              <select class="form-select" :name="endWeek" v-model="endWeek">
-                <option value="1">1주차</option>
-                <option value="2">2주차</option>
-                <option value="3">3주차</option>
-              </select>
+              <input type="date" :name="endDt" v-model="endDt" :min="startDt" :max="dateFormat(projectInfo.endDt)"
+                class="form-control">
             </div>
           </div>
         </div>
@@ -100,44 +91,56 @@
 
     <!-- 모달 푸터 -->
     <template v-slot:footer>
-      <button type="button" class="btn btn-primary btn-fill" @click="confirm">등록</button>
+      <button type="button" class="btn btn-primary btn-fill" @click="btnProjectPlanAdd">등록</button>
       <button type="button" class="btn btn-secondary btn-fill" @click="modalClose">닫기</button>
     </template>
   </Modal>
-  <!--업무등록 모달[e]-->
+  <!--일정등록 모달[e]-->
 
 </template>
 
 <script setup>
 import axios from "axios";
-import Swal from 'sweetalert2';
 import { onBeforeMount, ref } from 'vue';
+import { useRoute } from "vue-router";
+
+//---------------컴포넌트-------------- 
+import Swal from 'sweetalert2';
 import Card from '../../components/Cards/Card.vue'
 import Modal from '../../components/Modal.vue';
-import { dateFormat } from '../../assets/js/common.js'
-import { useRoute } from 'vue-router';
+
+//---------------js-------------- 
+import { dateFormat } from '../../assets/js/common'
+import { dateTermCalc, dateGetDay, dateFormatDay } from '../../assets/js/project'
+
 
 //---------------데이터-------------- 
 
 const route = useRoute();
-const prCd = ref('');
-const planNm = ref('');
-const startWeek = ref('1');
-const endWeek = ref('1');
+const prCd = ref('');            //해당 프로젝트 코드
+const term = ref('');            //프로젝트 남은일수
+
+const planNm = ref('');          //일정명
+const color = ref('#fd9b9b');    //화면에 보여질 일정색상
+const startDt = ref('');         //일정 시작일
+const endDt = ref('');           //일정 종료일
+const dateTermArr = ref([]);        //일정 시작일~종료일 모든 일자 출력
+const createId = ref('admin');
 
 onBeforeMount(() => {
   prCd.value = route.query.prCd;
-  projectGetInfo(prCd.value);
+  projectGetInfo(prCd.value);     //해당 프로젝트 정보 호출 함수
 });
 
 //---------------모달--------------
 
 const isShowModal = ref(false);
-const modalOpen = () => { //프로젝트 정보 모달 열기
+const modalOpen = () => { //일정 등록/수정 모달 열기
   isShowModal.value = true;
 }
 
-const modalClose = (e) => { //프로젝트 정보 모달 닫기
+const modalClose = (e) => { //일정 등록/수정 모달 닫기
+  formReset();
   if (e.key === "Escape") {
     if (isShowModal.value) {
       isShowModal.value = !isShowModal.value
@@ -147,9 +150,54 @@ const modalClose = (e) => { //프로젝트 정보 모달 닫기
   }
 }
 
-const confirm = () => {
+//-------------버튼이벤트------------
+
+const btnProjectPlanAdd = () => { //일정 등록
   projectPlanAdd();
   isShowModal.value = false;
+}
+
+const btnProjectPlanUpdate = (code) => { //일정 수정
+  modalOpen();
+  projectPlanGetInfo(code);
+}
+
+const btnProjectPlanRemove = (code) => { //일정 삭제
+  Swal.fire({
+    title: "해당 일정을 삭제 하시겠습니까?",
+    icon: "question",
+    showCancelButton: true,
+    customClass: {
+      confirmButton: "btn btn-danger btn-fill",
+      cancelButton: "btn btn-secondary btn-fill"
+    },
+    cancelButtonText: "닫기",
+    confirmButtonText: "삭제",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      projectPlanRemove(code);
+    }
+  });
+}
+
+//-------------공통함수------------
+
+const projectDateTerm = (startDate, endDate) => { // 시작일 ~ 종료일 사이의 날짜 배열로 담는 함수 
+  let start = new Date(startDate);
+  let end = new Date(endDate);
+
+  while (start <= end) {
+    let formattedDate = start.toISOString().split("T")[0]; // YYYY-MM-DD 형식으로 변환
+    dateTermArr.value.push(formattedDate);
+    start.setDate(start.getDate() + 1); // 하루 증가
+  }
+};
+
+const formReset = () => { //입력정보 초기화
+  planNm.value = '';
+  color.value = '';
+  startDt.value = '';
+  endDt.value = '';
 }
 
 //---------------axois--------------
@@ -157,10 +205,63 @@ const confirm = () => {
 const projectInfo = ref([]);
 const projectGetInfo = async (prCd) => { //프로젝트 단건조회
   try {
-    const result = await axios.get(`/api/project/info?prCd=${prCd}`);
+    const result = await axios.get(`/api/project/info/${prCd}`);
+
     projectInfo.value = result.data.info;
+    projectInfo.value.startDt = dateFormat(projectInfo.value.startDt);
+    projectInfo.value.endDt = dateFormat(projectInfo.value.endDt);
+    projectInfo.value.term = dateTermCalc(dateFormat(projectInfo.value.endDt), dateFormat());
+
+    term.value = projectInfo.value.term;
+
+    term.value > 0 ? term.value = "+" + term.value         //종료일 전일 때
+      : term.value < 0 ? term.value  //종료일을 초과했을 때
+        : term.value = term.value = "-day";                  //종료일 당일일 때
+
+    projectPlanGetList(prCd);
+    projectDateTerm(projectInfo.value.startDt, projectInfo.value.endDt); //프로젝트 시작일~종료일까지 모든 일자 배열에 담음
   } catch (err) {
     projectInfo.value = [];
+
+    Swal.fire({
+      icon: "error",
+      title: "API 조회 오류",
+      text: "Error : " + err
+    });
+  }
+}
+
+const planList = ref([]);
+const planCount = ref(0);
+const projectPlanGetList = async (prCd) => { //프로젝트 일정 전체조회
+  try {
+    const result = await axios.get(`/api/project/plan/${prCd}`);
+
+    planCount.value = result.data.length;
+    planList.value = result.data.map(item => ({
+      ...item,
+      startDt: dateFormat(item.startDt),
+      endDt: dateFormat(item.endDt),
+    }));
+
+  } catch (err) {
+    planList.value = [];
+  }
+}
+
+const projectPlanInfo = ref([]);
+const projectPlanGetInfo = async (prPlanCd) => { //프로젝트 일정 단건조회
+  try {
+    const result = await axios.get(`/api/project/plan/info/${prPlanCd}`);
+
+    projectPlanInfo.value = result.data.info;
+    planNm.value = projectPlanInfo.value.planNm;
+    color.value = projectPlanInfo.value.color;
+    startDt.value = dateFormat(projectPlanInfo.value.startDt);
+    endDt.value = dateFormat(projectPlanInfo.value.endDt);
+
+  } catch (err) {
+    projectPlanInfo.value = [];
 
     Swal.fire({
       icon: "error",
@@ -178,26 +279,18 @@ const projectPlanAdd = async () => { //프로젝트 일정 등록
       title: "일정명을 입력하세요"
     });
     return;
-  } else if (startWeek.value >= endWeek.value) {
-    Swal.fire({
-      icon: "info",
-      title: "일정 시작일이 종료일보다 작을 수 없습니다."
-    });
-    return;
   }
 
-  const requestData = { // 요청 본문에 보낼 데이터
-    prCd: prCd.value,
-    planNm: planNm.value,
-    startWeek: startWeek.value,
-    endWeek: endWeek.value,
-    createId: "admin"
-  };
-
-  console.log(requestData);
+  const formData = new FormData();
+  formData.append("prCd", prCd.value);
+  formData.append("planNm", planNm.value);
+  formData.append("startDt", startDt.value);
+  formData.append("endDt", endDt.value);
+  formData.append("color", color.value);
+  formData.append("createId", createId.value);
 
   try {
-    const response = await axios.post('/api/project/plan', requestData);
+    const response = await axios.post('/api/project/plan', formData);
 
     if (response.data.result === true) {
       Swal.fire({
@@ -205,6 +298,8 @@ const projectPlanAdd = async () => { //프로젝트 일정 등록
         title: "등록완료",
         text: "등록한 일정은 목록에서 확인할 수 있습니다",
       })
+
+      projectPlanGetList(prCd.value);
     }
   } catch (err) {
     Swal.fire({
@@ -212,6 +307,29 @@ const projectPlanAdd = async () => { //프로젝트 일정 등록
       title: "등록실패",
       text: "프로젝트 등록 실패",
     })
+  }
+}
+
+const projectPlanRemove = async (prPlanCd) => { //프로젝트 일정삭제
+
+  try {
+    const response = await axios.delete(`/api/project/plan/${prPlanCd}`);
+
+    if (response.data.result === true) {
+      Swal.fire({
+        icon: "success",
+        title: "삭제완료",
+        text: "선택한 일정을 삭제하였습니다",
+      })
+
+      projectPlanGetList(prCd.value);
+    }
+  } catch (err) {
+    Swal.fire({
+      icon: "error",
+      title: "삭제 실패",
+      text: "Error : " + err
+    });
   }
 }
 </script>

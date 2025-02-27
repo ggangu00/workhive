@@ -28,7 +28,7 @@ public class DeptJob implements Serializable{
 	/** 부서업무함명 */
 	private String deptJobBxNm;
 	/** 부서 ID */
-	private String deptId;
+	private String deptCd;
 	/** 부서명 */
 	private String deptNm;
 	/** 부서업무 ID */
@@ -66,11 +66,11 @@ public class DeptJob implements Serializable{
 	public void setDeptJobBxNm(String deptJobBxNm) {
 		this.deptJobBxNm = deptJobBxNm;
 	}
-	public String getDeptId() {
-		return deptId;
+	public String getDeptCd() {
+		return deptCd;
 	}
-	public void setDeptId(String deptId) {
-		this.deptId = deptId;
+	public void setDeptCd(String deptCd) {
+		this.deptCd = deptCd;
 	}
 	public String getDeptNm() {
 		return deptNm;

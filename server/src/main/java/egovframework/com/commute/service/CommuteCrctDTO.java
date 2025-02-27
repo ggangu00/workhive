@@ -18,16 +18,21 @@ public class CommuteCrctDTO {
 	private String atchFileId;
 	private String createId;
 	private String createDt;
+	private String updateId;
+	private String updateDt;
 	private String signId;
 	private String signDt;
 	private String signState;
 
 	private String commuteDt;
 	private String goTime;
-	private String leave_time;
+	private String leaveTime;
 	
 	private String startDate;
 	private String endDate;
+	private String searchState;
 	
+	private String preGoTime;
+	private String preLeaveTime;
 	
 }

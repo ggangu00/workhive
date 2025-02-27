@@ -92,7 +92,15 @@ public class BoardMaster implements Serializable {
     
     private String answerAt;
     
-    private String bbsAttrbCode;
+    public String getAnswerAt() {
+		return answerAt;
+	}
+
+	public void setAnswerAt(String answerAt) {
+		this.answerAt = answerAt;
+	}
+
+	private String bbsAttrbCode;
     public String getBbsAttrbCode() {
 		return bbsAttrbCode;
 	}
