@@ -58,6 +58,11 @@ public class DocumentServiceImpl implements DocumentService{
 	}
 
 	@Override
+	public int pendingDocCount(SearchDTO searchDTO) {
+		return documentMapper.getCount(searchDTO);
+	}
+	
+	@Override
 	public List<FormDTO> formSelectAll() {
 		return documentMapper.formSelectAll();
 	}
@@ -153,6 +158,11 @@ public class DocumentServiceImpl implements DocumentService{
 	@Override
 	public List<Reception> receiverSelecteAll(String docCd) {
 		return documentMapper.receiverSelecteAll(docCd);
+	}
+
+	@Override
+	public List<DocumentDTO> pendingDocumentSelectAll(SearchDTO searchDTO) {
+		return documentMapper.pendingDocumentSelectAll(searchDTO);
 	}
 	
 	

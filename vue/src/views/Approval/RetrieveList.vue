@@ -3,6 +3,7 @@
       :buttons="buttons" 
       :columnDefs="columnDefs" 
       :status="status"
+
       @button-click="linkButton"
     />
   </template>
@@ -39,6 +40,7 @@
           { header: '기안일시', name: 'draftDt' },
         ],
         status: "H05",
+
       }
     },
   }

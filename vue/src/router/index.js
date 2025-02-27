@@ -26,11 +26,12 @@ import ApprovalList from "../components/PaymentLayout/ApprovalList.vue";
 import ApprovalLine from "../components/PaymentLayout/ApprovalLine.vue";
 import ApprovalRegister from "../components/PaymentLayout/ApprovalRegister.vue";
 import ApprovalInfo from "../components/PaymentLayout/ApprovalInfo.vue";
+import PendingListComp from "../components/PaymentLayout/PendingListComp.vue";
 //skh
 import RegisterTest from "../views/Approval/RegisterTest.vue";
 import CompletedList from "../views/Approval/CompletedList.vue";
 import Calendar from "../views/schedule/Calendar.vue";
-import PendingList from "../views/Approval/PendingList.vue";
+import PendingList from "../views/Approval/PendingList copy.vue";
 import ProceedList from "../views/Approval/ProceedList.vue";
 import RejectedList from "../views/Approval/RejectedList.vue";
 import RejectedInfo from "../views/Approval/RejectedInfo.vue";
@@ -40,7 +41,7 @@ import PendingInfo from "../views/Approval/PendingInfo.vue";
 import ProceedInfo from "../views/Approval/ProceedInfo.vue";
 import RetrieveList from "../views/Approval/RetrieveList.vue";
 import ReceivedList from "../views/Approval/ReceivedList.vue";
-
+import PendingListCopy from "../views/Approval/PendingList.vue";
 
 // pjh
 import Todo from '../views/Todo/TodoManage.vue'
@@ -182,8 +183,18 @@ const routes = [
       name: 'ApprovalInfo',
       component: ApprovalInfo
    },
+   {
+      path: '/pendingListComp',
+      name: 'PendingListComp',
+      component: PendingListComp
+   },
    //skh
 
+   {
+      path:'/pendgingList',
+      name:'PendingListCopy',
+      component:PendingListCopy
+   },
    { //
       path: '/approval/restartDraft',
       name: 'RestartDraft',

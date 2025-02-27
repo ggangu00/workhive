@@ -151,6 +151,54 @@ public class DocumentController {
 		return map;
 	}
 	
+	//리스트조회(미결함)
+	@GetMapping("/pendingList")
+	public Map<String, Object> getPendingDocuments(@RequestParam(required = false) String status,
+												     @RequestParam(required = false) int page,
+												     @RequestParam(required = false) int perPage,
+												     @ModelAttribute SearchDTO searchDTO) throws JsonMappingException, JsonProcessingException {
+		
+		searchDTO.setPageUnit(perPage);
+
+		// 페이징 조건
+		searchDTO.setStartPage(searchDTO.getFirst());
+		searchDTO.setEndPage(searchDTO.getLast());
+		searchDTO.setStatus(status);
+		
+		// 페이징처리
+		searchDTO.setTotalRecord(documentService.getCount(searchDTO));
+		
+		System.out.println("request DATA => " +  status + " page => " +  page);
+		
+	    
+	    String str = """
+						{
+						  "result": true,
+						  "data": {
+						    "contents": [],
+						    "pagination": {
+						      "page": 1,
+						      "totalCount": 100
+						    }
+						  }
+						}
+										""";
+		ObjectMapper objectMapper = new ObjectMapper();
+		
+		Map<String, Object> map = objectMapper.readValue(str, Map.class);
+		
+		Map<String, Object> data = (Map) map.get("data");
+		Map<String, Object> pagination = (Map) data.get("pagination");
+		
+		// 페이징처리
+		pagination.put("page", searchDTO.getPage());
+		pagination.put("totalCount", documentService.pendingDocCount(searchDTO));
+		
+		data.put("contents", documentService.pendingDocumentSelectAll(searchDTO));
+		
+		return map;
+	}
+	
 	//문서양식조회
 	@GetMapping("/form")
 	public List<FormDTO> formList() {
