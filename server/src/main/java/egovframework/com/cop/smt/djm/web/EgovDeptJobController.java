@@ -33,6 +33,7 @@ import egovframework.com.cmm.service.EgovFileMngUtil;
 import egovframework.com.cmm.service.EgovProperties;
 import egovframework.com.cmm.service.FileVO;
 import egovframework.com.cmm.util.EgovUserDetailsHelper;
+import egovframework.com.common.util.GridUtil;
 import egovframework.com.cop.smt.djm.service.ChargerVO;
 import egovframework.com.cop.smt.djm.service.DeptJob;
 import egovframework.com.cop.smt.djm.service.DeptJobBx;
@@ -483,7 +484,9 @@ public class EgovDeptJobController {
 	@IncludedInfo(name="부서업무정보", order = 401 ,gid = 40)
 //	@RequestMapping("/cop/smt/djm/selectDeptJobList.do")
 	@GetMapping("/jobList")
-	public Map<String, Object> selectDeptJobList(@ModelAttribute("searchVO") DeptJobVO deptJobVO, ModelMap model) throws Exception{
+	public Map<String, Object> selectDeptJobList(@ModelAttribute("searchVO") DeptJobVO deptJobVO
+			,@RequestParam(name = "page", required = false, defaultValue = "1") int page
+												,@RequestParam(name = "perPage", required = false, defaultValue = "5") int perPage, ModelMap model) throws Exception{
 		//로그인 객체 선언
 		LoginVO loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
    	 	// KISA 보안취약점 조치 (2018-12-10, 신용호)
@@ -497,9 +500,11 @@ public class EgovDeptJobController {
 //		deptJobVO.setPageSize(propertyService.getInt("pageSize"));
         
 		PaginationInfo paginationInfo = new PaginationInfo();
-		paginationInfo.setCurrentPageNo(deptJobVO.getPageIndex());
-		paginationInfo.setRecordCountPerPage(deptJobVO.getPageUnit());
-		paginationInfo.setPageSize(deptJobVO.getPageSize());
+//		paginationInfo.setCurrentPageNo(deptJobVO.getPageIndex());
+		paginationInfo.setCurrentPageNo(page);
+//		paginationInfo.setRecordCountPerPage(deptJobVO.getPageUnit());
+		paginationInfo.setRecordCountPerPage(perPage);
+//		paginationInfo.setPageSize(deptJobVO.getPageSize());
 
 		deptJobVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
 		deptJobVO.setLastIndex(paginationInfo.getLastRecordIndex());
@@ -518,7 +523,7 @@ public class EgovDeptJobController {
 
 		Map<String, Object> map = deptJobService.selectDeptJobList(deptJobVO);
 		int totCnt = Integer.parseInt((String)map.get("resultCnt"));
-		paginationInfo.setTotalRecordCount(totCnt);
+		//paginationInfo.setTotalRecordCount(totCnt);
 
 //		model.addAttribute("resultBxList", deptJobService.selectDeptJobBxListAll());
 //		model.addAttribute("resultList", map.get("resultList"));
@@ -537,7 +542,7 @@ public class EgovDeptJobController {
         System.out.println("map : " + map.toString());
         System.out.println("----------------------------------------------------");
         
-		return map;
+		return GridUtil.responseData(page, totCnt, (List)map.get("resultList"));
 	}
 
 	/**

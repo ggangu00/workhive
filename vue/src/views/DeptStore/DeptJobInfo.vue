@@ -93,7 +93,7 @@
                   <label for="title-search" class="m-0 me-2">제목 검색</label>
                   
                   <input type="text" class="form-control w-auto me-2" placeholder="제목을 입력해주세요" id="title-search" v-model="jobSearch.searchWrd">
-                  <button class="btn btn-info btn-fill" @click="jobGetList">검색</button>
+                  <button class="btn btn-info btn-fill" @click="btnReadData">검색</button>
                 </div>
               </div>
               
@@ -131,7 +131,7 @@ import JobManage from "./JobManage.vue";
 import Modal from '../../components/Modal.vue';
 
 let gridInstance = ref();
-let rowData = ref([]);
+// let rowData = ref([]);
 
 
 // 부서 및 업무함 시작
@@ -151,8 +151,12 @@ watch(jobBxSelected, () => {
   jobSearch.value.searchWrd = '';
   jobSearch.value = Object.assign(jobSearch.value, jobBxSelected.value);
 
-  jobGetList();
+  btnReadData();
+  // jobGetList();
 });
+const btnReadData = () => {
+  gridInstance.value.readData(1, jobSearch.value);
+}
 
 // 부서 및 업무함 데이터
 const departments = ref([]);
@@ -286,18 +290,12 @@ onMounted(() => {
     ]
   })
 
-  gridInstance.value.on('pagination', (event) => {
-    // 페이지가 변경될 때마다 jobGetList를 호출
-    console.log("click");
-    jobGetList(event.page);
-  });
-
-  jobGetList();
+  // jobGetList();
 })
 
 const dataSource = {
   api: {
-    readData: { url: '/api/deptstore/jobList', method: 'GET', initParams: jobSearch.value }
+    readData: { url: '/api/deptstore/jobList', method: 'GET'}
   }
 };
 
@@ -349,7 +347,7 @@ const delEvent = async (rowKey) => {
 
   await axios.delete('/api/deptstore/jobRemove', { params: { deptJobId: selectedRowData.deptJobId } });
   
-  jobGetList();
+  // jobGetList();
 };
 // 업무 목록 삭제
 const btnJobListRemove = async () => {
@@ -363,55 +361,55 @@ const btnJobListRemove = async () => {
 
   await axios.post('/api/deptstore/jobListRemove', jobList);
 
-  jobGetList();
+  // jobGetList();
 };
 
-const jobGetList = async (page = 1) => {
+// const jobGetList = async (page = 1) => {
 
-  // console.log(jobBxSelected);
+//   // console.log(jobBxSelected);
 
-  // 그리드 페이지 정보 입력
-  // let gridPage = gridInstance.value.paginationManager.getPagination();
-  // console.log("grid page : ", gridPage);
-  // let newPagination = {
-  //   pageIndex: gridPage._currentPage,
-  //   pageUnit: gridPage._options.perPage,
-  //   pageSize: 5, // 페이지 표시 갯수
-  // };
-  // jobSearch.value = {...jobSearch.value, ...newPagination};
+//   // 그리드 페이지 정보 입력
+//   // let gridPage = gridInstance.value.paginationManager.getPagination();
+//   // console.log("grid page : ", gridPage);
+//   // let newPagination = {
+//   //   pageIndex: gridPage._currentPage,
+//   //   pageUnit: gridPage._options.perPage,
+//   //   pageSize: 5, // 페이지 표시 갯수
+//   // };
+//   // jobSearch.value = {...jobSearch.value, ...newPagination};
 
-  jobSearch.value.page = page;
+//   jobSearch.value.page = page;
 
-  let jobList = await axios.get('/api/deptstore/jobList', {
-    params: jobSearch.value
-  })
-  .catch(error => console.error("에러 :", error));
+//   let jobList = await axios.get('/api/deptstore/jobList', {
+//     params: jobSearch.value
+//   })
+//   .catch(error => console.error("에러 :", error));
 
-  rowData.value = [...jobList.data.resultList];
+//   rowData.value = [...jobList.data.resultList];
   
-  rowData.value = rowData.value.map((item, index) => ({
-    rowNum: index + 1, // 1부터 시작하는 행번호
-    ...item
-  }));
+//   rowData.value = rowData.value.map((item, index) => ({
+//     rowNum: index + 1, // 1부터 시작하는 행번호
+//     ...item
+//   }));
   
-  let paginationInfo = jobList.data.paginationInfo;
-  console.log(jobList.data);
-  /*
-  {
-    "result": true,
-    "data": {
-      "contents": [],
-      "pagination": {
-        "page": 1,
-        "totalCount": 100
-      }
-    }
-  }
-  */
+//   let paginationInfo = jobList.data.paginationInfo;
+//   console.log(jobList.data);
+//   /*
+//   {
+//     "result": true,
+//     "data": {
+//       "contents": [],
+//       "pagination": {
+//         "page": 1,
+//         "totalCount": 100
+//       }
+//     }
+//   }
+//   */
     
-  gridInstance.value.resetData(rowData.value);
-  gridInstance.value.setPaginationTotalCount(paginationInfo.totalRecordCount);
-};
+//   gridInstance.value.resetData(rowData.value);
+//   gridInstance.value.setPaginationTotalCount(paginationInfo.totalRecordCount);
+// };
 
 
 
@@ -430,7 +428,7 @@ const modalCloseJob = () => {
 const modalConfirmJob = () => {
   isShowJobModal.value = false;
   isUpdate.value = '';
-  jobGetList();
+  // jobGetList();
 }
 
 // 업무 수정
