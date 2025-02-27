@@ -66,7 +66,6 @@
    import { useRouter } from "vue-router";
    import axios from "axios";
    import Swal from 'sweetalert2';
-   import qs from 'qs';
 
 // ================================================== side, header 숨기기 ==================================================
    const store = useStore();
@@ -122,15 +121,15 @@
 // ============================================= Axios Event =============================================
    // id, pass값 서버로 보내기
    const loginSelect = async () => {
-      const requestData = {
-         username : userId.value,
-         password : password.value,
-      }
+      // const requestData = {
+      //    username : userId.value,
+      //    password : password.value,
+      // }
 
       const options = {
          method: 'POST',
          headers: { 'content-type': 'application/x-www-form-urlencoded' },
-         data: qs.stringify(requestData),
+         data: `username=${userId.value}&password=${password.value}`,
          url : '/api/login'
       };
 
@@ -139,10 +138,14 @@
 
          console.log("로그인 성공 => ", result.data);
 
-         Swal.fire({
-            icon: "success",
-            title: "Login 성공 !!!",
-         });
+         if(result.data.result == "success") {
+            Swal.fire({
+               icon: "success",
+               title: "Login 성공 !!!",
+            });
+            router.push({ path: `/home` });
+         }
+
       } catch (err) {
          console.log("로그인 실패 => ", err)
          Swal.fire({

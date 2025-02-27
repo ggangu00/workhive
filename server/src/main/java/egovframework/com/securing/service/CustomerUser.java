@@ -22,7 +22,7 @@ public class CustomerUser implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return userDTO.getRoles().stream().map(r -> new SimpleGrantedAuthority(r.getRoleName()))
+		return userDTO.getRoles().stream().map(r -> new SimpleGrantedAuthority(r))
 				.collect(Collectors.toList());
 	}
 
@@ -48,12 +48,12 @@ public class CustomerUser implements UserDetails {
 
 	@Override
 	public String getUsername() {
-		return userDTO.getLoginId();
+		return userDTO.getMberId();
 	}
 
 	@Override
 	public boolean isCredentialsNonExpired() {
-		return false;
+		return true;
 	}
 
 }

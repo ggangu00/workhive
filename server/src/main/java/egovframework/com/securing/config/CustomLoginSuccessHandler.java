@@ -8,6 +8,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
@@ -26,8 +28,8 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 		UserDTO dto = ((CustomerUser)auth.getPrincipal()).getUserDTO();
 		
 		// session
-		request.getSession().setAttribute("userid", dto.getId());
-		request.getSession().setAttribute("deptName", dto.getDeptName());
+//		request.getSession().setAttribute("userid", dto.getId());
+//		request.getSession().setAttribute("deptName", dto.getDeptName());
 		
 		// username, role
 		List<String> roleNames = new ArrayList<>();
@@ -39,14 +41,11 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 
 		System.out.println("roleName => " + roleNames);
 
-		if (roleNames.contains("ROLE_ADMIN")) {
-			response.sendRedirect("/emp/list");
-			return;
-		} else if (roleNames.contains("ROLE_USER")) {
-			response.sendRedirect("/board/list");
-			return;
-		}
-		response.sendRedirect("/");
+		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setStatus(HttpStatus.OK.value());	// 성공이라서 ok
+        response.setCharacterEncoding("UTF-8");
+        // json 응답으로 넘겨야함 !!
+        response.getWriter().write("{\"result\" : \"success\"}");
 	}
 
 }

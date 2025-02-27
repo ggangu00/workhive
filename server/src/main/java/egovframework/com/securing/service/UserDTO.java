@@ -8,12 +8,12 @@ import lombok.Data;
 public class UserDTO {
 	
 	private Long id;
-	private String loginId;
+	private String mberId;
 	private String password;
 	private String fullName;
 	private String deptName;
 	
-	private List<RoleDTO> roles;
+	private List<String> roles;
 
 //	@Override
 //	public Collection<? extends GrantedAuthority> getAuthorities() {

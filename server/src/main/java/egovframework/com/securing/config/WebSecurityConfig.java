@@ -25,18 +25,18 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((requests) -> requests
-                .requestMatchers("/", "/home", "/css/*", "/js/*", "/assets/*", "/login").permitAll() // 홈, 정적 리소스는 인증 없이 접근 가능
-                .requestMatchers("/admin/*").hasRole("ADMIN") // "/admin/*" 경로는 ADMIN 역할을 가진 사용자만 접근 가능
+                .requestMatchers("/", "/menu", "/css/*", "/js/*", "/assets/*", "/login").permitAll() // 홈, 정적 리소스는 인증 없이 접근 가능
+                //.requestMatchers("/admin/*").hasRole("ADMIN") // "/admin/*" 경로는 ADMIN 역할을 가진 사용자만 접근 가능
                 .anyRequest().authenticated()) // 위의 URL 외에는 모두 인증된 사용자만 접근 가능
                 .formLogin((form) -> form
-                .usernameParameter("userid") // 로그인 시 사용할 username 파라미터 이름을 "userid"로 지정
+                //.usernameParameter("userid") // 로그인 시 사용할 username 파라미터 이름을 "userid"로 지정
                 .successHandler(suthenticationSuccessHandler()) // 로그인 성공 시 실행할 핸들러 설정
                 .failureHandler(suthenticationFaildHandler())
                 .permitAll()) // 로그인 페이지는 인증 없이 접근 가능하도록 설정
                 .logout((logout) -> logout
 						.deleteCookies("JSESSIONID") // 로그아웃 시 JSESSIONID 쿠키 삭제
 						.permitAll()) // 로그아웃은 인증 없이도 가능하도록 설정
-        .csrf(csrf -> csrf.disable());
+                .csrf(csrf -> csrf.disable());
 
         // CSRF 설정 (현재 비활성화됨)
 
