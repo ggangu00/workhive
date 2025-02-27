@@ -17,73 +17,14 @@ import egovframework.com.cmm.util.EgovUserDetailsHelper;
 
 /**
  * 인증여부 체크 인터셉터
- * @author 공통서비스 개발팀 서준식
- * @since 2011.07.01
- * @version 1.0
- * @see
- *
- * <pre>
- * << 개정이력(Modification Information) >>
- *
- *   수정일      수정자          수정내용
- *  -------    --------    ---------------------------
- *  2011.07.01  서준식          최초 생성
- *  2011.09.07  서준식          인증이 필요없는 URL을 패스하는 로직 추가
- *  2017.08.31  장동한          인증된 사용자 체크로직 변경 및 관리자 권한 체크 로직 추가 
- *  2021.08.27  신용호          dummy모드 사용시 "60. 권한관리" 접근오류 수정
- *  </pre>
+ * Spring의 인터셉터(Interceptor) 를 사용하여 사용자의 인증 여부를 확인하는 기능을 수행하는 클래스야.
+ * 이 AuthenticInterceptor 클래스는 요청(Request)이 컨트롤러로 전달되기 전에 실행되며, 사용자가 로그인했는지, 관리자 권한이 있는지 등을 체크하는 역할을 해.
+ * 여기서 권한이 있는지 없는지 체크를해서 vue단으로 json형태로 넘겨주면 앞단에서 이것을 처리함
  */
 
 
 public class AuthenticInterceptor implements HandlerInterceptor {
 
-	@SuppressWarnings("unused")
-	@Autowired
-	private Environment environment;
-	
-	/** 관리자 접근 권한 패턴 목록 */
-	private List<String> adminAuthPatternList;
-	
-	public List<String> getAdminAuthPatternList() {
-		return adminAuthPatternList;
-	}
 
-	public void setAdminAuthPatternList(List<String> adminAuthPatternList) {
-		this.adminAuthPatternList = Collections.unmodifiableList(adminAuthPatternList);
-	}
-
-	/**
-	 * 인증된 사용자 여부로 인증 여부를 체크한다.
-	 * 관리자 권한에 따라 접근 페이지 권한을 체크한다.
-	 */
-	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-		//인증된사용자 여부
-		boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();	
-		//미민증사용자 체크
-		if(!isAuthenticated) {
-			ModelAndView modelAndView = new ModelAndView("redirect:/uat/uia/egovLoginUsr.do");
-			throw new ModelAndViewDefiningException(modelAndView);
-		}
-		//인증된 권한 목록
-		List<String> authList = (List<String>)EgovUserDetailsHelper.getAuthorities();
-		//관리자인증여부
-		boolean adminAuthUrlPatternMatcher = false;
-		//AntPathRequestMatcher
-		AntPathRequestMatcher antPathRequestMatcher = null;
-		//관리자가 아닐때 체크함
-		for(String adminAuthPattern : adminAuthPatternList){
-			antPathRequestMatcher = new AntPathRequestMatcher(adminAuthPattern);
-			if(antPathRequestMatcher.matches(request)){
-				adminAuthUrlPatternMatcher = true;
-			}
-		}
-		//관리자 권한 체크
-		if(adminAuthUrlPatternMatcher && !authList.contains("ROLE_ADMIN")){
-			ModelAndView modelAndView = new ModelAndView("redirect:/uat/uia/egovLoginUsr.do?auth_error=1");
-			throw new ModelAndViewDefiningException(modelAndView);
-		}
-		return true;
-	}
 
 }

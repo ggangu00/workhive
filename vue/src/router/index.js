@@ -1,3 +1,5 @@
+import { useUserInfoStore } from "../store/userStore"; // Pinia Store 가져오기
+
 import { createRouter, createWebHistory } from "vue-router";
 import Dashboard from "../views/Dashboard.vue";
 import Tables from "../views/Tables.vue";
@@ -398,6 +400,17 @@ const router = createRouter({
    history: createWebHistory(process.env.BASE_URL),
    routes,
    linkActiveClass: "active",
+});
+
+// ✅ **전역 네비게이션 가드 설정**
+router.beforeEach((to, from, next) => {
+   const store = useUserInfoStore(); // 🔥 여기서 `useUserInfoStore()` 호출
+
+   if (to.path !== "/login" && !store.isAuthenticated) {
+   next("/login"); // 로그인 안 된 경우 로그인 페이지로 이동
+   } else {
+   next(); // 정상 이동
+   }
 });
 
 export default router;

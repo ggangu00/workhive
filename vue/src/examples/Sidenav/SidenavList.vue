@@ -53,12 +53,12 @@
    <!--게시글 목록 작업하는 곳[S]-->
    <li class="nav-item">
       <sidenav-collapse
-      url="#"
-      :aria-controls="''"
-       v-bind:collapse="false"
-       collapseRef="/bulletin/bulletinList"
-       navText="게시글 관리"
-       >
+         url="#"
+         :aria-controls="''"
+         v-bind:collapse="false"
+         collapseRef="/bulletin/bulletinList"
+         navText="게시글 관리"
+      >
          <template v-slot:icon>
             <i class="fa-solid fa-pen-to-square"></i>
          </template>
@@ -93,7 +93,7 @@ const menus = ref([]);
 const menuGetList = async () => {
    try {
       const response = await axios.get('/api/menu');
-      
+
       menuBuildTree(response.data);
    } catch (err) {
       Swal.fire({
@@ -199,7 +199,7 @@ onMounted(() => {
 </script>
 
 
-<style scoped>
+<style lang="scss" scoped>
 .sub-item {
    color: #cfcfcf;
    font-size: 13px;
