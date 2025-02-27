@@ -53,7 +53,7 @@
             <div class="approval-box">
               <div v-for="(receiver, index) in receivers" :key="index" class="approval-item">
                 <span class="badge bg-warning text-dark">수신</span>
-                <span v-if="receiver.mberNm">[{{ receiver.respNm }}] {{ receiver.mberNm }}<button @click="removeReceiver(index)" class="btn btn-sm btn-danger">삭제</button></span> <!-- [직책]사원 -->
+                <span v-if="receiver.mberNm">[{{ receiver.gradeNm }}] {{ receiver.mberNm }}<button @click="removeReceiver(index)" class="btn btn-sm btn-danger">삭제</button></span> <!-- [직책]사원 -->
                 <span v-else>[{{ receiver.deptNm }}]<button @click="removeReceiver(index)" class="btn btn-sm btn-danger">삭제</button></span> <!-- 부서 -->                
               </div>
             </div>
@@ -81,7 +81,7 @@
           <div class="box">
             <h5>결재 목록</h5>
             <div class="approval-box">
-              <div v-for="(approver, index) in reversedApprovers " :key="index" class="approval-item">
+              <div v-for="(approver, index) in approvers " :key="index" class="approval-item">
                 <select v-model="approver.signName" class="form-select form-select-sm">
                   <option v-for="(data, idx) in selectedData" 
                   :key="idx"
@@ -89,7 +89,7 @@
                   {{ data.commDtlNm }}
                   </option>
                 </select>
-                [{{ approver.deptNm }}] {{ approver.mberNm }} {{ approver.respNm }}
+                [{{ approver.deptNm }}] {{ approver.mberNm }} {{ approver.gradeNm }}
                 <button @click="removeApproval(index)" class="btn btn-sm btn-danger">삭제</button>
               </div>
             </div>
@@ -101,32 +101,23 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed} from 'vue';
+import { ref, onMounted, watch, toRefs } from 'vue';
 import "tui-grid/dist/tui-grid.css";
 import Grid from "tui-grid";
 import axios from 'axios';
 
   let gridInstance = null; 
 
-    //역으로표현
-    const reversedApprovers = computed(() => [...approvers.value].reverse());
-
     const selectedDept = ref(''); //UI가 자동 업데이트
-    const receivers = ref([]);
-    const approvers = ref([]);
     const employees = ref([]); // 직원 목록
     const departmentTree = ref([]);
 
-    // //모달에 결재선 불러넣기
-    // const localApprovers = ref([]);
-    // const localReceivers = ref([]);
+    const props = defineProps({
+      approvers: { type: Array, required: true },
+      receivers: { type: Array, required: true },
+    });
 
-    // // 외부에서 데이터 설정하는 함수
-    // const setApprovals = (reversedApprovers, receivers) => {
-    //   localApprovers.value = [...reversedApprovers]; // 데이터 복사하여 저장
-    //   localReceivers.value = [...receivers];
-    // };
-
+    const { approvers, receivers } = toRefs(props);
     //공통코드 가져오기
     const selectedData = ref([]); //결재상태(signname) 셀렉트박스
     const commonDtlList = async () =>{
@@ -192,7 +183,6 @@ import axios from 'axios';
 
     //수신자추가기능
     const addReceiver = () => {
-
       //부서추가
       if (selectedDept.value && !receivers.value.some(receiver => receiver.dept == selectedDept.value)) {
         receivers.value.push({
@@ -205,19 +195,15 @@ import axios from 'axios';
       const selectedData = gridInstance.getCheckedRows();
 
       selectedData.forEach(emp => {
-        const empName = emp.mberNm;  
-        const empTitle = emp.respNm
-
-        if (!receivers.value.some(receiver => receiver.name == empName)) {
+        if (!receivers.value.some(receiver => receiver.name == emp.mberNm)) {
             receivers.value.push({
-              mberNm: empName,
+              mberNm: emp.mberNm,
               mberId: emp.mberId,
               deptNm: emp.deptNm,  // 부서명도 같이 저장
               deptCd: emp.deptCd,
-              respNm: empTitle,
-              respCd: emp.respCd,
+              gradeNm: emp.gradeNm,
+              gradeCd: emp.gradeCd,
               status: "수신",
-
             });
           }
         });
@@ -231,15 +217,14 @@ import axios from 'axios';
     const addApproval = () => {
       if (!gridInstance) return;
       const selectedData = gridInstance.getCheckedRows();
-      console.log('결재를정보=> ', selectedData)
       selectedData.forEach(emp => {
         if (!approvers.value.find(appr => appr.mberNm == emp.mberNm)) {
-          approvers.value.push({ 
-            mberNm: emp.mberNm || emp.name,  
-            deptNm: emp.deptNm || emp.dept, 
+          approvers.value.unshift({ 
+            mberNm: emp.mberNm,  
+            deptNm: emp.deptNm, 
             deptCd: emp.deptCd,
-            respNm: emp.respNm, 
-            respCd: emp.respCd,
+            gradeNm: emp.gradeNm, 
+            gradeCd: emp.gradeCd,
             signName: 'K02',
             mberId: emp.mberId});
         }
@@ -264,7 +249,7 @@ import axios from 'axios';
         rowHeaders: ['checkbox'],
         columns: [
           { header: '이름', name: 'mberNm' },
-          { header: '직책', name: 'respNm' },
+          { header: '직책', name: 'gradeNm' },
           { header: '부서', name: 'deptNm' },
         ]
       });
@@ -289,11 +274,12 @@ import axios from 'axios';
     const login = ref({
       mberNm: "신강현", 
       deptNm: "총무팀",
-      respNm: "대리",
+      gradeNm: "대리",
       mberId: "admin3"
     });
     //  모달이 열릴 때 Toast UI Grid를 다시 초기화
-    const onModalOpen = () => {
+    const onModalOpen = async() => {
+
       setTimeout(() => {
         if (!gridInstance) {
           initGrid();
@@ -304,25 +290,28 @@ import axios from 'axios';
         if (selectedDept.value) {
           gridInstance.resetData(employees.value);
         }
+        
       },300);
       //로그인 기안자
       if (!approvers.value.find(a => a.signName == "K01")) {
-      approvers.value.push({
-        mberNm: login.value.mberNm,
-        deptNm: login.value.deptNm,
-        respNm: login.value.respNm,
-        signName: "K01",
-        mberId: login.value.mberId
-      });
-  }
+        approvers.value.push({
+          mberNm: login.value.mberNm,
+          deptNm: login.value.deptNm,
+          gradeNm: login.value.gradeNm,
+          signName: "K01",
+          mberId: login.value.mberId
+        });
+      }
     };
+    //역으로표현
+    //const reversedApprovers = computed(() => [...approvers.value].reverse());
 
     onMounted(() => {
       deptList();
       commonDtlList();
     });
 
-    defineExpose({onModalOpen, approvers, receivers, reversedApprovers});
+    defineExpose({onModalOpen,addApproval,removeApproval,addReceiver,removeReceiver,approvers, receivers});
 </script>
 
 <style scoped>

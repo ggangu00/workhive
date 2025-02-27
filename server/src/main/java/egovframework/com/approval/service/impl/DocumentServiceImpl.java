@@ -149,6 +149,11 @@ public class DocumentServiceImpl implements DocumentService{
 		
 		return updatedRows >0;
 	}
+
+	@Override
+	public List<Reception> receiverSelecteAll(String docCd) {
+		return documentMapper.receiverSelecteAll(docCd);
+	}
 	
 	
 }
