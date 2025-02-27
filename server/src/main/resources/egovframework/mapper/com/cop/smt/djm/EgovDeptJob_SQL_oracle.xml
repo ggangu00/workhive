@@ -3,483 +3,493 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="DeptJobDAO">
 
-	
-	<resultMap id="chargerList" type="egovframework.com.cop.smt.djm.service.ChargerVO">
-		<result property="orgnztNm" column="DEPT_NM"/>
-		<result property="uniqId" column="ESNTL_ID"/>
-		<result property="emplyrNm" column="USER_NM"/>
-		<result property="emplNo" column="EMPL_NO"/>
-		<result property="ofcpsNm" column="OFCPS_NM"/>
+
+	<resultMap id="chargerList"
+		type="egovframework.com.cop.smt.djm.service.ChargerVO">
+		<result property="orgnztNm" column="DEPT_NM" />
+		<result property="uniqId" column="ESNTL_ID" />
+		<result property="emplyrNm" column="USER_NM" />
+		<result property="emplNo" column="EMPL_NO" />
+		<result property="ofcpsNm" column="OFCPS_NM" />
 	</resultMap>
-	
-	<resultMap id="DeptList" type="egovframework.com.cop.smt.djm.service.DeptVO">
-		<result property="orgnztId" column="DEPT_CD"/>
-		<result property="orgnztNm" column="DEPT_NM"/>
-		<result property="orgnztDc" column="ORGNZT_DC"/>	
+
+	<resultMap id="DeptList"
+		type="egovframework.com.cop.smt.djm.service.DeptVO">
+		<result property="orgnztId" column="DEPT_CD" />
+		<result property="orgnztNm" column="DEPT_NM" />
+		<result property="orgnztDc" column="ORGNZT_DC" />
 	</resultMap>
-	
-	<resultMap id="DeptJobBxList" type="egovframework.com.cop.smt.djm.service.DeptJobBxVO">
-		<result property="deptCd" column="DEPT_CD"/>
-		<result property="deptNm" column="DEPT_NM"/>
-		<result property="deptJobBxId" column="DEPT_JOBBX_ID"/>
-		<result property="deptJobBxNm" column="DEPT_JOBBX_NM"/>
-		<result property="indictOrdr" column="INDICT_ORDR"/>
-		<result property="lastUpdusrNm" column="LAST_UPDUSR_NM"/>
-		<result property="lastUpdusrPnttm" column="UPDATE_DT"/>
+
+	<resultMap id="DeptJobBxList"
+		type="egovframework.com.cop.smt.djm.service.DeptJobBxVO">
+		<result property="deptCd" column="DEPT_CD" />
+		<result property="deptNm" column="DEPT_NM" />
+		<result property="deptJobBxId" column="DEPT_JOBBX_ID" />
+		<result property="deptJobBxNm" column="DEPT_JOBBX_NM" />
+		<result property="indictOrdr" column="INDICT_ORDR" />
+		<result property="lastUpdusrNm" column="LAST_UPDUSR_NM" />
+		<result property="lastUpdusrPnttm" column="UPDATE_DT" />
 	</resultMap>
-	
-	<resultMap id="DeptJobBxListAll" type="egovframework.com.cop.smt.djm.service.DeptJobBxVO">
-		<result property="deptCd" column="DEPT_CD"/>
-		<result property="deptNm" column="DEPT_NM"/>
-		<result property="deptJobBxId" column="DEPT_JOBBX_ID"/>
-		<result property="deptJobBxNm" column="DEPT_JOBBX_NM"/>
+
+	<resultMap id="DeptJobBxListAll"
+		type="egovframework.com.cop.smt.djm.service.DeptJobBxVO">
+		<result property="deptCd" column="DEPT_CD" />
+		<result property="deptNm" column="DEPT_NM" />
+		<result property="deptJobBxId" column="DEPT_JOBBX_ID" />
+		<result property="deptJobBxNm" column="DEPT_JOBBX_NM" />
 	</resultMap>
-	
-	<resultMap id="DeptJobList" type="egovframework.com.cop.smt.djm.service.DeptJobVO">
-		<result property="deptCd" column="DEPT_CD"/>
-		<result property="deptJobId" column="DEPT_JOB_ID"/>
-		<result property="deptJobNm" column="DEPT_JOB_NM"/>
-		<result property="priort" column="PRIORT"/>
-		<result property="chargerNm" column="CHARGER_NM"/>
-		<result property="frstRegisterPnttm" column="CREATE_DT"/>
+
+	<resultMap id="DeptJobList"
+		type="egovframework.com.cop.smt.djm.service.DeptJobVO">
+		<result property="deptCd" column="DEPT_CD" />
+		<result property="deptJobId" column="DEPT_JOB_ID" />
+		<result property="deptJobNm" column="DEPT_JOB_NM" />
+		<result property="priort" column="PRIORT" />
+		<result property="chargerNm" column="CHARGER_NM" />
+		<result property="frstRegisterPnttm" column="CREATE_DT" />
 	</resultMap>
-	
-	<resultMap id="DeptJobBxDetail" type="egovframework.com.cop.smt.djm.service.DeptJobBxVO">
-		<result property="deptCd" column="DEPT_CD"/>
-		<result property="deptNm" column="DEPT_NM"/>
-		<result property="deptJobBxId" column="DEPT_JOBBX_ID"/>
-		<result property="deptJobBxNm" column="DEPT_JOBBX_NM"/>	
-		<result property="indictOrdr" column="INDICT_ORDR"/>
-		<result property="lastUpdusrPnttm" column="UPDATE_DT"/>
-		<result property="lastUpdusrNm" column="LAST_UPDUSR_NM"/>			
+
+	<resultMap id="DeptJobBxDetail"
+		type="egovframework.com.cop.smt.djm.service.DeptJobBxVO">
+		<result property="deptCd" column="DEPT_CD" />
+		<result property="deptNm" column="DEPT_NM" />
+		<result property="deptJobBxId" column="DEPT_JOBBX_ID" />
+		<result property="deptJobBxNm" column="DEPT_JOBBX_NM" />
+		<result property="indictOrdr" column="INDICT_ORDR" />
+		<result property="lastUpdusrPnttm" column="UPDATE_DT" />
+		<result property="lastUpdusrNm" column="LAST_UPDUSR_NM" />
 	</resultMap>
-	
-	<resultMap id="DeptJobDetail" type="egovframework.com.cop.smt.djm.service.DeptJobVO">
-		<result property="deptCd" column="DEPT_CD"/>
-		<result property="deptNm" column="DEPT_NM"/>
-		<result property="deptJobBxId" column="DEPT_JOBBX_ID"/>
-		<result property="deptJobBxNm" column="DEPT_JOBBX_NM"/>	
-		<result property="deptJobId" column="DEPT_JOB_ID"/>	
-		<result property="deptJobNm" column="DEPT_JOB_NM"/>	
-		<result property="deptJobCn" column="DEPT_JOB_CN"/>	
-		<result property="chargerId" column="CHARGER_ID"/>	
-		<result property="chargerNm" column="CHARGER_NM"/>	
-		<result property="priort" column="PRIORT"/>	
-		<result property="atchFileId" column="ATCH_FILE_ID"/>	
-		<result property="frstRegisterPnttm" column="CREATE_DT"/>
-		<result property="frstRegisterId" column="CREATE_ID"/>
-		<result property="lastUpdusrPnttm" column="UPDATE_DT"/>
-		<result property="lastUpdusrId" column="UPDATE_ID"/>			
+
+	<resultMap id="DeptJobDetail"
+		type="egovframework.com.cop.smt.djm.service.DeptJobVO">
+		<result property="deptCd" column="DEPT_CD" />
+		<result property="deptNm" column="DEPT_NM" />
+		<result property="deptJobBxId" column="DEPT_JOBBX_ID" />
+		<result property="deptJobBxNm" column="DEPT_JOBBX_NM" />
+		<result property="deptJobId" column="DEPT_JOB_ID" />
+		<result property="deptJobNm" column="DEPT_JOB_NM" />
+		<result property="deptJobCn" column="DEPT_JOB_CN" />
+		<result property="chargerId" column="CHARGER_ID" />
+		<result property="chargerNm" column="CHARGER_NM" />
+		<result property="priort" column="PRIORT" />
+		<result property="atchFileId" column="ATCH_FILE_ID" />
+		<result property="frstRegisterPnttm" column="CREATE_DT" />
+		<result property="frstRegisterId" column="CREATE_ID" />
+		<result property="lastUpdusrPnttm" column="UPDATE_DT" />
+		<result property="lastUpdusrId" column="UPDATE_ID" />
 	</resultMap>
-	
-	<select id="selectChargerList" parameterType="egovframework.com.cop.smt.djm.service.ChargerVO" resultMap="chargerList">
-		
-	SELECT *
-	FROM (
-	SELECT T0.*, ROWNUM RNUM
+
+	<select id="selectChargerList"
+		parameterType="egovframework.com.cop.smt.djm.service.ChargerVO"
+		resultMap="chargerList">
+
+		SELECT *
 		FROM (
-	
-	
-		
-			SELECT
-				b.DEPT_NM, a.ESNTL_ID, a.USER_NM, 
-				a.EMPL_NO, a.OFCPS_NM
-			FROM
-				COMTNEMPLYRINFO a
-			LEFT OUTER JOIN DEPARTMENT b
-				ON a.DEPT_CD = b.DEPT_CD
-			WHERE 1=1
-		
-			<if test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(searchCnd, 0)">AND
-					NVL(b.DEPT_NM, ' ') LIKE '%'||#{searchWrd}||'%' 		
-			</if>
-			<if test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(searchCnd, 1)">AND
-					NVL(a.USER_NM, ' ') LIKE '%'||#{searchWrd}||'%' 		
-			</if>
-		
-			ORDER BY b.DEPT_NM, a.USER_NM ASC
-			
-	
-		
+		SELECT T0.*, ROWNUM RNUM
+		FROM (
+
+
+
+		SELECT
+		b.DEPT_NM, a.ESNTL_ID, a.USER_NM,
+		a.EMPL_NO, a.OFCPS_NM
+		FROM
+		COMTNEMPLYRINFO a
+		LEFT OUTER JOIN DEPARTMENT b
+		ON a.DEPT_CD = b.DEPT_CD
+		WHERE 1=1
+
+		<if
+			test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(searchCnd, 0)">AND
+			NVL(b.DEPT_NM, ' ') LIKE '%'||#{searchWrd}||'%'
+		</if>
+		<if
+			test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(searchCnd, 1)">AND
+			NVL(a.USER_NM, ' ') LIKE '%'||#{searchWrd}||'%'
+		</if>
+
+		ORDER BY b.DEPT_NM, a.USER_NM ASC
+
+
+
 		) T0
-	) 
-	WHERE RNUM BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}
-					
-	</select>	
-	
-	<select id="selectChargerListCnt" parameterType="egovframework.com.cop.smt.djm.service.ChargerVO" resultType="java.lang.Integer">
-		
-			SELECT
-				COUNT(EMPLYR_ID) as cnt
-			FROM
-				COMTNEMPLYRINFO a
-			LEFT OUTER JOIN DEPARTMENT b
-				ON a.DEPT_CD = b.DEPT_CD
-			WHERE 1=1
-		
-			<if test='searchCnd == "0"'>AND
-					NVL(b.DEPT_NM, ' ') LIKE '%'||#{searchWrd}||'%' 		
-			</if>
-			<if test='searchCnd == "1"'>AND
-					NVL(a.USER_NM, ' ') LIKE '%'||#{searchWrd}||'%' 		
-			</if>		
+		)
+		WHERE RNUM BETWEEN #{firstIndex} + 1 AND #{firstIndex} +
+		#{recordCountPerPage}
+
 	</select>
-	
+
+	<select id="selectChargerListCnt"
+		parameterType="egovframework.com.cop.smt.djm.service.ChargerVO"
+		resultType="java.lang.Integer">
+
+		SELECT
+		COUNT(EMPLYR_ID) as cnt
+		FROM
+		COMTNEMPLYRINFO a
+		LEFT OUTER JOIN DEPARTMENT b
+		ON a.DEPT_CD = b.DEPT_CD
+		WHERE 1=1
+
+		<if test='searchCnd == "0"'>AND
+			NVL(b.DEPT_NM, ' ') LIKE '%'||#{searchWrd}||'%'
+		</if>
+		<if test='searchCnd == "1"'>AND
+			NVL(a.USER_NM, ' ') LIKE '%'||#{searchWrd}||'%'
+		</if>
+	</select>
+
 	<!-- 부서::목록조회 -->
-	<select id="selectDeptList" parameterType="egovframework.com.cop.smt.djm.service.DeptVO" resultMap="DeptList">
-		
-	SELECT *
-	FROM (
-	SELECT T0.*, ROWNUM RNUM
+	<select id="selectDeptList"
+		parameterType="egovframework.com.cop.smt.djm.service.DeptVO"
+		resultMap="DeptList">
+
+		SELECT *
 		FROM (
-	
-	
-	 
-		SELECT 
-			DEPT_CD,
-			DEPT_NM,
-			ORGNZT_DC 
+		SELECT T0.*, ROWNUM RNUM
+		FROM (
+
+
+
+		SELECT
+		DEPT_CD,
+		DEPT_NM,
+		ORGNZT_DC
 		FROM DEPARTMENT
 		WHERE 1=1
-	 
-	 <if test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(searchCnd, 0)">AND
-		 	DEPT_NM LIKE '%'||#{searchWrd}||'%' 		
-	 </if>
-	 <if test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(searchCnd, 1)">AND
-		 	ORGNZT_DC LIKE '%'||#{searchWrd}||'%' 		
-	 </if>
-	 
+
+		<if
+			test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(searchCnd, 0)">AND
+			DEPT_NM LIKE '%'||#{searchWrd}||'%'
+		</if>
+		<if
+			test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(searchCnd, 1)">AND
+			ORGNZT_DC LIKE '%'||#{searchWrd}||'%'
+		</if>
+
 		ORDER BY DEPT_NM ASC
-	 
-	 
-		
+
+
+
 		) T0
-	) 
-	WHERE RNUM BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}
-		
+		)
+		WHERE RNUM BETWEEN #{firstIndex} + 1 AND #{firstIndex} +
+		#{recordCountPerPage}
+
 	</select>
-	
-	<!-- 부서::목록조회 Count-->
-	<select id="selectDeptListCnt" parameterType="egovframework.com.cop.smt.djm.service.DeptVO" resultType="java.lang.Integer">
-		
-			SELECT
-				COUNT(DEPT_CD) as cnt
-			FROM
-				DEPARTMENT 
-			WHERE 1=1
-		
-			<if test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(searchCnd, 0)">AND
-					DEPT_NM LIKE '%'||#{searchWrd}||'%' 		
-			</if>
-			<if test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(searchCnd, 1)">AND
-					ORGNZT_DC LIKE '%'||#{searchWrd}||'%' 		
-			</if>		
+
+	<!-- 부서::목록조회 Count -->
+	<select id="selectDeptListCnt"
+		parameterType="egovframework.com.cop.smt.djm.service.DeptVO"
+		resultType="java.lang.Integer">
+
+		SELECT
+		COUNT(DEPT_CD) as cnt
+		FROM
+		DEPARTMENT
+		WHERE 1=1
+
+		<if
+			test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(searchCnd, 0)">AND
+			DEPT_NM LIKE '%'||#{searchWrd}||'%'
+		</if>
+		<if
+			test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(searchCnd, 1)">AND
+			ORGNZT_DC LIKE '%'||#{searchWrd}||'%'
+		</if>
 	</select>
-	
+
 	<!-- 부서::조회 -->
-	<select id="selectDept" parameterType="java.lang.String" resultType="java.lang.String">
-	 
-		SELECT 
-			DEPT_NM 
+	<select id="selectDept" parameterType="java.lang.String"
+		resultType="java.lang.String">
+
+		SELECT
+		DEPT_NM
 		FROM DEPARTMENT
 		WHERE DEPT_CD = #{orgnztId}
-	 
+
 	</select>
-	
+
 	<!-- 부서업무함::목록조회(All) -->
 	<select id="selectDeptJobBxListAll" resultMap="DeptJobBxListAll">
-	 
-		SELECT 
-			A.DEPT_CD,
-			B.DEPT_NM DEPT_NM,
-			A.DEPT_JOBBX_ID,
-			A.DEPT_JOBBX_NM
+
+		SELECT
+		A.DEPT_CD,
+		B.DEPT_NM DEPT_NM,
+		A.DEPT_JOBBX_ID,
+		A.DEPT_JOBBX_NM
 		FROM COMTNDEPTJOBBX A
 		LEFT OUTER JOIN DEPARTMENT B
-			ON A.DEPT_CD = B.DEPT_CD 
+		ON A.DEPT_CD = B.DEPT_CD
 		ORDER BY B.DEPT_NM, A.INDICT_ORDR ASC
-	 	
+
 	</select>
-	
+
 	<!-- 부서업무함::목록조회 -->
-	<select id="selectDeptJobBxList" parameterType="egovframework.com.cop.smt.djm.service.DeptJobBxVO" resultMap="DeptJobBxList">
-		
-	SELECT *
-	FROM (
-	SELECT T0.*, ROWNUM RNUM
+	<select id="selectDeptJobBxList"
+		parameterType="egovframework.com.cop.smt.djm.service.DeptJobBxVO"
+		resultMap="DeptJobBxList">
+
+		SELECT *
 		FROM (
-	
-	 
-	 
-		SELECT 
-			A.DEPT_CD,
-			B.DEPT_NM,
-			A.DEPT_JOBBX_ID,
-			A.DEPT_JOBBX_NM,
-			A.INDICT_ORDR,
-			C.USER_NM LAST_UPDUSR_NM,
-			TO_DATE(A.UPDATE_DT) UPDATE_DT 
+		SELECT T0.*, ROWNUM RNUM
+		FROM (
+
+
+
+		SELECT
+		A.DEPT_CD,
+		B.DEPT_NM,
+		A.DEPT_JOBBX_ID,
+		A.DEPT_JOBBX_NM,
+		A.INDICT_ORDR,
+		C.USER_NM LAST_UPDUSR_NM,
+		TO_DATE(A.UPDATE_DT) UPDATE_DT
 		FROM COMTNDEPTJOBBX A
 		LEFT OUTER JOIN DEPARTMENT B
-			ON A.DEPT_CD = B.DEPT_CD 
+		ON A.DEPT_CD = B.DEPT_CD
 		LEFT OUTER JOIN COMTNEMPLYRINFO C
-			ON A.UPDATE_ID = C.ESNTL_ID 
+		ON A.UPDATE_ID = C.ESNTL_ID
 		WHERE 1=1
-	 
-	 <if test='popupCnd != null and popupCnd != ""'>
-		 <if test='deptCd != null and deptCd != ""'>AND
-			 A.DEPT_CD = #{deptCd}
-		 </if>
-	 </if>
-	 <if test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(searchCnd, 0)">AND
-		 	NVL(B.DEPT_NM, ' ') LIKE '%'||#{searchWrd}||'%' 		
-	 </if>
-	 <if test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(searchCnd, 1)">AND
-		 	A.DEPT_JOBBX_NM LIKE '%'||#{searchWrd}||'%' 		
-	 </if>
-	 
-		ORDER BY B.DEPT_NM, A.INDICT_ORDR ASC
-	 
-	
-		
-		) T0
-	) 
-	WHERE RNUM BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}
-			
-	</select>
-	
-	<!-- 부서업무함::목록조회 Count-->
-	<select id="selectDeptJobBxListCnt" parameterType="egovframework.com.cop.smt.djm.service.DeptJobBxVO" resultType="java.lang.Integer">
-		
-			SELECT
-				COUNT(DEPT_JOBBX_ID) as cnt
-			FROM
-				COMTNDEPTJOBBX A
-			LEFT OUTER JOIN DEPARTMENT B
-				ON A.DEPT_CD = B.DEPT_CD 
-			WHERE 1=1
-		
+
 		<if test='popupCnd != null and popupCnd != ""'>
-		 <if test='deptCd != null and deptCd != ""'>AND
-			 A.DEPT_CD = #{deptCd}
-		 </if>
-	 	</if>
-		<if test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(searchCnd, 0)">AND
-		 		NVL(B.DEPT_NM, ' ') LIKE '%'||#{searchWrd}||'%' 		
-	 	</if>
-		<if test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(searchCnd, 1)">AND
-				A.DEPT_JOBBX_NM LIKE '%'||#{searchWrd}||'%' 		
-		</if>	
+			<if test='deptCd != null and deptCd != ""'>AND
+				A.DEPT_CD = #{deptCd}
+			</if>
+		</if>
+		<if
+			test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(searchCnd, 0)">AND
+			NVL(B.DEPT_NM, ' ') LIKE '%'||#{searchWrd}||'%'
+		</if>
+		<if
+			test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(searchCnd, 1)">AND
+			A.DEPT_JOBBX_NM LIKE '%'||#{searchWrd}||'%'
+		</if>
+
+		ORDER BY B.DEPT_NM, A.INDICT_ORDR ASC
+
+
+
+		) T0
+		)
+		WHERE RNUM BETWEEN #{firstIndex} + 1 AND #{firstIndex} +
+		#{recordCountPerPage}
+
 	</select>
-	
+
+	<!-- 부서업무함::목록조회 Count -->
+	<select id="selectDeptJobBxListCnt"
+		parameterType="egovframework.com.cop.smt.djm.service.DeptJobBxVO"
+		resultType="java.lang.Integer">
+
+		SELECT
+		COUNT(DEPT_JOBBX_ID) as cnt
+		FROM
+		COMTNDEPTJOBBX A
+		LEFT OUTER JOIN DEPARTMENT B
+		ON A.DEPT_CD = B.DEPT_CD
+		WHERE 1=1
+
+		<if test='popupCnd != null and popupCnd != ""'>
+			<if test='deptCd != null and deptCd != ""'>AND
+				A.DEPT_CD = #{deptCd}
+			</if>
+		</if>
+		<if
+			test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(searchCnd, 0)">AND
+			NVL(B.DEPT_NM, ' ') LIKE '%'||#{searchWrd}||'%'
+		</if>
+		<if
+			test="@egovframework.com.cmm.util.EgovMybatisUtil@isEquals(searchCnd, 1)">AND
+			A.DEPT_JOBBX_NM LIKE '%'||#{searchWrd}||'%'
+		</if>
+	</select>
+
 	<!-- 부서업무함::상세보기 -->
-	<select id="selectDeptJobBx" parameterType="egovframework.com.cop.smt.djm.service.DeptJobBxVO" resultMap="DeptJobBxDetail">
-		SELECT 
-			A.DEPT_CD,
-			B.DEPT_NM DEPT_NM,
-			A.DEPT_JOBBX_ID,
-			A.DEPT_JOBBX_NM,
-			A.INDICT_ORDR,
-			A.UPDATE_DT,
-			C.USER_NM LAST_UPDUSR_NM 
+	<select id="selectDeptJobBx"
+		parameterType="egovframework.com.cop.smt.djm.service.DeptJobBxVO"
+		resultMap="DeptJobBxDetail">
+		SELECT
+		A.DEPT_CD,
+		B.DEPT_NM DEPT_NM,
+		A.DEPT_JOBBX_ID,
+		A.DEPT_JOBBX_NM,
+		A.INDICT_ORDR,
+		A.UPDATE_DT,
+		C.USER_NM LAST_UPDUSR_NM
 		FROM COMTNDEPTJOBBX A
 		LEFT OUTER JOIN DEPARTMENT B
-			ON A.DEPT_CD = B.DEPT_CD
+		ON A.DEPT_CD = B.DEPT_CD
 		LEFT OUTER JOIN COMTNEMPLYRINFO C
-			ON A.UPDATE_ID = C.ESNTL_ID 
+		ON A.UPDATE_ID = C.ESNTL_ID
 		WHERE A.DEPT_JOBBX_ID = #{deptJobBxId}
 	</select>
-	
-	<!-- 부서업무함::수정  -->
-	<update id="updateDeptJobBx" parameterType="egovframework.com.cop.smt.djm.service.DeptJobBx"> 
-		UPDATE COMTNDEPTJOBBX 
-		SET  
-			DEPT_CD=#{deptCd},
-			DEPT_JOBBX_NM=#{deptJobBxNm},
-			INDICT_ORDR=#{indictOrdr},
-			UPDATE_DT = sysdate,
-			UPDATE_ID = #{lastUpdusrId}
+
+	<!-- 부서업무함::수정 -->
+	<update id="updateDeptJobBx"
+		parameterType="egovframework.com.cop.smt.djm.service.DeptJobBx">
+		UPDATE COMTNDEPTJOBBX
+		SET
+		DEPT_CD=#{deptCd},
+		DEPT_JOBBX_NM=#{deptJobBxNm},
+		INDICT_ORDR=#{indictOrdr},
+		UPDATE_DT = sysdate,
+		UPDATE_ID = #{lastUpdusrId}
 		WHERE DEPT_JOBBX_ID = #{deptJobBxId}
 	</update>
-	
+
 	<!-- 부서업무함::등록시 순서 조회 -->
-	<select id="selectMaxDeptJobBxOrdr" parameterType="java.lang.String" resultType="java.lang.Integer">
-		
-			SELECT
-				NVL(MAX(INDICT_ORDR), 0)
-			FROM
-				COMTNDEPTJOBBX 
-		
+	<select id="selectMaxDeptJobBxOrdr"
+		parameterType="java.lang.String" resultType="java.lang.Integer">
+
+		SELECT
+		NVL(MAX(INDICT_ORDR), 0)
+		FROM
+		COMTNDEPTJOBBX
+
 		WHERE DEPT_CD=#{deptCd}
 	</select>
-	
+
 	<!-- 부서업무함::순서 조회 -->
-	<select id="selectDeptJobBxOrdr" parameterType="egovframework.com.cop.smt.djm.service.DeptJobBxVO" resultType="java.lang.Integer">
-		
-			SELECT
-				COUNT(DEPT_JOBBX_ID) as cnt
-			FROM
-				COMTNDEPTJOBBX 
-		
+	<select id="selectDeptJobBxOrdr"
+		parameterType="egovframework.com.cop.smt.djm.service.DeptJobBxVO"
+		resultType="java.lang.Integer">
+
+		SELECT
+		COUNT(DEPT_JOBBX_ID) as cnt
+		FROM
+		COMTNDEPTJOBBX
+
 		WHERE DEPT_CD=#{deptCd}
-			<if test='ordrCnd != null and ordrCnd != ""'>
-				<if test='ordrCnd == "up"'>
+		<if test='ordrCnd != null and ordrCnd != ""'>
+			<if test='ordrCnd == "up"'>
 				<![CDATA[ AND
 				 	 INDICT_ORDR <= #{indictOrdr} ]]>
-			 	</if>
-				<if test='ordrCnd == "down"'>
+			</if>
+			<if test='ordrCnd == "down"'>
 				<![CDATA[ AND
 					 INDICT_ORDR >= #{indictOrdr} ]]>
-				</if>
 			</if>
-			<if test='ordrCnd == null or ordrCnd == ""'>
-				AND INDICT_ORDR = #{indictOrdr} 
-			</if>
-			 AND DEPT_JOBBX_ID != #{deptJobBxId}
-			  
+		</if>
+		<if test='ordrCnd == null or ordrCnd == ""'>
+			AND INDICT_ORDR = #{indictOrdr}
+		</if>
+		AND DEPT_JOBBX_ID != #{deptJobBxId}
+
 	</select>
-	
-	<!-- 부서업무함::순서 수정  -->
-	<update id="updateDeptJobBxOrdrUp" parameterType="egovframework.com.cop.smt.djm.service.DeptJobBx"> 
-		UPDATE COMTNDEPTJOBBX 
-		SET  
-			INDICT_ORDR = INDICT_ORDR + 1
+
+	<!-- 부서업무함::순서 수정 -->
+	<update id="updateDeptJobBxOrdrUp"
+		parameterType="egovframework.com.cop.smt.djm.service.DeptJobBx">
+		UPDATE COMTNDEPTJOBBX
+		SET
+		INDICT_ORDR = INDICT_ORDR + 1
 		WHERE DEPT_CD=#{deptCd}
-			AND INDICT_ORDR = #{indictOrdr}
+		AND INDICT_ORDR = #{indictOrdr}
 	</update>
-	
-	<!-- 부서업무함::순서 수정  -->
-	<update id="updateDeptJobBxOrdrDown" parameterType="egovframework.com.cop.smt.djm.service.DeptJobBx"> 
-		UPDATE COMTNDEPTJOBBX 
-		SET  
-			INDICT_ORDR = INDICT_ORDR - 1
+
+	<!-- 부서업무함::순서 수정 -->
+	<update id="updateDeptJobBxOrdrDown"
+		parameterType="egovframework.com.cop.smt.djm.service.DeptJobBx">
+		UPDATE COMTNDEPTJOBBX
+		SET
+		INDICT_ORDR = INDICT_ORDR - 1
 		WHERE DEPT_CD=#{deptCd}
-			AND INDICT_ORDR = #{indictOrdr}
+		AND INDICT_ORDR = #{indictOrdr}
 	</update>
-	
-	<!-- 부서업무함::순서 수정  -->
-	<update id="updateDeptJobBxOrdr" parameterType="egovframework.com.cop.smt.djm.service.DeptJobBx"> 
-		UPDATE COMTNDEPTJOBBX 
-		SET  
-			INDICT_ORDR = #{indictOrdr}
+
+	<!-- 부서업무함::순서 수정 -->
+	<update id="updateDeptJobBxOrdr"
+		parameterType="egovframework.com.cop.smt.djm.service.DeptJobBx">
+		UPDATE COMTNDEPTJOBBX
+		SET
+		INDICT_ORDR = #{indictOrdr}
 		WHERE DEPT_JOBBX_ID = #{deptJobBxId}
 	</update>
-	
-	<!-- 부서업무함::순서 수정  -->
-	<update id="updateDeptJobBxOrdrAll" parameterType="egovframework.com.cop.smt.djm.service.DeptJobBx"> 
-		UPDATE COMTNDEPTJOBBX 
-		SET  
-			INDICT_ORDR = INDICT_ORDR + 1
+
+	<!-- 부서업무함::순서 수정 -->
+	<update id="updateDeptJobBxOrdrAll"
+		parameterType="egovframework.com.cop.smt.djm.service.DeptJobBx">
+		UPDATE COMTNDEPTJOBBX
+		SET
+		INDICT_ORDR = INDICT_ORDR + 1
 		WHERE DEPT_CD=#{deptCd}
-				AND INDICT_ORDR >= #{indictOrdr} 
+		AND INDICT_ORDR >= #{indictOrdr}
 	</update>
-	
-	<!-- 부서업무함::삭제  -->
-	<delete id="deleteDeptJobBx" parameterType="egovframework.com.cop.smt.djm.service.DeptJobBx"> 
-		
-			DELETE FROM COMTNDEPTJOBBX 
-			WHERE DEPT_JOBBX_ID = #{deptJobBxId}
-		
+
+	<!-- 부서업무함::삭제 -->
+	<delete id="deleteDeptJobBx"
+		parameterType="egovframework.com.cop.smt.djm.service.DeptJobBx">
+
+		DELETE FROM COMTNDEPTJOBBX
+		WHERE DEPT_JOBBX_ID = #{deptJobBxId}
+
 	</delete>
-	
-	<!-- 부서업무함::입력  -->
-	<insert id="insertDeptJobBx" parameterType="egovframework.com.cop.smt.djm.service.DeptJobBx">
-	 
-	 
-		INSERT INTO COMTNDEPTJOBBX ( 
-			DEPT_JOBBX_ID,
-			DEPT_CD,
-			DEPT_JOBBX_NM,
-			INDICT_ORDR,
-			CREATE_DT,
-			CREATE_ID,
-			UPDATE_DT,
-			UPDATE_ID
-		)VALUES( 
-			#{deptJobBxId},
-			#{deptCd},
-			#{deptJobBxNm},
-			#{indictOrdr},
-			sysdate,
-			#{frstRegisterId},
-			sysdate,
-			#{lastUpdusrId} 
+
+	<!-- 부서업무함::입력 -->
+	<insert id="insertDeptJobBx"
+		parameterType="egovframework.com.cop.smt.djm.service.DeptJobBx">
+
+
+		INSERT INTO COMTNDEPTJOBBX (
+		DEPT_JOBBX_ID,
+		DEPT_CD,
+		DEPT_JOBBX_NM,
+		INDICT_ORDR,
+		CREATE_DT,
+		CREATE_ID,
+		UPDATE_DT,
+		UPDATE_ID
+		)VALUES(
+		#{deptJobBxId},
+		#{deptCd},
+		#{deptJobBxNm},
+		#{indictOrdr},
+		sysdate,
+		#{frstRegisterId},
+		sysdate,
+		#{lastUpdusrId}
 		)
 
-	 
+
 	</insert>
-	
-	<!-- 부서업무함::부서업무함명 체크  -->
-	<select id="selectDeptJobBxCheck" parameterType="egovframework.com.cop.smt.djm.service.DeptJobBx" resultType="java.lang.Integer">
+
+	<!-- 부서업무함::부서업무함명 체크 -->
+	<select id="selectDeptJobBxCheck"
+		parameterType="egovframework.com.cop.smt.djm.service.DeptJobBx"
+		resultType="java.lang.Integer">
 		SELECT
-			COUNT(DEPT_JOBBX_ID) as cnt
+		COUNT(DEPT_JOBBX_ID) as cnt
 		FROM
-			COMTNDEPTJOBBX 
+		COMTNDEPTJOBBX
 		WHERE DEPT_CD = #{deptCd}
-			AND DEPT_JOBBX_NM = #{deptJobBxNm}
-			
+		AND DEPT_JOBBX_NM = #{deptJobBxNm}
+
 	</select>
-	
+
 	<!-- 부서업무::목록조회 -->
-	<select id="selectDeptJobList" parameterType="egovframework.com.cop.smt.djm.service.DeptJobVO" resultMap="DeptJobList">
-		
-	SELECT *
-	FROM (
-	SELECT T0.*, ROWNUM RNUM
+	<select id="selectDeptJobList"
+		parameterType="egovframework.com.cop.smt.djm.service.DeptJobVO"
+		resultMap="DeptJobList">
+
+		SELECT *
 		FROM (
-	
-	 
-		SELECT 
-			B.DEPT_CD,
-			A.DEPT_JOB_ID,
-			A.DEPT_JOB_NM,
-			A.PRIORT,
-			C.USER_NM CHARGER_NM, 
-			TO_DATE(A.CREATE_DT) CREATE_DT 
+		SELECT T0.*, ROWNUM RNUM
+		FROM (
+
+		SELECT
+		B.DEPT_CD,
+		A.DEPT_JOB_ID,
+		A.DEPT_JOB_NM,
+		A.PRIORT,
+		C.USER_NM CHARGER_NM,
+		TO_DATE(A.CREATE_DT) CREATE_DT
 		FROM COMTNDEPTJOB A
 		LEFT OUTER JOIN COMTNDEPTJOBBX B
-			ON A.DEPT_JOBBX_ID = B.DEPT_JOBBX_ID 
+		ON A.DEPT_JOBBX_ID = B.DEPT_JOBBX_ID
 		LEFT OUTER JOIN COMTNEMPLYRINFO C
-			ON A.CHARGER_ID = C.ESNTL_ID 
-	
-	 <if test='searchDeptJobBxId != null and searchDeptJobBxId != ""'>
-		WHERE A.DEPT_JOBBX_ID = #{searchDeptJobBxId}
-	 </if>
-	 <if test='searchDeptJobBxId == null or searchDeptJobBxId == ""'>
-		WHERE B.DEPT_CD = #{searchDeptCd}
-	 </if>
-	 <if test='searchCnd == "0"'>AND
-		 	A.DEPT_JOB_NM LIKE '%'||#{searchWrd}||'%' 		
-	 </if>
-	 <if test='searchCnd == "1"'>AND
-		 	A.DEPT_JOB_CN LIKE '%'||#{searchWrd}||'%' 		
-	 </if>
-	 <if test='searchCnd == "2"'>AND
-		 	C.USER_NM LIKE '%'||#{searchWrd}||'%' 		
-	 </if>
-	 
-		ORDER BY A.CREATE_DT DESC
-	 	
-	 
-		
-		) T0
-	) 
-	WHERE RNUM BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}
-	
-	</select>
-	
-	<!-- 부서업무::목록조회 Count-->
-	<select id="selectDeptJobListCnt" parameterType="egovframework.com.cop.smt.djm.service.DeptJobVO" resultType="java.lang.Integer">
-		
-			SELECT
-				COUNT(A.DEPT_JOB_ID) as cnt
-			FROM
-				COMTNDEPTJOB A
-			LEFT OUTER JOIN COMTNDEPTJOBBX B
-				ON A.DEPT_JOBBX_ID = B.DEPT_JOBBX_ID 
-			LEFT OUTER JOIN COMTNEMPLYRINFO C
-				ON A.CHARGER_ID = C.ESNTL_ID 
-		
+		ON A.CHARGER_ID = C.ESNTL_ID
+
 		<if test='searchDeptJobBxId != null and searchDeptJobBxId != ""'>
 			WHERE A.DEPT_JOBBX_ID = #{searchDeptJobBxId}
 		</if>
@@ -487,98 +497,143 @@
 			WHERE B.DEPT_CD = #{searchDeptCd}
 		</if>
 		<if test='searchCnd == "0"'>AND
-		 		A.DEPT_JOB_NM LIKE '%'||#{searchWrd}||'%' 		
+			A.DEPT_JOB_NM LIKE '%'||#{searchWrd}||'%'
 		</if>
 		<if test='searchCnd == "1"'>AND
-				A.DEPT_JOB_CN LIKE '%'||#{searchWrd}||'%' 		
+			A.DEPT_JOB_CN LIKE '%'||#{searchWrd}||'%'
 		</if>
 		<if test='searchCnd == "2"'>AND
-				C.USER_NM LIKE '%'||#{searchWrd}||'%' 		
+			C.USER_NM LIKE '%'||#{searchWrd}||'%'
+		</if>
+
+		ORDER BY A.CREATE_DT DESC
+
+
+
+		) T0
+		)
+		WHERE RNUM BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}
+
+	</select>
+
+	<!-- 부서업무::목록조회 Count -->
+	<select id="selectDeptJobListCnt"
+		parameterType="egovframework.com.cop.smt.djm.service.DeptJobVO"
+		resultType="java.lang.Integer">
+
+		SELECT
+		COUNT(A.DEPT_JOB_ID) as cnt
+		FROM
+		COMTNDEPTJOB A
+		LEFT OUTER JOIN COMTNDEPTJOBBX B
+		ON A.DEPT_JOBBX_ID = B.DEPT_JOBBX_ID
+		LEFT OUTER JOIN COMTNEMPLYRINFO C
+		ON A.CHARGER_ID = C.ESNTL_ID
+
+		<if test='searchDeptJobBxId != null and searchDeptJobBxId != ""'>
+			WHERE A.DEPT_JOBBX_ID = #{searchDeptJobBxId}
+		</if>
+		<if test='searchDeptJobBxId == null or searchDeptJobBxId == ""'>
+			WHERE B.DEPT_CD = #{searchDeptCd}
+		</if>
+		<if test='searchCnd == "0"'>AND
+			A.DEPT_JOB_NM LIKE '%'||#{searchWrd}||'%'
+		</if>
+		<if test='searchCnd == "1"'>AND
+			A.DEPT_JOB_CN LIKE '%'||#{searchWrd}||'%'
+		</if>
+		<if test='searchCnd == "2"'>AND
+			C.USER_NM LIKE '%'||#{searchWrd}||'%'
 		</if>
 	</select>
-	
+
 	<!-- 부서업무::상세보기 -->
-	<select id="selectDeptJob" parameterType="egovframework.com.cop.smt.djm.service.DeptJobVO" resultMap="DeptJobDetail">
-		SELECT 
-			B.DEPT_CD,
-			C.DEPT_NM DEPT_NM,
-			A.DEPT_JOBBX_ID,
-			B.DEPT_JOBBX_NM,
-			A.DEPT_JOB_ID,
-			A.DEPT_JOB_NM,
-			A.DEPT_JOB_CN,
-			A.CHARGER_ID,
-			D.USER_NM CHARGER_NM,
-			A.PRIORT,
-			A.ATCH_FILE_ID,
-			A.CREATE_DT,
-			A.CREATE_ID,
-			A.UPDATE_DT,
-			A.UPDATE_ID 
+	<select id="selectDeptJob"
+		parameterType="egovframework.com.cop.smt.djm.service.DeptJobVO"
+		resultMap="DeptJobDetail">
+		SELECT
+		B.DEPT_CD,
+		C.DEPT_NM DEPT_NM,
+		A.DEPT_JOBBX_ID,
+		B.DEPT_JOBBX_NM,
+		A.DEPT_JOB_ID,
+		A.DEPT_JOB_NM,
+		A.DEPT_JOB_CN,
+		A.CHARGER_ID,
+		D.USER_NM CHARGER_NM,
+		A.PRIORT,
+		A.ATCH_FILE_ID,
+		A.CREATE_DT,
+		A.CREATE_ID,
+		A.UPDATE_DT,
+		A.UPDATE_ID
 		FROM COMTNDEPTJOB A
-		LEFT OUTER JOIN COMTNDEPTJOBBX B 
-			ON A.DEPT_JOBBX_ID = B.DEPT_JOBBX_ID
+		LEFT OUTER JOIN COMTNDEPTJOBBX B
+		ON A.DEPT_JOBBX_ID = B.DEPT_JOBBX_ID
 		LEFT OUTER JOIN DEPARTMENT C
-			ON B.DEPT_CD = C.DEPT_CD
+		ON B.DEPT_CD = C.DEPT_CD
 		LEFT OUTER JOIN COMTNEMPLYRINFO D
-			ON A.CHARGER_ID = D.ESNTL_ID
+		ON A.CHARGER_ID = D.ESNTL_ID
 		WHERE A.DEPT_JOB_ID = #{deptJobId}
 	</select>
-	
-	<!-- 부서업무::수정  -->
-	<update id="updateDeptJob" parameterType="egovframework.com.cop.smt.djm.service.DeptJob"> 
+
+	<!-- 부서업무::수정 -->
+	<update id="updateDeptJob"
+		parameterType="egovframework.com.cop.smt.djm.service.DeptJob">
 		UPDATE COMTNDEPTJOB
-		SET  
-			DEPT_JOBBX_ID=#{deptJobBxId},
-			DEPT_JOB_NM=#{deptJobNm},
-			DEPT_JOB_CN=#{deptJobCn},
-			CHARGER_ID=#{chargerId},
-			PRIORT=#{priort},
-			ATCH_FILE_ID=#{atchFileId},
-			UPDATE_DT = sysdate,
-			UPDATE_ID = #{lastUpdusrId}
+		SET
+		DEPT_JOBBX_ID=#{deptJobBxId},
+		DEPT_JOB_NM=#{deptJobNm},
+		DEPT_JOB_CN=#{deptJobCn},
+		CHARGER_ID=#{chargerId},
+		PRIORT=#{priort},
+		ATCH_FILE_ID=#{atchFileId},
+		UPDATE_DT = sysdate,
+		UPDATE_ID = #{lastUpdusrId}
 		WHERE DEPT_JOB_ID = #{deptJobId}
 	</update>
-	
-	<!-- 부서업무::삭제  -->
-	<delete id="deleteDeptJob" parameterType="egovframework.com.cop.smt.djm.service.DeptJob"> 
-		
-			DELETE FROM COMTNDEPTJOB 
-			WHERE DEPT_JOB_ID = #{deptJobId}
-		
+
+	<!-- 부서업무::삭제 -->
+	<delete id="deleteDeptJob"
+		parameterType="egovframework.com.cop.smt.djm.service.DeptJob">
+
+		DELETE FROM COMTNDEPTJOB
+		WHERE DEPT_JOB_ID = #{deptJobId}
+
 	</delete>
-	
-	<!-- 부서업무::입력  --> <!-- ksy 수정중 2/13 -->
-	<insert id="insertDeptJob" parameterType="egovframework.com.cop.smt.djm.service.DeptJob">
-	 
-	 
-		INSERT INTO COMTNDEPTJOB ( 
-			DEPT_JOB_ID,
-			DEPT_JOBBX_ID,
-			DEPT_JOB_NM,
-			DEPT_JOB_CN,
-			CHARGER_ID,
-			PRIORT,
-			ATCH_FILE_ID,
-			CREATE_DT,
-			CREATE_ID,
-			UPDATE_DT,
-			UPDATE_ID
-		)VALUES( 
-			#{deptJobId},
-			#{deptJobBxId},
-			#{deptJobNm},
-			#{deptJobCn},
-			#{chargerId},
-			#{priort},
-			#{atchFileId},
-			sysdate,
-			#{frstRegisterId},
-			sysdate,
-			#{lastUpdusrId}
+
+	<!-- 부서업무::입력 --> <!-- ksy 수정중 2/13 -->
+	<insert id="insertDeptJob"
+		parameterType="egovframework.com.cop.smt.djm.service.DeptJob">
+
+
+		INSERT INTO COMTNDEPTJOB (
+		DEPT_JOB_ID,
+		DEPT_JOBBX_ID,
+		DEPT_JOB_NM,
+		DEPT_JOB_CN,
+		CHARGER_ID,
+		PRIORT,
+		ATCH_FILE_ID,
+		CREATE_DT,
+		CREATE_ID,
+		UPDATE_DT,
+		UPDATE_ID
+		)VALUES(
+		#{deptJobId},
+		#{deptJobBxId},
+		#{deptJobNm},
+		#{deptJobCn},
+		#{chargerId},
+		#{priort},
+		#{atchFileId},
+		sysdate,
+		#{frstRegisterId},
+		sysdate,
+		#{lastUpdusrId}
 		)
 
-	 
+
 	</insert>
 
 </mapper>

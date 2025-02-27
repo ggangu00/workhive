@@ -130,5 +130,14 @@ public class DeptJobVO extends DeptJob {
 	public void setRecordCountPerPage(int recordCountPerPage) {
 		this.recordCountPerPage = recordCountPerPage;
 	}
+
+	@Override
+	public String toString() {
+		return "DeptJobVO [searchCnd=" + searchCnd + ", searchWrd=" + searchWrd + ", searchDeptCd=" + searchDeptCd
+				+ ", searchDeptJobBxId=" + searchDeptJobBxId + ", pageIndex=" + pageIndex + ", pageUnit=" + pageUnit
+				+ ", pageSize=" + pageSize + ", firstIndex=" + firstIndex + ", lastIndex=" + lastIndex
+				+ ", recordCountPerPage=" + recordCountPerPage + "]";
+	}
+	
 	
 }
