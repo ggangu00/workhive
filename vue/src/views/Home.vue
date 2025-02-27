@@ -37,7 +37,6 @@
         </div>
       </div>
 
-
       <div class="row" style="background-color: transparent;">
         <div class="col-5">
           <div class="card">

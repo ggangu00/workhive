@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import egovframework.com.cmm.ComDefaultVO;
 import egovframework.com.project.service.ProjectDTO;
 import egovframework.com.project.service.ProjectService;
+import egovframework.com.project.service.ProjectWorkDTO;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController // data 
@@ -59,7 +60,6 @@ public class ProjectController {
 		int totCnt = projectService.projectSelectAllCnt(searchVO);
 		paginationInfo.setTotalRecordCount(totCnt);
 		
-		log.info("페이징 매개변수 ====>" + totCnt);
 		model.addAttribute("paginationInfo", paginationInfo);
 		model.addAttribute("list", projectList); 
 		
@@ -88,29 +88,21 @@ public class ProjectController {
 	
 	//프로젝트 등록
 	@PostMapping("")
-	public Map<String, Object> projectAdd(@RequestBody ProjectDTO dto) {
-		log.info("받아온 값 =======>☆★☆★"+dto);
+	public boolean projectAdd(@RequestBody ProjectDTO project) {
+		boolean result = projectService.saveProject(project);
 		
-	  //boolean result = projectService.projectInsert(requestBody);
-	  	  
-	  Map<String, Object> map = new HashMap<>();
-	  //map.put("result", result);
-	  //map.put("list", projectService.projectSelectAll());
-		
-	  return map;
+	  return result;
 	}
 	
 	//프로젝트 수정
 	@PutMapping("")
 	public Map<String, Object> projectModify(@RequestBody ProjectDTO dto) {
-		log.info("수정 권한 코드 출력 => " + dto.toString());
 		
 		Map<String, Object> map = new HashMap<>();
 		
 		boolean result = projectService.projectUpdate(dto);
 		
 		map.put("result", result);
-		//map.put("list", projectService.projectSelectAll());
 		
 		return map;
 	}
@@ -145,7 +137,7 @@ public class ProjectController {
 	
 	//프로젝트 과업조회
 	@GetMapping("/work/{prCd}")
-	public List<ProjectDTO> projectWorkList(@PathVariable(name="prCd") String prCd) {	  
+	public List<ProjectWorkDTO> projectWorkList(@PathVariable(name="prCd") String prCd) {	  
 	  return projectService.projectWorkSelectAll(prCd);
 	}	
 
@@ -156,7 +148,7 @@ public class ProjectController {
 		Map<String, Object> map = new HashMap<>();
 		
 		//프로젝트 과업 정보조회
-		ProjectDTO infoDto = projectService.projectWorkSelect(prWorkCd);
+		ProjectWorkDTO infoDto = projectService.projectWorkSelect(prWorkCd);
 		
 		if (infoDto != null) {
 	        map.put("result", true);
@@ -167,19 +159,6 @@ public class ProjectController {
 	    }
 		
 		return map;
-	}
-	
-	//프로젝트 과업등록
-	@PostMapping("/work")
-	public Map<String, Object> projectWorkAdd(@Validated ProjectDTO project) {
-		
-	  boolean result = projectService.projectWorkInsert(project);
-	  	  
-	  Map<String, Object> map = new HashMap<>();
-	  map.put("result", result);
-	  map.put("list", projectService.projectWorkSelectAll(project.getPrCd()));
-		
-	  return map;
 	}
 	
 	//프로젝트 과업 삭제
