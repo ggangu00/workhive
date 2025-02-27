@@ -47,9 +47,6 @@
             </sidenav-collapse>
          </li>
 
-
-
-
          <!--게시글 목록 작업하는 곳[S]-->
          <li class="nav-item">
             <sidenav-collapse
@@ -72,8 +69,7 @@
                </template>
             </sidenav-collapse>
          </li>
-         <!--게시판 목록 작업하는 곳[E]-->``
-
+         <!--게시판 목록 작업하는 곳[E]-->
 
       </ul>
    </div>
@@ -93,7 +89,7 @@ const menus = ref([]);
 const menuGetList = async () => {
    try {
       const response = await axios.get('/api/menu');
-      
+
       menuBuildTree(response.data);
    } catch (err) {
       Swal.fire({
@@ -199,7 +195,7 @@ onMounted(() => {
 </script>
 
 
-<style scoped>
+<style lang="scss" scoped>
 .sub-item {
    color: #cfcfcf;
    font-size: 13px;

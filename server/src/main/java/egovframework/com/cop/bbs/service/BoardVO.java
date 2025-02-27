@@ -117,6 +117,13 @@ public class BoardVO extends Board implements Serializable {
     /** 비밀글 여부 */
     private String secretAt;
     
+	/** 게시글 제목 */
+    private String nttSj;
+    
+    /** 게시글 내용 */
+    private String nttCn;
+    
+    
     public int getInqireCo() {
 		return inqireCo;
 	}
@@ -143,11 +150,6 @@ public class BoardVO extends Board implements Serializable {
 		this.nttCn = nttCn;
 	}
 
-	/** 게시글 제목 */
-    private String nttSj;
-    
-    /** 게시글 내용 */
-    private String nttCn;
     
     /**
      * searchBgnDe attribute를 리턴한다.

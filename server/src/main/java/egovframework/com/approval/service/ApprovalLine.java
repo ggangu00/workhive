@@ -26,6 +26,7 @@ public class ApprovalLine {
 	private String signDt;
 	private String signName;
 	private String respNm;
+	private String gradeNm;
 	
 	private List<String> approvalArr;
 }

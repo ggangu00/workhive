@@ -4,7 +4,7 @@
       <div>
         <div class="card">
           <div class="card-body">
-            <h4 class="card-title float-left mt-1">공지사항 목록</h4>
+            <h4 class="card-title float-left mt-1 font-weight-bold">📢 공지사항 목록</h4>
             <button class="btn btn-primary btn-sm btn-fill float-right" @click="goToBulletinAdd">등록</button>
           </div>
         </div>
@@ -44,45 +44,54 @@ import axios from 'axios';
 
 const route = useRoute();
 const router = useRouter();
-const bbsId = ref(route.params.bbsId); // bbsId를 ref로 감싸서 반응형 처리
-
-console.log('라우트 파라미터:', route.params);
+const bbsId = ref(route.params.bbsId);
 
 const gridInstance = ref(null);
 const BulletinList = ref([]);
 const searchColumn = ref('');
 const searchKeyword = ref('');
 
-// 등록 버튼 클릭 시 bulletinAdd 페이지로 이동
+// 등록 버튼 클릭 시 이동
 const goToBulletinAdd = () => {
   router.push({
     name: 'BulletinAdd',
-    query: { bbsId: bbsId.value}, // .value 사용하여 값 전달
+    query: { bbsId: bbsId.value },
   });
 };
 
-// 게시글 목록 조회 함수
+// 📌 게시글 목록 조회 + 공지사항 정렬
 const BulletinGetList = async () => {
   try {
     const { data } = await axios.get(`/api/bulletin/bulletinList?bbsId=${bbsId.value}`);
-    BulletinList.value = (data.resultList || []).map((item, index) => ({
-      rowNum: index + 1,
-      ...item,
-    }));
+    
+    let noticeCount = 0; // 공지사항 개수
+    BulletinList.value = (data.resultList || []).map((item, index) => {
+      const isNotice = item.noticeAt?.trim().toUpperCase() === 'Y';
+      if (isNotice) noticeCount += 1;
+
+      return {
+        rowNum: isNotice ? '📢' : index + 1 - noticeCount, // 공지글이면 📢, 아니면 번호
+        noticeAt: isNotice ? 'Y' : 'N', // 공지여부
+        ...item,
+      };
+    }).sort((a, b) => {
+      if (a.noticeAt === 'Y' && b.noticeAt !== 'Y') return -1; // 공지글 상단 배치
+      if (a.noticeAt !== 'Y' && b.noticeAt === 'Y') return 1;
+      return new Date(b.frstRegistPnttm) - new Date(a.frstRegistPnttm); // 최신글 순 정렬
+    });
 
     if (gridInstance.value) {
-      gridInstance.value.resetData(BulletinList.value); // 그리드 데이터 갱신
+      gridInstance.value.resetData(BulletinList.value);
     }
   } catch (error) {
     console.error('게시글 목록 불러오기 오류:', error);
     BulletinList.value = [];
   }
-  console.log('게시글 목록:', BulletinList.value);
 };
 
-// 그리드 초기화
+// 📌 그리드 초기화
 const initializeGrid = () => {
-  destroyGrid(); // 기존 그리드 제거
+  destroyGrid();
 
   gridInstance.value = new window.tui.Grid({
     el: document.getElementById('bulletinGrid'),
@@ -98,12 +107,52 @@ const initializeGrid = () => {
       resizable: true,
     },
     columns: [
-      { header: '번호', name: 'rowNum', align: 'center', width: 60, sortable: true },
-      { header: '제목', name: 'nttSj', align: 'left', minWidth: 200, sortable: true },
-      { header: '작성자', name: 'ntcrNm', align: 'center', width: 120, sortable: true },
-      { header: '작성일', name: 'frstRegistPnttm', align: 'center', width: 140, sortable: true },
-      { header: '조회수', name: 'inqireCo', align: 'center', width: 100, sortable: true },
-      { header: '관리', name: 'action', align: 'center', width: 150 },
+      { 
+        header: '번호', 
+        name: 'rowNum', 
+        align: 'center', 
+        width: 60, 
+        className: 'bold-text',
+        formatter: ({ value }) => {
+          return value === '📢' ? `<span class="notice-icon">${value}</span>` : `${value}`;
+        }
+      },
+      { 
+        header: '제목', 
+        name: 'nttSj', 
+        align: 'left', 
+        minWidth: 200, 
+        sortable: true,
+        formatter: ({ value, row }) => {
+          return row.noticeAt === 'Y'
+            ? `<strong class="notice-text">${value}</strong>` // 공지글: 진하게
+            : `<span class="normal-text">${value}</span>`; // 일반글: 덜 진하게
+        }
+      },
+      { 
+        header: '등록자', 
+        name: 'ntcrNm', 
+        align: 'center', 
+        width: 120, 
+        sortable: true, 
+        className: 'bold-text'
+      },
+      { 
+        header: '등록일', 
+        name: 'frstRegistPnttm', 
+        align: 'center', 
+        width: 140, 
+        sortable: true,
+        formatter: ({ value }) => `${value}`
+      },
+      { 
+        header: '조회수', 
+        name: 'inqireCo', 
+        align: 'right', 
+        width: 100, 
+        sortable: true, 
+        className: 'bold-text'
+      },
     ],
   });
 
@@ -115,14 +164,12 @@ const initializeGrid = () => {
   });
 };
 
-// 게시글 상세 조회 이동 함수
+// 게시글 상세 조회 이동
 const goToBulletinInfo = (row) => {
-  console.log("테스트:",row.nttId);
-  router.push({ path: `/bulletin/bulletinInfo/${bbsId.value}/${row.nttId}`})//, params: { bulletinId: row.nttId, bbsId: bbsId.value } });
+  router.push({ path: `/bulletin/bulletinInfo/${bbsId.value}/${row.nttId}` });
 };
 
-
-// 그리드 제거 함수
+// 그리드 제거
 const destroyGrid = () => {
   if (gridInstance.value) {
     gridInstance.value.destroy();
@@ -130,7 +177,7 @@ const destroyGrid = () => {
   }
 };
 
-// 검색 필터링 함수
+// 검색 필터링
 const filterGrid = () => {
   if (!searchKeyword.value) {
     gridInstance.value?.resetData(BulletinList.value);
@@ -160,6 +207,7 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+/* 공통 스타일 */
 .custom-select {
   margin-right: 10px;
   padding: 5px;
@@ -178,4 +226,25 @@ onBeforeUnmount(() => {
   padding: 15px;
   border-radius: 5px;
 }
+
+/* 공지사항 텍스트 스타일 (진하게) */
+.notice-text {
+  font-weight: bold;
+  color: #333;
+}
+
+/* 일반 게시글 텍스트 스타일 (덜 진하게) */
+.normal-text {
+  font-weight: normal;
+  color: #555;
+}
+
+/* 공지사항 아이콘 스타일 */
+.notice-icon {
+  color: #d9534f;
+  font-weight: bold;
+}
 </style>
+
+
+

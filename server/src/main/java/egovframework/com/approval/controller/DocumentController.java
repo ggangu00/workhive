@@ -45,7 +45,6 @@ public class DocumentController {
 
 	@Resource DocumentService documentService;
 	
-	
 	//문서기안
 	@PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public String register(
@@ -98,6 +97,10 @@ public class DocumentController {
 	}
 	
 	//수신자조횜
+	@GetMapping("/receiverList")
+	public List<Reception> receiverList(@RequestParam(name="docCd") String docCd){
+		return documentService.receiverSelecteAll(docCd);
+	}
 	
 	
 	//리스트조회(조건별)

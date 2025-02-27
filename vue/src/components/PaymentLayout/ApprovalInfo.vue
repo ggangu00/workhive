@@ -32,7 +32,7 @@
                     <input type="text" class="form-control w80" :value="$route.query.docKind" disabled>
                   </div>
                   <div class="col-3">
-                    <input type="text" class="form-control w80" :value="$route.query.formNm" disabled>
+                    <input type="text" class="form-control w80" :value="$route.query.formType" disabled>
                   </div>
                   <div class="col-3">
                     <input type="text" class="form-control w80" :value="$route.query.deptNm" disabled>
@@ -107,15 +107,15 @@
               <span class="mt-1 mb-1">결재</span>
               <div class="approval-box">
                 <div v-for="(approver, index) in reversedApprovers" :key="index" class="approval-item">
-                    <span class='badge bg-info text-dark'>{{ getApprovalStatusName(approver.status) }}</span> 
-                    [{{ approver.dept }}] {{ approver.name }} {{ approver.title }}
+                    <span class='badge bg-info text-dark'>{{ getApprovalStatusName(approver.signName) }}</span> 
+                    [{{ approver.deptNm }}] {{ approver.mberNm }} {{ approver.gradeNm }}
                 </div>
               </div>
               <span class="mt-3 mb-1">수신</span>
               <div class="approval-box">
                   <div v-for="(receiver, index) in receivers" :key="index" class="approval-item">
                     <span class="badge bg-warning text-dark">수신</span>
-                    <span v-if="receiver.mberNm">[{{ receiver.respNm }}] {{ receiver.mberNm }}</span> <!-- 사원 -->
+                    <span v-if="receiver.mberNm">[{{ receiver.gradeNm }}] {{ receiver.mberNm }}</span> <!-- 사원 -->
                     <span v-else>[{{ receiver.deptNm }}]</span> <!-- 부서 -->
                   </div>
                 </div>
@@ -160,6 +160,7 @@ onMounted(() => {
 
   if(route.query.docCd ){
     approvalList();
+    receiverList();
   }
 });
 
@@ -174,7 +175,31 @@ onUnmounted(() => {
 });
 
 const fileList = ref([]);
+/////////////////////수신자 가져오기/////////////////////
+const receivers = ref([]);
+const receiverList = async () => {
+  if (!route.query.docCd) return; // docCd가 없으면 실행하지 않음
 
+  try {
+    const response = await axios.get("/api/document/receiverList", {
+      params: { docCd: route.query.docCd }
+    });
+
+    console.log('response.data=> ' ,response.data)
+    if (response.data) {
+      // 결재자 목록 설정
+      receivers.value = response.data.map((approver) => ({
+        mberId: approver.mberId,
+        mberNm: approver.mberNm,
+        deptNm: approver.deptNm,
+        signName: approver.signName, // 상태 코드 변환
+      }));
+    }
+    console.log('receivers.value => ', receivers.value);
+  } catch (error) {
+    console.error("결재선 정보 불러오기 실패:", error);
+  }
+};
 /////////////////////결재선 가져오기/////////////////////
 const reversedApprovers = ref([]);
 const approvalList = async () => {
@@ -190,9 +215,9 @@ const approvalList = async () => {
       // 결재자 목록 설정
       reversedApprovers.value = response.data.map((approver) => ({
         mberId: approver.mberId,
-        name: approver.mberNm,
-        dept: approver.deptNm,
-        status: approver.signName, // 상태 코드 변환
+        mberNm: approver.mberNm,
+        deptNm: approver.deptNm,
+        signName: approver.signName, // 상태 코드 변환
       }));
     }
     console.log('approvers.value => ', reversedApprovers.value);

@@ -32,13 +32,13 @@
                       </div>
                       <div class="d-flex justify-content-between mb-1">
                           <div class="col-3">
-                            <input type="text" class="form-control" v-model='docKind' readonly>
+                            <input type="text" class="form-control" v-model='docKind' readonly/>
                           </div>
                           <div class="col-3">
-                            <input type="text" class="form-control" v-model='formNm' readonly/>
+                            <input type="text" class="form-control" v-model='formType' readonly/>
                           </div>
                           <div class="col-3">
-                            <input type="text" class="form-control" v-model='deptNm'>
+                            <input type="text" class="form-control" v-model='deptNm' readonly/>
                           </div>
                       </div>
                     </div>
@@ -76,7 +76,7 @@
                       <ul class="file-list">
                           <li v-for="(file, index) in fileList" :key="index">
                           {{ file.name }}
-                          <button class="btn btn-sm btn-danger">삭제</button>
+                          <button class="btn btn-sm btn-danger" @click="removeFile(index)">삭제</button>
                           </li>
                           <li v-if="fileList.length == 0">첨부된 파일이 없습니다.</li>
                       </ul>
@@ -103,16 +103,16 @@
                <span>결재</span>    
                 <!-- 결재 목록 -->
                 <div  class="approval-box">
-                  <div v-for="(approver, index) in reversedApprovers" :key="index" class="approval-item">
+                  <div v-for="(approver, index) in approvers" :key="index" class="approval-item">
                       <span class='badge bg-info text-dark'>{{ getApprovalStatusName(approver.signName) }}</span> 
-                      [{{ approver.deptNm }}] {{ approver.mberNm }} {{ approver.respNm }}
+                      [{{ approver.deptNm }}] {{ approver.mberNm }} {{ approver.gradeNm }}
                   </div>
                 </div>
                 <span>수신</span>
                   <div class="approval-box">
                   <div v-for="(receiver, index) in receivers" :key="index" class="approval-item">
                     <span class="badge bg-warning text-dark">수신</span>
-                    <span v-if="receiver.mberNm">[{{ receiver.respNm }}] {{ receiver.mberNm }}</span> <!-- 사원 -->
+                    <span v-if="receiver.mberNm">[{{ receiver.gradeNm }}] {{ receiver.mberNm }}</span> <!-- 사원 -->
                     <span v-else>[{{ receiver.deptNm }}]</span> <!-- 부서 -->
                   </div>
                 </div>
@@ -136,7 +136,9 @@
 
       <!-- 모달 바디 -->
       <div class="modal-body">
-        <ApprovalLine ref="approvalLineRef" :approvers="approvers"/>
+        <ApprovalLine ref="approvalLineRef" 
+        :approvers="approvers"
+        :receivers="receivers"/>
       </div>
 
       <!-- 모달 푸터 -->
@@ -212,7 +214,7 @@ const editorElement = ref('');
 //데이터받기
 const docCd = ref("");
 const docKind = ref("I01");
-const formNm = ref("");
+const formType = ref("");
 const deptNm = ref("");
 const docTitle = ref("");
 const docCnEditor = ref("");
@@ -231,7 +233,7 @@ onMounted(() => {
   // 앞전 페이지에서 정보 받아옴
   docCd.value = route.query.docCd || "";
   docKind.value = route.query.docKind || "";
-  formNm.value = route.query.formNm || "";
+  formType.value = route.query.formType || "";
   deptNm.value = route.query.deptNm || "";
   docTitle.value = route.query.docTitle || "";
   docCnEditor.value = route.query.docCnEditor || "";
@@ -239,8 +241,10 @@ onMounted(() => {
 
   initEditor();
 
+  
   if(docCd.value){
     approvalList();
+    receiverList();
   }
   //param값 제거
   window.history.replaceState({}, '', route.path);
@@ -277,14 +281,17 @@ const handleModalOpen = () => {
     //approvalLineRef.value.setApprovals(reversedApprovers.value, receivers.value);
   }
 };
-
-const reversedApprovers = ref([]);
+ // 파일 삭제 기능
+const removeFile = (index) => {
+    fileList.value.splice(index, 1);
+    };
+//const reversedApprovers = ref([]);
 //결재자목록 수신자목록 가져오기
 const approvers = ref([]);
 const receivers = ref([]);
 const registerApprovals = () => {
   if (approvalLineRef.value) {
-    reversedApprovers.value = approvalLineRef.value.reversedApprovers;  // ApprovalLine의 approvers 데이터를 가져오기(화면에 보여주는)
+    //reversedApprovers.value = approvalLineRef.value.reversedApprovers;  // ApprovalLine의 approvers 데이터를 가져오기(화면에 보여주는)
     approvers.value = approvalLineRef.value.approvers;//이값으로 디비에넘기기
     console.log("결재자 => ", approvalLineRef.value.approvers);//이값으로 디비에넘기기
     console.log("결재자 => ", approvers.value);
@@ -293,6 +300,33 @@ const registerApprovals = () => {
     console.log("수신자 => ", receivers.value);
   }
 };
+
+/////////////////////수신자 가져오기/////////////////////
+const receiverList = async () => {
+  if (!route.query.docCd) return; // docCd가 없으면 실행하지 않음
+
+  try {
+    const response = await axios.get("/api/document/receiverList", {
+      params: { docCd: route.query.docCd }
+    });
+
+    console.log('response.data=> ' ,response.data)
+    if (response.data) {
+      // 수신자 목록 설정
+      receivers.value = response.data.map((approver) => ({
+        mberId: approver.mberId,
+        mberNm: approver.mberNm,
+        deptNm: approver.deptNm,
+        signName: approver.signName, // 상태 코드 변환
+        gradeNm : approver.gradeNm
+      }));
+    }
+    console.log('receivers.value => ', receivers.value);
+  } catch (error) {
+    console.error("결재선 정보 불러오기 실패:", error);
+  }
+};
+
 /////////////////////결재선 가져오기/////////////////////
 const approvalList = async () => {
   if (!docCd.value) return; // docCd가 없으면 실행하지 않음
@@ -305,14 +339,21 @@ const approvalList = async () => {
     console.log('response => ',response.data);
     if (response.data) {
       // 결재자 목록 설정
-      reversedApprovers.value = response.data.map((approver) => ({
+      // reversedApprovers.value = response.data.map((approver) => ({
+      //   mberId: approver.mberId,
+      //   mberNm: approver.mberNm,
+      //   deptNm: approver.deptNm,
+      //   signName: approver.signName, // 상태 코드 변환
+      // }));
+
+      approvers.value = response.data.map((approver) => ({
         mberId: approver.mberId,
         mberNm: approver.mberNm,
         deptNm: approver.deptNm,
         signName: approver.signName, // 상태 코드 변환
       }));
     }
-    console.log('approvers.value => ', reversedApprovers.value);
+    //console.log('approvers.value => ', reversedApprovers.value);
   } catch (error) {
     console.error("결재선 정보 불러오기 실패:", error);
   }
@@ -370,7 +411,7 @@ const formGetList = async () =>{
 
 //양신석택 모달
 const formSelect = (params) => {
-  formNm.value = params.formType;
+  formType.value = params.formType;
   formFile.value = params.formFile;
   formCd.value = params.formCd;
   editor.setHTML(formFile.value);
@@ -380,7 +421,7 @@ const formSelect = (params) => {
 ////////////////////리셋버튼/////////////////////////
 
 const conditionReset = () => { // 정보 리셋
-  formNm.value = "";
+  formType.value = "";
   docTitle.value = "";
   docCnEditor.value = "";
 
@@ -417,7 +458,7 @@ const getApprovalStatusName = (code) => {
 const approvalInfo = async() => {
   if (!inputCheck()) return;
   console.log(editor.getHTML()); // 내용
-  console.log(reversedApprovers.value);// 결재자정보
+  //console.log(reversedApprovers.value);// 결재자정보
   console.log('결재자정보 =>',approvers.value);// 결재자정보
   console.log(receivers.value);// 수신자정보
   console.log(fileList.value);
@@ -432,7 +473,7 @@ const approvalInfo = async() => {
       docKind : 'I01',
       formCd : formCd.value,
       deptNm : deptNm.value,
-      formNm : formNm.value
+      formType : formType.value
     })
   )
 
@@ -470,39 +511,14 @@ const approvalInfo = async() => {
               text:  "Error : " + err.response.data.error
           });
         }
-
-
-  //결재자정보포멧
-  // const formatApprovalLine = approvers.value.map((approver, index)=>({
-  //   mberId: approver.mberId,
-  //   signSeq: index + 1,
-  //   signName: approver.status, 
-  // }))
-
-  //
-  // const requestData = { 
-  // document:{// 서버로 보낼 데이터
-  //     docTitle : docTitle.value,
-  //     docCnEditor : editor.getHTML(),
-  //     mberId : 'admin3',
-  //     docKind : 'I01',
-  //     formCd : formCd.value,
-  //     deptNm : deptNm.value,
-  //     formNm : formNm.value
-  //     },
-  //     approvalLine: formatApprovalLine,
-  //     reception: receivers.value,
-  //     file: fileList.value
-  //   };
-
-  //     console.log(requestData);
 }
-
 
 defineExpose({  // modalOpen expose
   modalOpen,
   conditionReset,
-  approvalInfo
+  approvalInfo,
+  receiverList,
+  approvalList
 });
 
 watch(()=> docCnEditor.value, async()=>{
