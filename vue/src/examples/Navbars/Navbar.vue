@@ -20,7 +20,7 @@
             </div>
 
             <ul class="navbar-nav justify-content-end">
-               <li class="nav-item dropdown ps-3 d-flex align-items-center me-3">
+               <li class="nav-item dropdown ps-3 d-flex align-items-center me-3" @click="showProfile = !showProfile">
                   <!-- 로그인 유저 정보 -->
                   <a
                      href="#"
@@ -29,7 +29,7 @@
                      id="dropdownMenuButton"
                      data-bs-toggle="dropdown"
                      aria-expanded="false"
-                     @click="showProfile = !showProfile"
+                     
                   >
                      <i class="fa-solid fa-user font-16"></i>
                      <span v-if="userInfoStore.isAuthenticated" class="ms-2 font-16">
@@ -38,32 +38,31 @@
                   </a>
 
                   <ul
-                     class="px-2 py-3 dropdown-menu dropdown-menu-end me-sm-n4"
+                     class="dropdown-menu dropdown-menu-end me-sm-n4 p-none"
                      :class="showProfile ? 'show' : ''"
                      aria-labelledby="dropdownMenuButton"
                   >
-                     <li class="mb-2">
-                        <a class="dropdown-item border-radius-md" @click="btnLogout">
+                     <li>
+                        <a class="dropdown-item border-radius-md" href="/personal/manage">
+
                         <div class="py-1 d-flex">
                            <div class="d-flex flex-column justify-content-center">
-                              <h5 class="mb-1 text-sm font-weight-normal">
-                                 <i class="fa-solid fa-right-to-bracket"></i>
-                                 <span class="font-weight-bold"> 로그아웃</span>
+                              <h5 class="mb-0 text-sm font-weight-normal">
+                                 <i class="fa-solid fa-user-pen"></i>
+                                 개인정보수정
                               </h5>
                            </div>
                         </div>
                         </a>
                      </li>
-
-                     <li class="mb-2">
-                        <a class="dropdown-item border-radius-md" href="/personal/manage">
-
+                     <li>
+                        <a class="dropdown-item border-radius-md" @click="btnLogout">
                         <div class="py-1 d-flex">
                            <div class="d-flex flex-column justify-content-center">
-                              <h6 class="mb-1 text-sm font-weight-normal">
-                                 <i class="fa-solid fa-user-pen"></i>
-                                 <span class="font-weight-bold"> 개인정보수정</span>
-                              </h6>
+                              <h5 class="mb-0 text-sm font-weight-normal">
+                                 <i class="fa-solid fa-right-to-bracket"></i>
+                                 로그아웃
+                              </h5>
                            </div>
                         </div>
                         </a>
@@ -229,3 +228,18 @@ export default {
    },
 };
 </script>
+<style>
+.dropdown-menu { 
+   border: 1px solid #eee !important;
+   h5{
+      color: #7b809a;
+   }
+   li:first-child {
+      border-bottom: 1px solid #eee !important;
+   }   
+   i {
+      width: 20px;
+      color: #7b809a;
+   }
+}
+</style>
