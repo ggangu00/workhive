@@ -37,7 +37,7 @@
 		<result property="ntcrId" column="NTCR_ID"/>
 		<result property="ntcrNm" column="NTCR_NM"/>
 		<result property="nttNo" column="NTT_NO"/>
-		<result property="nttCn" column="NTT_CN" jdbcType="CLOB"/>
+		<result property="nttCn" column="NTT_CN" />
 		<result property="password" column="PASSWORD"/>
 		<result property="frstRegisterId" column="FRST_REGISTER_ID"/>
 		<result property="frstRegisterNm" column="FRST_REGISTER_NM"/>
