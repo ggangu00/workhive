@@ -39,6 +39,7 @@ import CompletedInfo from "../views/Approval/CompletedInfo.vue";
 import PendingInfo from "../views/Approval/PendingInfo.vue";
 import ProceedInfo from "../views/Approval/ProceedInfo.vue";
 import RetrieveList from "../views/Approval/RetrieveList.vue";
+import ReceivedList from "../views/Approval/ReceivedList.vue";
 
 
 // pjh
@@ -242,6 +243,11 @@ const routes = [
       path: '/approval/retrieveList',
       name: 'RetrieveList',
       component : RetrieveList
+   },
+   {//수신함
+      path: '/approval/receivedList',
+      name: 'ReceivedList',
+      component : ReceivedList
    },
 
 

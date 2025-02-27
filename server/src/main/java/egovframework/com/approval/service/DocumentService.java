@@ -29,4 +29,7 @@ public interface DocumentService {
 	
 	//결재선 상태 변경
 	public boolean approvalStateUpdate(List<String> approvalArr, String signStat, String mberId);
+	
+	//수신자조회(문서번호로)
+	public List<Reception> receiverSelecteAll(String docCd);
 }

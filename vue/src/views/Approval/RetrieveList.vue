@@ -32,7 +32,7 @@
           { header: '문서번호', name: 'docCd' },
           { header: '현재결재상태', name: 'crntSignStat' },
           { header: '종류', name: 'docKind' },
-          { header: '양식', name: 'formNm' },
+          { header: '양식', name: 'formType' },
           { header: '제목', name: 'docTitle' },
           { header: '기안부서', name: 'deptNm' },
           { header: '기안자', name: 'mberId' },
