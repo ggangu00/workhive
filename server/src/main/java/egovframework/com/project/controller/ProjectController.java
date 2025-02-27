@@ -88,12 +88,13 @@ public class ProjectController {
 	
 	//프로젝트 등록
 	@PostMapping("")
-	public Map<String, Object> projectAdd(@Validated ProjectDTO project) {
+	public Map<String, Object> projectAdd(@RequestBody ProjectDTO dto) {
+		log.info("받아온 값 =======>☆★☆★"+dto);
 		
-	  boolean result = projectService.projectInsert(project);
+	  //boolean result = projectService.projectInsert(requestBody);
 	  	  
 	  Map<String, Object> map = new HashMap<>();
-	  map.put("result", result);
+	  //map.put("result", result);
 	  //map.put("list", projectService.projectSelectAll());
 		
 	  return map;
