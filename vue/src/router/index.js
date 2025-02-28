@@ -79,6 +79,7 @@ import BulletinList from "../views/Bulletin/BulletinList.vue";
 import BulletinAdd from "../views/Bulletin/BulletinAdd.vue";
 import BulletinInfo from "../views/Bulletin/BulletinInfo.vue";
 import BulletinModify from "../views/Bulletin/BulletinModify.vue";
+import SecretAt from "../views/Bulletin/SecretAt.vue"
 
 
 
@@ -368,6 +369,15 @@ const routes = [
       name: 'BulletinModify',
       component : BulletinModify,
    },
+      {//게시글 수정
+         path:'/bulletin/secretAt',
+         name: 'SecretAt',
+         component : SecretAt,
+      },
+       
+
+
+
 
 
 

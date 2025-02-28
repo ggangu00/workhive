@@ -53,7 +53,7 @@
             url="#"
             :aria-controls="''"
             v-bind:collapse="false"
-            collapseRef="/bulletin/bulletinList"
+            collapseRef="/bulletin"
             navText="게시글 관리"
             >
                <template v-slot:icon>
@@ -65,11 +65,15 @@
                   <div class="sub-item">
                      <li class="sub-li" @click="movePage('/bulletin/bulletinList/BBS001')">공지사항</li>
                      <li class="sub-li" @click="movePage('/bulletin/bulletinList/BBS001')">사내게시판</li>
+                     <li class="sub-li" @click="movePage('/bulletin/secretAt')">비밀글</li>
+                    
                   </div>
                </template>
             </sidenav-collapse>
          </li>
          <!--게시판 목록 작업하는 곳[E]-->
+
+          
 
       </ul>
    </div>
