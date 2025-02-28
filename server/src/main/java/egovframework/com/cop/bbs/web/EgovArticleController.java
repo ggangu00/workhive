@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -556,9 +557,13 @@ public class EgovArticleController {
      * @throws Exception
      */
     //@RequestMapping("/cop/bbs/updateArticle.do")
-    @PostMapping("/bulletinModify")
-    public String updateBoardArticle(final MultipartHttpServletRequest multiRequest, @ModelAttribute("searchVO") BoardVO boardVO,
-	    @ModelAttribute("bdMstr") BoardMaster bdMstr, @ModelAttribute("board") Board board, BindingResult bindingResult, ModelMap model) throws Exception {
+    @PostMapping("/bulletinModify/{bbsId}/{nttId}")
+    public String updateBoardArticle(final MultipartHttpServletRequest multiRequest, 
+    		@ModelAttribute("searchVO") BoardVO boardVO,
+	        @ModelAttribute("bdMstr") BoardMaster bdMstr, 
+	        @ModelAttribute("board") Board board, 
+	        BindingResult bindingResult, 
+	        ModelMap model) throws Exception {
 
 		LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
 		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
@@ -571,15 +576,15 @@ public class EgovArticleController {
     	// @ XSS 대응 권한체크 체크  START
     	// param1 : 사용자고유ID(uniqId,esntlId)
     	//--------------------------------------------------------
-    	LOGGER.debug("@ XSS 권한체크 START ----------------------------------------------");
-    	//step1 DB에서 해당 게시물의 uniqId 조회
-    	BoardVO vo = egovArticleService.selectArticleDetail(boardVO);
-    	
-    	//step2 EgovXssChecker 공통모듈을 이용한 권한체크
-    	EgovXssChecker.checkerUserXss(multiRequest, vo.getFrstRegisterId()); 
-      	LOGGER.debug("@ XSS 권한체크 END ------------------------------------------------");
-    	//--------------------------------------------------------
-    	// @ XSS 대응 권한체크 체크 END
+//    	LOGGER.debug("@ XSS 권한체크 START ----------------------------------------------");
+//    	//step1 DB에서 해당 게시물의 uniqId 조회
+//    	BoardVO vo = egovArticleService.selectArticleDetail(boardVO);
+//    	
+//    	//step2 EgovXssChecker 공통모듈을 이용한 권한체크
+//    	EgovXssChecker.checkerUserXss(multiRequest, vo.getFrstRegisterId()); 
+//      	LOGGER.debug("@ XSS 권한체크 END ------------------------------------------------");
+//    	//--------------------------------------------------------
+//    	// @ XSS 대응 권한체크 체크 END
     	//--------------------------------------------------------------------------------------------
 	
 		String atchFileId = boardVO.getAtchFileId();
