@@ -41,7 +41,6 @@ import PendingInfo from "../views/Approval/PendingInfo.vue";
 import ProceedInfo from "../views/Approval/ProceedInfo.vue";
 import RetrieveList from "../views/Approval/RetrieveList.vue";
 import ReceivedList from "../views/Approval/ReceivedList.vue";
-import PendingListCopy from "../views/Approval/PendingList.vue";
 
 // pjh
 import Todo from '../views/Todo/TodoManage.vue'
@@ -190,11 +189,6 @@ const routes = [
    },
    //skh
 
-   {
-      path:'/pendgingList',
-      name:'PendingListCopy',
-      component:PendingListCopy
-   },
    { //
       path: '/approval/restartDraft',
       name: 'RestartDraft',

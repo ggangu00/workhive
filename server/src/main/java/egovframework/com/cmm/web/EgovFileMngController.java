@@ -10,11 +10,11 @@ import javax.servlet.http.HttpServletRequest;
 import org.egovframe.rte.fdl.cryptography.EgovEnvCryptoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import egovframework.com.cmm.service.EgovFileMngService;
 import egovframework.com.cmm.service.FileVO;
@@ -40,7 +40,7 @@ import egovframework.com.cmm.util.EgovUserDetailsHelper;
  *
  *      </pre>
  */
-@Controller
+@RestController
 public class EgovFileMngController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EgovFileMngController.class);
@@ -67,33 +67,33 @@ public class EgovFileMngController {
 	 * @throws Exception
 	 */
 	@RequestMapping("/cmm/fms/selectFileInfs.do")
-	public String selectFileInfs(@ModelAttribute("searchVO") FileVO fileVO,
+	public List<FileVO> selectFileInfs(@ModelAttribute("searchVO") FileVO fileVO,
 			HttpServletRequest request,
 			@RequestParam Map<String, Object> commandMap, ModelMap model) throws Exception {
 		
 		String param_atchFileId = (String) commandMap.get("param_atchFileId");
-		String decodedAtchFileId = "";
+		//String decodedAtchFileId = "";
 		
-		if (param_atchFileId != null && !"".equals(param_atchFileId) ) {
-			decodedAtchFileId = cryptoService.decrypt(param_atchFileId);
-		}
+//		if (param_atchFileId != null && !"".equals(param_atchFileId) ) {
+//			decodedAtchFileId = cryptoService.decrypt(param_atchFileId);
+//		}
 		
-		fileVO.setAtchFileId(decodedAtchFileId);
+		fileVO.setAtchFileId(param_atchFileId);
 		List<FileVO> result = fileService.selectFileInfs(fileVO);
 
 		// FileId를 유추하지 못하도록 세션ID와 함께 암호화하여 표시한다. (2022.12.06 추가) - 파일아이디가 유추 불가능하도록 조치
-		for (FileVO file : result) {
-			String sessionId = request.getSession().getId();
-			String toEncrypt = sessionId + "|" + file.atchFileId;
-			file.setAtchFileId(Base64.getEncoder().encodeToString(cryptoService.encrypt(toEncrypt).getBytes()));
-		}
+//		for (FileVO file : result) {
+//			String sessionId = request.getSession().getId();
+//			String toEncrypt = sessionId + "|" + file.atchFileId;
+//			file.setAtchFileId(Base64.getEncoder().encodeToString(cryptoService.encrypt(toEncrypt).getBytes()));
+//		}
 
-		model.addAttribute("fileList", result);
-		model.addAttribute("updateFlag", "N");
-		model.addAttribute("fileListCnt", result.size());
-		model.addAttribute("atchFileId", param_atchFileId);
+//		model.addAttribute("fileList", result);
+//		model.addAttribute("updateFlag", "N");
+//		model.addAttribute("fileListCnt", result.size());
+//		model.addAttribute("atchFileId", param_atchFileId);
 
-		return "egovframework/com/cmm/fms/EgovFileList";
+		return result;
 	}
 
 	/**

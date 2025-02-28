@@ -57,10 +57,11 @@
         </div>
 
         <!-- Toast UI Grid 영역 -->
-        <div class="col-12">
-          <div id="tableGrid" class="toastui"></div>
-          <div id="pagination" class="tui-pagination"></div>
-        </div>
+
+          <div class="col-12">
+            <div id="tableGrid" class="toastui"></div>
+            <div id="pagination" class="tui-pagination"></div>
+          </div>
 
       </div>
     </div>
@@ -189,7 +190,7 @@ const btnSelectChange = () => {
     try {
       const response = await axios.put(`/api/document/state`, {
         approvalArr: checkedData.map(row => row.docCd),
-        mberId: 'admin8', // 실제 로그인 아이디로 변경
+        mberId: loginUser , // 실제 로그인 아이디로 변경
         signStat: newSignStat
       });
       
@@ -231,27 +232,18 @@ const TueGrid = () => {
 const handleRowClick = (e) => {
   if (!grid.value || e.rowKey == null || e.rowKey == undefined ) return;
   const dataRow = grid.value.getRow(e.rowKey);
-  if (e.nativeEvent.target.type == "checkbox") {
-    console.log("체크박스 클릭 감지, 행 클릭 이벤트 무시");
+  if (e.nativeEvent.target.type == "checkbox") {//행클릭무시 체크박스면
     return;
   }
 
   let routePath ='';
 
   // 특정 조건일 때 페이지 이동
-  if (dataRow?.crntSignStat == "반려") {
-    routePath = "/approval/rejectedInfo"
-  }else if (dataRow?.crntSignStat == "완료") {
-    routePath = "/approval/completedInfo";
-  }else if (dataRow?.crntSignStat == "미결") {
+if (dataRow?.crntSignStat == "미결" ||dataRow?.crntSignStat == "진행중" ) {
     routePath = "/approval/pendingInfo"
-  }else if (dataRow?.crntSignStat == "진행중") {
-    routePath = "/approval/proceedInfo"
-  }else if (dataRow?.crntSignStat == "회수"){
-    routePath = "/approval/restartDraft"
-  }
+}
 
-  console.log(dataRow)
+
   router.push({
     path: routePath,
     query :{
@@ -275,7 +267,7 @@ onMounted(() => {
 
 //문서 유형 셀렉트박스 변경시 필터 감지하여 재로딩
 watch([docKind, deptNm, formType, startDate, endDate], async ([newDodKind, newDeptNm, newFormType, newStartDate, newEndDate]) => {
-    const response = await axios.get("/api/document/list", { params: {
+    const response = await axios.get("/api/document/pendingList", { params: {
       docKind : newDodKind,
       deptNm : newDeptNm == "전체" ? "" : newDeptNm,
       formCd : newFormType,

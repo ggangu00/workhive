@@ -38,4 +38,6 @@ public interface DocumentService {
 	
 	//문서조회(미결함)
 	public List<DocumentDTO> pendingDocumentSelectAll(SearchDTO searchDTO);
+	
+	public boolean approvalCnUpdate(ApprovalLine approvalLine);
 }

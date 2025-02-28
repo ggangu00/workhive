@@ -59,7 +59,7 @@ public class DocumentServiceImpl implements DocumentService{
 
 	@Override
 	public int pendingDocCount(SearchDTO searchDTO) {
-		return documentMapper.getCount(searchDTO);
+		return documentMapper.pendingDocCount(searchDTO);
 	}
 	
 	@Override
@@ -117,6 +117,7 @@ public class DocumentServiceImpl implements DocumentService{
 
 		//결재자
         List<ApprovalLine> approvalLines = approvalParentDTO.getApprovalLine();
+        
         if (approvalLines != null && !approvalLines.isEmpty()) {
             for (int i = 0; i < approvalLines.size(); i++) {
                 ApprovalLine line = approvalLines.get(i);
@@ -163,6 +164,12 @@ public class DocumentServiceImpl implements DocumentService{
 	@Override
 	public List<DocumentDTO> pendingDocumentSelectAll(SearchDTO searchDTO) {
 		return documentMapper.pendingDocumentSelectAll(searchDTO);
+	}
+
+	@Override
+	public boolean approvalCnUpdate(ApprovalLine approvalLine) {
+		int updatedRows = documentMapper.approvalCnUpdate(approvalLine); 
+		return updatedRows > 0;
 	}
 	
 	

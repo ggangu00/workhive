@@ -137,7 +137,6 @@ let loginUser = userInfoStore.user ? userInfoStore.user.mberId : ""; // 로그�
       try {
         const response = await axios.get('/api/department');
         const deptData = response.data;
-        console.log(deptData)
         const departmentsTree = (deptList, parentCd = null, depth = 0) => {
           if (depth > 10) return [];
 
@@ -165,7 +164,6 @@ let loginUser = userInfoStore.user ? userInfoStore.user.mberId : ""; // 로그�
           { params: { deptCd : deptCd } 
         });
         employees.value =response.data;
-        console.log(response.data)
         updateGridData();
       } catch (error) {
         console.error("사원 목록 불러오기 실패:", error);
@@ -271,7 +269,6 @@ let loginUser = userInfoStore.user ? userInfoStore.user.mberId : ""; // 로그�
       }
     };
     watch(selectedDept, () => {
-      console.log('ads');
       updateGridData();
     });
 
@@ -284,7 +281,6 @@ let loginUser = userInfoStore.user ? userInfoStore.user.mberId : ""; // 로그�
     });
     //  모달이 열릴 때 Toast UI Grid를 다시 초기화
     const onModalOpen = async() => {
-      console.log(userInfoStore.user)
       setTimeout(() => {
         if (!gridInstance) {
           initGrid();
@@ -309,7 +305,7 @@ let loginUser = userInfoStore.user ? userInfoStore.user.mberId : ""; // 로그�
       }
     };
     //역으로표현
-    //const reversedApprovers = computed(() => [...approvers.value].reverse());
+
 
     onMounted(() => {
       deptList();

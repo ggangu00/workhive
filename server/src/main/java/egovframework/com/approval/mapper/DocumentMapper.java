@@ -38,6 +38,7 @@ public interface DocumentMapper {
 	
 	//미결문서 개수
 	int pendingDocCount(SearchDTO searchDTO);
+	
 	//양식조회
 	List<FormDTO> formSelectAll();
 	
@@ -61,4 +62,7 @@ public interface DocumentMapper {
 	
 	//문서조회(미결함)
 	List<DocumentDTO> pendingDocumentSelectAll(SearchDTO searchDTO);
+	
+	//결재 의견작성()
+	public int approvalCnUpdate(ApprovalLine approvalLine);
 }

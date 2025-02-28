@@ -193,6 +193,7 @@ public class DocumentController {
 		// 페이징처리
 		pagination.put("page", searchDTO.getPage());
 		pagination.put("totalCount", documentService.pendingDocCount(searchDTO));
+		System.out.println("totalPage => " + documentService.pendingDocCount(searchDTO));
 		
 		data.put("contents", documentService.pendingDocumentSelectAll(searchDTO));
 		
@@ -237,12 +238,19 @@ public class DocumentController {
 	
 	//결재선 상태변경
 	@PutMapping("/state")
-	public boolean todoStateModify(@RequestBody ApprovalLine approvalLine) {		
+	public boolean approvalLineModify(@RequestBody ApprovalLine approvalLine) {		
 		List<String> approvalArr = approvalLine.getApprovalArr();
 	    String signStat = approvalLine.getSignStat();
 	    String mberId = approvalLine.getMberId();
 	    log.info("결과아아ㅏㅏ ==> "+signStat);
 	    
 	    return documentService.approvalStateUpdate(approvalArr,signStat, mberId);
+	}
+	
+	//결재의견 추가(update)
+	@PutMapping("/approvalOpn")
+	public boolean approvalOpnModify(@RequestBody ApprovalLine approvalLine) {		
+	    
+	    return documentService.approvalCnUpdate(approvalLine);
 	}
 }
