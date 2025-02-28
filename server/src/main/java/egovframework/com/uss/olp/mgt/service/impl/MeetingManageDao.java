@@ -2,12 +2,13 @@ package egovframework.com.uss.olp.mgt.service.impl;
 
 import java.util.List;
 
+import org.egovframe.rte.psl.dataaccess.util.EgovMap;
+import org.springframework.stereotype.Repository;
+
 import egovframework.com.cmm.ComDefaultVO;
 import egovframework.com.cmm.service.impl.EgovComAbstractDAO;
 import egovframework.com.uss.olp.mgt.service.MeetingManageVO;
-
-import org.egovframe.rte.psl.dataaccess.util.EgovMap;
-import org.springframework.stereotype.Repository;
+import egovframework.com.uss.olp.mgt.service.MeetingMemberVO;
 /**
  * 회의관리를 처리하기 위한 Dao 구현 Class
  * @author 공통서비스 장동한
@@ -67,6 +68,11 @@ public class MeetingManageDao extends EgovComAbstractDAO {
 		return selectList("MeetingManage.selectMeetingManageDetail", meetingManageVO);
 	}
 
+
+	public List<EgovMap> selectMeetingMember(String mtgId){
+		return selectList("MeetingManage.selectMeetingMember", mtgId);
+	}
+
     /**
 	 * 회의정보를 목록 전체 건수를 조회한다.
 	 * @param searchVO - 조회할 정보가 담긴 VO
@@ -85,7 +91,11 @@ public class MeetingManageDao extends EgovComAbstractDAO {
 	public void insertMeetingManage(MeetingManageVO meetingManageVO){
 		insert("MeetingManage.insertMeetingManage", meetingManageVO);
 	}
-
+	
+	public void insertMeetingMember(MeetingMemberVO meetingMemberVO){
+		insert("MeetingManage.insertMeetingMemeber", meetingMemberVO);
+	}
+	
     /**
 	 * 회의정보를 수정한다.
 	 * @param searchVO - 조회할 정보가 담긴 VO

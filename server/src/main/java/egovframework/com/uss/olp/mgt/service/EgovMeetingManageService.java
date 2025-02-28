@@ -1,6 +1,7 @@
 package egovframework.com.uss.olp.mgt.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.egovframe.rte.psl.dataaccess.util.EgovMap;
 
@@ -51,7 +52,7 @@ public interface EgovMeetingManageService {
 	 * @return List
 	 * @throws Exception
 	 */
-	public List<EgovMap> selectMeetingManageDetail(MeetingManageVO meetingManageVO) throws Exception;
+	public Map<String, Object> selectMeetingManageDetail(MeetingManageVO meetingManageVO) throws Exception;
 
     /**
 	 * 회의정보를 목록 전체 건수를 조회한다.
@@ -67,7 +68,10 @@ public interface EgovMeetingManageService {
 	 * @throws Exception
 	 */
 	void  insertMeetingManage(MeetingManageVO meetingManageVO) throws Exception;
-
+	
+	//회의정보 등록
+	public boolean saveMeeting(MeetingManageVO meetingManageVO) throws Exception;
+	
     /**
 	 * 회의정보를 수정한다.
 	 * @param searchVO - 조회할 정보가 담긴 VO

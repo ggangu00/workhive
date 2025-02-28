@@ -1,6 +1,7 @@
 package egovframework.com.uss.olp.mgt.service;
 
 import java.io.Serializable;
+import java.util.List;
 /**
  * 회의관리 Vo Class 구현
  * @author 공통서비스 장동한
@@ -608,5 +609,17 @@ public class MeetingManageVO implements Serializable {
 	public void setTypeCd(String typeCd) {
 		this.typeCd = typeCd;
 	}
+	
+	//==================회의참여자===================
+	
+	private List<MeetingMemberVO> memberArr;		// 회의 참여자 목록
+    
+    public List<MeetingMemberVO> getMemberArr() {
+        return memberArr;
+    }
+
+    public void setMemberArr(List<MeetingMemberVO> memberArr) {
+        this.memberArr = memberArr;
+    }
 
 }

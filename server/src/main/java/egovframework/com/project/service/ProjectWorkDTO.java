@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProjectWorkDTO {
-	private String prCd;	// 과업코드
+	private String prCd;		// 과업코드
 	private String prWorkCd;	// 과업코드
 	private String prWorkNm;	// 과업명
 	private Long seq;			// 과업순서

@@ -56,10 +56,10 @@ public class UserDTO {
 	private String updateId;		// 수정자
 	private String delYn;			// 삭제여부
 	private String respCd;			// 직책코드
-  private String respNm;      // 직책명
+	private String respNm;      	// 직책명
 	private String gradeCd;			// 직급코드
 	private String deptCd;			// 부서코드
-  private String deptNm;      // 부서명
+	private String deptNm;     		// 부서명
 	
 	// 직급정보
 	private String gradeNm;
