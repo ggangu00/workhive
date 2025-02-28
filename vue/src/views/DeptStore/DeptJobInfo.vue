@@ -131,7 +131,7 @@ import Modal from '../../components/Modal.vue';
 import { useUserInfoStore } from '../../store/userStore.js';
 
 const userInfoStore = useUserInfoStore();
-let loginUser = userInfoStore.user;
+let loginUser = userInfoStore.user.mberId;
 console.log("로그인 정보 : ", loginUser);
 
 let gridInstance = ref();
@@ -244,8 +244,8 @@ const modalConfirm = async () => {
   formData.append("deptCd", jobBxData.value.deptCd);
   formData.append("deptJobBxNm", jobBxData.value.deptJobBxNm);
   formData.append("indictOrdr", jobBxData.value.indictOrdr);
-  formData.append("frstRegisterId", 'user01');
-  formData.append("lastUpdusrId", 'user01');
+  formData.append("frstRegisterId", loginUser);
+  formData.append("lastUpdusrId", loginUser);
 
   if(jobBxModalType == 'add') {
     await axios.post('/api/deptstore/jobBxAdd', formData);
@@ -273,13 +273,12 @@ onMounted(() => {
     data: dataSource,
     scrollX: false,
     scrollY: true,
-    rowHeaders: ['checkbox'],
+    rowHeaders: ['checkbox', 'rowNum'],
     pageOptions: {
       useClient: false,
       perPage: 5,
     },
     columns: [ // 체크박스 / 번호 / 제목 / 담당자 / 작성일 / 버튼
-      { header: '번호', name: 'rowNum', sortable: true, align: 'center' },
       { header: '제목', name: 'deptJobNm', sortable: true},
       { header: '담당자', name: 'chargerNm', sortable: true},
       { header: '작성일', name: 'frstRegisterPnttm', sortable: true},

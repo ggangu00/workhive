@@ -13,4 +13,7 @@ public interface CommuteCrctService {
 	public List<CommuteCrctDTO> crctSelectSigner(CommuteCrctDTO crctDTO);
 	public List<CommuteCrctDTO> crctSelectSigned(CommuteCrctDTO crctDTO);
 	public boolean signUpdate(CommuteCrctDTO crctDTO);
+	public int crctSelectAllCnt(CommuteCrctDTO crctDTO);
+	public int crctSelectSignerCnt(CommuteCrctDTO crctDTO);
+	public int crctSelectSignedCnt(CommuteCrctDTO crctDTO);
 }

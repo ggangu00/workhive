@@ -45,17 +45,32 @@
 <script setup>
 import { ref, onMounted, computed, watch, onBeforeUnmount } from 'vue';
 import { useStore } from "vuex";
-import axios from 'axios';
+// import axios from 'axios';
 import Grid from 'tui-grid';
 import { useRouter } from 'vue-router';
-import { dateTimeFormat } from '../../assets/js/common.js';
+// import { dateTimeFormat } from '../../assets/js/common.js';
+
+import { useUserInfoStore } from '../../store/userStore.js';
+
+const userInfoStore = useUserInfoStore();
+let loginUser = userInfoStore.user.mberId;
+console.log("로그인 정보 : ", loginUser);
 
 const store = useStore();
-const rowData = computed(() => store.state.commuteList);
+const isCmt = computed(() => store.state.isCmt);
+watch(isCmt, () => {
+  cmtGetList();
+})
 
 let gridInstance = ref();
 
-// 날짜 조회 조건
+// 조회 조건
+let params = {
+  mberId: loginUser,
+  startDate: '',
+  endDate: ''
+};
+
 const startDate = computed({
   get() {
     return store.state.startDate;  // Vuex 상태에서 startDate 가져오기
@@ -74,17 +89,23 @@ const endDate = computed({
 });
 
 watch ([startDate, endDate], async () => {
-  const params = {
-    mberId: "user01",
-    startDate: startDate.value,
-    endDate: endDate.value
-  };
+  params.startDate = startDate.value;
+  params.endDate = endDate.value;
 
-  let result = await axios.get(`/api/commute/cmtList`, { params });
-  
-  store.commit('commuteSetList', result.data);
+  cmtGetList();
+  // let result = await axios.get(`/api/commute/cmtList`, { params });
+  // store.commit('commuteSetList', result.data);
 });
 
+// 출퇴근 기록
+const cmtGetList = () => {
+  gridInstance.value.readData(1, params);
+}
+const dataSource = {
+  api: {
+    readData: { url: '/api/commute/cmtList', method: 'GET', initParams: params}
+  }
+};
 // Grid 초기화
 const initGrid = () => {
   if (gridInstance.value) {
@@ -93,10 +114,14 @@ const initGrid = () => {
 
   gridInstance.value = new Grid({
     el: document.getElementById('commuteGrid'),
-    data: rowData.value,
+    data: dataSource,
     scrollX: false,
     scrollY: true,
     bodyHeight: 500,
+    pageOptions: {
+      useClient: false,
+      perPage: 5,
+    },
     columns: [
       { header: '근무일자', name: 'commuteDt', align: 'center' },
       { header: '사원정보', name: 'mberId', align: 'center' },
@@ -114,20 +139,20 @@ const initGrid = () => {
 // Toast Grid 초기화
 onMounted(() => {
   initGrid();
-  store.dispatch("commuteGetList");
+  // store.dispatch("commuteGetList");
 });
 
 // rowData가 변경될 때 Toast Grid 업데이트
-watch(rowData, (newData) => {
-  rowData.value.forEach(i => {
-    i.commuteDt = dateTimeFormat(i.commuteDt, 'yyyy-MM-dd');
-    i.goTime = dateTimeFormat(i.goTime, 'MM/dd hh:mm');
-    i.leaveTime = dateTimeFormat(i.leaveTime, 'MM/dd hh:mm');
-  });
-  if (gridInstance.value) {
-    gridInstance.value.resetData(newData);
-  }
-});
+// watch(rowData, (newData) => {
+//   rowData.value.forEach(i => {
+//     i.commuteDt = dateTimeFormat(i.commuteDt, 'yyyy-MM-dd');
+//     i.goTime = dateTimeFormat(i.goTime, 'MM/dd hh:mm');
+//     i.leaveTime = dateTimeFormat(i.leaveTime, 'MM/dd hh:mm');
+//   });
+//   if (gridInstance.value) {
+//     gridInstance.value.resetData(newData);
+//   }
+// });
 
 // 페이지 이동 시 Grid 제거하여 중복 방지
 onBeforeUnmount(() => {
@@ -172,7 +197,7 @@ const router = useRouter();
 const btnCrctAdd = (rowKey) => {
   let selectedRowData = gridInstance.value.getRow(rowKey);
 
-  router.push({ name: 'CrctManage', query: { cmtCd: selectedRowData.commuteCd, isUpdate: 'true' } });
+  router.push({ name: 'CrctManage', query: { cmtCd: selectedRowData.commuteCd, isUpdate: 'false' } });
 }
 
 </script>

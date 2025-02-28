@@ -48,7 +48,22 @@
                     </tr>
                     <tr>
                       <th>파일 첨부</th>
-                      <td colspan="5"><input type="file" class="form-control"></td>
+                      <td colspan="5">
+                        <div class="form-control custom-file-div">
+                          <label class="btn btn-fill cell-btn-custom" for="inputFile">파일선택</label>
+                          <a>{{ (fileList.length == 0) ? "선택된 파일 없음" : `파일 ${fileList.length}개` }}</a>
+                          <p class="file-info">개별 파일 기준 최대 30MB까지 첨부할 수 있습니다.</p>
+                          <input type="file" id="inputFile" style="display: none;" @change="addFileList($event.target)" multiple>
+                          <hr>
+                          <div class="row file-list">
+                            <div class="col-4" v-for="(file, index) in fileList" :key="index">
+                            {{ file.name }}
+                            <button class="btn btn-sm btn-danger cell-btn-custom" @click="removeFile(index)">삭제</button>
+                            </div>
+                            <div class="col" v-if="fileList.length == 0">첨부된 파일이 없습니다.</div>
+                          </div>
+                        </div>
+                      </td>
                     </tr>
                     <tr>
                       <th>결재자</th>
@@ -59,8 +74,10 @@
               </div>
         
               <div class="row justify-content-center">
-                <button class="btn btn-secondary btn-fill" @click="btnCrctCancle">취소</button>
-                <button class="btn btn-success btn-fill" @click="btnCrctManage">저장</button>
+                <div class="col-auto">
+                  <button class="btn btn-secondary btn-fill mx-2" @click="btnCrctCancle">취소</button>
+                  <button class="btn btn-success btn-fill" @click="btnCrctManage">저장</button>
+                </div>
               </div>
             </div>
           </div>
@@ -79,12 +96,26 @@ import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import { ref , onMounted, watch } from 'vue';
 import { dateTimeFormat } from '../../assets/js/common.js';
+import { useUserInfoStore } from '../../store/userStore.js';
+
+const userInfoStore = useUserInfoStore();
+let loginUser = userInfoStore.user.mberId;
+console.log("로그인 정보 : ", loginUser);
 
 const route = useRoute();
 let isUpdate = ref(route.query.isUpdate === 'true');;
 let cmtCd;
 let crctCd;
 
+// 첨부파일
+const fileList = ref([]);
+const addFileList = (target) => {
+  const newFile = Array.from(target.files);
+  fileList.value.push(...newFile);
+}
+const removeFile = (index) => {
+  fileList.value.splice(index, 1);
+};
 
 let crctData = ref({
   commuteCd: '',
@@ -151,17 +182,20 @@ const btnCrctManage = async () => {
   formData.append("crctGoTime", dateTimeFormat(crctData.value.crctGoTime, 'yyyy-MM-dd hh:mm:ss'));
   formData.append("crctLeaveTime", dateTimeFormat(crctData.value.crctLeaveTime, 'yyyy-MM-dd hh:mm:ss'));
   formData.append("crctReason", crctData.value.crctReason);
-  // formData.append("atchFileId", );
-  formData.append("createId", 'user01');
   formData.append("signId", crctData.value.signId);
   
+  fileList.value.forEach((file) => {
+    formData.append("files[]", file);
+  });
+  
   if(!isUpdate.value) {
+    formData.append("createId", loginUser);
     formData.append("preGoTime", crctData.value.goTime);
     formData.append("preLeaveTime", crctData.value.leaveTime);
     await axios.post('/api/commute/crctAdd', formData);
   }
   else {
-    
+    formData.append("updateId", loginUser);
     await axios.post('/api/commute/crctModify', formData);
   }
 
@@ -181,9 +215,8 @@ th {
   font-size: 16px;
 }
 
-button {
-  width: 80px;
-  padding: 5px 10px !important;
+.custom-file-div{
+  text-align: left;
 }
 </style>
   

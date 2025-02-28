@@ -62,5 +62,10 @@ public class CommuteServiceImpl implements CommuteService {
 		return commuteMapper.cmtTimeSelect();
 	}
 
+	@Override
+	public int cmtSelectAllCnt(CommuteDTO commuteDTO) {
+		return commuteMapper.cmtSelectAllCnt(commuteDTO);
+	}
+
 	
 }
