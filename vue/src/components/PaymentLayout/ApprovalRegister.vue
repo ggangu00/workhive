@@ -251,6 +251,7 @@ onMounted(() => {
     approvalList();
     receiverList();
   }
+
   //param값 제거
   window.history.replaceState({}, '', route.path);
 });
@@ -308,13 +309,13 @@ const receiverList = async () => {
       params: { docCd: route.query.docCd }
     });
 
-    console.log('response.data=> ' ,response.data)
     if (response.data) {
       // 수신자 목록 설정
       receivers.value = response.data.map((approver) => ({
         mberId: approver.mberId,
         mberNm: approver.mberNm,
         deptNm: approver.deptNm,
+        deptCd: approver.deptCd,
         signName: approver.signName, // 상태 코드 변환
         gradeNm : approver.gradeNm
       }));
@@ -333,24 +334,27 @@ const approvalList = async () => {
       params: { docCd: docCd.value }
     });
 
-    console.log('response => ',response.data);
     if (response.data) {
 
       approvers.value = response.data.map((approver) => ({
         mberId: approver.mberId,
         mberNm: approver.mberNm,
         deptNm: approver.deptNm,
+        deptCd: approver.deptCd,
         signName: approver.signName, // 상태 코드 변환
       }));
     }
-    //console.log('approvers.value => ', reversedApprovers.value);
+
   } catch (error) {
     console.error("결재선 정보 불러오기 실패:", error);
   }
 };
+
+
 /////////////////////첨부파일/////////////////////////
 const addFileList = (target) => {
   const newFile = Array.from(target.files);
+  console.log(target.files);
   fileList.value.push(...newFile);
 
 }
@@ -457,7 +461,7 @@ const approvalInfo = async() => {
     })
   )
 
-  formData.append("approvalLine", JSON.stringify(approvers.value));
+  formData.append("approvalLine", JSON.stringify([...approvers.value].reverse()));
 
   formData.append("reception", JSON.stringify(receivers.value));
 

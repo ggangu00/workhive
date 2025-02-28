@@ -57,10 +57,11 @@
         </div>
 
         <!-- Toast UI Grid 영역 -->
-        <div class="col-12">
-          <div id="tableGrid" class="toastui"></div>
-          <div id="pagination" class="tui-pagination"></div>
-        </div>
+
+          <div class="col-12">
+            <div id="tableGrid" class="toastui"></div>
+            <div id="pagination" class="tui-pagination"></div>
+          </div>
 
       </div>
     </div>
@@ -264,6 +265,7 @@ const handleRowClick = (e) => {
       deptNm : dataRow.deptNm,
       docTitle : dataRow.docTitle,
       docCnEditor : dataRow.docCnEditor,
+      atchFileId : dataRow.atchFileId,
     }
   });
 };

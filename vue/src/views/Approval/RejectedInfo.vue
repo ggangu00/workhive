@@ -26,6 +26,7 @@
   const deptNm = ref('');
   const docTitle = ref('');
   const docCnEditor = ref('');
+  const atchFileId =ref('');
 
   //넘긴 문서코드
   onMounted(()=>{
@@ -36,6 +37,7 @@
     deptNm.value = route.query.deptNm || "";
     docTitle.value = route.query.docTitle || "";
     docCnEditor.value = route.query.docCnEditor || "";
+    atchFileId.value=route.query.atchFileId || "";
 
     window.history.replaceState({}, '', route.path);
   })
