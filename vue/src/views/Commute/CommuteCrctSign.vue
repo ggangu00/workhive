@@ -80,20 +80,52 @@
 import axios from 'axios';
 import Grid from 'tui-grid';
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
-import { dateTimeFormat } from '../../assets/js/common';
+// import { dateTimeFormat } from '../../assets/js/common';
 import { cmtCheck } from '../../assets/js/commute';
+import { useUserInfoStore } from '../../store/userStore.js';
+
+const userInfoStore = useUserInfoStore();
+let loginUser = userInfoStore.user.mberId;
+console.log("로그인 정보 : ", loginUser);
+
+// 조회 조건
+const crctSrchData = ref({
+  signId: loginUser,
+  startDate: '',
+  endDate: '',
+})
+const signSrchData = ref({
+  signId: loginUser,
+  startDate: '',
+  endDate: '',
+})
 
 // 그리드 인스턴스
 let crctGridInstance = ref();
 let signGridInstance = ref();
 
 // 그리드 로우 데이터
-let crctList = ref();
-let signList = ref();
+const crctGetList = () => {
+  crctGridInstance.value.readData(1,  crctSrchData.value);
+  console.log("readData : ", crctGridInstance.value.readData(1,  crctSrchData.value));
+}
+const crctList = {
+  api: {
+    readData: { url: '/api/commute/signerList', method: 'GET', initParams: crctSrchData.value}
+  }
+};
+const signGetList = () => {
+  signGridInstance.value.readData(1, signSrchData.value);
+}
+const signList = {
+  api: {
+    readData: { url: '/api/commute/signedList', method: 'GET', initParams: signSrchData.value}
+  }
+};
 
 // 가져온 원본 목록 데이터
-let originCrctList;
-let originSignList;
+// let originCrctList;
+// let originSignList;
 
 // 그리드 컬럼 데이터
 let crctCol = [
@@ -118,63 +150,53 @@ let signCol = [
   { header: '결재상태', name: 'signState', align: 'center'},
 ];
 
-// 조회 조건
-const crctSrchData = ref({
-  signId: 'test',
-  startDate: '',
-  endDate: '',
-})
-const signSrchData = ref({
-  signId: 'test',
-  startDate: '',
-  endDate: '',
-})
-
 // 그리드 데이터 조회 메소드
-const crctGetList = async () => {
-  const result = await axios.get('/api/commute/signerList', { params : crctSrchData.value });
+// const crctGetList = async () => {
+//   const result = await axios.get('/api/commute/signerList', { params : crctSrchData.value });
 
-  originCrctList = JSON.parse(JSON.stringify(result.data)); // 깊은 복사
-  crctList.value = result.data;
-  listFormat(crctList.value);
+//   originCrctList = JSON.parse(JSON.stringify(result.data)); // 깊은 복사
+//   crctList.value = result.data;
+//   listFormat(crctList.value);
   
-  crctGridInstance.value.resetData(crctList.value);
-}
-const signGetList = async () => {
-  const result = await axios.get('/api/commute/signedList', { params : signSrchData.value });
+//   crctGridInstance.value.resetData(crctList.value);
+// }
+// const signGetList = async () => {
+//   const result = await axios.get('/api/commute/signedList', { params : signSrchData.value });
 
-  originSignList = JSON.parse(JSON.stringify(result.data)); // 깊은 복사
-  signList.value = result.data;
-  listFormat(signList.value);
+//   originSignList = JSON.parse(JSON.stringify(result.data)); // 깊은 복사
+//   signList.value = result.data;
+//   listFormat(signList.value);
 
-  signGridInstance.value.resetData(signList.value);
-}
+//   signGridInstance.value.resetData(signList.value);
+// }
+
 // 그리드 데이터 형식 변경
-const listFormat = (list) => {
-  list.forEach(i => {
-    i.commuteDt = dateTimeFormat(i.commuteDt, 'yyyy-MM-dd');
-    i.preGoTime = dateTimeFormat(i.preGoTime, 'MM/dd hh:mm');
-    i.preLeaveTime = dateTimeFormat(i.preLeaveTime, 'MM/dd hh:mm');
-    i.crctGoTime = dateTimeFormat(i.crctGoTime, 'MM/dd hh:mm');
-    i.crctLeaveTime = dateTimeFormat(i.crctLeaveTime, 'MM/dd hh:mm');
-    i.createDt = dateTimeFormat(i.createDt, 'yyyy-MM-dd');
-    i.signDt = dateTimeFormat(i.signDt, 'yyyy-MM-dd');
-    switch(i.signState) {
-      case "D01":
-        i.signState = "미결재";
-        break;
-      case "D02":
-        i.signState = "승인";
-        break;
-      case "D03":
-        i.signState = "보완";
-        break;
-      case "D04":
-        i.signState = `<a>반려</a>`;
-        break;
-    }
-  });
-}
+// const listFormat = (list) => {
+//   list.forEach(i => {
+//     i.commuteDt = dateTimeFormat(i.commuteDt, 'yyyy-MM-dd');
+//     i.preGoTime = dateTimeFormat(i.preGoTime, 'MM/dd hh:mm');
+//     i.preLeaveTime = dateTimeFormat(i.preLeaveTime, 'MM/dd hh:mm');
+//     i.crctGoTime = dateTimeFormat(i.crctGoTime, 'MM/dd hh:mm');
+//     i.crctLeaveTime = dateTimeFormat(i.crctLeaveTime, 'MM/dd hh:mm');
+//     i.createDt = dateTimeFormat(i.createDt, 'yyyy-MM-dd');
+//     i.signDt = dateTimeFormat(i.signDt, 'yyyy-MM-dd');
+//     switch(i.signState) {
+//       case "D01":
+//         i.signState = "미결재";
+//         break;
+//       case "D02":
+//         i.signState = "승인";
+//         break;
+//       case "D03":
+//         i.signState = "보완";
+//         break;
+//       case "D04":
+//         i.signState = `<a>반려</a>`;
+//         break;
+//     }
+//   });
+// }
+
 // 실시간 조회 조건
 watch(() => crctSrchData, () => {
   crctGetList();
@@ -187,10 +209,14 @@ watch(() => signSrchData, () => {
 const initGrid = (gridInstance, gridDiv, rowData, colData) => {
   gridInstance.value = new Grid({
     el: document.getElementById(gridDiv),
-    data: rowData.value,
+    data: rowData,
     scrollX: false,
     scrollY: true,
     rowHeaders: ['checkbox'],
+    pageOptions: {
+      useClient: false,
+      perPage: 5,
+    },
     columns: colData,
   });
 };
@@ -200,8 +226,8 @@ onMounted(() => {
   initGrid(crctGridInstance, 'crctGrid', crctList, crctCol);
   initGrid(signGridInstance, 'signGrid', signList, signCol);
   
-  crctGetList();
-  signGetList();
+  // crctGetList();
+  // signGetList();
 });
 
 // 컴포넌트가 파괴될 때 기존 Grid 삭제
@@ -212,34 +238,55 @@ onBeforeUnmount(() => {
 
 // 정정 요청 결재 기능
 const btnCrctSign = async (e) => {
+  console.log(e);
   let selectedRows = e.target.value === 'D01' ? signGridInstance.value.getCheckedRows() : crctGridInstance.value.getCheckedRows();
-  let originList = e.target.value === 'D01' ? originSignList : originCrctList;
+  // let originList = e.target.value === 'D01' ? originSignList : originCrctList;
 
   let signDataArray = [];
 
   for (const row of selectedRows) {
-    let originalRow = originList.find(item => item.commuteCd === row.commuteCd);
-    if (originalRow) {
-      let signData = {
-        crctCd: originalRow.crctCd,
-        signState: e.target.value
-      };
+    let signData = {
+      crctCd: row.crctCd,
+      signState: e.target.value
+    };
 
-      let cmtData = {
-        commuteCd: originalRow.commuteCd,
-        goTime: e.target.value === 'D01' ? originalRow.preGoTime : originalRow.crctGoTime,
-        leaveTime: e.target.value === 'D01' ? originalRow.preLeaveTime : originalRow.crctLeaveTime
-      };
+    let cmtData = {
+      commuteCd: row.commuteCd,
+      goTime: e.target.value === 'D01' ? row.preGoTime : row.crctGoTime,
+      leaveTime: e.target.value === 'D01' ? row.preLeaveTime : row.crctLeaveTime
+    };
 
-      let changeData = await cmtCheck(cmtData.goTime, cmtData.leaveTime);
-      cmtData.goState = changeData.goState;
-      cmtData.leaveState = changeData.leaveState;
-      cmtData.workTime = changeData.workTime;
-      cmtData.overWorkTime = changeData.overWorkTime;
+    let changeData = await cmtCheck(cmtData.goTime, cmtData.leaveTime);
+    cmtData.goState = changeData.goState;
+    cmtData.leaveState = changeData.leaveState;
+    cmtData.workTime = changeData.workTime;
+    cmtData.overWorkTime = changeData.overWorkTime;
 
-      // signData와 cmtData를 모두 포함한 객체를 배열에 추가
-      signDataArray.push({ signData, cmtData });
-    }
+    // signData와 cmtData를 모두 포함한 객체를 배열에 추가
+    signDataArray.push({ signData, cmtData });
+
+    // let originalRow = originList.find(item => item.commuteCd === row.commuteCd);
+    // if (originalRow) {
+    //   let signData = {
+    //     crctCd: originalRow.crctCd,
+    //     signState: e.target.value
+    //   };
+
+    //   let cmtData = {
+    //     commuteCd: originalRow.commuteCd,
+    //     goTime: e.target.value === 'D01' ? originalRow.preGoTime : originalRow.crctGoTime,
+    //     leaveTime: e.target.value === 'D01' ? originalRow.preLeaveTime : originalRow.crctLeaveTime
+    //   };
+
+    //   let changeData = await cmtCheck(cmtData.goTime, cmtData.leaveTime);
+    //   cmtData.goState = changeData.goState;
+    //   cmtData.leaveState = changeData.leaveState;
+    //   cmtData.workTime = changeData.workTime;
+    //   cmtData.overWorkTime = changeData.overWorkTime;
+
+    //   // signData와 cmtData를 모두 포함한 객체를 배열에 추가
+    //   signDataArray.push({ signData, cmtData });
+    // }
   }
 
   // 해당 데이터들을 서버에 보내도록 수정

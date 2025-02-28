@@ -203,6 +203,11 @@ import { useRoute } from 'vue-router';
 import Swal from 'sweetalert2';
 import Modal from '../../components/Modal.vue';
 import axios from 'axios';
+import { useUserInfoStore } from '../../store/userStore.js';
+
+
+const userInfoStore = useUserInfoStore();
+let loginUser = userInfoStore.user ? userInfoStore.user.mberId : ""; // 로그인한 사용자 정보 가져오기
 
 let editor ;
 const route = useRoute();
@@ -234,7 +239,7 @@ onMounted(() => {
   docCd.value = route.query.docCd || "";
   docKind.value = route.query.docKind || "";
   formType.value = route.query.formType || "";
-  deptNm.value = route.query.deptNm || "";
+  deptNm.value = userInfoStore.user.deptNm;
   docTitle.value = route.query.docTitle || "";
   docCnEditor.value = route.query.docCnEditor || "";
   formCd.value = route.query.formCd || "";
@@ -246,6 +251,7 @@ onMounted(() => {
     approvalList();
     receiverList();
   }
+
   //param값 제거
   window.history.replaceState({}, '', route.path);
 });
@@ -278,26 +284,19 @@ const approvalLineRef = ref(null);
 const handleModalOpen = () => {
   if (approvalLineRef.value) {
     approvalLineRef.value.onModalOpen();  // ApprovalLine의 onModalOpen() 실행
-    //approvalLineRef.value.setApprovals(reversedApprovers.value, receivers.value);
   }
 };
  // 파일 삭제 기능
 const removeFile = (index) => {
     fileList.value.splice(index, 1);
     };
-//const reversedApprovers = ref([]);
 //결재자목록 수신자목록 가져오기
 const approvers = ref([]);
 const receivers = ref([]);
 const registerApprovals = () => {
   if (approvalLineRef.value) {
-    //reversedApprovers.value = approvalLineRef.value.reversedApprovers;  // ApprovalLine의 approvers 데이터를 가져오기(화면에 보여주는)
     approvers.value = approvalLineRef.value.approvers;//이값으로 디비에넘기기
-    console.log("결재자 => ", approvalLineRef.value.approvers);//이값으로 디비에넘기기
-    console.log("결재자 => ", approvers.value);
     receivers.value = approvalLineRef.value.receivers;
-    console.log("수신자 => ", approvalLineRef.value.receivers);
-    console.log("수신자 => ", receivers.value);
   }
 };
 
@@ -310,18 +309,17 @@ const receiverList = async () => {
       params: { docCd: route.query.docCd }
     });
 
-    console.log('response.data=> ' ,response.data)
     if (response.data) {
       // 수신자 목록 설정
       receivers.value = response.data.map((approver) => ({
         mberId: approver.mberId,
         mberNm: approver.mberNm,
         deptNm: approver.deptNm,
+        deptCd: approver.deptCd,
         signName: approver.signName, // 상태 코드 변환
         gradeNm : approver.gradeNm
       }));
     }
-    console.log('receivers.value => ', receivers.value);
   } catch (error) {
     console.error("결재선 정보 불러오기 실패:", error);
   }
@@ -336,36 +334,30 @@ const approvalList = async () => {
       params: { docCd: docCd.value }
     });
 
-    console.log('response => ',response.data);
     if (response.data) {
-      // 결재자 목록 설정
-      // reversedApprovers.value = response.data.map((approver) => ({
-      //   mberId: approver.mberId,
-      //   mberNm: approver.mberNm,
-      //   deptNm: approver.deptNm,
-      //   signName: approver.signName, // 상태 코드 변환
-      // }));
 
       approvers.value = response.data.map((approver) => ({
         mberId: approver.mberId,
         mberNm: approver.mberNm,
         deptNm: approver.deptNm,
+        deptCd: approver.deptCd,
         signName: approver.signName, // 상태 코드 변환
       }));
     }
-    //console.log('approvers.value => ', reversedApprovers.value);
+
   } catch (error) {
     console.error("결재선 정보 불러오기 실패:", error);
   }
 };
+
+
 /////////////////////첨부파일/////////////////////////
 const addFileList = (target) => {
   const newFile = Array.from(target.files);
+  console.log(target.files);
   fileList.value.push(...newFile);
-  console.log(fileList.value);
+
 }
-
-
 
 //  컴포넌트 언마운트 시 이벤트 리스너 제거 (페이지이동)
 onUnmounted(() => {
@@ -403,8 +395,6 @@ const formList =ref([]);
 const formCount = ref(0);
 const formGetList = async () =>{
   const formType = await axios.get('/api/document/form')
-
-  console.log(formType.data.formCd)
   formList.value = formType.data;
   formCount.value = formType.data.length;
 }
@@ -457,19 +447,13 @@ const getApprovalStatusName = (code) => {
 ///////////////////상신버튼////////////////////////////
 const approvalInfo = async() => {
   if (!inputCheck()) return;
-  console.log(editor.getHTML()); // 내용
-  //console.log(reversedApprovers.value);// 결재자정보
-  console.log('결재자정보 =>',approvers.value);// 결재자정보
-  console.log(receivers.value);// 수신자정보
-  console.log(fileList.value);
-
   const formData = new FormData();
 
   formData.append(
     "document", JSON.stringify({
       docTitle : docTitle.value,
       docCnEditor : editor.getHTML(),
-      mberId : 'admin3',
+      mberId : loginUser,
       docKind : 'I01',
       formCd : formCd.value,
       deptNm : deptNm.value,
@@ -477,7 +461,7 @@ const approvalInfo = async() => {
     })
   )
 
-  formData.append("approvalLine", JSON.stringify(approvers.value));
+  formData.append("approvalLine", JSON.stringify([...approvers.value].reverse()));
 
   formData.append("reception", JSON.stringify(receivers.value));
 
@@ -485,9 +469,6 @@ const approvalInfo = async() => {
     formData.append("files[]", file);
   });
   
-  formData.forEach((value, key) => {
-  console.log(`${key}:`, value);
-});
   try {
           const response = await axios.post('/api/document/register', formData,
           {headers: { "Content-Type": "multipart/form-data" }});

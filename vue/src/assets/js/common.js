@@ -1,5 +1,6 @@
 import axios from "axios";
 
+
 //공통함수
 export async function getComm(cd) { // comm_cd
    let result = await axios.get(`/api/comm/codeList?cd=${cd}`)
@@ -47,3 +48,5 @@ export function numberFormat(num) {
    if (!num) return '0';
    return Number(num).toLocaleString();
 };
+
+

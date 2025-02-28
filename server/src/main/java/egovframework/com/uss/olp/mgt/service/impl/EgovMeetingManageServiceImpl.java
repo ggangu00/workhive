@@ -1,18 +1,21 @@
 package egovframework.com.uss.olp.mgt.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import egovframework.com.cmm.ComDefaultVO;
-import egovframework.com.uss.olp.mgt.service.EgovMeetingManageService;
-import egovframework.com.uss.olp.mgt.service.MeetingManageVO;
+import javax.annotation.Resource;
 
 import org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl;
 import org.egovframe.rte.fdl.idgnr.EgovIdGnrService;
 import org.egovframe.rte.psl.dataaccess.util.EgovMap;
-
-import javax.annotation.Resource;
-
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import egovframework.com.cmm.ComDefaultVO;
+import egovframework.com.uss.olp.mgt.service.EgovMeetingManageService;
+import egovframework.com.uss.olp.mgt.service.MeetingManageVO;
+import egovframework.com.uss.olp.mgt.service.MeetingMemberVO;
 /**
  * 회의관리를 처리하기 위한 ServiceImpl 구현 Class
  * @author 공통서비스 장동한
@@ -80,8 +83,18 @@ public class EgovMeetingManageServiceImpl extends EgovAbstractServiceImpl implem
 	 * @throws Exception
 	 */
 	@Override
-	public List<EgovMap> selectMeetingManageDetail(MeetingManageVO meetingManageVO) throws Exception{
-		return dao.selectMeetingManageDetail(meetingManageVO);
+	public Map<String, Object> selectMeetingManageDetail(MeetingManageVO meetingManageVO) throws Exception {
+	    Map<String, Object> resultMap = new HashMap<>();
+	    
+	    // 회의 정보 조회
+	    List<EgovMap> meetingInfo = dao.selectMeetingManageDetail(meetingManageVO);
+	    resultMap.put("result", meetingInfo);
+	    
+	    // 회의 참석자 명단 조회
+	    List<EgovMap> attendeeList = dao.selectMeetingMember(meetingManageVO.getMtgId());
+	    resultMap.put("list", attendeeList);
+	    
+	    return resultMap;
 	}
 
     /**
@@ -108,6 +121,33 @@ public class EgovMeetingManageServiceImpl extends EgovAbstractServiceImpl implem
 
 		dao.insertMeetingManage(meetingManageVO);
 	}
+	
+	//회의 정보/참여자 등록
+	@Transactional
+    public boolean saveMeeting(MeetingManageVO meetingManageVO) throws Exception {
+		 try {
+			 String sMakeId = idgenService.getNextStringId();
+
+			meetingManageVO.setMtgId(sMakeId);
+
+			dao.insertMeetingManage(meetingManageVO);
+
+	        // 작업 리스트가 존재할 경우
+	        if (meetingManageVO.getMemberArr() != null && !meetingManageVO.getMemberArr().isEmpty()) {
+	            
+	            for (MeetingMemberVO mem : meetingManageVO.getMemberArr()) {	            	
+	            	mem.setMtgId(sMakeId);  // 각 작업 항목에 mtgId 설정
+	            	
+	                dao.insertMeetingMember(mem);  // 개별 INSERT 실행
+	            }
+	        }
+	        return true; 
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return false;
+	    }
+    }
+	
 
     /**
 	 * 회의정보를 수정한다.
@@ -128,4 +168,5 @@ public class EgovMeetingManageServiceImpl extends EgovAbstractServiceImpl implem
 	public void deleteMeetingManage(MeetingManageVO meetingManageVO){
 		dao.deleteMeetingManage(meetingManageVO);
 	}
+
 }

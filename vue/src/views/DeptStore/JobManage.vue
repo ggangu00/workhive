@@ -75,8 +75,21 @@
               </div>
 
               <div class="mb-3">
-                <label>파일<em class="point-red">*</em></label>
-                <input type="file" class="form-control" style="padding: 6px" multiple>
+                <label>파일첨부</label>
+                <div class="form-control">
+                  <label class="btn btn-fill cell-btn-custom" for="inputFile">파일선택</label>
+                  <a>{{ (fileList.length == 0) ? "선택된 파일 없음" : `파일 ${fileList.length}개` }}</a>
+                  <p class="file-info">개별 파일 기준 최대 30MB까지 첨부할 수 있습니다.</p>
+                  <input type="file" id="inputFile" style="display: none;" @change="addFileList($event.target)" multiple>
+                  <hr>
+                  <div class="row file-list">
+                    <div class="col-4" v-for="(file, index) in fileList" :key="index">
+                    {{ file.name }}
+                    <button class="btn btn-sm btn-danger cell-btn-custom" @click="removeFile(index)">삭제</button>
+                    </div>
+                    <div class="col" v-if="fileList.length == 0">첨부된 파일이 없습니다.</div>
+                  </div>
+                </div>
               </div>
 
             </div>
@@ -97,6 +110,11 @@ import { computed, ref, watch } from 'vue';
 import Modal from '../../components/Modal.vue';
 import axios from 'axios';
 import { useStore } from 'vuex';
+import { useUserInfoStore } from '../../store/userStore.js';
+
+const userInfoStore = useUserInfoStore();
+let loginUser = userInfoStore.user.mberId;
+console.log("로그인 정보 : ", loginUser);
 
 const props = defineProps({
   isShowJobModal: Boolean,
@@ -120,6 +138,25 @@ let formValues = ref({
   deptJobCn: '',
   chargerId: '',
 });
+// 첨부파일
+const fileList = ref([]);
+const addFileList = (target) => {
+  const newFile = Array.from(target.files);
+  fileList.value.push(...newFile);
+}
+const removeFile = (index) => {
+  fileList.value.splice(index, 1);
+};
+
+watch(() => props.isShowJobModal, () => {
+  if(props.isShowJobModal && !props.isUpdate) {
+    formValues.value.priort = '';
+    formValues.value.deptJobNm = '';
+    formValues.value.deptJobCn = '';
+    formValues.value.chargerId = '';
+    fileList.value = [];
+  }
+})
 
 // 업무함 선택 변경(부서 및 업무함 정보 변경)
 watch(() => props.jobBxSelected, (newVal) => {
@@ -178,9 +215,13 @@ const jobAdd = async () => {
   addData.append("deptJobNm", formValues.value.deptJobNm);
   addData.append("deptJobCn", formValues.value.deptJobCn);
   addData.append("chargerId", formValues.value.chargerId);
-  // addData.append("", formValues.); 파일
+  addData.append("frstRegisterId", loginUser);
+  fileList.value.forEach((file) => {
+    addData.append("files[]", file);
+  });
 
-  await axios.post('/api/deptstore/jobAdd', addData);
+  let result = await axios.post('/api/deptstore/jobAdd', addData);
+  console.log(result);
 }
 
 // 수정
@@ -193,10 +234,14 @@ const jobUpdate = async () => {
   modifyData.append("deptJobNm", formValues.value.deptJobNm);
   modifyData.append("deptJobCn", formValues.value.deptJobCn);
   modifyData.append("chargerId", formValues.value.chargerId);
-  // modifyData.append("", formValues.); 파일
+  modifyData.append("lastUpdusrId", loginUser);
+  fileList.value.forEach((file) => {
+    modifyData.append("files[]", file);
+  });
 
   await axios.post('/api/deptstore/jobModify', modifyData);
 }
+
 </script>
 
 <style>

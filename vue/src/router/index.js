@@ -26,11 +26,12 @@ import ApprovalList from "../components/PaymentLayout/ApprovalList.vue";
 import ApprovalLine from "../components/PaymentLayout/ApprovalLine.vue";
 import ApprovalRegister from "../components/PaymentLayout/ApprovalRegister.vue";
 import ApprovalInfo from "../components/PaymentLayout/ApprovalInfo.vue";
+import PendingListComp from "../components/PaymentLayout/PendingListComp.vue";
 //skh
 import RegisterTest from "../views/Approval/RegisterTest.vue";
 import CompletedList from "../views/Approval/CompletedList.vue";
 import Calendar from "../views/schedule/Calendar.vue";
-import PendingList from "../views/Approval/PendingList.vue";
+import PendingList from "../views/Approval/PendingList copy.vue";
 import ProceedList from "../views/Approval/ProceedList.vue";
 import RejectedList from "../views/Approval/RejectedList.vue";
 import RejectedInfo from "../views/Approval/RejectedInfo.vue";
@@ -40,7 +41,6 @@ import PendingInfo from "../views/Approval/PendingInfo.vue";
 import ProceedInfo from "../views/Approval/ProceedInfo.vue";
 import RetrieveList from "../views/Approval/RetrieveList.vue";
 import ReceivedList from "../views/Approval/ReceivedList.vue";
-
 
 // pjh
 import Todo from '../views/Todo/TodoManage.vue'
@@ -78,6 +78,7 @@ import BulletinList from "../views/Bulletin/BulletinList.vue";
 import BulletinAdd from "../views/Bulletin/BulletinAdd.vue";
 import BulletinInfo from "../views/Bulletin/BulletinInfo.vue";
 import BulletinModify from "../views/Bulletin/BulletinModify.vue";
+import SecretAt from "../views/Bulletin/SecretAt.vue"
 
 
 
@@ -181,6 +182,11 @@ const routes = [
       path: '/approvalInfo',
       name: 'ApprovalInfo',
       component: ApprovalInfo
+   },
+   {
+      path: '/pendingListComp',
+      name: 'PendingListComp',
+      component: PendingListComp
    },
    //skh
 
@@ -357,6 +363,15 @@ const routes = [
       name: 'BulletinModify',
       component : BulletinModify,
    },
+      {//게시글 수정
+         path:'/bulletin/secretAt',
+         name: 'SecretAt',
+         component : SecretAt,
+      },
+       
+
+
+
 
 
 
@@ -414,14 +429,20 @@ const router = createRouter({
    linkActiveClass: "active",
 });
 
-// ✅ **전역 네비게이션 가드 설정**
+// **전역 네비게이션 가드 설정**
 router.beforeEach((to, from, next) => {
-   const store = useUserInfoStore(); // 🔥 여기서 `useUserInfoStore()` 호출
+   const store = useUserInfoStore(); // pinia 정보
 
-   if (to.path !== "/login" && !store.isAuthenticated) {
-   next("/login"); // 로그인 안 된 경우 로그인 페이지로 이동
+   // 로그인 없이 접근 가능한 페이지 목록
+   const publicPages = ["/login", "/findPw"];
+
+   // 현재 이동하려는 페이지가 로그인 필요한 페이지인지 확인
+   const authRequired = !publicPages.includes(to.path);
+
+   if (authRequired && !store.isAuthenticated) {
+      next("/login"); // 로그인 안 된 경우 로그인 페이지로 이동
    } else {
-   next(); // 정상 이동
+      next(); // 정상 이동
    }
 });
 

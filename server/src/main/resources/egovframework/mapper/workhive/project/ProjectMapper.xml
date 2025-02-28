@@ -143,28 +143,12 @@
 		
 	
 	<!-- 프로젝트 과업등록 -->
-
-	<insert id="projectWorkInsert" parameterType="map">
-	     INSERT INTO project_work (
-			pr_work_cd, --과업코드
-			pr_cd,		--프로젝트 코드
-			pr_work_nm, --과업명
-			seq, 		--순서
-			progress,	--진행률
-			state		--완료여부
-		)
-		VALUES
-	    <foreach collection="list" item="item" separator=",">
-	        (
-				seq_pr_work_cd.nextval,
-				#{prCd},
-				#{item.prWorkNm},
-				#{item.seq},				
-				#{item.progress},
-				#{item.state}
-			)	
-	    </foreach>
+	<insert id="projectWorkInsert" parameterType="ProjectWorkDTO">
+	    INSERT INTO project_work (pr_work_cd, pr_work_nm, seq, progress, state, pr_cd)
+	    VALUES (seq_pr_work_cd.nextval, #{prWorkNm}, #{seq}, #{progress}, #{state}, #{prCd})
 	</insert>
+
+
 	
 	<!-- 프로젝트 수정 -->
 	<update id="projectUpdate" parameterType="projectDTO">
@@ -211,7 +195,7 @@
 	<!-- ======================프로젝트 과업=====================  -->
 	
 	<!-- 프로젝트 과업조회 -->
-	<select id="projectWorkSelectAll" parameterType="String" resultType="projectDTO">
+	<select id="projectWorkSelectAll" parameterType="String" resultType="projectWorkDTO">
 		select pr_work_cd, --과업코드
 			   pr_cd,		--프로젝트 코드
 			   pr_work_nm, --과업명
@@ -221,6 +205,7 @@
 		from project_work
 		where 
 			pr_cd = #{prCd}
+		order by seq asc
 	</select>	
 	
 	<!-- ======================프로젝트 일정=====================  -->

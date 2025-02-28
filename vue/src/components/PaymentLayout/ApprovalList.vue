@@ -57,10 +57,11 @@
         </div>
 
         <!-- Toast UI Grid 영역 -->
-        <div class="col-12">
-          <div id="tableGrid" class="toastui"></div>
-          <div id="pagination" class="tui-pagination"></div>
-        </div>
+
+          <div class="col-12">
+            <div id="tableGrid" class="toastui"></div>
+            <div id="pagination" class="tui-pagination"></div>
+          </div>
 
       </div>
     </div>
@@ -73,6 +74,11 @@ import { useRouter } from "vue-router";
 import "tui-grid/dist/tui-grid.css";
 import axios from "axios";
 import Swal from 'sweetalert2';
+import { useUserInfoStore } from '../../store/userStore.js';
+
+
+const userInfoStore = useUserInfoStore();
+let loginUser = userInfoStore.user ? userInfoStore.user.mberId : ""; // 로그인한 사용자 정보 가져오기
 
 // Props 정의
 const props = defineProps({
@@ -145,6 +151,8 @@ const getParams = ({
   formCd: '',
   startDate: '',
   endDate: '',
+  mberId:loginUser,
+
 });
 
 const dataSource = {
@@ -184,7 +192,7 @@ const btnSelectChange = () => {
     try {
       const response = await axios.put(`/api/document/state`, {
         approvalArr: checkedData.map(row => row.docCd),
-        mberId: 'admin8', // 실제 로그인 아이디로 변경
+        mberId: loginUser, // 실제 로그인 아이디로 변경
         signStat: newSignStat
       });
       
@@ -257,6 +265,7 @@ const handleRowClick = (e) => {
       deptNm : dataRow.deptNm,
       docTitle : dataRow.docTitle,
       docCnEditor : dataRow.docCnEditor,
+      atchFileId : dataRow.atchFileId,
     }
   });
 };
@@ -278,7 +287,8 @@ watch([docKind, deptNm, formType, startDate, endDate], async ([newDodKind, newDe
       endDate : newEndDate,
       perPage: 5,
       page: page.value,
-      status : props.status
+      status : props.status,
+      mberId : loginUser
     }
   });
 

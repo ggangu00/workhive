@@ -60,13 +60,19 @@ public class ProjectDTO {
 	
 	//======================프로젝트 과업=====================
 	
-    private List<ProjectWorkDTO> workArr;		// 프로젝트 코드
+    private List<ProjectWorkDTO> workArr;		// 프로젝트 과업 목록
+    
+    public List<ProjectWorkDTO> getWorkArr() {
+        return workArr;
+    }
+
+    public void setWorkArr(List<ProjectWorkDTO> workArr) {
+        this.workArr = workArr;
+    }
     
 	//======================프로젝트 일정=====================
 	
 	private String prPlanCd;	// 일정코드
 	private String planNm;		// 일정명
 	private String color;		// 일정 색상
-
-	public void setPrCd(String prCd) {}
 }

@@ -1,5 +1,5 @@
 <template>
-  <ApprovalList 
+  <PendingListComp
     :buttons="buttons" 
     :columnDefs="columnDefs" 
     :status="status"
@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import ApprovalList from '@/components/PaymentLayout/ApprovalList.vue'
+import PendingListComp from '@/components/PaymentLayout/PendingListComp.vue'
 import {ref} from'vue';
 
 const buttons = ref([
@@ -50,9 +50,7 @@ const buttonClick = async (buttonName)=>{
         { header: '양식', name: 'formCd',sortable: true },
         { header: '제목', name: 'docTitle' ,sortable: true},
         { header: '기안부서', name: 'deptNm',sortable: true },
-        { header: '기안자', name: 'mberId' ,sortable: true},
+        { header: '기안자', name: 'mberNm' ,sortable: true},
         { header: '기안일시', name: 'draftDt' ,sortable: true},
       ])
-
-      const status = "H01";
 </script>

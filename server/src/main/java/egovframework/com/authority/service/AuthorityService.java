@@ -19,4 +19,7 @@ public interface AuthorityService {
 	// 권한 삭제
 	public boolean authorityDelete(String authorityCd);
 	
+	// 접근 권한 조회
+	public boolean authorityAuthCheckSelect();
+	
 }

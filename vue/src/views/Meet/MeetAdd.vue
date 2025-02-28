@@ -52,8 +52,8 @@
 
                     <div class="mb-3">
                         <label class="form-label">회의 참여자 <em class="point-red">*</em></label>
-                        <Multiselect class="w50" v-model="selected" :options="options" label="label"
-                        track-by="value" :multiple="true" placeholder="참여자를 검색해주세요" />
+                        <Multiselect class="w50" v-model="selected" :options="options" label="label" track-by="value"
+                            :multiple="true" placeholder="참여자를 검색해주세요" />
                     </div>
                 </div>
             </div>
@@ -63,13 +63,11 @@
                     <h5 class="card-title">2. 회의 안건 내용</h5>
                 </div>
                 <div class="card-body">
-                    <div class="mb-3">
-                        <div class="form-group has-label">
-                            <label>회의 안건 내용 <em class="point-red">*</em></label>
-                        </div>
-                        <textarea type="text" :name="mtgMtrCn" v-model="mtgMtrCn" class="form-control"
-                            placeholder="회의안건내용을 입력해주세요"></textarea>
+                    <div class="form-group has-label">
+                        <label>회의 안건 내용 <em class="point-red">*</em></label>
                     </div>
+                    <textarea type="text" :name="mtgMtrCn" v-model="mtgMtrCn" class="form-control"
+                        style="min-height: 150px;" placeholder="회의안건내용을 입력해주세요"></textarea>
                 </div>
             </div>
 
@@ -78,13 +76,11 @@
                     <h5 class="card-title">3. 회의 결과 내용</h5>
                 </div>
                 <div class="card-body">
-                    <div class="mb-3">
-                        <div class="form-group has-label">
-                            <label>회의 결과 내용</label>
-                        </div>
-                        <textarea type="text" :name="mtgResultCn" v-model="mtgResultCn" class="form-control"
-                            placeholder="회의결과내용을 입력해주세요"></textarea>
+                    <div class="form-group has-label">
+                        <label>회의 결과 내용</label>
                     </div>
+                    <textarea type="text" :name="mtgResultCn" v-model="mtgResultCn" class="form-control"
+                        style="min-height: 150px;" placeholder="회의결과내용을 입력해주세요"></textarea>
                 </div>
             </div>
         </div>
@@ -93,40 +89,71 @@
 
 <script setup>
 import axios from "axios";
-import Swal from 'sweetalert2';
-import { onBeforeMount, ref } from 'vue';
-import Card from '../../components/Cards/Card.vue'
 import { useRouter } from 'vue-router';
-import { getComm } from '../../assets/js/common.js'
+import { onBeforeMount, ref } from 'vue';
 
+//========================== 컴포넌트 ==========================
+import Swal from 'sweetalert2';
 import Multiselect from "vue-multiselect";
 import "vue-multiselect/dist/vue-multiselect.css";
+import Card from '../../components/Cards/Card.vue'
 
-const selected = ref(null);
-const options = ref([]);
+//============================= js =============================
+import { getComm } from '../../assets/js/common.js'
 
-//---------------데이터-------------- 
+//========================= 데이터 초기화 =========================
 
-const typeCd = ref('B01');
-const typeCdArr = ref([]);
-const mtgNm = ref('');
-const mtgMtrCn = ref('');
-const mtgResultCn = ref('');
-const mtgDe = ref('');
-const mtgBeginTm = ref('');
-const mtgEndTm = ref('');
-const mtgPlace = ref('M01');
-const mtgPlaceArr = ref([]);
+const selected = ref([]);   //선택된 참여자 목록
+const options = ref([]);    //참여자 목록 데이터
+const typeCd = ref('B01');  //회의실 구분
+const typeCdArr = ref([]);  //회의실 공통함수 목록
+const mtgNm = ref('');      //회의주제
+const mtgMtrCn = ref('');   //회의 안건
+const mtgResultCn = ref('');//회의 결과
+const mtgDe = ref('');      //회의 일시
+const mtgBeginTm = ref(''); //회의 시작시간
+const mtgEndTm = ref('');   //회의 종료시간
+const mtgPlace = ref('M01');//회의 장소
+const mtgPlaceArr = ref([]);//회의 장소 공통함수 목록
 
-const router = useRouter()
+const router = useRouter();
 
 onBeforeMount(() => {
     getStatus();
     memberGetList();
 });
 
+//입력정보 초기화
+const formReset = () => {
+    Swal.fire({
+        title: "작성내용을 초기화하시겠습니까?",
+        icon: "question",
+        showCancelButton: true,
+        customClass: {
+            confirmButton: "btn btn-secondary btn-fill",
+            cancelButton: "btn btn-danger btn-fill"
+        },
+        confirmButtonText: "아니요",
+        cancelButtonText: "네",
+    }).then(result => {
+        if (result.dismiss == Swal.DismissReason.cancel) {
+            mtgNm.value = '';
+            typeCd.value = 'B01';
+            mtgPlace.value = 'M01';
+            mtgDe.value = '';
+            mtgBeginTm.value = '';
+            mtgEndTm.value = '';
+            selected.value = '';
+            mtgMtrCn.value = '';
+            mtgResultCn.value = '';
+        }
+    })
+}
 
-const getStatus = async () => { //회의실 목록 호출
+//======================= axios =======================
+
+//회의실 목록 호출
+const getStatus = async () => { 
     let arr = await getComm("MP");
     let arrAdd = { comm_dtl_cd: '', comm_dtl_nm: '전체' };
     mtgPlaceArr.value.unshift(arrAdd);
@@ -137,15 +164,16 @@ const getStatus = async () => { //회의실 목록 호출
     typeCdArr.value = arr2;
 }
 
+//프로젝트 전체조회
 const memList = ref([]);
-const memberGetList = async () => { //프로젝트 전체조회
+const memberGetList = async () => { 
 
     try {
         const result = await axios.get(`/api/member/memList`);
         memList.value = result.data;
         options.value = result.data.map((row) => ({
-            label: `[${row.deptNm}] ${row.mberNm} ${row.respNm}`, // 드롭다운에 표시될 값
-            value: row.mberId // 선택 시 바인딩할 값 (사원코드)
+            label: `[${row.deptNm}] ${row.mberNm} ${row.gradeNm}`, // 드롭다운에 표시될 값
+            value: row // 선택 시 바인딩할 값 (사원코드)
         }));
 
     } catch (err) {
@@ -159,30 +187,37 @@ const memberGetList = async () => { //프로젝트 전체조회
     }
 }
 
-const meetAdd = async () => { //회의 등록
+//회의 등록
+const meetAdd = async () => { 
 
-    const formData = new FormData();
-    formData.append("cmd", "save");
-    formData.append("typeCd", typeCd.value);
-    formData.append("mtgNm", mtgNm.value);
-    formData.append("mtgMtrCn", mtgMtrCn.value);
-    formData.append("mtgResultCn", mtgResultCn.value);
-    formData.append("mtgDe", mtgDe.value);
-    formData.append("mtgBeginTm", mtgBeginTm.value);
-    formData.append("mtgEndTm", mtgEndTm.value);
-    formData.append("mtgPlace", mtgPlace.value);
-    formData.append("createId", 'admin');
+    const requestData = {
+        memberArr: selected.value.map(row => ({
+            mberId: row.value.mberId,
+            gradeCd: row.value.gradeCd,
+            deptCd: row.value.deptCd
+        })),
+        typeCd: typeCd.value,
+        mtgNm: mtgNm.value,
+        mtgDe: mtgDe.value,
+        mtgBeginTm: mtgBeginTm.value,
+        mtgEndTm: mtgEndTm.value,
+        mtgPlace: mtgPlace.value,
+        mtgMtrCn: mtgMtrCn.value,
+        mtgResultCn: mtgResultCn.value
+    };
 
     try {
-        await axios.post('/api/meet', formData);
+        const response = await axios.post('/api/meet', requestData);
 
-        Swal.fire({
-            icon: "success",
-            title: "등록완료",
-            text: "등록한 회의는 목록에서 확인할 수 있습니다",
-        }).then(() => {
-            router.replace({ name: 'MeetList' }) //프로젝트 조회페이지로 이동
-        });
+        if (response.data === true) {
+            Swal.fire({
+                icon: "success",
+                title: "등록완료",
+                text: "등록한 회의는 목록에서 확인할 수 있습니다",
+            }).then(() => {
+                router.replace({ name: 'MeetList' }) //프로젝트 조회페이지로 이동
+            });
+        }
     } catch (err) {
         Swal.fire({
             icon: "error",

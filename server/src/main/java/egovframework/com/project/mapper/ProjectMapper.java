@@ -1,9 +1,6 @@
 package egovframework.com.project.mapper;
 
 import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.annotations.Param;
 
 import egovframework.com.cmm.ComDefaultVO;
 import egovframework.com.project.service.ProjectDTO;
@@ -45,7 +42,7 @@ public interface ProjectMapper {
 	public ProjectWorkDTO projectWorkSelect(String prWorkCd);
 		
 	// 프로젝트 과업등록
-	public int projectWorkInsert(@Param("list") Map<String, Object> paramMap);
+	public int projectWorkInsert(ProjectWorkDTO work);
 	
 	// 프로젝트 과업삭제
 	public int projectWorkDelete(String prWorkCd);

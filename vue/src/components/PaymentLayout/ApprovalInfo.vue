@@ -76,11 +76,10 @@
                   <div class="mb-1">
                     <span>첨부된 파일 목록</span>
                   </div>
-                  <ul class="file-list">
-                    <li v-for="(file, index) in fileList" :key="index">
-                      {{ file.name }} ({{ formatFileSize(file.size) }})
-                      <button class="btn btn-sm btn-danger">삭제</button>
-                    </li>
+                  <ul class="file-list">                   
+                    <li v-for="(file, index) in fileList" :key="index" @click="showFileInfo(file)">
+                      {{ file.orignlFileNm }}
+                    </li>                 
                     <li v-if="fileList.length == 0">첨부된 파일이 없습니다.</li>
                   </ul>
                 </div>
@@ -106,8 +105,10 @@
             <div class="d-flex flex-column flex-grow-1">
               <span class="mt-1 mb-1">결재</span>
               <div class="approval-box">
-                <div v-for="(approver, index) in reversedApprovers" :key="index" class="approval-item">
-                    <span class='badge bg-info text-dark'>{{ getApprovalStatusName(approver.signName) }}</span> 
+                <div v-for="(approver, index) in approvers" :key="index" class="approval-item  tooltip-container">
+                    <span class='badge bg-info text-dark'>
+                        <span class="tooltip-text">신강현 바보</span>
+                      {{ getApprovalStatusName(approver.signName) }}</span> 
                     [{{ approver.deptNm }}] {{ approver.mberNm }} {{ approver.gradeNm }}
                 </div>
               </div>
@@ -130,6 +131,7 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
+import FileSaver from 'file-saver';
 
 const route = useRoute();
 //데이터받기
@@ -162,11 +164,15 @@ onMounted(() => {
     approvalList();
     receiverList();
   }
+  if(route.query.atchFileId){
+    files();
+  }
+
 });
 
 //  컴포넌트 언마운트 시 이벤트 리스너 제거
 onUnmounted(() => {
-  console.log("전달받은 query params:", route.query);
+
   const modalElement = document.getElementById('approvalRegiModal');
   if (modalElement) {
     modalElement.removeEventListener('shown.bs.modal', handleModalOpen);
@@ -185,7 +191,6 @@ const receiverList = async () => {
       params: { docCd: route.query.docCd }
     });
 
-    console.log('response.data=> ' ,response.data)
     if (response.data) {
       // 결재자 목록 설정
       receivers.value = response.data.map((approver) => ({
@@ -195,13 +200,13 @@ const receiverList = async () => {
         signName: approver.signName, // 상태 코드 변환
       }));
     }
-    console.log('receivers.value => ', receivers.value);
+
   } catch (error) {
     console.error("결재선 정보 불러오기 실패:", error);
   }
 };
 /////////////////////결재선 가져오기/////////////////////
-const reversedApprovers = ref([]);
+const approvers = ref([]);
 const approvalList = async () => {
   if (!route.query.docCd) return; // docCd가 없으면 실행하지 않음
 
@@ -210,21 +215,112 @@ const approvalList = async () => {
       params: { docCd: route.query.docCd }
     });
 
-    console.log('response => ',response.data);
+
     if (response.data) {
       // 결재자 목록 설정
-      reversedApprovers.value = response.data.map((approver) => ({
+      approvers.value = response.data.map((approver) => ({
         mberId: approver.mberId,
         mberNm: approver.mberNm,
         deptNm: approver.deptNm,
         signName: approver.signName, // 상태 코드 변환
       }));
     }
-    console.log('approvers.value => ', reversedApprovers.value);
+
   } catch (error) {
     console.error("결재선 정보 불러오기 실패:", error);
   }
 };
+/////////////////////첨부파일 가져오기/////////////////////
+const files = async () => {
+  if (!route.query.atchFileId) return;
+
+  try{
+    const response = await axios.get("/api/cmm/fms/selectFileInfs.do",{
+      params: {
+        param_atchFileId: route.query.atchFileId
+      },
+    });
+
+    console.log("파일내용=> ",response.data);
+    fileList.value = response.data; // 결과 저장
+  } catch (error) {
+    console.error("파일 목록 불러오기 실패:", error);
+  }
+}
+
+// /////////////////////파일정보가져와서 다운로드//////////////////
+// const showFileInfo = async(file) => {
+//   console.log("파일 정보:", file);
+//   await axios.get(`/api/cmm/fms/FileDown.do`,{
+//     params:{
+//       atchFileId : file.atchFileId,
+//       fileSn : file.fileSn
+//   },
+//   responseType : "blob"}
+//   ).then((response) => {
+//   // 다운로드(서버에서 전달 받은 데이터) 받은 바이너리 데이터를 blob으로 변환합니다.
+//   const blob = new Blob([response.data]);
+//   // 특정 타입을 정의해야 경우에는 옵션을 사용해 MIME 유형을 정의 할 수 있습니다.
+//   // const blob = new Blob([this.content], {type: 'text/plain'})
+
+//   // blob을 사용해 객체 URL을 생성합니다.
+//   const fileObjectUrl = window.URL.createObjectURL(blob);
+
+//   // blob 객체 URL을 설정할 링크를 만듭니다.
+//   const link = document.createElement("a");
+//   link.href = fileObjectUrl;
+//   link.style.display = "none";
+
+//   // 다운로드 파일 이름을 지정 할 수 있습니다.
+//   // 일반적으로 서버에서 전달해준 파일 이름은 응답 Header의 Content-Disposition에 설정됩니다.
+
+
+//   // 다운로드 파일 이름을 추출하는 함수
+//   const extractDownloadFilename = (response) => {
+//   const disposition = response.headers["content-disposition"];
+//   const fileName = decodeURI(
+//   disposition
+//   .match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)[1]
+//   .replace(/['"]/g, "")
+//   );
+//   return fileName;
+//   };
+
+//   link.download = extractDownloadFilename(response);
+//   // 다운로드 파일의 이름은 직접 지정 할 수 있습니다.
+//   // link.download = "sample-file.xlsx";
+
+//   // 링크를 body에 추가하고 강제로 click 이벤트를 발생시켜 파일 다운로드를 실행시킵니다.
+//   document.body.appendChild(link);
+//   link.click();
+//   link.remove();
+
+//   // 다운로드가 끝난 리소스(객체 URL)를 해제합니다.
+//     window.URL.revokeObjectURL(fileObjectUrl);
+//   });
+
+//   };
+
+/////////////////////파일정보가져와서 다운로드//////////////////
+const showFileInfo = async(file) => {
+  console.log("파일 정보:", file);
+  await axios.get(`/api/cmm/fms/FileDown.do`,{
+    params:{
+      atchFileId : file.atchFileId,
+      fileSn : file.fileSn
+  },
+  responseType : "blob"}
+  ).then((response) => {
+  // 다운로드(서버에서 전달 받은 데이터) 받은 바이너리 데이터를 blob으로 변환합니다.
+  const blob = new Blob([response.data]);
+  // 특정 타입을 정의해야 경우에는 옵션을 사용해 MIME 유형을 정의 할 수 있습니다.
+  // const blob = new Blob([this.content], {type: 'text/plain'})
+
+  // blob을 사용해 객체 URL을 생성합니다.
+  FileSaver.saveAs(blob, file.orignlFileNm);
+  });
+
+  };
 
 // 결재선 포멧
 const approvalStatusMap = {
@@ -304,5 +400,30 @@ const getApprovalStatusName = (code) => {
 
 .badge {
   font-weight: 400 !important;
+}
+.tooltip-container {
+  position: relative;
+  display: flex;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px;
+  position: absolute;
+  bottom: 150%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip-container:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
 }
 </style>

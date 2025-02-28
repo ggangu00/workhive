@@ -12,6 +12,9 @@ public interface DocumentService {
 	//문서 개수
 	int getCount(SearchDTO searchDTO);
 	
+	//미결문서 개수
+	int pendingDocCount(SearchDTO searchDTO);
+	
 	//문서양식 이름 조회
 	public List<FormDTO> formSelectAll();
 	
@@ -32,4 +35,9 @@ public interface DocumentService {
 	
 	//수신자조회(문서번호로)
 	public List<Reception> receiverSelecteAll(String docCd);
+	
+	//문서조회(미결함)
+	public List<DocumentDTO> pendingDocumentSelectAll(SearchDTO searchDTO);
+	
+	public boolean approvalCnUpdate(ApprovalLine approvalLine);
 }

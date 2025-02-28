@@ -140,13 +140,15 @@
 
 <script setup>
 import axios from "axios";
-import Swal from 'sweetalert2';
-import { onBeforeMount, onMounted, ref } from 'vue';
-import Card from '../../components/Cards/Card.vue'
-import Modal from '../../components/Modal.vue';
 import { useRouter, useRoute } from 'vue-router';
+import { onBeforeMount, onMounted, ref } from 'vue';
 
-//---------------데이터-------------- 
+//========================== 컴포넌트 ==========================
+import Swal from 'sweetalert2';
+import Modal from '../../components/Modal.vue';
+import Card from '../../components/Cards/Card.vue'
+
+//========================= 데이터 초기화 =========================
 
 const router = useRouter()
 const route = useRoute();
@@ -169,9 +171,16 @@ if (route.query.prCd) { //수정일 경우
   isUpdated.value = true;
 }
 
-//--------------공통함수------------- 
+//======================== 공통함수 ========================
 
-const numberAutoFormat = () => { //입력 시 콤마 자동입력
+onBeforeMount(() => {
+  if (isUpdated.value == true) {
+    projectGetInfo(prCd.value);
+  }
+});
+
+//입력 시 콤마 자동입력
+const numberAutoFormat = () => {
   if (!price.value) {
     price.value = "";
     return;
@@ -181,13 +190,33 @@ const numberAutoFormat = () => { //입력 시 콤마 자동입력
   price.value = strValue.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,'); // 천 단위 콤마 추가하여 표시
 }
 
-onBeforeMount(() => {
-  if (isUpdated.value == true) {
-    projectGetInfo(prCd.value);
-  }
-});
+//입력정보 초기화
+const formReset = () => { 
+  Swal.fire({
+    title: "작성내용을 초기화하시겠습니까?",
+    icon: "question",
+    showCancelButton: true,
+    customClass: {
+      confirmButton: "btn btn-secondary btn-fill",
+      cancelButton: "btn btn-danger btn-fill"
+    },
+    confirmButtonText: "아니요",
+    cancelButtonText: "네",
+  }).then(result => {
+    if (result.dismiss == Swal.DismissReason.cancel) {
+      prNm.value = '';
+      typeCd.value = 'A03';
+      startDt.value = '';
+      endDt.value = '';
+      price.value = '';
+      aheadDt.value = '';
+      entrprsMberId.value = '';
+    }
+  })
+}
 
-// 프로젝트 과업
+//========================= Toast grid =========================
+
 const gridInstance = ref();
 const workList = ref([]);
 onMounted(() => {
@@ -220,25 +249,24 @@ onMounted(() => {
   })
 })
 
+//행 추가 시 컬럼값
 const appendedData = {
   prWorkNm: '',
   progress: '',
   state: '',
 };
 
-const btnWorkAdd = () => {
-  gridInstance.value.appendRow(appendedData);
-};
+//========================= 모달 =========================
 
-//---------------모달--------------
-
+//거래처 목록 모달 열기
 const isShowModal = ref(false);
-const modalOpen = () => { //프로젝트 정보 모달 열기
+const modalOpen = () => {
   isShowModal.value = true;
   comGetList();
 }
 
-const modalClose = (e) => { //프로젝트 정보 모달 닫기
+//거래처 목록 모달 닫기
+const modalClose = (e) => { 
   if (e.key === "Escape") {
     if (isShowModal.value) {
       isShowModal.value = !isShowModal.value
@@ -248,10 +276,18 @@ const modalClose = (e) => { //프로젝트 정보 모달 닫기
   }
 }
 
-//---------------axios--------------
+//======================= 버튼이벤트 =======================
 
+//행 추가 버튼
+const btnWorkAdd = () => {
+  gridInstance.value.appendRow(appendedData);
+};
+
+//======================= axios =======================
+
+//프로젝트 단건조회
 const projectInfo = ref([]);
-const projectGetInfo = async (prCd) => { //프로젝트 단건조회
+const projectGetInfo = async (prCd) => { 
   try {
     const result = await axios.get(`/api/project/info/${prCd}`);
     projectInfo.value = result.data.info;
@@ -276,9 +312,10 @@ const projectGetInfo = async (prCd) => { //프로젝트 단건조회
   }
 }
 
+//거래처 목록 조회
 const companyList = ref([]);
 const companyCount = ref(0);
-const comGetList = async () => { //프로젝트 단건조회
+const comGetList = async () => { 
   try {
     const result = await axios.get('/api/comm/comList');
 
@@ -289,13 +326,15 @@ const comGetList = async () => { //프로젝트 단건조회
   }
 }
 
+//거래처 선택 시 v-model값 추가
 const comSelect = (params) => {
   entrprsMberId.value = params.entrprsMberId;
   cmpnyNm.value = params.cmpnyNm;
   isShowModal.value = false;
 }
 
-const projectAdd = async () => { //프로젝트 등록
+//프로젝트 등록
+const projectAdd = async () => { 
 
   if (!prNm.value) {
     Swal.fire({
@@ -334,7 +373,7 @@ const projectAdd = async () => { //프로젝트 등록
   try {
     const response = await axios.post("/api/project", requestData);
 
-    if (response.data.result === true) {
+    if (response.data === true) {
       Swal.fire({
         icon: "success",
         title: "등록완료",
@@ -350,27 +389,5 @@ const projectAdd = async () => { //프로젝트 등록
       text: "프로젝트 등록 실패",
     })
   }
-}
-
-const formReset = () => { //입력정보 초기화
-  Swal.fire({
-    icon: "question",
-    title: "작성내용을 초기화하시겠습니까?",
-    showCancelButton: true,
-    confirmButtonColor: "#83a2e9",
-    cancelButtonColor: "#ff9097",
-    confirmButtonText: "예",
-    cancelButtonText: "아니요"
-  }).then(result => {
-    if (result.isConfirmed) {
-      prNm.value = '';
-      typeCd.value = 'A03';
-      startDt.value = '';
-      endDt.value = '';
-      price.value = '';
-      aheadDt.value = '';
-      entrprsMberId.value = '';
-    }
-  })
 }
 </script>

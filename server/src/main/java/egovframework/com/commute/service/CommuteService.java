@@ -14,4 +14,5 @@ public interface CommuteService {
 	public CommuteDTO lastCmtSelect(String mberId);
 	public CommuteDTO dateCmtSelect(String commuteDt);
 	public CommuteDTO cmtTimeSelect();
+	public int cmtSelectAllCnt(CommuteDTO commuteDTO);
 }

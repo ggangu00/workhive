@@ -90,7 +90,6 @@ public class ProjectController {
 	@PostMapping("")
 	public boolean projectAdd(@RequestBody ProjectDTO project) {
 		boolean result = projectService.saveProject(project);
-		
 	  return result;
 	}
 	
@@ -109,16 +108,11 @@ public class ProjectController {
 	
 	//프로젝트 삭제
 	@DeleteMapping("/{prCd}")
-	public Map<String, Object> projectRemove(@PathVariable(name="prCd") String prCd) {
-	    
-	    // 서비스 로직 실행
+	public boolean projectRemove(@PathVariable(name="prCd") String prCd) {
+		
 		boolean result = projectService.projectDelete(prCd);
 		
-		Map<String, Object> map = new HashMap<>();
-		map.put("result", result);
-		//map.put("list", projectService.projectSelectAll());
-		
-		return map;
+		return result;
 	}
 	
 	//프로젝트 다중 삭제
@@ -164,7 +158,6 @@ public class ProjectController {
 	//프로젝트 과업 삭제
 	@DeleteMapping("/work/{prWorkCd}")
 	public Map<String, Object> projectWorkRemove(@PathVariable("prWorkCd") String prWorkCd) {
-		log.info("삭제 권한 코드 출력 => " + prWorkCd);
 	    
 	    // 서비스 로직 실행
 		boolean result = projectService.projectWorkDelete(prWorkCd);
@@ -221,7 +214,6 @@ public class ProjectController {
 	//프로젝트 일정 삭제
 	@DeleteMapping("/plan/{prPlanCd}")
 	public Map<String, Object> projectPlanRemove(@PathVariable("prPlanCd") String prPlanCd) {
-		log.info("삭제 권한 코드 출력 => " + prPlanCd);
 	    
 	    // 서비스 로직 실행
 		boolean result = projectService.projectPlanDelete(prPlanCd);

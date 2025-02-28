@@ -104,17 +104,17 @@ import axios from "axios";
 import { onBeforeMount, ref } from 'vue';
 import { useRoute } from "vue-router";
 
-//---------------컴포넌트-------------- 
+//========================== 컴포넌트 ==========================
 import Swal from 'sweetalert2';
 import Card from '../../components/Cards/Card.vue'
 import Modal from '../../components/Modal.vue';
 
-//---------------js-------------- 
+//============================= js =============================
 import { dateFormat } from '../../assets/js/common'
 import { dateTermCalc, dateGetDay, dateFormatDay } from '../../assets/js/project'
 
 
-//---------------데이터-------------- 
+//========================= 데이터 초기화 =========================
 
 const route = useRoute();
 const prCd = ref('');            //해당 프로젝트 코드
@@ -132,7 +132,7 @@ onBeforeMount(() => {
   projectGetInfo(prCd.value);     //해당 프로젝트 정보 호출 함수
 });
 
-//---------------모달--------------
+//========================= 모달 =========================
 
 const isShowModal = ref(false);
 const modalOpen = () => { //일정 등록/수정 모달 열기
@@ -150,19 +150,22 @@ const modalClose = (e) => { //일정 등록/수정 모달 닫기
   }
 }
 
-//-------------버튼이벤트------------
+//======================= 버튼이벤트 =======================
 
-const btnProjectPlanAdd = () => { //일정 등록
+//일정 등록
+const btnProjectPlanAdd = () => { 
   projectPlanAdd();
   isShowModal.value = false;
 }
 
-const btnProjectPlanUpdate = (code) => { //일정 수정
+//일정 수정
+const btnProjectPlanUpdate = (code) => { 
   modalOpen();
   projectPlanGetInfo(code);
 }
 
-const btnProjectPlanRemove = (code) => { //일정 삭제
+//일정 삭제
+const btnProjectPlanRemove = (code) => { 
   Swal.fire({
     title: "해당 일정을 삭제 하시겠습니까?",
     icon: "question",
@@ -180,9 +183,10 @@ const btnProjectPlanRemove = (code) => { //일정 삭제
   });
 }
 
-//-------------공통함수------------
+//======================== 공통함수 ========================
 
-const projectDateTerm = (startDate, endDate) => { // 시작일 ~ 종료일 사이의 날짜 배열로 담는 함수 
+// 시작일 ~ 종료일 사이의 날짜 배열로 담는 함수 
+const projectDateTerm = (startDate, endDate) => { 
   let start = new Date(startDate);
   let end = new Date(endDate);
 
@@ -193,17 +197,19 @@ const projectDateTerm = (startDate, endDate) => { // 시작일 ~ 종료일 사�
   }
 };
 
-const formReset = () => { //입력정보 초기화
+//입력정보 초기화
+const formReset = () => { 
   planNm.value = '';
   color.value = '';
   startDt.value = '';
   endDt.value = '';
 }
 
-//---------------axois--------------
+//======================= axios =======================
 
+//프로젝트 단건조회
 const projectInfo = ref([]);
-const projectGetInfo = async (prCd) => { //프로젝트 단건조회
+const projectGetInfo = async (prCd) => { 
   try {
     const result = await axios.get(`/api/project/info/${prCd}`);
 
@@ -214,9 +220,9 @@ const projectGetInfo = async (prCd) => { //프로젝트 단건조회
 
     term.value = projectInfo.value.term;
 
-    term.value > 0 ? term.value = "+" + term.value         //종료일 전일 때
-      : term.value < 0 ? term.value  //종료일을 초과했을 때
-        : term.value = term.value = "-day";                  //종료일 당일일 때
+    term.value > 0 ? term.value = "+" + term.value  //종료일 전일 때
+      : term.value < 0 ? term.value                 //종료일을 초과했을 때
+        : term.value = term.value = "-day";         //종료일 당일일 때
 
     projectPlanGetList(prCd);
     projectDateTerm(projectInfo.value.startDt, projectInfo.value.endDt); //프로젝트 시작일~종료일까지 모든 일자 배열에 담음
@@ -231,9 +237,10 @@ const projectGetInfo = async (prCd) => { //프로젝트 단건조회
   }
 }
 
+//프로젝트 일정 전체조회
 const planList = ref([]);
 const planCount = ref(0);
-const projectPlanGetList = async (prCd) => { //프로젝트 일정 전체조회
+const projectPlanGetList = async (prCd) => { 
   try {
     const result = await axios.get(`/api/project/plan/${prCd}`);
 
@@ -249,8 +256,9 @@ const projectPlanGetList = async (prCd) => { //프로젝트 일정 전체조회
   }
 }
 
+//프로젝트 일정 단건조회
 const projectPlanInfo = ref([]);
-const projectPlanGetInfo = async (prPlanCd) => { //프로젝트 일정 단건조회
+const projectPlanGetInfo = async (prPlanCd) => { 
   try {
     const result = await axios.get(`/api/project/plan/info/${prPlanCd}`);
 
@@ -271,7 +279,8 @@ const projectPlanGetInfo = async (prPlanCd) => { //프로젝트 일정 단건조
   }
 }
 
-const projectPlanAdd = async () => { //프로젝트 일정 등록
+//프로젝트 일정 등록
+const projectPlanAdd = async () => { 
 
   if (!planNm.value) {
     Swal.fire({
@@ -310,7 +319,8 @@ const projectPlanAdd = async () => { //프로젝트 일정 등록
   }
 }
 
-const projectPlanRemove = async (prPlanCd) => { //프로젝트 일정삭제
+//프로젝트 일정삭제
+const projectPlanRemove = async (prPlanCd) => { 
 
   try {
     const response = await axios.delete(`/api/project/plan/${prPlanCd}`);

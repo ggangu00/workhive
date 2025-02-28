@@ -30,7 +30,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useStore } from 'vuex';
 import { inject } from 'vue'; // 부모에게 받아오기
 
@@ -64,9 +64,16 @@ const jobBxManage = (type, data) => {
   jobBxCheck(type, data); // 부모로 이벤트 전달
 };
 
+// 업무함 관리 기능 감시
+watch(() => props.jobBoxes, () => {
+  if(selectedJobBx != undefined) jobBoxClicked(selectedJobBx);
+});
+
 // 업무함 클릭시 vuex 정보 변경
 const store = useStore();
+let selectedJobBx;
 const jobBoxClicked = (job) => {
+  selectedJobBx = job;
   const relatedJobBoxes = props.jobBoxes.filter(j => j.deptCd === job.deptCd);
 
   store.dispatch('jobBxSelectedUpdate', { 

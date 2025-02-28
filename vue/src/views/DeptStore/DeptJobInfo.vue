@@ -93,7 +93,7 @@
                   <label for="title-search" class="m-0 me-2">제목 검색</label>
                   
                   <input type="text" class="form-control w-auto me-2" placeholder="제목을 입력해주세요" id="title-search" v-model="jobSearch.searchWrd">
-                  <button class="btn btn-info btn-fill" @click="btnReadData">검색</button>
+                  <button class="btn btn-info btn-fill" @click="jobGetList">검색</button>
                 </div>
               </div>
               
@@ -125,17 +125,18 @@ import "tui-grid/dist/tui-grid.css";
 import Swal from 'sweetalert2';
 import { useStore } from 'vuex';
 import { provide } from 'vue'; // 자식에게 전달
-
 import DeptJobBx from "./DeptJobBx.vue";
 import JobManage from "./JobManage.vue";
 import Modal from '../../components/Modal.vue';
+import { useUserInfoStore } from '../../store/userStore.js';
+
+const userInfoStore = useUserInfoStore();
+let loginUser = userInfoStore.user.mberId;
+console.log("로그인 정보 : ", loginUser);
 
 let gridInstance = ref();
-// let rowData = ref([]);
-
 
 // 부서 및 업무함 시작
-
 // vuex 감지
 const store = useStore();
 const jobBxSelected = computed(() => store.state.jobBxSelected);
@@ -151,10 +152,9 @@ watch(jobBxSelected, () => {
   jobSearch.value.searchWrd = '';
   jobSearch.value = Object.assign(jobSearch.value, jobBxSelected.value);
 
-  btnReadData();
-  // jobGetList();
+  jobGetList();
 });
-const btnReadData = () => {
+const jobGetList = () => {
   gridInstance.value.readData(1, jobSearch.value);
 }
 
@@ -244,8 +244,8 @@ const modalConfirm = async () => {
   formData.append("deptCd", jobBxData.value.deptCd);
   formData.append("deptJobBxNm", jobBxData.value.deptJobBxNm);
   formData.append("indictOrdr", jobBxData.value.indictOrdr);
-  formData.append("frstRegisterId", 'user01');
-  formData.append("lastUpdusrId", 'user01');
+  formData.append("frstRegisterId", loginUser);
+  formData.append("lastUpdusrId", loginUser);
 
   if(jobBxModalType == 'add') {
     await axios.post('/api/deptstore/jobBxAdd', formData);
@@ -273,13 +273,12 @@ onMounted(() => {
     data: dataSource,
     scrollX: false,
     scrollY: true,
-    rowHeaders: ['checkbox'],
+    rowHeaders: ['checkbox', 'rowNum'],
     pageOptions: {
       useClient: false,
       perPage: 5,
     },
     columns: [ // 체크박스 / 번호 / 제목 / 담당자 / 작성일 / 버튼
-      { header: '번호', name: 'rowNum', sortable: true, align: 'center' },
       { header: '제목', name: 'deptJobNm', sortable: true},
       { header: '담당자', name: 'chargerNm', sortable: true},
       { header: '작성일', name: 'frstRegisterPnttm', sortable: true},
@@ -347,7 +346,7 @@ const delEvent = async (rowKey) => {
 
   await axios.delete('/api/deptstore/jobRemove', { params: { deptJobId: selectedRowData.deptJobId } });
   
-  // jobGetList();
+  jobGetList();
 };
 // 업무 목록 삭제
 const btnJobListRemove = async () => {
@@ -361,7 +360,7 @@ const btnJobListRemove = async () => {
 
   await axios.post('/api/deptstore/jobListRemove', jobList);
 
-  // jobGetList();
+  jobGetList();
 };
 
 // const jobGetList = async (page = 1) => {
@@ -411,8 +410,6 @@ const btnJobListRemove = async () => {
 //   gridInstance.value.setPaginationTotalCount(paginationInfo.totalRecordCount);
 // };
 
-
-
 // 모달
 let isShowJobModal = ref(false);
 let isUpdate = ref(false);
@@ -428,7 +425,7 @@ const modalCloseJob = () => {
 const modalConfirmJob = () => {
   isShowJobModal.value = false;
   isUpdate.value = '';
-  // jobGetList();
+  jobGetList();
 }
 
 // 업무 수정

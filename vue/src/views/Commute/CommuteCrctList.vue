@@ -56,34 +56,33 @@
 import axios from 'axios';
 import Grid from 'tui-grid';
 import { ref, onBeforeUnmount, onMounted, watch } from 'vue';
-import { dateTimeFormat } from '../../assets/js/common.js';
+// import { dateTimeFormat } from '../../assets/js/common.js';
 import { useRouter } from 'vue-router';
+import { useUserInfoStore } from '../../store/userStore.js';
+
+const userInfoStore = useUserInfoStore();
+let loginUser = userInfoStore.user.mberId;
+console.log("로그인 정보 : ", loginUser);
 
 let gridInstance = ref();
-let rowData = ref([]);
+// let rowData = ref([]);
 
 // 검색 데이터
 const searchData = ref({
-  createId: "user01",
+  createId: loginUser,
   startDate: '',
   endDate: '',
   searchState: ''
 });
-const crctGetList = async () => {
-  const result = await axios.get('/api/commute/crctList', { params : searchData.value });
-  rowData.value = result.data;
 
-  rowData.value.forEach((i) => {
-    i.commuteDt = dateTimeFormat(i.commuteDt, 'yyyy-MM-dd');
-    i.preGoTime = dateTimeFormat(i.preGoTime, 'MM/dd hh:mm');
-    i.preLeaveTime = dateTimeFormat(i.preLeaveTime, 'MM/dd hh:mm');
-    i.crctGoTime = dateTimeFormat(i.crctGoTime, 'MM/dd hh:mm');
-    i.crctLeaveTime = dateTimeFormat(i.crctLeaveTime, 'MM/dd hh:mm');
-    i.createDt = dateTimeFormat(i.createDt, 'yyyy-MM-dd');
-  })
-
-  gridInstance.value.resetData(rowData.value);
+const crctGetList = () => {
+  gridInstance.value.readData(1, searchData.value);
 }
+const dataSource = {
+  api: {
+    readData: { url: '/api/commute/crctList', method: 'GET', initParams: searchData.value}
+  }
+};
 
 watch(() => searchData, () => {
   crctGetList();
@@ -93,9 +92,13 @@ watch(() => searchData, () => {
 onMounted(() => {
   gridInstance.value = new Grid({
     el: document.getElementById('crctGrid'),
-    data: rowData.value,
+    data: dataSource,
     scrollX: false,
     scrollY: true,
+    pageOptions: {
+      useClient: false,
+      perPage: 5,
+    },
     columns: [ //근무일자 / 출근시간 / 퇴근시간 / 정정출근시간 / 정정퇴근시간 / 신청일 / 결재자
       { header: '근무일자', name: 'commuteDt', align: 'center'},
       { header: '출근시간', name: 'preGoTime', align: 'center'},
@@ -108,7 +111,7 @@ onMounted(() => {
     ]
   })
   
-  crctGetList();
+  // crctGetList();
 })
 
 // 그리드 버튼
