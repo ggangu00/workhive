@@ -168,6 +168,23 @@
 		WHERE 1=1
 		AND A.MTG_ID = #{mtgId}
 	</select>
+	
+	<!-- 회의관리::상세보기 -->
+	<select id="selectMeetingMember" parameterType="String" resultType="egovMap">
+		SELECT
+			MTG_ID,
+			mber_id,
+			fn_get_memnm(mber_id) as mem_nm,
+			dept_cd,
+			fn_get_deptnmDeptCd(dept_cd) as dept_nm,
+			grade_cd,
+            FN_GET_GRADENM(grade_cd) as gradeNm
+		FROM COMTNMTGINFO_MEM
+		WHERE 1=1
+		AND MTG_ID = #{mtgId}
+	</select>
+	
+	
 	<!-- 회의관리::목록조회_게시물정보 -->
 	<select id="selectMeetingManage" parameterType="comDefaultVO" resultType="egovMap" resultMap="MeetingManageListMap">
 	
@@ -232,6 +249,8 @@
 	WHERE RNUM BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}
 	
 	</select>
+	
+	
 	<!-- 회의관리::목록조회_게시물 총개수  -->
 	<select id="selectMeetingManageCnt" parameterType="comDefaultVO" resultType="int">
 		SELECT
@@ -250,10 +269,9 @@
 	 </if>
 	 
 	</select>
+	
 	<!-- 회의관리::입력  -->
 	<insert id="insertMeetingManage">
-	 
-
 	INSERT INTO COMTNMTGINFO (
 		MTG_ID,
 		TYPE_CD,
@@ -278,6 +296,12 @@
 		#{createId}
 	)
 	 
+	</insert>
+	
+	<!-- 회의 참여자 등록 -->
+	<insert id="insertMeetingMemeber" parameterType="MeetingMemberVO">
+	    INSERT INTO COMTNMTGINFO_MEM (mber_id, mtg_id, grade_cd, dept_cd)
+	    VALUES (#{mberId}, #{mtgId}, #{gradeCd}, #{deptCd})
 	</insert>
 
 

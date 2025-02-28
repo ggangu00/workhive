@@ -20,7 +20,7 @@
 			   resp_cd,			--직책코드
 			   grade_cd,			--직급코드
 			   fn_get_deptnm(mber_id) as dept_nm,
-               fn_get_formnm(resp_cd) as resp_nm
+               FN_GET_GRADENM(grade_cd) as gradeNm
 		from COMTNGNRLMBER
 	</select>
 </mapper>

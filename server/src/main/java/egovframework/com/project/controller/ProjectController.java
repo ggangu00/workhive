@@ -108,16 +108,11 @@ public class ProjectController {
 	
 	//프로젝트 삭제
 	@DeleteMapping("/{prCd}")
-	public Map<String, Object> projectRemove(@PathVariable(name="prCd") String prCd) {
-	    
-	    // 서비스 로직 실행
+	public boolean projectRemove(@PathVariable(name="prCd") String prCd) {
+		
 		boolean result = projectService.projectDelete(prCd);
 		
-		Map<String, Object> map = new HashMap<>();
-		map.put("result", result);
-		//map.put("list", projectService.projectSelectAll());
-		
-		return map;
+		return result;
 	}
 	
 	//프로젝트 다중 삭제
