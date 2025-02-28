@@ -6,184 +6,78 @@
         <button class="btn btn-primary btn-sm btn-fill float-right" onclick="location.href ='/project/add'">프로젝트
           등록</button>
       </card>
-      <card>
-        <ul class="nav nav-pills">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page">전체(100)</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link">진행전(30)</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link">진행중(20)</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link">진행완료(50)</a>
-          </li>
-        </ul>
-      </card>
-      <card>
-        <div class="mb-3 row">
-          <label for="staticEmail" class="col-sm-2 col-form-label">검색</label>
-          <div class="col-auto">
-            <select class="form-select" aria-label="Default select example">
-              <option value="1">프로젝트명</option>
-              <option value="2">거래처</option>
-              <option value="3">담당자</option>
-            </select>
+      <form @submit.prevent="projectGetList">
+        <card>
+          <ul class="nav nav-pills">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page">전체(100)</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link">진행전(30)</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link">진행중(20)</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link">진행완료(50)</a>
+            </li>
+          </ul>
+        </card>
+        <card>
+          <div class="mb-3 row">
+            <label for="staticEmail" class="col-sm-2 col-form-label">검색</label>
+            <div class="col-auto">
+              <select class="form-select" v-model="searchData.searchCondition">
+                <option value="0">프로젝트명</option>
+                <option value="1">거래처</option>
+                <option value="2">담당자</option>
+              </select>
+            </div>
+
+            <div class="col-auto">
+              <input type="text" class="form-control" placeholder="검색어를 입력해주세요" v-model="searchData.searchKeyword">
+            </div>
           </div>
-          <div class="col-auto">
-            <input type="text" class="form-control" placeholder="검색어를 입력해주세요">
+          <div class="mb-3 row">
+            <label for="inputPassword" class="col-sm-2 col-form-label">프로젝트 기간</label>
+            <div class="col-auto">
+              <input type="date" class="form-control" v-model="searchData.startDt">
+            </div>
+            <div class="col-auto">~</div>
+            <div class="col-auto">
+              <input type="date" class="form-control" v-model="searchData.endDt">
+            </div>
           </div>
-        </div>
-        <div class="mb-3 row">
-          <label for="inputPassword" class="col-sm-2 col-form-label">프로젝트 기간</label>
-          <div class="col-auto">
-            <input type="date" name="START_DT" class="form-control">
+          <div class="mb-3 row">
+            <label for="inputPassword" class="col-sm-2 col-form-label">프로젝트 금액</label>
+            <div class="col-auto">
+              <input type="number" class="form-control" v-model="searchData.priceSt">
+            </div>
+            <div class="col-auto">~</div>
+            <div class="col-auto">
+              <input type="number" class="form-control" v-model="searchDatapriceEnd">
+            </div>
           </div>
-          <div class="col-auto">~</div>
-          <div class="col-auto">
-            <input type="date" name="END_DT" class="form-control">
+          <div class="text-center">
+            <button type="reset" class="btn btn-secondary btn-fill">
+              초기화
+            </button>
+            <button type="submit" class="btn btn-info btn-fill">
+              검색
+            </button>
           </div>
-        </div>
-        <div class="mb-3 row">
-          <label for="inputPassword" class="col-sm-2 col-form-label">프로젝트 금액</label>
-          <div class="col-auto">
-            <input type="number" name="PRICE_ST" class="form-control">
-          </div>
-          <div class="col-auto">~</div>
-          <div class="col-auto">
-            <input type="number" name="PRICE_END" class="form-control">
-          </div>
-        </div>
-        <div class="text-center">
-          <button type="submit" class="btn btn-secondary btn-fill">
-            초기화
-          </button>
-          <button class="btn btn-info btn-fill">
-            검색
-          </button>
-        </div>
-      </card>
+        </card>
+      </form>
       <card>
         <div class="d-flex">
           <div class="p-2 w90">
-            <button class="btn btn-danger btn-fill btn-sm">다중삭제</button>
-            <button class="btn btn-excel btn-sm"><img class="me-1" src="../../assets/img/icon/excel.svg" alt="xls">
+            <button class="btn btn-danger btn-fill btn-sm" @click="projectListRemove">다중삭제</button>
+            <button class="btn btn-excel btn-sm" @click="exportToExcel"><img class="me-1"
+                src="../../assets/img/icon/excel.svg" alt="xls">
               엑셀다운로드</button>
           </div>
-          <div class="p-2 flex-shrink-1">
-            <select class="form-select form-select-sm">
-              <option value="PA">프로젝트명 오름차순</option>
-              <option value="PD">프로젝트명 내림차순</option>
-              <option value="DA">프로젝트 기간 최신순</option>
-              <option value="DD">프로젝트 기간 오래된순</option>
-            </select>
-          </div>
         </div>
-        <div class="table-responsive">
-          <table class="table table-hover project">
-            <thead class="table-light">
-              <tr>
-                <th>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                  </div>
-                </th>
-                <th>번호</th>
-                <th>진행상태</th>
-                <th>프로젝트명</th>
-                <th>프로젝트 기간</th>
-                <th>금액</th>
-                <th>담당자</th>
-                <th>일정</th>
-                <th>등록일</th>
-                <th>관리</th>
-              </tr>
-            </thead>
-            <tbody>
-              <template v-if="projectCount > 0">
-                <tr :key="i" v-for="(project, i) in projectList">
-                  <td>
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                    </div>
-                  </td>
-                  <td>{{ i + 1 }}</td>
-                  <td>진행중</td>
-                  <td>
-                    <div class="category">{{ project.entrprsMberId }}</div>
-                    <div class="subject"><a href="#" @click="modalOpen(project.prCd)" class="mrp5">{{ project.prNm
-                        }}</a>
-                      <span class="badge badge-danger">D-10</span>
-                    </div>
-                  </td>
-                  <td>{{ dateFormat(project.startDt) }} ~ {{ dateFormat(project.endDt) }}</td>
-                  <td>{{ Number(project.price).toLocaleString() }}</td>
-                  <td>김지환</td>
-                  <td><button class="btn btn-primary btn-sm" onclick="location.href ='/project/plan'">일정등록</button></td>
-                  <td>{{ dateFormat(project.createDt) }}</td>
-                  <td>
-                    <button class="btn btn-success btn-fill btn-sm mr-1">수정</button>
-                    <button class="btn btn-danger btn-fill btn-sm mr-1">삭제</button>
-                  </td>
-                </tr>
-              </template>
-              <tr v-else>
-                <td colspan="10">
-                  <div class="list-nodata">등록된 프로젝트가 없습니다.</div>
-                </td>
-              </tr>
-              <!--
-              <tr>
-                <td>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                  </div>
-                </td>
-                <td>2</td>
-                <td>진행중</td>
-                <td>
-                  <div class="category">경북자연생태원</div>
-                  <div class="subject">프로그램 예약 및 결제 시스템 구축
-                    <span class="badge badge-primary">D-20</span>
-                  </div>
-                </td>
-                <td>2024-12-01 ~ 2025-03-31</td>
-                <td>30,000,000</td>
-                <td>김지환</td>
-                <td><button class="btn btn-primary btn-sm">일정등록</button></td>
-                <td>2024-12-01</td>
-                <td>
-                  <button class="btn btn-success btn-fill btn-sm mr-1">수정</button>
-                  <button class="btn btn-danger btn-fill btn-sm mr-1">삭제</button>
-                </td>
-              </tr>
-              <tr class="table-secondary">
-                <td>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                  </div>
-                </td>
-                <td>3</td>
-                <td>완료</td>
-                <td>
-                  <div class="category">예담대학교</div>
-                  <div class="subject">예담대학교 빌더 관리자페이지 고도화 용역</div>
-                </td>
-                <td>2024-12-01 ~ 2025-03-31</td>
-                <td>30,000,000</td>
-                <td>김지환</td>
-                <td><button class="btn btn-primary btn-sm">일정등록</button></td>
-                <td>2024-12-01</td>
-                <td>
-                  <button class="btn btn-success btn-fill btn-sm mr-1">수정</button>
-                  <button class="btn btn-danger btn-fill btn-sm mr-1">삭제</button>
-                </td>
-              </tr>-->
-            </tbody>
-          </table>
-        </div>
+        <div id="tableGrid" class="toastui project"></div>
       </card>
 
       <!--프로젝트 상세보기 모달[s]-->
@@ -199,14 +93,15 @@
                     <th class="table-secondary">프로젝트명</th>
                     <td class="text-start">{{ projectInfo.prNm }}</td>
                     <th class="table-secondary">거래처명</th>
-                    <td class="text-start">{{ projectInfo.entrprs_mber_id }}</td>
+                    <td class="text-start">{{ projectInfo.comNm }}</td>
                   </tr>
                   <tr>
                     <th class="table-secondary">프로젝트 기간</th>
+
                     <td class="text-start">{{ dateFormat(projectInfo.startDt) }} ~ {{ dateFormat(projectInfo.endDt) }}
                     </td>
                     <th class="table-secondary">금액</th>
-                    <td class="text-start">{{ Number(projectInfo.price).toLocaleString() }}</td>
+                    <td class="text-start">{{ projectInfo.price ? projectInfo.price : "-" }}</td>
                   </tr>
                   <tr>
                     <th class="table-secondary">참여자</th>
@@ -231,17 +126,17 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <template v-if="projectCount > 0">
-                    <tr>
-                      <th>1</th>
-                      <td>교내 SSO 연동</td>
-                      <th>100%</th>
-                      <td>완료</td>
+                  <template v-if="workCount > 0">
+                    <tr :key="i" v-for="(work, i) in workList">
+                      <th>{{ i + 1 }}</th>
+                      <td>{{ work.prWorkNm }}</td>
+                      <th>{{ work.progress }}%</th>
+                      <td>{{ work.state == 'A02' ? '미완료' : '완료' }}</td>
                     </tr>
                   </template>
-                  <tr v-else>
+                  <tr v-else class="list-nodata">
                     <td colspan="4">
-                      <div class="list-nodata">등록된 일정이 없습니다.</div>
+                      <div>등록된 일정이 없습니다.</div>
                     </td>
                   </tr>
                 </tbody>
@@ -262,40 +157,180 @@
 
 <script setup>
 import axios from "axios";
-import { onBeforeMount, ref } from 'vue';
-import Card from '../../components/Cards/Card.vue'
+import { useRouter } from "vue-router";
+import { onMounted, ref, watch, nextTick } from 'vue';
+
+//========================== 컴포넌트 ==========================
+import Grid from 'tui-grid';
+import Swal from 'sweetalert2';
 import Modal from '../../components/Modal.vue';
+import Card from '../../components/Cards/Card.vue'
 
-const projectList = ref([]);
-const projectInfo = ref([]);
-const isShowModal = ref(false);
-const projectCount = ref(0);
+//============================= js =============================
+import { dateFormat } from '../../assets/js/common'
+import { dateTermCalc } from '../../assets/js/project'
 
-onBeforeMount(() => {
-  projectGetList();
+//========================= Toast grid =========================
+
+//검색조건
+const searchData = ref({
+  searchCondition: "",
+  searchKeyword: '',
+  startDt: '',
+  endDt: '',
+  priceSt: '',
+  priceEnd: ''
 });
 
-//---------------공통함수--------------
+//검색조건이 변경되면 리스트가 새로 로드됨
+watch(() => searchData, () => {
+  projectGetList();
+}, { deep: true });
 
-const dateFormat = (value) => { //날짜포맷 (yyyy-mm-dd)
-  let date = value == null ? new Date() : new Date(value);
+//리스트 초기화
+const grid = ref([]);
+onMounted(() => {
+  projectGetList();
 
-  let year = date.getFullYear();
-  let month = ('0' + (date.getMonth() + 1)).slice(-2);
-  let day = ('0' + date.getDate()).slice(-2);
+  grid.value = new Grid({
+    el: document.getElementById("tableGrid"),
+    scrollX: true,
+    scrollY: true,
+    columns: [
+      { header: "진행상태", name: "state", align: "center", width: 80, formatter: ({ row }) => `${row.state == 'A04' ? '완료' : '진행중'}` },
+      { header: "프로젝트명", name: "prNm", align: "center", renderer: subjectRenderer },
+      { header: "프로젝트 기간", name: "startDt", align: "center", width: 200, formatter: ({ row }) => `${row.startDt} ~ ${row.endDt}` },
+      { header: "금액", name: "price", align: "center", width: 120, },
+      { header: "일정", name: "plan", align: "center", width: 100, renderer: BtnRendererPlan },
+      { header: "등록일", name: "createDt", align: "center", width: 100, formatter: ({ row }) => dateFormat(row.createDt) },
+      { header: "관리", name: "managementSetting", align: "center", width: 150, renderer: BtnRendererSetting }
+    ],
+    pageOptions: {
+      useClient: false,
+      perPage: 5,
+    },
+    rowHeight: 50,
+    data: projectList.value,
+    rowHeaders: ["checkbox"]
+  });
+});
 
-  let result = year + '-' + month + '-' + day;
-  return result;
+//리스트 엑셀다운로드
+const exportToExcel = () => {
+  if (grid.value) {
+    grid.value.export("xlsx", {
+      fileName: "프로젝트 내역 조회_" + dateFormat(),
+      useFormattedValue: true,
+      onlySelected: false,
+      includeHiddenColumns: false,
+    });
+  }
 };
 
-//---------------모달--------------
+//===================== Toast Grid Rendere =====================
 
-const modalOpen = (prCd) => { //프로젝트 정보 모달 열기
+//프로젝트명 
+class subjectRenderer {
+  constructor(props) {
+    const termClass = ref('');
+    const rowKey = props.row?.rowKey ?? props.grid.getRow(props.rowKey)?.rowKey;
+    const rowData = props.grid.getRow(rowKey);
+
+    const el = document.createElement("div");
+    el.className = "mlp10";
+
+    //남은 기간이 10일 이하인 경우 경고배지 적용
+    rowData.term > 10 ? termClass.value = 'badge-primary' : termClass.value = 'badge-danger';
+
+    el.innerHTML = `
+      <div class="category">${rowData.comNm}</div>
+      <div class="subject">
+        <a href="#" class="mrp5">${rowData.prNm}</a>
+        <span class="badge ${termClass.value}">
+          D${rowData.term > 0 ? "+" + rowData.term
+        : rowData.term > 0 ? "-" + rowData.term
+          : "-day"}</span>
+      </div>
+    `;
+
+    el.addEventListener("click", () => {
+      modalOpen(rowData.prCd); //제목 클릭 시 상세보기 모달 표출
+    });
+
+    this.el = el;
+  }
+
+  getElement() {
+    return this.el;
+  }
+}
+
+//프로젝트 수정/삭제 버튼
+class BtnRendererSetting {
+  constructor(props) {
+    const rowKey = props.row?.rowKey ?? props.grid.getRow(props.rowKey)?.rowKey;
+    const rowData = props.grid.getRow(rowKey);
+
+    const el = document.createElement("div");
+
+    el.innerHTML = `
+      <button class="btn btn-success btn-fill btn-sm mr-1" data-type="edit">수정</button>
+      <button class="btn btn-danger btn-fill btn-sm mr-1" data-type="del">삭제</button>
+    `;
+
+    el.addEventListener("click", (event) => {
+      const type = event.target.dataset.type;
+
+      if (type === "edit") { //수정버튼 클릭 시 수정페이지로 이동
+        btnPageMove("add", rowData.prCd);
+      } else if (type === "del") { //삭제버튼 클릭 시 삭제처리
+        btnProjectRemove(rowData.prCd);
+      }
+    });
+
+    this.el = el;
+  }
+
+  getElement() {
+    return this.el;
+  }
+}
+
+//프로젝트 일정관리 버튼
+class BtnRendererPlan {
+  constructor(props) {
+    const rowKey = props.row?.rowKey ?? props.grid.getRow(props.rowKey)?.rowKey;
+    const rowData = props.grid.getRow(rowKey);
+    const el = document.createElement("div");
+
+    el.innerHTML = `
+      <button class="btn btn-primary btn-sm">일정관리</button>
+    `;
+
+    el.addEventListener("click", () => {
+      btnPageMove('plan', rowData.prCd); //일정관리 버튼 클릭 시 일정관리 페이지로 이동
+    });
+
+    this.el = el;
+  }
+
+  getElement() {
+    return this.el;
+  }
+}
+
+//========================= 모달 =========================
+
+const isShowModal = ref(false);
+
+//프로젝트 정보 모달 열기
+const modalOpen = (prCd) => {
   isShowModal.value = true;
   projectGetInfo(prCd);
 }
 
-const modalClose = (e) => { //프로젝트 정보 모달 닫기
+//프로젝트 정보 모달 닫기
+const modalClose = (e) => {
   if (e.key === "Escape") {
     if (isShowModal.value) {
       isShowModal.value = !isShowModal.value
@@ -305,27 +340,152 @@ const modalClose = (e) => { //프로젝트 정보 모달 닫기
   }
 }
 
-//---------------axios--------------
+//======================= 버튼이벤트 =======================
 
-const projectGetList = async () => { //프로젝트 전체조회
+const router = useRouter();
+
+//수정/일정관리 페이지로 이동
+const btnPageMove = (mode, code) => {
+  router.push({ path: `/project/${mode}`, query: { prCd: code } });
+}
+
+// 프로젝트 삭제 버튼
+const btnProjectRemove = (code) => {
+  Swal.fire({
+    title: "해당 프로젝트를 삭제 하시겠습니까?",
+    icon: "question",
+    showCancelButton: true,
+    customClass: {
+      confirmButton: "btn btn-secondary btn-fill",
+      cancelButton: "btn btn-danger btn-fill"
+    },
+    confirmButtonText: "닫기",
+    cancelButtonText: "삭제",
+  }).then((result) => {
+    if (result.dismiss == Swal.DismissReason.cancel) {
+      projectRemove(code); //삭제처리 함수
+    }
+  });
+}
+
+//======================= axios =======================
+
+//프로젝트 전체조회
+const projectList = ref([]);
+const projectCount = ref(0);
+const projectGetList = async () => {
   try {
-    const result = await axios.get('/api/project/list');
-
-    projectList.value = result.data;
+    const result = await axios.get(`/api/project/list`, { params: searchData.value });
     projectCount.value = result.data.length;
+    projectList.value = result.data.map(item => ({
+      ...item,
+      startDt: dateFormat(item.startDt),
+      endDt: dateFormat(item.endDt),
+      term: dateTermCalc(dateFormat(item.endDt), dateFormat()) //프로젝트 종료일까지 남은기간
+    }));
+
+    grid.value.resetData(projectList.value); //toast grid로 데이터 전달
+
+    await nextTick(); //toast grid 로드될때까지 기다림
+    projectList.value.forEach((row, index) => { //toast grid 로드완료 후 상태별 rowClass 부여
+      if (row.state == "A03") {
+        grid.value.addRowClassName(index, "table-end");
+      } else {
+        grid.value.addRowClassName(index, "table-white");
+      }
+    });
+
   } catch (err) {
     projectList.value = [];
+
+    Swal.fire({
+      icon: "error",
+      title: "API 조회 오류",
+      text: "Error : " + err
+    });
   }
 }
 
-const projectGetInfo = async (prCd) => { //프로젝트 단건조회
+//프로젝트 단건조회
+const projectInfo = ref([]);
+const projectGetInfo = async (prCd) => { 
   try {
-    const result = await axios.get(`/api/project/info?pr=${prCd}`);
-
-    projectInfo.value = result.data;
+    const result = await axios.get(`/api/project/info/${prCd}`);
+    projectInfo.value = result.data.info;
+    projectWorkGetList(prCd); //프로젝트 과업리스트 조회
   } catch (err) {
     projectInfo.value = [];
+
+    Swal.fire({
+      icon: "error",
+      title: "API 조회 오류",
+      text: "Error : " + err
+    });
   }
 }
 
+//프로젝트 단건삭제
+const projectRemove = async (prCd) => { 
+
+  try {
+    const response = await axios.delete(`/api/project/${prCd}`);
+
+    if (response.data === true) {
+      Swal.fire({
+        icon: "success",
+        title: "삭제완료",
+        text: "선택한 프로젝트를 삭제하였습니다",
+      })
+      projectGetList(); //삭제완료 후 리스트 리로드
+    }
+  } catch (err) {
+    Swal.fire({
+      icon: "error",
+      title: "삭제 실패",
+      text: "Error : " + err
+    });
+  }
+}
+
+//프로젝트 다중삭제
+const projectListRemove = async () => { 
+  const checkedData = grid.value.getCheckedRows();
+
+  try {
+    const response = ref([]);
+    response.value = await axios.put(`/api/project/delete`, {
+      projectArr: checkedData.map(row => row.prCd)
+    });
+
+    if (response.value.statusText == "OK") {
+      Swal.fire({
+        icon: "success",
+        title: "삭제완료",
+        text: "선택한 프로젝트를 삭제하였습니다",
+      })
+      projectGetList(); //삭제완료 후 리스트 리로드
+    }
+  } catch (err) {
+    Swal.fire({
+      icon: "error",
+      title: "삭제 실패",
+      text: "Error : " + err
+    });
+  }
+}
+
+//프로젝트 과업조회
+const workList = ref([]);
+const workCount = ref(0);
+const projectWorkGetList = async (prCd) => { 
+  try {
+    const result = await axios.get(`/api/project/work/${prCd}`);
+    console.log(result);
+
+    workList.value = result.data;
+    workCount.value = result.data.length;
+  } catch (err) {
+    workList.value = [];
+  }
+}
 </script>

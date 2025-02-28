@@ -5,13 +5,20 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.egovframe.rte.fdl.property.EgovPropertyService;
+import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springmodules.validation.commons.DefaultBeanValidator;
 
 import egovframework.com.cmm.EgovMessageSource;
@@ -21,8 +28,6 @@ import egovframework.com.cop.cmt.service.Comment;
 import egovframework.com.cop.cmt.service.CommentVO;
 import egovframework.com.cop.cmt.service.EgovArticleCommentService;
 import egovframework.com.utl.fcc.service.EgovStringUtil;
-import org.egovframe.rte.fdl.property.EgovPropertyService;
-import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 
 /**
  * 댓글 관리를 위한 컨트롤러 클래스
@@ -41,7 +46,8 @@ import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
  * </pre>
  */
 
-@Controller
+@RestController
+@RequestMapping("/comment")
 public class EgovArticleCommentController {
 
 	@Resource(name = "EgovArticleCommentService")
@@ -66,7 +72,8 @@ public class EgovArticleCommentController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/cop/cmt/selectArticleCommentList.do")
+    //@RequestMapping("/cop/cmt/selectArticleCommentList.do")
+    @GetMapping("/commentList/{bbsId}/{nttId}")
     public String selectArticleCommentList(@ModelAttribute("searchVO") CommentVO commentVO, ModelMap model) throws Exception {
 
     	CommentVO articleCommentVO = new CommentVO();
@@ -134,7 +141,8 @@ public class EgovArticleCommentController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/cop/cmt/insertArticleComment.do")
+    //@RequestMapping("/cop/cmt/insertArticleComment.do")
+    @PostMapping("/commentAdd")
     public String insertArticleComment(@ModelAttribute("searchVO") CommentVO commentVO, @ModelAttribute("comment") Comment comment, 
 	    BindingResult bindingResult, ModelMap model, @RequestParam HashMap<String, String> map) throws Exception {
 
@@ -169,7 +177,13 @@ public class EgovArticleCommentController {
 		}
 		
     }
-    
+
+
+
+
+
+
+
     
     /**
      * 댓글을 삭제한다.
@@ -180,7 +194,8 @@ public class EgovArticleCommentController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/cop/cmt/deleteArticleComment.do")
+    //@RequestMapping("/cop/cmt/deleteArticleComment.do")
+    @DeleteMapping("/commentRemove")
     public String deleteArticleComment(@ModelAttribute("searchVO") CommentVO commentVO, @ModelAttribute("comment") Comment comment, 
     		ModelMap model, @RequestParam HashMap<String, String> map) throws Exception {
 		@SuppressWarnings("unused")
@@ -212,7 +227,8 @@ public class EgovArticleCommentController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/cop/cmt/updateArticleCommentView.do")
+    //@RequestMapping("/cop/cmt/updateArticleCommentView.do")
+    @PostMapping("/commentModify")
     public String updateArticleCommentView(@ModelAttribute("searchVO") CommentVO commentVO, ModelMap model) throws Exception {
 
 	LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();

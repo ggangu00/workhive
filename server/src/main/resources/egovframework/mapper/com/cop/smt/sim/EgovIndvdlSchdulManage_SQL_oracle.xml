@@ -32,7 +32,7 @@
 		<result property="atchFileId" column="ATCH_FILE_ID"/>
 		<result property="reptitSeCode" column="REPTIT_SE_CODE"/>    
 		<result property="frstRegisterPnttm" column="FRST_REGIST_PNTTM"/>
-		<result property="frstRegisterId" column="MEM_CD"/>
+		<result property="frstRegisterId" column="MBER_ID"/>
 		<result property="lastUpdusrPnttm" column="UPDATE_DT"/>
 		<result property="lastUpdusrId" column="LAST_UPDUSR_ID"/>				
 	</resultMap>
@@ -46,6 +46,7 @@
 			TO_CHAR(sysdate, 'YYYY-MM-DD') TO_DAY,
 			A.SCHDUL_ID,
 			A.SCHDUL_SE,
+			A.fn_get_codename(SCHDUL_SE) as SCHDUL_SE,
 			A.DEPT_CD,
 			A.SCHDUL_KND_CODE SCHDUL_KIND_CODE,
 			A.SCHDUL_BGNDE,
@@ -57,14 +58,14 @@
 			A.SCHDUL_CHARGER_ID,					
 			A.ATCH_FILE_ID,
 			TO_CHAR(A.FRST_REGIST_PNTTM,'YYYY-MM-DD') FRST_REGISTER_PNTTM,
-			A.MEM_CD,
+			A.MBER_ID,
 			A.UPDATE_DT,
 			A.LAST_UPDUSR_ID,
 			A.REPTIT_SE_CODE 
 		FROM COMTNSCHDULINFO A
 		WHERE 1=1 
 		 
-		AND (A.SCHDUL_CHARGER_ID = #{uniqId} OR A.MEM_CD = #{uniqId})  
+		AND (A.SCHDUL_CHARGER_ID = #{uniqId} OR A.MBER_ID = #{uniqId})  
 		
 		
 		AND ( 
@@ -87,6 +88,7 @@
 			A.SCHDUL_ID,
 			A.SCHDUL_SE,
 			A.DEPT_CD,
+			fn_get_deptnmDeptCd(A.DEPT_CD) AS DEPT_NM,
 			A.SCHDUL_KND_CODE SCHDUL_KIND_CODE,
 			A.SCHDUL_BGNDE,
 			A.SCHDUL_ENDDE,
@@ -98,7 +100,7 @@
 			(SELECT USER_NM FROM COMTNEMPLYRINFO WHERE ESNTL_ID = A.SCHDUL_CHARGER_ID) SCHDUL_CHARGER_NAME,		
 			A.ATCH_FILE_ID,
 			A.FRST_REGIST_PNTTM FRST_REGISTER_PNTTM,
-			A.MEM_CD,
+			A.MBER_ID,
 			A.UPDATE_DT,
 			A.LAST_UPDUSR_ID,
 			A.REPTIT_SE_CODE 
@@ -106,7 +108,7 @@
 		WHERE 1=1 
 		
 	 
-	 <if test='searchMode != null and searchMode != ""'>
+	 <if test='searchMode != null and searchMode != ""'> 
 	 <if test='searchMode == "MONTH"'>
  
 		 <if test='searchMonth != null and searchMonth != ""'>
@@ -161,7 +163,7 @@
 			A.ATCH_FILE_ID,
 			A.REPTIT_SE_CODE,
 			A.FRST_REGIST_PNTTM,
-			A.MEM_CD,
+			A.MBER_ID,
 			A.UPDATE_DT,
 			A.LAST_UPDUSR_ID 
 		FROM COMTNSCHDULINFO A
@@ -192,7 +194,7 @@
 			A.SCHDUL_CHARGER_ID,		
 			A.ATCH_FILE_ID,
 			A.FRST_REGIST_PNTTM FRST_REGISTER_PNTTM,
-			A.MEM_CD,
+			A.MBER_ID,
 			A.UPDATE_DT,
 			A.LAST_UPDUSR_ID,
 			A.REPTIT_SE_CODE 
@@ -233,7 +235,7 @@
 
 	
 	<!-- 개인일정정보::삭제  -->
-	<delete id="deleteDiaryManage" >
+	<delete id="deleteDiaryManage" parameterType="egovframework.com.cop.smt.sim.service.IndvdlSchdulManageVO">
 			DELETE FROM COMTNDIARYINFO WHERE SCHDUL_ID = #{schdulId}
 	</delete>
 	<delete id="deleteIndvdlSchdulManage">
@@ -280,7 +282,7 @@
 			(SELECT USER_NM FROM COMTNEMPLYRINFO WHERE ESNTL_ID = A.SCHDUL_CHARGER_ID) SCHDUL_CHARGER_NAME,	
 			A.ATCH_FILE_ID,
 			A.FRST_REGIST_PNTTM FRST_REGISTER_PNTTM,
-			A.MEM_CD,
+			A.MBER_ID,
 			A.UPDATE_DT,
 			A.LAST_UPDUSR_ID,
 			A.REPTIT_SE_CODE
@@ -308,7 +310,7 @@
 			ATCH_FILE_ID,
 			REPTIT_SE_CODE,
 			FRST_REGIST_PNTTM,
-			MEM_CD,
+			MBER_ID,
 			UPDATE_DT,
 			LAST_UPDUSR_ID
 		)VALUES( 

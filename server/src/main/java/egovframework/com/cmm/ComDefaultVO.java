@@ -1,6 +1,7 @@
 package egovframework.com.cmm;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -54,6 +55,50 @@ public class ComDefaultVO implements Serializable {
 
 	/** 검색KeywordTo */
     private String searchKeywordTo = "";  
+    
+    /** 출력 갯수 지정 rowCnt(limit) */
+    private int rowCnt = 0;
+    
+    private Date searchStartDt;
+    private Date searchEndDt;
+    
+    public Date getSearchStartDt() {
+		return searchStartDt;
+	}
+
+	public void setSearchStartDt(Date searchStartDt) {
+		this.searchStartDt = searchStartDt;
+	}
+
+	public Date getSearchEndDt() {
+		return searchEndDt;
+	}
+
+	public void setSearchEndDt(Date searchEndDt) {
+		this.searchEndDt = searchEndDt;
+	}
+
+	public Long getSearchStartPrice() {
+		return searchStartPrice;
+	}
+
+	public void setSearchStartPrice(Long searchStartPrice) {
+		this.searchStartPrice = searchStartPrice;
+	}
+
+	public Long getSearchEndPrice() {
+		return searchEndPrice;
+	}
+
+	public void setSearchEndPrice(Long searchEndPrice) {
+		this.searchEndPrice = searchEndPrice;
+	}
+
+	private Long searchStartPrice;
+    private Long searchEndPrice;
+    
+    /** (회의) 진행예정 / 금일 구분 */
+    private String state = "";  
     
 	public int getFirstIndex() {
 		return firstIndex;
@@ -162,5 +207,21 @@ public class ComDefaultVO implements Serializable {
 	 */
 	public void setSearchKeywordTo(String searchKeywordTo) {
 		this.searchKeywordTo = searchKeywordTo;
+	}
+
+	public int getRowCnt() {
+		return rowCnt;
+	}
+
+	public void setRowCnt(int rowCnt) {
+		this.rowCnt = rowCnt;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
 	}
 }

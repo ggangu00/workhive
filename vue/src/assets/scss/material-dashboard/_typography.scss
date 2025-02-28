@@ -1,68 +1,71 @@
 html *{
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+   -webkit-font-smoothing: antialiased;
+   -moz-osx-font-smoothing: grayscale;
 }
 body {
-  font-weight: $font-weight-normal;
-  line-height: $p-line-height;
+   font-weight: $font-weight-normal;
+   line-height: $p-line-height;
+}
+
+* {
+   font-family: 'Noto Sans KR', serif;
 }
 
 h1, .h1 {
-  font-size: $h1-font-size;
-  line-height: $h1-line-height;
-  letter-spacing: $btn-letter-spacing;
+   font-size: $h1-font-size;
+   font-weight: 900;
 
-  @include media-breakpoint-down(sm) {
-    font-size: rfs-fluid-value($h1-font-size);
-  }
+   @include media-breakpoint-down(sm) {
+      font-size: rfs-fluid-value($h1-font-size);
+   }
 }
 
 h2, .h2 {
-  font-size: $h2-font-size;
-  line-height: $h2-line-height;
-  letter-spacing: $letter-wider;
+   font-size: $h2-font-size;
+   line-height: $h2-line-height;
+   letter-spacing: $letter-wider;
 
-  @include media-breakpoint-down(sm) {
-    font-size: rfs-fluid-value($h2-font-size);
-  }
+   @include media-breakpoint-down(sm) {
+      font-size: rfs-fluid-value($h2-font-size);
+   }
 }
 
 h3, .h3 {
-  font-size: $h3-font-size;
-  line-height: $h3-line-height;
+   font-size: $h3-font-size;
+   line-height: $h3-line-height;
 
-  @include media-breakpoint-down(sm) {
-    font-size: rfs-fluid-value($h3-font-size);
-  }
+   @include media-breakpoint-down(sm) {
+      font-size: rfs-fluid-value($h3-font-size);
+   }
 }
 
 h4, .h4 {
-  font-size: $h4-font-size;
-  line-height: $h4-line-height;
+   font-size: $h4-font-size;
+   line-height: $h4-line-height;
 
-  @include media-breakpoint-down(sm) {
-    font-size: rfs-fluid-value($h4-font-size);
-  }
+   @include media-breakpoint-down(sm) {
+      font-size: rfs-fluid-value($h4-font-size);
+   }
 }
 
 h5, .h5 {
-  font-size: $h5-font-size;
-  line-height: $h5-line-height;
+   font-size: $h5-font-size;
+   line-height: $h5-line-height;
 
-  @include media-breakpoint-down(sm) {
-    font-size: rfs-fluid-value($h5-font-size);
-  }
+   @include media-breakpoint-down(sm) {
+      font-size: rfs-fluid-value($h5-font-size);
+   }
 }
 
 h6, .h6 {
-  font-size: $h6-font-size;
-  line-height: $h6-line-height;
+   font-size: $h6-font-size;
+   line-height: $h6-line-height;
 }
 
 p, .p {
-  font-size: $font-size-base;
-  font-weight: $p-font-weight;
-  line-height: $p-line-height;
+   font-size: $font-size-base;
+   font-weight: $p-font-weight;
+   line-height: $p-line-height;
 }
 
 .lead {
@@ -71,11 +74,10 @@ p, .p {
   line-height: $lead-line-height;
 }
 
-h1, .h1,
 h2, .h2,
 h3, .h3 {
-  font-weight: $font-weight-bold;
-  font-family: $font-family-roboto-slab;
+   font-weight: $font-weight-bold;
+   font-family: $font-family-roboto-slab;
 }
 
 h4, .h4,

@@ -14,12 +14,12 @@
          <div class="card">
             <div class="card-body">
                <div class="m-group mx-auto w90">
-                  <div class="table-line">
+                  <div class="bottom-line">
                      <div class="d-flex justify-content-between align-items-center p-2">
                         <div class="w10">
                            <p class="m-0">전체 <span class="cnt">10</span></p>
                         </div>
-                        
+
                         <div class="d-flex justify-content-between align-items-center w50">
                            <select name="searchSel" id="searchSel" class="form-select w25">
                               <option value="name">이름</option>
@@ -63,13 +63,13 @@
                   </table>
 
                </div>
-               
+
             </div>
          </div>
       </div>
    </div>
 </template>
-   
+
 <script setup>
    import { ref } from 'vue'
 

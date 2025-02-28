@@ -1,5 +1,7 @@
 package egovframework.com.uat.uia.web;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -7,14 +9,23 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.egovframe.rte.psl.dataaccess.util.EgovMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import egovframework.com.cmm.ComDefaultCodeVO;
 import egovframework.com.cmm.EgovComponentChecker;
@@ -30,7 +41,6 @@ import egovframework.com.cmm.util.EgovUserDetailsHelper;
 import egovframework.com.uat.uia.service.EgovLoginService;
 import egovframework.com.utl.fcc.service.EgovStringUtil;
 import egovframework.com.utl.sim.service.EgovClntInfo;
-import org.egovframe.rte.psl.dataaccess.util.EgovMap;
 
 /*
 import com.gpki.gpkiapi.cert.X509Certificate;
@@ -67,7 +77,7 @@ import com.gpki.servlet.GPKIHttpServletResponse;
  *  
  *  </pre>
  */
-@Controller
+@RestController
 public class EgovLoginController {
 
 	/** EgovLoginService */
@@ -87,6 +97,33 @@ public class EgovLoginController {
 
 	/** log */
 	private static final Logger LOGGER = LoggerFactory.getLogger(EgovLoginController.class);
+
+	 @PostMapping("/loginSuccesss.do") // ✅ GET 요청으로 변경
+	 public ResponseEntity<String> loginSuccess() throws JsonProcessingException {
+		 Map<String, Object> responseData = new HashMap<>();
+		 responseData.put("status", "success");
+		 responseData.put("message", "로그인 성공");
+		 	System.out.println("로그인 성공 !" );
+			ObjectMapper objMap = new ObjectMapper(); // json 형태
+
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON)
+					.body(objMap.writeValueAsString(responseData));
+		 
+	 }
+	 
+	 @PostMapping("/loginFail.do") // ✅ GET 요청으로 변경
+	 public ResponseEntity<String> loginFail() throws JsonProcessingException {
+		 Map<String, Object> responseData = new HashMap<>();
+		 responseData.put("status", "fail");
+		 responseData.put("message", "로그인 실패");
+		 System.out.println("loginFail.do => ");
+		 
+		 ObjectMapper objMap = new ObjectMapper(); // json 형태
+
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON)
+					.body(objMap.writeValueAsString(responseData));
+		 
+	 }
 
 	/**
 	 * 로그인 화면으로 들어간다

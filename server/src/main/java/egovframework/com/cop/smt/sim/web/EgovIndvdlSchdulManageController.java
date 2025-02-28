@@ -14,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -69,6 +71,7 @@ import org.egovframe.rte.psl.dataaccess.util.EgovMap;
 public class EgovIndvdlSchdulManageController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EgovIndvdlSchdulManageController.class);
+	
 
 	@Autowired
 	private DefaultBeanValidator beanValidator;
@@ -478,6 +481,19 @@ public class EgovIndvdlSchdulManageController {
 		return sLocationUrl;
 	}
 
+	//삭제컨트롤러
+	@DeleteMapping("/delete/{schdulId}") 
+	public String remove(@PathVariable("schdulId") String schdulId) throws Exception { 
+
+	        // 서비스에서 삭제 실행
+	        IndvdlSchdulManageVO indvdlSchdulManageVO = new IndvdlSchdulManageVO();
+	        indvdlSchdulManageVO.setSchdulId(schdulId);
+	        egovIndvdlSchdulManageService.deleteIndvdlSchdulManage(indvdlSchdulManageVO);
+
+	        return "success"; 
+
+	}
+
 	/**
 	 * 일정 수정 폼
 	 * @param searchVO
@@ -581,7 +597,7 @@ public class EgovIndvdlSchdulManageController {
 
 		String sCmd = commandMap.get("cmd") == null ? "" : (String)commandMap.get("cmd");
 
-
+		Map<String, Object> response = new HashMap<>();
 
         if(sCmd.equals("save")){
     		//서버  validate 체크
@@ -653,7 +669,11 @@ public class EgovIndvdlSchdulManageController {
         	egovIndvdlSchdulManageService.updateIndvdlSchdulManage(indvdlSchdulManageVO);
         	 LOGGER.info("✅ [DB 업데이트 완료]");
         	//sLocationUrl = "redirect:/cop/smt/sim/EgovIndvdlSchdulManageList.do";
-		}
+        	 
+             	response.put("result", true);
+             }else {
+                response.put("result", false);
+             }
 
 		return commandMap;
 	}
@@ -754,6 +774,8 @@ public class EgovIndvdlSchdulManageController {
 		String sCmd = commandMap.get("cmd") == null ? "" : (String)commandMap.get("cmd");
 		LOGGER.info("cmd => {}", sCmd);
 
+		Map<String, Object> response = new HashMap<>();
+		
         if(sCmd.equals("save")){
     		//서버  validate 체크
 //            beanValidator.validate(indvdlSchdulManageVO, bindingResult);
@@ -788,6 +810,10 @@ public class EgovIndvdlSchdulManageController {
         	egovIndvdlSchdulManageService.insertIndvdlSchdulManage(indvdlSchdulManageVO);
         	sLocationUrl = "redirect:/cop/smt/sim/EgovIndvdlSchdulManageList.do";
         	LOGGER.info("🔹 받은 데이터: {}", commandMap);
+       
+            response.put("result", true);
+        }else {
+            response.put("result", false);
         }
 
         return commandMap;

@@ -106,10 +106,10 @@ public class Comment implements Serializable {
 
     /**
      * nttId attribute 값을 설정한다.
-     * @param nttId the nttId to set
+     * @param nttId2 the nttId to set
      */
-    public void setNttId(long nttId) {
-        this.nttId = nttId;
+    public void setNttId(long nttId2) {
+        this.nttId = nttId2;
     }
 
     /**

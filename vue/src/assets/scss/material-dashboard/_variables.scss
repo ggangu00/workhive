@@ -4,7 +4,11 @@
 // consistent naming. Ex: $nav-link-disabled-color and $modal-content-box-shadow-xs.
 
 * {
-  font-family: 'Noto Sans KR', serif;
+   font-family: 'Noto Sans KR', serif;
+}
+
+body{
+  background-color: #f0f2f5;
 }
 
 // $soft-background-color: #fbfbfb !default;
@@ -492,7 +496,7 @@ $border-color: $gray-300 !default;
 
 $border-radius-xs: 0.1rem !default;
 $border-radius-sm: 0.125rem !default;
-$border-radius-md: 0.375rem !default;
+$border-radius-md: 3px !default;
 $border-radius-lg: 0.5rem !default;
 $border-radius-xl: 0.75rem !default;
 $border-radius-2xl: 1rem !default;
@@ -566,10 +570,10 @@ $aspect-ratios: (
 // Font, line-height, and color for body text, headings, and more.
 
 // stylelint-disable value-keyword-case
-$font-family-sans-serif: "Roboto", Helvetica, Arial, sans-serif !default;
+$font-family-sans-serif: 'Noto Sans KR', serif !default;
 $font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas,
   "Liberation Mono", "Courier New", monospace !default;
-$font-family-roboto-slab: "Roboto Slab", sans-serif !default;
+$font-family-roboto-slab: 'Noto Sans KR', serif !default;
 
 // stylelint-enable value-keyword-case
 $font-family-base: var(--bs-font-sans-serif) !default;
@@ -1084,7 +1088,7 @@ $form-check-input-active-filter: brightness(99%) !default;
 
 $form-check-input-bg: $white !default;
 $form-check-input-border: none !default;
-$form-check-input-border-radius: 0.35rem !default;
+$form-check-input-border-radius: 3px !default;
 $form-check-radio-border-radius: 50% !default;
 $form-check-input-focus-border: none !default;
 $form-check-input-focus-box-shadow: none !default;

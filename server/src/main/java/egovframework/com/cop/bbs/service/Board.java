@@ -37,7 +37,7 @@ public class Board implements Serializable {
 	/**
 	 * 최초등록시점
 	 */
-	private String frstRegisterPnttm = "";
+	private String frstRegistPnttm = "";
 	/**
 	 * 최종수정자 아이디
 	 */
@@ -45,7 +45,7 @@ public class Board implements Serializable {
 	/**
 	 * 최종수정시점
 	 */
-	private String lastUpdusrPnttm = "";
+	private String lastUpdtPnttm = "";
 	/**
 	 * 게시시작일
 	 */
@@ -129,6 +129,8 @@ public class Board implements Serializable {
 	/**
 	 * 블로그 게시판 여부 
 	 */
+	
+	
 	private String blogAt = "";
 	/** 블로그 ID */
     private String blogId = "";
@@ -184,8 +186,8 @@ public class Board implements Serializable {
 	 * frstRegisterPnttm attribute를 리턴한다.
 	 * @return the frstRegisterPnttm
 	 */
-	public String getFrstRegisterPnttm() {
-		return frstRegisterPnttm;
+	public String getFrstRegistPnttm() {
+		return frstRegistPnttm;
 	}
 
 	/**
@@ -193,7 +195,7 @@ public class Board implements Serializable {
 	 * @param frstRegisterPnttm the frstRegisterPnttm to set
 	 */
 	public void setFrstRegisterPnttm(String frstRegisterPnttm) {
-		this.frstRegisterPnttm = frstRegisterPnttm;
+		this.frstRegistPnttm = frstRegisterPnttm;
 	}
 
 	/**
@@ -205,7 +207,7 @@ public class Board implements Serializable {
 	}
 
 	/**
-	 * lastUpdusrId attribute 값을 설정한다.
+	 * UpdusrId attribute 값을 설정한다.
 	 * @param lastUpdusrId the lastUpdusrId to set
 	 */
 	public void setLastUpdusrId(String lastUpdusrId) {
@@ -217,7 +219,7 @@ public class Board implements Serializable {
 	 * @return the lastUpdusrPnttm
 	 */
 	public String getLastUpdusrPnttm() {
-		return lastUpdusrPnttm;
+		return lastUpdtPnttm;
 	}
 
 	/**
@@ -225,7 +227,7 @@ public class Board implements Serializable {
 	 * @param lastUpdusrPnttm the lastUpdusrPnttm to set
 	 */
 	public void setLastUpdusrPnttm(String lastUpdusrPnttm) {
-		this.lastUpdusrPnttm = lastUpdusrPnttm;
+		this.lastUpdtPnttm = lastUpdusrPnttm;
 	}
 
 	/**

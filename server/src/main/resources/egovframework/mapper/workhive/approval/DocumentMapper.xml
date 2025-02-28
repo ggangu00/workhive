@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="egovframework.com.approval.mapper.DocumentMapper">
+	
+	<!-- 문서기안 -->
+    <insert id="documentInsert" parameterType="egovframework.com.approval.service.Document" useGeneratedKeys="true" keyProperty="docCd">
+       INSERT INTO DOCUMENT (
+	       DOC_CD, 
+	       DOC_TITLE, 
+	       DOC_CN_EDITOR, 
+	       MBER_ID, 
+	       DRAFT_DT, 
+	       COMPLETE_DT, 
+	       DOC_KIND, 
+	       ATCH_FILE_ID, 
+	       FORM_CD)
+       VALUES (
+	       'DOC' || seq_document_cd.NEXTVAL, 
+	       #{docTitle},  
+	       #{docCnEditor}, 
+	       #{mberId}, 
+	       SYSDATE, 
+	       #{completeDt},
+	       #{docKind}, 
+		   #{atchFileId}, 
+		   #{formCd}
+		   )
+    </insert>
+    
+    <!-- 문서 등록 후 문서코드가져오기 -->
+    <select id="lastDocCdGet" resultType="String">
+	    SELECT 'DOC' || seq_document_cd.CURRVAL FROM dual
+	</select>
+    
+    <!-- 결재선등록 -->
+    <insert id="approvalInsert" parameterType="egovframework.com.approval.service.ApprovalLine">
+    	INSERT INTO APPROVAL_LINE (doc_cd, mber_id, sign_seq, sign_opn, sign_dt, sign_name)
+    	VALUES (#{docCd}, #{mberId}, #{signSeq}, #{signOpn}, sysdate, #{signName})
+    </insert>
+    
+    <!-- 수신정보 등록 -->
+	  <insert id="receptionInsert" parameterType="egovframework.com.approval.service.Reception">
+    	INSERT INTO RECEPTION (recept_cd, doc_cd, mber_id, dept_cd)
+    	VALUES ('RCPTN' || seq_reception_cd.NEXTVAL, #{docCd}, #{mberId}, #{deptCd})
+    </insert>
+    
+    
+    <!-- 결재선조회 -->
+    <select id="approvalSelectAll" resultType="egovframework.com.approval.service.ApprovalLine" parameterType="egovframework.com.approval.service.SearchDTO">
+    	SELECT 
+			mber_id,
+			fn_get_memnm(mber_id) as mber_nm,
+			doc_cd,
+			fn_get_deptnm(mber_id) as dept_nm,
+			sign_seq,
+			sign_stat,
+			sign_opn,
+			sign_dt,
+			sign_name
+		FROM approval_line
+		WHERE 1=1
+		 <if test="docCd != null and docCd != ''">
+            AND doc_cd = #{docCd}
+        </if>
+        order by sign_seq desc
+    </select>
+    
+    <!-- 수신자조회 -->
+    <select id="receiverSelecteAll" resultType="egovframework.com.approval.service.Reception">	
+    	SELECT
+    		recept_cd
+			recept_dt,
+			recept_yn,
+			doc_cd,
+			fn_get_deptnmDeptCd(dept_cd) as dept_nm,
+			mber_id,
+			fn_get_memnm(mber_id) as mber_nm,
+			fn_get_grademberid(mber_id) as grade_nm,
+			dept_cd
+		FROM reception
+		WHERE 1=1
+		<if test="docCd != null and docCd != ''">
+            AND doc_cd = #{docCd}
+        </if>
+    </select>
+    
+    <!-- 문서회수(상태 회수로변경) -->
+    <update id="documentUpdate">
+    	update document
+    	set	crnt_sign_stat='H05'
+    	where doc_cd = #{docCd}
+    </update>
+    
+    <!-- 문서삭제 -->
+     <update id="documentDelete">
+    	update document
+    	set	del_yn = 'Y'
+    	where doc_cd = #{docCd}
+    </update>
+    
+    <!-- 문서양식 -->
+    <select id="formSelectAll" resultType = "egovframework.com.approval.service.FormDTO">
+    	SELECT
+    		form_cd,
+    		form_type,
+    		form_file
+    	FROM FORM_TYPE
+    </select>
+    
+    <!-- 문서카운트 -->
+    <select id="getCount" resultType="int">
+	  SELECT 
+	  COUNT(*) 
+	  FROM document
+	  where 1=1
+	  AND mber_id = #{mberId} 
+	  <include refid="searchCriteria" />
+	</select>
+	
+	<!-- 결재선 수정 -->
+	<update id="approvalStateUpdate" parameterType="egovframework.com.approval.service.ApprovalLine">
+	    UPDATE 
+	    	approval_line 
+	    SET sign_stat = #{signStat}
+	    WHERE 
+	    	doc_cd 
+	    IN
+	    <foreach collection="approvalArr" item="docCd" open="(" separator="," close=")">
+	        #{docCd}
+	    </foreach>    
+	    AND mber_id = #{mberId}
+	</update>
+	
+	<!-- 결재시 결재내용입력 -->
+	<update id="approvalCnUpdate" parameterType="egovframework.com.approval.service.ApprovalLine">
+	    UPDATE approval_line 
+	    SET sign_opn = #{signOpn}
+	    WHERE doc_cd = #{docCd}
+	    AND mber_id = #{mberId}
+	</update>
+    <!-- 문서조회(완료, 진행, 반려) -->
+    <select id="documentSelectAll" resultType="egovframework.com.approval.service.DocumentDTO" parameterType="egovframework.com.approval.service.SearchDTO">
+		 SELECT * FROM (
+		            SELECT 
+		                ROWNUM AS rn,
+		                doc_cd,
+		                doc_title,
+		                doc_cn_editor,
+		                mber_id,
+		                fn_get_memnm(mber_id) as mber_nm,
+		                fn_get_deptNm(mber_id) as dept_nm,
+		                fn_get_codename(CRNT_SIGN_STAT) as crnt_sign_stat,
+		                draft_dt,
+		                complete_dt,
+		                fn_get_codename(DOC_KIND) as doc_kind,
+		                atch_file_id,
+		                form_cd,
+		                fn_get_formnm(form_cd) as form_type,
+		                del_yn
+		            FROM DOCUMENT
+		                WHERE 1=1
+		                AND del_yn = UPPER('N')
+		              	AND mber_id = #{mberId} 
+		                <include refid="searchCriteria"/>
+		            <![CDATA[AND ROWNUM <= #{end}]]>
+		        ) 
+		        WHERE rn >= #{start}
+		        ORDER BY draft_dt DESC
+    </select>
+		<select id="pendingDocumentSelectAll" 
+		        resultType="egovframework.com.approval.service.DocumentDTO"
+		        parameterType="egovframework.com.approval.service.SearchDTO">
+		    SELECT *
+		      FROM (
+		            SELECT ROWNUM AS rn,
+		                   d.doc_cd,
+		                   d.doc_title,
+		                   d.doc_cn_editor,
+		                   d.mber_id,
+		                   fn_get_memnm(a.mber_id)     AS mber_nm,
+		                   fn_get_deptNm(a.mber_id)    AS dept_nm,
+		                   fn_get_codename(d.CRNT_SIGN_STAT) AS crnt_sign_stat,
+		                   d.draft_dt,
+		                   d.complete_dt,
+		                   fn_get_codename(d.DOC_KIND) AS doc_kind,
+		                   d.atch_file_id,
+		                   d.form_cd,
+		                   fn_get_formnm(d.form_cd)    AS form_type,
+		                   d.del_yn
+		              FROM DOCUMENT d
+		                   JOIN approval_line a
+		                     ON d.doc_cd = a.doc_cd
+		             WHERE 1=1
+		               AND d.del_yn = 'N'
+		               AND a.mber_id = #{mberId}
+		               AND a.sign_stat = 'D01'
+		               AND ( a.sign_seq = 1
+						     OR EXISTS (
+						         SELECT 1
+						           FROM approval_line a2
+						          WHERE a2.doc_cd = a.doc_cd
+						            AND a2.sign_seq = a.sign_seq - 1
+						            AND a2.sign_stat = 'D02'
+						     )
+		               )
+		    <include refid="searchCriteria"/>
+		    <![CDATA[
+		               AND ROWNUM <= #{end}
+		           )
+		     WHERE rn >= #{start}
+		     ORDER BY draft_dt DESC
+		    ]]>
+		</select>
+		
+		<!-- 미결문서카운트 -->
+		<select id="pendingDocCount" resultType="int" parameterType="egovframework.com.approval.service.SearchDTO">	  
+				    SELECT COUNT(*)
+				      FROM (
+				           SELECT d.doc_cd
+				             FROM DOCUMENT d
+				                  JOIN approval_line a
+				                    ON d.doc_cd = a.doc_cd
+				            WHERE 1=1
+				              AND d.del_yn = 'N'
+				              AND a.mber_id = #{mberId}
+				              AND a.sign_stat = 'D01'
+				              AND (
+				                    a.sign_seq = 1
+				                    OR EXISTS (
+				                        SELECT 1
+				                          FROM approval_line a2
+				                         WHERE a2.doc_cd = a.doc_cd
+				                           AND a2.sign_seq = a.sign_seq - 1
+				                           AND a2.sign_stat = 'D02'
+				                    )
+				              )
+				              <include refid="searchCriteria" />
+				      )
+		</select>
+	<!-- 부서코드로 사원조회 -->
+	  <select id="memberSelectAll" resultType="egovframework.com.approval.service.MemberDTO" parameterType="egovframework.com.approval.service.SearchDTO">
+    	SELECT
+    		mber_id,
+    		mber_nm,
+    		grade_cd,
+    		fn_get_gradenm(grade_cd) as grade_nm,
+    		dept_cd,
+    		(select dept_nm from department where dept_cd = #{deptCd}) as dept_nm
+    	FROM COMTNGNRLMBER
+    	WHERE dept_cd = #{deptCd}
+    </select>
+	<!-- 검색조건함수 -->
+    <sql id="searchCriteria">
+        <if test="status != null and status != ''">
+            AND crnt_sign_stat = #{status}
+        </if>
+        <if test="delYn != null and delYn != ''">
+            AND del_yn = #{delYn}
+        </if>
+        <if test="formCd != null and formCd != ''">
+            AND form_cd = #{formCd}
+        </if>
+		<if test="docKind != null and docKind != ''">
+            AND doc_kind = #{docKind}
+        </if>
+        <if test="docCd != null and docCd != ''">
+            AND doc_cd = #{docCd}
+        </if>
+        <if test="deptNm != null and deptNm != ''">
+            AND fn_get_deptNm(mber_id) = #{deptNm}
+        </if>
+		<if test='!startDate.isEmpty()'>
+			<![CDATA[
+			and to_char(draft_dt, 'yyyy-mm-dd') >= #{startDate}
+			]]>
+		</if>
+		<if test='!endDate.isEmpty()'>
+			<![CDATA[
+			and to_char(draft_dt, 'yyyy-mm-dd') <= #{endDate}
+			]]>
+		</if>
+    </sql>
+</mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.member.mapper.MemberMapper">	
+	
+	<!-- ======================프로젝트=====================  -->
+	
+	<!-- 프로젝트 전체조회 -->
+    
+	<select id="memberSelectAll" parameterType="int" resultType="userDTO">
+		
+		select mber_id,			--회원코드
+			   mber_nm,			--회원명
+			   zip,				--우편번호
+			   adres,			--주소
+			   area_no,			--지역번호
+			   meddle_telno,	--중간 전화번호
+			   end_telno,		--끝 전화번호
+			   detail_adres,	--상세주소
+			   dept_cd, 		--부서코드
+			   resp_cd,			--직책코드
+			   grade_cd,			--직급코드
+			   fn_get_deptnm(mber_id) as dept_nm,
+               FN_GET_GRADENM(grade_cd) as gradeNm
+		from COMTNGNRLMBER
+	</select>
+</mapper>
+

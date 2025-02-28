@@ -7,12 +7,18 @@
         </Console>
     </Appenders>
     <Loggers>
+        
+        <Logger name="egovframework.com.cmm.util" level="info" additivity="false">
+            <AppenderRef ref="console" />
+        </Logger>
+        
         <Logger name="java.sql" level="DEBUG" additivity="false">
             <AppenderRef ref="console" />
         </Logger>
         <Logger name="egovframework" level="DEBUG" additivity="false">
             <AppenderRef ref="console" />
         </Logger>
+        
         <Logger name="org.egovframe" level="DEBUG" additivity="false">
             <AppenderRef ref="console" />
         </Logger>
@@ -21,6 +27,9 @@
 	        <AppenderRef ref="console" />
 	    </Logger>
 	    <Logger name="org.springframework" level="INFO" additivity="false">
+	        <AppenderRef ref="console" />
+	    </Logger>
+	     <Logger name="org.springframework.security" level="DEBUG" additivity="false">
 	        <AppenderRef ref="console" />
 	    </Logger>
         <Root level="INFO">

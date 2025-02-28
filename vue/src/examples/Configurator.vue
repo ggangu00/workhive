@@ -1,11 +1,11 @@
 <template>
   <div class="fixed-plugin">
-    <a
+    <!-- <a
       class="px-3 py-2 fixed-plugin-button text-dark position-fixed"
       @click="toggle"
     >
       <i class="material-icons py-2">settings</i>
-    </a>
+    </a> -->
     <div class="shadow-lg card">
       <div class="pt-3 pb-0 bg-transparent card-header">
         <div class="float-start">

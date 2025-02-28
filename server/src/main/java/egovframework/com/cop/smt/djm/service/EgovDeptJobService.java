@@ -177,5 +177,8 @@ public interface EgovDeptJobService {
 	 * @param deptJob
 	 */
 	public void deleteDeptJob(DeptJob deptJob) throws Exception;
+	
+	// 업무 목록 삭제
+	public void deleteDeptJobList(List<DeptJob> jobList);
 
 }

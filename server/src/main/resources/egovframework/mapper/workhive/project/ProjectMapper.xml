@@ -1,19 +1,126 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="egovframework.com.project.mapper.ProjectMapper">
-
-	<!-- 등록 -->
-	<insert id="insert" parameterType="projectDTO">
+<mapper namespace="egovframework.com.project.mapper.ProjectMapper">	
+	
+	<!-- ======================프로젝트=====================  -->
+	
+	<!-- 프로젝트 전체조회 -->
+	<select id="projectSelectAll" parameterType="int" resultType="projectDTO">
+	SELECT *
+	FROM (
+	SELECT T0.*, ROWNUM RNUM
+		FROM (
+		
+		select pr_cd,		--프로젝트 코드
+			   type_cd,		--프로젝트 구분코드
+			   pr_nm,		--프로젝트명
+			   ahead_dt,	--내부완료일
+			   start_dt,	--시작일
+			   end_dt,		--종료일
+			   price,		--금액
+			   create_id,	
+			   create_dt,
+			   entrprs_mber_id,	--거래처id
+               fn_get_comnm(entrprs_mber_id) as com_nm	--거래처명
+		from project
+		where 
+			UPPER(del_yn) = UPPER('N')
+			
+			<if test="searchCondition == 0">AND
+                 PR_NM LIKE '%' || #{searchKeyword} || '%'
+            </if>
+            <if test="searchCondition == 1">AND
+                 com_nm LIKE '%' ||#{searchKeyword} || '%'
+            </if>
+            
+            <if test="searchStartDt != null and !searchStartDt.equals('')">AND
+                 <![CDATA[CDATAstart_dt >= #{searchStartDt}]]>
+            </if>
+            
+            <if test="searchEndDt != null and !searchEndDt.equals('')">AND
+               	 <![CDATA[start_dt <= #{searchEndDt}]]>
+            </if>
+            
+            <if test="searchStartPrice != null and !searchStartPrice.equals('')">AND
+                 <![CDATA[price >= #{searchStartPrice}]]>
+            </if>
+            
+            <if test="searchEndPrice != null and !searchEndPrice.equals('')">AND
+               	 <![CDATA[price <= #{searchEndPrice}]]>
+            </if>
+            
+		order by 
+			create_dt desc
+			
+			) T0
+	)
+	WHERE RNUM BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}
+	
+	</select>
+	
+	<!-- 프로젝트 전체건수 -->
+	<select id="projectSelectAllCnt" parameterType="comDefaultVO" resultType="int">
+		SELECT
+		COUNT(*) totcnt
+		FROM project
+		WHERE UPPER(del_yn) = UPPER('N')
+	 	
+		 <if test="searchCondition == 0">AND
+              PR_NM LIKE '%' || #{searchKeyword} || '%'
+         </if>
+         <if test="searchCondition == 1">AND
+              com_nm LIKE '%' ||#{searchKeyword} || '%'
+         </if>
+         
+         <if test="searchStartDt != null and !searchStartDt.equals('')">AND
+              <![CDATA[CDATAstart_dt >= #{searchStartDt}]]>
+         </if>
+         
+         <if test="searchEndDt != null and !searchEndDt.equals('')">AND
+            	 <![CDATA[start_dt <= #{searchEndDt}]]>
+         </if>
+         
+         <if test="searchStartPrice != null and !searchStartPrice.equals('')">AND
+              <![CDATA[price >= #{searchStartPrice}]]>
+         </if>
+         
+         <if test="searchEndPrice != null and !searchEndPrice.equals('')">AND
+            	 <![CDATA[price <= #{searchEndPrice}]]>
+         </if>
+	</select>
+	
+	<!-- 프로젝트 단건조회 -->
+	<select id="projectSelect" parameterType="String">
+		select pr_cd,		--프로젝트 코드
+			   type_cd,		--프로젝트 구분코드
+			   pr_nm,		--프로젝트명
+			   ahead_dt,	--내부완료일
+			   start_dt,	--시작일
+			   end_dt,		--종료일
+			   price,		--금액
+			   create_id,
+			   create_dt,
+			   entrprs_mber_id,	--거래처id
+               fn_get_comnm(entrprs_mber_id) as com_nm	--거래처명
+		from project
+		where 
+			pr_cd = #{prCd} 
+		and 
+			UPPER(del_yn) = UPPER('N')
+	</select>
+	
+	<!-- 프로젝트 등록 -->
+	<insert id="projectInsert" parameterType="projectDTO">
 		INSERT INTO project (
-			pr_cd,
-			type_cd,
-			pr_nm,
-			ahead_dt,
-			start_dt,
-			end_dt,
-			price,
+			pr_cd,		--프로젝트 코드
+		    type_cd,		--프로젝트 구분코드
+		    pr_nm,		--프로젝트명
+		    ahead_dt,	--내부완료일
+		    start_dt,	--시작일
+		    end_dt,		--종료일
+		    price,		--금액
 			create_id,
-			entrprs_mber_id
+			entrprs_mber_id --거래처id
 		)
 		VALUES (
 			seq_pr_cd.nextval,
@@ -29,55 +136,140 @@
 		
 	</insert>
 	
-	<!-- 수정 -->
-	<update id="update" parameterType="projectDTO">
+	<!-- 마지막삽입된 코드 찾기 -->
+	<select id="getLastInsertedPrCd" resultType="string">
+	    SELECT seq_pr_cd.CURRVAL FROM dual
+	</select>
+		
+	
+	<!-- 프로젝트 과업등록 -->
+	<insert id="projectWorkInsert" parameterType="ProjectWorkDTO">
+	    INSERT INTO project_work (pr_work_cd, pr_work_nm, seq, progress, state, pr_cd)
+	    VALUES (seq_pr_work_cd.nextval, #{prWorkNm}, #{seq}, #{progress}, #{state}, #{prCd})
+	</insert>
+
+
+	
+	<!-- 프로젝트 수정 -->
+	<update id="projectUpdate" parameterType="projectDTO">
 		update project
-		set	type_cd = #{typeCd}, 
+		set	
+			<if test="typeCd != null and !typeCd.equals('')">
+			type_cd = #{typeCd}, 
+			</if>
+			<if test="prNm != null and !prNm.equals('')">
 			pr_nm = #{prNm},
+			</if>
 			ahead_dt = #{aheadDt},
+			<if test="(startDt != null and !startDt.equals('')) and endDt != null and !endDt.equals(''))">
 			start_dt = #{startDt},
 			end_dt = #{endDt},
+			</if>
 			price = #{price},
 			update_id = #{updateId},
 			update_dt = sysdate
-		where pr_cd = ${prCd}				
+		where 
+			pr_cd = ${prCd}				
 	</update>
 	
-	<!-- 삭제 -->
-	<delete id="delete" parameterType="Long">
-		delete from project
-		where pr_cd = #{prCd}
+	<!-- 프로젝트 삭제 -->
+	<update id="projectDelete" parameterType="String">
+		UPDATE 
+		   project
+		SET
+		   del_yn = UPPER('Y')
+		WHERE
+		   pr_cd = #{prCd}
+	</update>
+	
+	<!-- 프로젝트 다중 삭제 -->
+	<update id="projectListDelete" parameterType="java.util.List">
+	    UPDATE project 
+	    SET del_yn = UPPER('Y')
+	    WHERE pr_cd IN
+	    <foreach collection="list" item="prCd" separator="," open="(" close=")">
+	        #{prCd}
+	    </foreach>
+	</update>
+	
+	<!-- ======================프로젝트 과업=====================  -->
+	
+	<!-- 프로젝트 과업조회 -->
+	<select id="projectWorkSelectAll" parameterType="String" resultType="projectWorkDTO">
+		select pr_work_cd, --과업코드
+			   pr_cd,		--프로젝트 코드
+			   pr_work_nm, --과업명
+			   seq, 		--순서
+			   progress,	--진행률
+			   state		--완료여부
+		from project_work
+		where 
+			pr_cd = #{prCd}
+		order by seq asc
+	</select>	
+	
+	<!-- ======================프로젝트 일정=====================  -->
+	
+	<!-- 프로젝트 일정조회 -->
+	<select id="projectPlanSelectAll" parameterType="String" resultType="projectDTO">
+		select pr_plan_cd,		--일정코드
+			   pr_cd,			--프로젝트 코드
+			   plan_nm,			--일정명
+			   start_dt,		--시작일
+			   end_dt,			--종료일
+			   color,			--색상
+			   create_id,
+			   create_dt
+		from project_plan
+		where 
+			pr_cd = #{prCd}
+		order by start_dt asc
+	</select>
+	
+	<!-- 프로젝트 일정 단건조회 -->
+	<select id="projectPlanSelect" parameterType="String">
+		select pr_plan_cd,		--일정코드
+			   pr_cd,			--프로젝트 코드
+			   plan_nm,			--일정명
+			   start_dt,		--시작일
+			   end_dt,			--종료일
+			   color,			--색상
+			   create_id,
+			   create_dt
+		from project_plan
+		where 
+			pr_plan_cd = #{prPlanCd}
+	</select>
+	
+	<!-- 프로젝트 일정등록 -->
+	<insert id="projectPlanInsert" parameterType="projectDTO">
+		INSERT INTO project_plan (
+			pr_plan_cd,		--일정코드
+			pr_cd,			--프로젝트 코드
+			plan_nm,		--일정명
+			start_dt,		--시작일
+		    end_dt,			--종료일
+		    color,			--색상
+			create_id
+		)
+		VALUES (
+			seq_pr_plan_cd.nextval,
+			#{prCd},
+			#{planNm},
+			#{startDt},
+			#{endDt},
+			#{color},
+			#{createId}
+		)		
+	</insert>
+	
+	<!-- 프로젝트 일정삭제 -->
+	<delete id="projectPlanDelete" parameterType="String">
+		delete 
+		from
+		   project_plan
+		WHERE
+		   pr_plan_cd = #{prPlanCd}
 	</delete>
-	
-	<!-- 단건조회 -->
-	<select id="projectSelect" parameterType="String">
-		select pr_cd,
-			   fn_get_codename(type_cd) as ACT_TYPE,
-			   pr_nm,
-			   ahead_dt,
-			   start_dt,
-			   end_dt,
-			   price,
-			   create_id,
-			   create_dt,
-			   entrprs_mber_id
-		from project
-		where pr_cd = #{prCd}
-	</select>
-	
-	<!-- 전체조회 -->
-	<select id="projectSelectAll" parameterType="int" resultType="projectDTO">
-		select pr_cd,
-			   fn_get_codename(type_cd) as ACT_TYPE,
-			   pr_nm,
-			   ahead_dt,
-			   start_dt,
-			   end_dt,
-			   price,
-			   create_id,
-			   create_dt,
-			   entrprs_mber_id
-		from project
-	</select>
 
 </mapper>

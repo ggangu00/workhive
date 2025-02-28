@@ -49,7 +49,7 @@ public class LoginVO implements Serializable{
 	private String orgnztId;
 	/** 조직(부서)명 */
 	private String orgnztNm;
-	/** 고유아이디 */
+	/** 고유아이디 내부에서 쓰이는 아이디*/
 	private String uniqId;
 	/** 로그인 후 이동할 페이지 */
 	private String url;
@@ -62,6 +62,14 @@ public class LoginVO implements Serializable{
 	/** 디지털원패스 사용자세션값 */
 	private String onepassIntfToken;
 
+	@Override
+	public String toString() {
+		return "LoginVO [id=" + id + ", name=" + name + ", ihidNum=" + ihidNum + ", email=" + email + ", password="
+				+ password + ", passwordHint=" + passwordHint + ", passwordCnsr=" + passwordCnsr + ", userSe=" + userSe
+				+ ", orgnztId=" + orgnztId + ", orgnztNm=" + orgnztNm + ", uniqId=" + uniqId + ", url=" + url + ", ip="
+				+ ip + ", dn=" + dn + ", onepassUserkey=" + onepassUserkey + ", onepassIntfToken=" + onepassIntfToken
+				+ "]";
+	}
 	/**
 	 * id attribute 를 리턴한다.
 	 * @return String

@@ -1,112 +1,265 @@
 <template>
   <div class="content">
     <div class="container-fluid">
-
-      <!--등록폼 [S]-->
+      <!-- 등록폼 [S] -->
       <div class="card">
         <div class="card-body">
           <h4 class="card-title float-left mt-1">게시글 등록</h4>
-          <button class="btn btn-primary btn-sm btn-fill float-right" onclick="location.href ='#/admin/project/add'">등록</button>
-          <button class="btn btn-secondary btn-sm btn-fill float-right">초기화</button>
+          <button @click="submitForm" class="btn btn-primary btn-sm btn-fill float-right">등록</button>
+          <button @click="goToBulletinList" class="btn btn-secondary btn-sm btn-fill float-right">목록</button>
         </div>
       </div>
 
-      <div class="card">
+      <!-- 입력폼 -->
+      <div class="card" :class="{'sticky-top': noticeAt}">
         <div class="card-body">
-          <form action="BoardAdd" method="post">
+          <form @submit.prevent="submitForm">
             <div class="mb-3">
-              <label>제목 <em class="point-red ">*</em></label>
-              <input type="text" class="form-control" placeholder="제목을 입력해주세요">
+              <label>제목 <em class="point-red">*</em></label>
+              <input type="text" class="form-control" placeholder="제목을 입력해주세요" v-model="nttSj" />
             </div>
 
-            <!--에디터 생성-->
-            <div class='col-12'>
+            <!-- 에디터 영역 -->
+            <div class="col-12">
               <div id="editor"></div>
-            </div>            
+              <!-- 에디터의 HTML 내용을 내부적으로 관리 (DB 컬럼과 매핑) -->
+              <input type="hidden" v-model="nttCn"/>
+            </div>
 
             <div class="mb-3">
               <label>공지여부</label>
               <div class="form-check form-check-inline" style="margin-left: 10px;">
-                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+                <input class="form-check-input" type="checkbox" v-model="noticeAt" @change="handleNoticeChange" />
               </div>
             </div>
 
             <div class="mb-3">
               <label>익명여부</label>
               <div class="form-check form-check-inline" style="margin-left: 10px;">
-                <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option2">
+                <input class="form-check-input" type="checkbox" v-model="anoAt" />
               </div>
             </div>
 
             <div class="mb-3">
               <label>비밀여부</label>
               <div class="form-check form-check-inline" style="margin-left: 10px;">
-                <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="option3" @click="togglePasswordField">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  v-model="secretAt"
+                  @click="togglePasswordField"
+                />
               </div>
             </div>
 
             <div class="mb-3" v-show="showPasswordField">
               <label>비밀번호 4자리를 입력해주세요</label>
-              <input type="password" class="form-control w30" placeholder="비밀번호 입력" maxlength="4">
+              <input
+                type="password"
+                class="form-control w30"
+                placeholder="비밀번호 입력"
+                maxlength="4"
+                v-model="password"
+              />
             </div>
 
             <div class="mb-3">
               <label class="form-label">게시기간 <em class="point-red">*</em></label>
               <div class="row">
                 <div class="col-auto">
-                  <input type="date" name="start_dt" class="form-control">
+                  <input type="date" v-model="ntceBgnde" class="form-control" required />
                 </div>
                 <div class="col-auto">~</div>
                 <div class="col-auto">
-                  <input type="date" name="end_dt" class="form-control">
+                  <input type="date" v-model="ntceEndde" class="form-control" required />
                 </div>
               </div>
             </div>
 
+            <!-- 파일첨부 (선택 사항) -->
             <div class="mb-3">
-            <label>파일첨부 <em class="point-red ">*</em></label>
+              <label>파일첨부</label>
               <div class="input-group w30" style="border: 1px solid #ccc; border-radius: 3px; background-color: #fff;">
-               <button class="btn btn-success btn-fill" type="button" style="border-top-left-radius: 5px; border-bottom-left-radius: 5px;">파일선택</button>  
+                <input type="file" class="form-control" ref="fileInput" />
               </div>
             </div>
           </form>
         </div>
       </div>
+
+      <!-- 응답 메시지 -->
+      <div
+        v-if="responseMessage"
+        class="alert"
+        :class="isSuccess ? 'alert-success' : 'alert-danger'"
+        style="margin-top: 15px;"
+      >
+        {{ responseMessage }}
+      </div>
     </div>
   </div>
 </template>
 
-<script>
+<script setup>
 import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor } from '@toast-ui/editor';
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+import { useRoute,useRouter } from 'vue-router';
 
-export default {
-  name: "billing-card",
-  data() {
-    return {
-      showPasswordField: false, // 비밀번호 필드 표시 여부
-      editor: null // TOAST UI Editor 인스턴스 저장
-    };
-  },
-  methods: {
-    // 비밀번호 필드 토글
-    togglePasswordField() {
-      this.showPasswordField = !this.showPasswordField;
-    },
-    
-    // TOAST UI Editor 초기화
-    initEditor() {
-      this.editor = new Editor({
-        el: document.querySelector("#editor"),
-        height: "500px",
-        initialEditType: "WYSIWYG",
-        previewStyle: "vertical"
-      });
+const route = useRoute();
+const router = useRouter();
+
+
+console.log("전체테스트:",route.params);
+
+
+
+
+// 필드 데이터
+const bbsId = ref(route.query.bbsId);              //게시판id
+console.log(bbsId.value);
+
+const nttSj = ref('');             // 제목
+const nttCn = ref('');             // 에디터의 HTML 내용 (게시글 내용)
+const noticeAt = ref(false);       // 공지여부
+const secretAt = ref(false);       // 비밀여부
+const anoAt = ref(false);          // 익명여부
+const password = ref('');          // 비밀번호 (비밀글일 경우)
+const ntceBgnde = ref('');   // 게시 시작일
+const ntceEndde = ref('');    // 게시 종료일
+const showPasswordField = ref(false); // 비밀번호 입력 필드 노출 여부
+
+// TOAST UI Editor 인스턴스
+const editor = ref(null);
+// 파일 첨부용 ref
+const fileInput = ref(null);
+
+// 응답 메시지 및 성공 여부
+const responseMessage = ref('');
+const isSuccess = ref(false);
+
+// 비밀번호 필드 토글 함수
+const togglePasswordField = () => {
+  showPasswordField.value = !showPasswordField.value;
+};
+
+// TOAST UI Editor 초기화
+const initEditor = () => {
+  editor.value = new Editor({
+    el: document.querySelector("#editor"),
+    height: "500px",
+    initialEditType: "WYSIWYG",
+    previewStyle: "vertical"
+  });
+};
+
+// 날짜 형식을 'yyyy-mm-dd'로 변환
+const formatDate = (date) => {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+// 폼 입력값 검증
+const validateForm = () => {
+  if (!nttSj.value.trim()) {
+    responseMessage.value = "제목은 필수 입력 항목입니다.";
+    isSuccess.value = false;
+    return false;
+  }
+  // 에디터의 HTML 내용을 가져와 nttCn에 저장
+  nttCn.value = editor.value.getHTML().trim();
+  if (!nttCn.value) {
+    responseMessage.value = "게시글 내용을 입력해주세요.";
+    isSuccess.value = false;
+    return false;
+  }
+
+  if (secretAt.value && password.value.trim().length !== 4) {
+    responseMessage.value = "비밀글인 경우 4자리 비밀번호를 입력해주세요.";
+    isSuccess.value = false;
+    return false;
+  }
+  return true;
+};
+const submitForm = async () => {
+  if (!validateForm()) return;
+
+  const formData = new FormData();
+  formData.append('nttSj', nttSj.value);
+  formData.append('nttCn', nttCn.value);
+  formData.append('noticeAt', noticeAt.value ? 'Y' : 'N');
+  formData.append('secretAt', secretAt.value ? 'Y' : 'N');
+  formData.append('anoAt', anoAt.value ? 'Y' : 'N');
+  formData.append('password', password.value);
+  formData.append('ntceBgnde', formatDate(ntceBgnde.value));
+  formData.append('ntceEndde', formatDate(ntceEndde.value));
+  formData.append('bbsId', bbsId.value);  // 확인 필요
+
+  if (fileInput.value.files.length > 0) {
+    console.log("첨부 파일:", fileInput.value.files[0]);
+    formData.append('file_1', fileInput.value.files[0]);
+  }
+
+  try {
+    console.log("전송 데이터:", [...formData.entries()]);
+    console.log("bbsId 값:", bbsId?.value);
+
+    const response = await axios.post("/api/bulletin/bulletinAdd", formData);
+
+    console.log("서버 응답:", response.data);
+
+    responseMessage.value = response.data?.message ?? "게시글이 성공적으로 등록되었습니다!";
+    isSuccess.value = true;
+
+    setTimeout(() => {
+      router.push({ path: '/bulletin/bulletinList/'+ bbsId.value});
+    }, 1000); // 1초 후 페이지 이동
+
+  } catch (error) {
+    console.error("게시글 등록 실패", error);
+    if (error.response) {
+      console.error("서버 오류 응답:", error.response.data);  // 서버 오류 내용 확인
+      console.error("응답 상태 코드:", error.response.status);
     }
-  },
-  mounted() {
-    this.initEditor(); // 컴포넌트가 마운트되면 에디터 초기화 실행
+    responseMessage.value = "게시글 등록에 실패했습니다. 다시 시도해주세요.";
+    isSuccess.value = false;
   }
 };
 
+const goToBulletinList = () => {
+  router.push({ path: '/bulletin/bulletinList/'+ bbsId.value});
+};
+
+const handleNoticeChange = () => {
+  if (noticeAt.value) {
+    // 공지사항이 체크되면 페이지 상단으로 이동
+    scrollToTop();
+  }
+};
+
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+
+
+
+// 컴포넌트 마운트 시 에디터 초기화
+onMounted(() => {
+  initEditor(); 
+});
 </script>
+
+<style scoped>
+.sticky-top {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: #fff;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+}
+</style>
