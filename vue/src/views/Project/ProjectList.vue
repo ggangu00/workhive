@@ -72,7 +72,8 @@
         <div class="d-flex">
           <div class="p-2 w90">
             <button class="btn btn-danger btn-fill btn-sm" @click="projectListRemove">다중삭제</button>
-            <button class="btn btn-excel btn-sm"><img class="me-1" src="../../assets/img/icon/excel.svg" alt="xls">
+            <button class="btn btn-excel btn-sm" @click="exportToExcel"><img class="me-1"
+                src="../../assets/img/icon/excel.svg" alt="xls">
               엑셀다운로드</button>
           </div>
         </div>
@@ -92,10 +93,11 @@
                     <th class="table-secondary">프로젝트명</th>
                     <td class="text-start">{{ projectInfo.prNm }}</td>
                     <th class="table-secondary">거래처명</th>
-                    <td class="text-start">{{ projectInfo.entrprsMberId }}</td>
+                    <td class="text-start">{{ projectInfo.comNm }}</td>
                   </tr>
                   <tr>
                     <th class="table-secondary">프로젝트 기간</th>
+
                     <td class="text-start">{{ dateFormat(projectInfo.startDt) }} ~ {{ dateFormat(projectInfo.endDt) }}
                     </td>
                     <th class="table-secondary">금액</th>
@@ -155,20 +157,20 @@
 
 <script setup>
 import axios from "axios";
-import { onMounted, ref, watch } from 'vue';
 import { useRouter } from "vue-router";
+import { onMounted, ref, watch, nextTick } from 'vue';
 
-//---------------컴포넌트-------------- 
-import Swal from 'sweetalert2';
+//========================== 컴포넌트 ==========================
 import Grid from 'tui-grid';
-import Card from '../../components/Cards/Card.vue'
+import Swal from 'sweetalert2';
 import Modal from '../../components/Modal.vue';
+import Card from '../../components/Cards/Card.vue'
 
-//---------------js-------------- 
+//============================= js =============================
 import { dateFormat } from '../../assets/js/common'
 import { dateTermCalc } from '../../assets/js/project'
 
-//---------------데이터-------------- 
+//========================= Toast grid =========================
 
 //검색조건
 const searchData = ref({
@@ -180,11 +182,13 @@ const searchData = ref({
   priceEnd: ''
 });
 
-const grid = ref([]);
+//검색조건이 변경되면 리스트가 새로 로드됨
 watch(() => searchData, () => {
   projectGetList();
 }, { deep: true });
 
+//리스트 초기화
+const grid = ref([]);
 onMounted(() => {
   projectGetList();
 
@@ -205,27 +209,37 @@ onMounted(() => {
       useClient: false,
       perPage: 5,
     },
-    rowHeaders: ["checkbox"],
-    data: projectList.value,
     rowHeight: 50,
-    rowClassName: (row) => {
-      return row.state == 'A04' ? 'table-white' : 'table-end';
-    }
+    data: projectList.value,
+    rowHeaders: ["checkbox"]
   });
 });
 
+//리스트 엑셀다운로드
+const exportToExcel = () => {
+  if (grid.value) {
+    grid.value.export("xlsx", {
+      fileName: "프로젝트 내역 조회_" + dateFormat(),
+      useFormattedValue: true,
+      onlySelected: false,
+      includeHiddenColumns: false,
+    });
+  }
+};
 
-//--------------그리드 렌더링-------------
+//===================== Toast Grid Rendere =====================
 
-//프로젝트 제목 
+//프로젝트명 
 class subjectRenderer {
   constructor(props) {
+    const termClass = ref('');
     const rowKey = props.row?.rowKey ?? props.grid.getRow(props.rowKey)?.rowKey;
     const rowData = props.grid.getRow(rowKey);
 
     const el = document.createElement("div");
     el.className = "mlp10";
-    const termClass = ref('');
+
+    //남은 기간이 10일 이하인 경우 경고배지 적용
     rowData.term > 10 ? termClass.value = 'badge-primary' : termClass.value = 'badge-danger';
 
     el.innerHTML = `
@@ -233,12 +247,14 @@ class subjectRenderer {
       <div class="subject">
         <a href="#" class="mrp5">${rowData.prNm}</a>
         <span class="badge ${termClass.value}">
-          D${rowData.term > 0 ? "+" + rowData.term : rowData.term}</span>
+          D${rowData.term > 0 ? "+" + rowData.term
+        : rowData.term > 0 ? "-" + rowData.term
+          : "-day"}</span>
       </div>
     `;
 
     el.addEventListener("click", () => {
-      modalOpen(rowData.prCd)
+      modalOpen(rowData.prCd); //제목 클릭 시 상세보기 모달 표출
     });
 
     this.el = el;
@@ -252,6 +268,8 @@ class subjectRenderer {
 //프로젝트 수정/삭제 버튼
 class BtnRendererSetting {
   constructor(props) {
+    const rowKey = props.row?.rowKey ?? props.grid.getRow(props.rowKey)?.rowKey;
+    const rowData = props.grid.getRow(rowKey);
 
     const el = document.createElement("div");
 
@@ -262,13 +280,10 @@ class BtnRendererSetting {
 
     el.addEventListener("click", (event) => {
       const type = event.target.dataset.type;
-      const rowKey = props.row?.rowKey ?? props.grid.getRow(props.rowKey)?.rowKey;
 
-      const rowData = props.grid.getRow(rowKey);
-
-      if (type === "edit") {
+      if (type === "edit") { //수정버튼 클릭 시 수정페이지로 이동
         btnPageMove("add", rowData.prCd);
-      } else if (type === "del") {
+      } else if (type === "del") { //삭제버튼 클릭 시 삭제처리
         btnProjectRemove(rowData.prCd);
       }
     });
@@ -284,7 +299,8 @@ class BtnRendererSetting {
 //프로젝트 일정관리 버튼
 class BtnRendererPlan {
   constructor(props) {
-
+    const rowKey = props.row?.rowKey ?? props.grid.getRow(props.rowKey)?.rowKey;
+    const rowData = props.grid.getRow(rowKey);
     const el = document.createElement("div");
 
     el.innerHTML = `
@@ -292,16 +308,7 @@ class BtnRendererPlan {
     `;
 
     el.addEventListener("click", () => {
-      const rowKey = props.row?.rowKey ?? props.grid.getRow(props.rowKey)?.rowKey;
-
-      if (rowKey === undefined) {
-        console.error("❌ BtnRenderer: rowKey를 가져올 수 없습니다.", props);
-        return;
-      }
-
-      const rowData = props.grid.getRow(rowKey);
-
-      btnPageMove('plan', rowData.prCd)
+      btnPageMove('plan', rowData.prCd); //일정관리 버튼 클릭 시 일정관리 페이지로 이동
     });
 
     this.el = el;
@@ -312,15 +319,18 @@ class BtnRendererPlan {
   }
 }
 
-//---------------모달--------------
+//========================= 모달 =========================
 
 const isShowModal = ref(false);
-const modalOpen = (prCd) => { //프로젝트 정보 모달 열기
+
+//프로젝트 정보 모달 열기
+const modalOpen = (prCd) => {
   isShowModal.value = true;
   projectGetInfo(prCd);
 }
 
-const modalClose = (e) => { //프로젝트 정보 모달 닫기
+//프로젝트 정보 모달 닫기
+const modalClose = (e) => {
   if (e.key === "Escape") {
     if (isShowModal.value) {
       isShowModal.value = !isShowModal.value
@@ -330,9 +340,12 @@ const modalClose = (e) => { //프로젝트 정보 모달 닫기
   }
 }
 
-//-------------버튼이벤트------------
+//======================= 버튼이벤트 =======================
+
 const router = useRouter();
-const btnPageMove = (mode, code) => { //수정/일정관리 페이지로
+
+//수정/일정관리 페이지로 이동
+const btnPageMove = (mode, code) => {
   router.push({ path: `/project/${mode}`, query: { prCd: code } });
 }
 
@@ -343,27 +356,24 @@ const btnProjectRemove = (code) => {
     icon: "question",
     showCancelButton: true,
     customClass: {
-      confirmButton: "btn btn-danger btn-fill",
-      cancelButton: "btn btn-secondary btn-fill"
+      confirmButton: "btn btn-secondary btn-fill",
+      cancelButton: "btn btn-danger btn-fill"
     },
-    cancelButtonText: "닫기",
-    confirmButtonText: "삭제",
+    confirmButtonText: "닫기",
+    cancelButtonText: "삭제",
   }).then((result) => {
-    if (result.isConfirmed) {
-      // 프로젝트 삭제
-      projectRemove(code);
+    if (result.dismiss == Swal.DismissReason.cancel) {
+      projectRemove(code); //삭제처리 함수
     }
   });
 }
 
-//---------------axios--------------
+//======================= axios =======================
 
+//프로젝트 전체조회
 const projectList = ref([]);
 const projectCount = ref(0);
-const projectGetList = async () => { //프로젝트 전체조회
-
-  //const params = new URLSearchParams({ searchKeyword: searchKeyword.value }).toString();
-
+const projectGetList = async () => {
   try {
     const result = await axios.get(`/api/project/list`, { params: searchData.value });
     projectCount.value = result.data.length;
@@ -371,8 +381,19 @@ const projectGetList = async () => { //프로젝트 전체조회
       ...item,
       startDt: dateFormat(item.startDt),
       endDt: dateFormat(item.endDt),
-      term: dateTermCalc(dateFormat(item.endDt), dateFormat())
+      term: dateTermCalc(dateFormat(item.endDt), dateFormat()) //프로젝트 종료일까지 남은기간
     }));
+
+    grid.value.resetData(projectList.value); //toast grid로 데이터 전달
+
+    await nextTick(); //toast grid 로드될때까지 기다림
+    projectList.value.forEach((row, index) => { //toast grid 로드완료 후 상태별 rowClass 부여
+      if (row.state == "A03") {
+        grid.value.addRowClassName(index, "table-end");
+      } else {
+        grid.value.addRowClassName(index, "table-white");
+      }
+    });
 
   } catch (err) {
     projectList.value = [];
@@ -383,16 +404,15 @@ const projectGetList = async () => { //프로젝트 전체조회
       text: "Error : " + err
     });
   }
-
-  grid.value.resetData(projectList.value);
 }
 
+//프로젝트 단건조회
 const projectInfo = ref([]);
-const projectGetInfo = async (prCd) => { //프로젝트 단건조회
+const projectGetInfo = async (prCd) => { 
   try {
     const result = await axios.get(`/api/project/info/${prCd}`);
     projectInfo.value = result.data.info;
-    projectWorkGetList(prCd);
+    projectWorkGetList(prCd); //프로젝트 과업리스트 조회
   } catch (err) {
     projectInfo.value = [];
 
@@ -404,18 +424,19 @@ const projectGetInfo = async (prCd) => { //프로젝트 단건조회
   }
 }
 
-const projectRemove = async (prCd) => { //프로젝트 삭제
+//프로젝트 단건삭제
+const projectRemove = async (prCd) => { 
 
   try {
     const response = await axios.delete(`/api/project/${prCd}`);
 
-    if (response.data.result === true) {
+    if (response.data === true) {
       Swal.fire({
         icon: "success",
         title: "삭제완료",
         text: "선택한 프로젝트를 삭제하였습니다",
       })
-      projectList.value = response.data.list;
+      projectGetList(); //삭제완료 후 리스트 리로드
     }
   } catch (err) {
     Swal.fire({
@@ -426,12 +447,14 @@ const projectRemove = async (prCd) => { //프로젝트 삭제
   }
 }
 
-const projectListRemove = async () => { //프로젝트 삭제
+//프로젝트 다중삭제
+const projectListRemove = async () => { 
   const checkedData = grid.value.getCheckedRows();
+
   try {
     const response = ref([]);
     response.value = await axios.put(`/api/project/delete`, {
-      projectArr: checkedData.map(row => row.prCd) 
+      projectArr: checkedData.map(row => row.prCd)
     });
 
     if (response.value.statusText == "OK") {
@@ -440,6 +463,7 @@ const projectListRemove = async () => { //프로젝트 삭제
         title: "삭제완료",
         text: "선택한 프로젝트를 삭제하였습니다",
       })
+      projectGetList(); //삭제완료 후 리스트 리로드
     }
   } catch (err) {
     Swal.fire({
@@ -450,11 +474,13 @@ const projectListRemove = async () => { //프로젝트 삭제
   }
 }
 
+//프로젝트 과업조회
 const workList = ref([]);
 const workCount = ref(0);
-const projectWorkGetList = async (prCd) => { //프로젝트 과업조회
+const projectWorkGetList = async (prCd) => { 
   try {
     const result = await axios.get(`/api/project/work/${prCd}`);
+    console.log(result);
 
     workList.value = result.data;
     workCount.value = result.data.length;

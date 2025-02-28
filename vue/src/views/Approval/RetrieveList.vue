@@ -36,7 +36,7 @@
           { header: '양식', name: 'formType' },
           { header: '제목', name: 'docTitle' },
           { header: '기안부서', name: 'deptNm' },
-          { header: '기안자', name: 'mberId' },
+          { header: '기안자', name: 'mberNm' },
           { header: '기안일시', name: 'draftDt' },
         ],
         status: "H05",

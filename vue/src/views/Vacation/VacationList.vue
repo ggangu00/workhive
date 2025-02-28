@@ -54,36 +54,51 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
-import { dateTimeFormat } from '../../assets/js/common.js';
+// import { dateTimeFormat } from '../../assets/js/common.js';
 import Grid from 'tui-grid';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import { useUserInfoStore } from '../../store/userStore.js';
+
+const userInfoStore = useUserInfoStore();
+let loginUser = userInfoStore.user.mberId;
+console.log("로그인 정보 : ", loginUser);
 
 let gridInstance = ref();
-let rowData = ref([]);
+// let rowData = ref([]);
 
 // 검색 데이터
 const searchData = ref({
-  createId: 'user01',
+  createId: loginUser,
   vcType: '',
   signState: '',
   startDate: '',
   endDate: '',
 });
 
-// 휴가 신청 목록 조회
-const vcGetList = async () => {
-  const result = await axios.get('/api/vacation/vcList', { params : searchData.value });
-  rowData.value = result.data;
-
-  rowData.value.forEach((i) => {
-    i.vcStartDt = dateTimeFormat(i.vcStartDt, 'yyyy-MM-dd');
-    i.vcEndDt = dateTimeFormat(i.vcEndDt, 'yyyy-MM-dd');
-    i.createDt = dateTimeFormat(i.createDt, 'yyyy-MM-dd');
-  })
-
-  gridInstance.value.resetData(rowData.value);
+const vcGetList = () => {
+  gridInstance.value.readData(1, searchData.value);
 }
+const dataSource = {
+  api: {
+    readData: { url: '/api/vacation/vcList', method: 'GET', initParams: searchData.value}
+  }
+};
+
+
+// 휴가 신청 목록 조회
+// const vcGetList = async () => {
+//   const result = await axios.get('/api/vacation/vcList', { params : searchData.value });
+//   rowData.value = result.data;
+
+//   rowData.value.forEach((i) => {
+//     i.vcStartDt = dateTimeFormat(i.vcStartDt, 'yyyy-MM-dd');
+//     i.vcEndDt = dateTimeFormat(i.vcEndDt, 'yyyy-MM-dd');
+//     i.createDt = dateTimeFormat(i.createDt, 'yyyy-MM-dd');
+//   })
+
+//   gridInstance.value.resetData(rowData.value);
+// }
 
 // 조회 조건 변경 감지
 watch(() => searchData, () => {
@@ -94,9 +109,13 @@ watch(() => searchData, () => {
 onMounted(() => {
   gridInstance.value = new Grid({
     el: document.getElementById('vcGrid'),
-    data: rowData.value,
+    data: dataSource,
     scrollX: false,
     scrollY: true,
+    pageOptions: {
+      useClient: false,
+      perPage: 5,
+    },
     columns: [ // 시작일 / 종료일 / 휴가종류 / 사용일수 / 신청일 / 결재자 / 결재상태
       { header: '시작일', name: 'vcStartDt', align: 'center'},
       { header: '종료일', name: 'vcEndDt', align: 'center'},
@@ -122,7 +141,7 @@ onMounted(() => {
     ]
   })
   
-  vcGetList();
+  // vcGetList();
 })
 
 // 그리드 버튼

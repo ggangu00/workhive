@@ -1,5 +1,5 @@
 <template>
-  <div class="content" @keydown.esc="modalCloseFunc">
+  <div class="content" @keydown.esc="modalClose">
     <div class="container-fluid">
       <div class="card">
         <div class="card-body">
@@ -8,15 +8,17 @@
       </div>
 
       <div class="card todo-container">
+        <!--
         <div class="todo-header">
           <button @click="toggleSubMenu">캘린더 펼침
             <i :class="['fa-solid', 'arrow-icon', isHidden ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
           </button>
         </div>
-        <div class="month">
-          <button @click="monthMove('prev')"><i class="fa-solid fa-angle-left" style="float: left;"></i></button>
+        -->
+        <div class="month mt-3">
+          <button @click="btnMonthMove('prev')"><i class="fa-solid fa-angle-left" style="float: left;"></i></button>
           {{ year }}.{{ month }}
-          <button @click="monthMove('next')"><i class="fa-solid fa-angle-right" style="float: left;"></i></button>
+          <button @click="btnMonthMove('next')"><i class="fa-solid fa-angle-right" style="float: left;"></i></button>
         </div>
         <div class="days mt-3 mb-3" :class="'day' + dateArr.length">
           <button class="day" :key="i" v-for="i in dateArr" :class="{
@@ -46,9 +48,9 @@
             </div>
           </div>
           <div class="table-responsive">
-            <button class="btn btn-secondary btn-fill btn-sm float-left" @click="btnSelectChange('A02')">선택미완료</button>
-            <button class="btn btn-secondary btn-fill btn-sm float-left" @click="btnSelectChange('A01')">선택완료</button>
-            <button class="btn btn-danger btn-fill btn-sm float-left" @click="btnSelectChange('del')">선택삭제</button>
+            <button class="btn btn-secondary btn-fill btn-sm float-left" @click="btnTodoListChange('A02')">선택미완료</button>
+            <button class="btn btn-secondary btn-fill btn-sm float-left" @click="btnTodoListChange('A01')">선택완료</button>
+            <button class="btn btn-danger btn-fill btn-sm float-left" @click="btnTodoListChange('del')">선택삭제</button>
             <div id="tableGrid" class="toastui project"></div>
           </div>
         </div>
@@ -117,38 +119,39 @@
 import axios from "axios";
 import { ref, computed, watch, watchEffect, onBeforeMount, onMounted, nextTick } from 'vue';
 
-//---------------컴포넌트-------------- 
-import Swal from 'sweetalert2';
+//========================== 컴포넌트 ==========================
 import Grid from 'tui-grid';
-import Card from '../../components/Cards/Card.vue'
+import Swal from 'sweetalert2';
 import Modal from '../../components/Modal.vue';
+import Card from '../../components/Cards/Card.vue'
 
-//---------------js-------------- 
-import { getComm, dateFormat } from '../../assets/js/common'
+//============================= js =============================
 import { dateGetDay } from '../../assets/js/project'
+import { getComm, dateFormat } from '../../assets/js/common'
 
-//---------------데이터-------------- 
+//========================= 데이터 초기화 =========================
 
 const year = ref(new Date().getFullYear()); // 현재 연도 기본값
 const month = ref(new Date().getMonth() + 1); // 현재 월 기본값 (1~12 범위)
 
-const isHidden = ref(false);
-const typeCd = ref('B01');
-const typeCdArr = ref([]);
-const title = ref('');
-const content = ref('');
-const state = ref('A02');
-const mberId = ref('admin');
+const typeCd = ref('B01');        //등록 시 업무구분
+const typeCdArr = ref([]);        //업무구분 공통코드 목록
+const title = ref('');            //업무제목
+const content = ref('');          //업무내용
+const state = ref('A02');         //업무 완료여부
+const mberId = ref('admin');      //등록자 아이디
 const todoDt = ref(dateFormat()); // 현재 선택된 날짜 (디폴트 : 오늘)
 
 onBeforeMount(() => {
-  nowDateInfo(); //해당 월의 일수 표출
-  todoGetListAll();
-  getStatus(); //업무구분
+  getStatus();      //업무구분
+  nowDateInfo();    //해당 월의 일수 표출
+  todoGetListAll(); //업무일지 전체조회 (금일)  
 });
 
-const grid = ref([]);
+//========================= Toast grid =========================
 
+//리스트 초기화
+const grid = ref([]);
 onMounted(() => {
 
   grid.value = new Grid({
@@ -165,13 +168,13 @@ onMounted(() => {
       useClient: false,
       perPage: 5,
     },
-    rowHeaders: ["checkbox"],
-    data: todoList.value,
     rowHeight: 50,
+    data: todoList.value,
+    rowHeaders: ["checkbox"],   
   });
 });
 
-//--------------그리드 렌더링-------------
+//===================== Toast Grid Rendere =====================
 
 //일지 제목 
 class subjectRenderer {
@@ -203,6 +206,8 @@ class subjectRenderer {
 //수정/삭제 버튼
 class BtnRendererSetting {
   constructor(props) {
+    const rowKey = props.row?.rowKey ?? props.grid.getRow(props.rowKey)?.rowKey;
+    const rowData = props.grid.getRow(rowKey);
 
     const el = document.createElement("div");
 
@@ -213,13 +218,10 @@ class BtnRendererSetting {
 
     el.addEventListener("click", (event) => {
       const type = event.target.dataset.type;
-      const rowKey = props.row?.rowKey ?? props.grid.getRow(props.rowKey)?.rowKey;
 
-      const rowData = props.grid.getRow(rowKey);
-
-      if (type === "edit") {
+      if (type === "edit") { //수정버튼 클릭 시 수정모달 표출
         btnSelectUpdate(rowData.todoCd)
-      } else if (type === "del") {
+      } else if (type === "del") { //삭제버튼 클릭 시 삭제처리
         btnTodoRemove(rowData.todoCd)
       }
     });
@@ -232,28 +234,62 @@ class BtnRendererSetting {
   }
 }
 
-//---------------모달-------------- 
+//========================= 모달 =========================
 
 const isShowModal = ref(false);
-const modalCloseFunc = (e) => {
-  if (e.key === "Escape") {
-    if (isShowModal.value) {
-      isShowModal.value = !isShowModal.value
-    }
-  }
-}
+
+//업무일지 등록 모달 열기
 const openModal = () => {
   isShowModal.value = true;
 }
 
+//업무일지 등록 모달 닫기
 const closeModal = () => {
   formReset();
   isShowModal.value = false;
 }
 
-//---------------공통함수-------------- 
+//======================== 공통함수 ========================
 
-const monthMove = (mode) => {
+// 현재 월의 총 일수
+const dateArr = ref([]);
+const dayCnt = computed(() => new Date(year.value, month.value, 0).getDate()); 
+const nowDateInfo = () => {
+  dateArr.value = [];
+  for (let i = 1; i <= dayCnt.value; i++) {
+    const formattedDate = `${year.value}-${String(month.value).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+    dateArr.value.push({
+      date: i,
+      thisDate: formattedDate,            //현재일수
+      dateDay: dateGetDay(formattedDate)  //현재요일 (토,일 구분용)
+    });
+  }
+}
+
+// todoDt가 변경되면 watchEffect가 자동 실행됨
+const todoGetDate = (date) => {
+  todoDt.value = date;
+};
+
+//입력정보 초기화
+const formReset = () => { 
+  typeCd.value = 'B01';
+  title.value = '';
+  content.value = '';
+}
+
+//======================= 버튼이벤트 =======================
+
+/*
+//캘린더 펼침/닫힘 (시간나면 작업예정)
+const isHidden = ref(false);
+const toggleSubMenu = () => {
+  isHidden.value = !isHidden.value;
+};
+*/
+
+//월 이동
+const btnMonthMove = (mode) => {
 
   if (mode == "prev") { //이전달
     if (month.value === 1) {
@@ -274,41 +310,13 @@ const monthMove = (mode) => {
   }
 }
 
-const dateArr = ref([]);
-const dayCnt = computed(() => new Date(year.value, month.value, 0).getDate()); // 현재 월의 총 일수
-const nowDateInfo = () => {
-  dateArr.value = [];
-  for (let i = 1; i <= dayCnt.value; i++) {
-    const formattedDate = `${year.value}-${String(month.value).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-    dateArr.value.push({
-      date: i,
-      thisDate: formattedDate,
-      dateDay: dateGetDay(formattedDate)
-    });
-  }
-}
-
-const todoGetDate = (date) => {
-  todoDt.value = date; // todoDt가 변경되면 watchEffect가 자동 실행됨
-};
-
-const formReset = () => { //입력정보 초기화
-  typeCd.value = 'B01';
-  title.value = '';
-  content.value = '';
-}
-
-//-------------버튼이벤트------------
-
-const toggleSubMenu = () => {
-  isHidden.value = !isHidden.value;
-};
-
+//수정버튼 클릭 시 수정모달 표출
 const btnSelectUpdate = (code) => {
   openModal();
   todoGetList(code);
 }
 
+//업무일지 단건삭제
 const btnTodoRemove = (code) => {
   Swal.fire({
     title: "해당 업무일지를 삭제 하시겠습니까?",
@@ -322,12 +330,13 @@ const btnTodoRemove = (code) => {
     cancelButtonText: "네",
   }).then((result) => {
     if (result.dismiss == Swal.DismissReason.cancel) {
-      todoStateUpdate(code);
+      todoListUpdate(code);
     }
   });
 };
 
-const btnSelectChange = (mode) => {
+//업무일지 다중 상태변경/삭제 처리 (버튼)
+const btnTodoListChange = (mode) => {
   const checkedData = grid.value.getCheckedRows();
   const modeText = ref('상태변경');
   if (mode == 'del') {
@@ -350,42 +359,43 @@ const btnSelectChange = (mode) => {
       cancelButtonText: "네",
     }).then((result) => {
       if (result.dismiss == Swal.DismissReason.cancel) {
-        todoStateUpdate(mode);
+        todoListUpdate(mode);
       }
     });
 
   }
 }
 
-//---------------axios--------------
+//======================= axios =======================
 
-const getStatus = async () => { //업무구분 목록 호출
+//업무구분 목록 호출
+const getStatus = async () => { 
   let arr = await getComm("WT");
   let arrAdd = { comm_dtl_cd: '', comm_dtl_nm: '전체' };
   typeCdArr.value.unshift(arrAdd);
   typeCdArr.value = arr;
 }
 
+//업무일지 전체조회
 const todoList = ref([]);
 const todoCount = ref(0);
-const todoGetListAll = async () => { //일지 전체조회
+const todoGetListAll = async () => { 
 
-  const date = dateFormat(todoDt.value).replaceAll("-", "");
+  const date = dateFormat(todoDt.value).replaceAll("-", ""); //선택된 날짜 없을 때 디폴트 금일
 
   try {
     const result = await axios.get(`/api/todo/list/${date}`);
-
     todoList.value = result.data;
     todoCount.value = result.data.length;
 
-    grid.value.resetData(todoList.value); //grid에 결과값 넣기
-    await nextTick(); //그리드가 완료될때까지 기다리기
- 
-    todoList.value.forEach((row, index) => {
+    grid.value.resetData(todoList.value); //toast grid로 데이터 전달
+
+    await nextTick(); //toast grid 로드될때까지 기다림 
+    todoList.value.forEach((row, index) => { //toast grid 로드완료 후 상태별 rowClass 부여
       if (row.state == "A01") {
-        grid.value.addRowClassName(index, "table-end"); // 완료된 행 스타일 적용
+        grid.value.addRowClassName(index, "table-end"); 
       } else {
-        grid.value.addRowClassName(index, "table-white"); // 미완료된 행 스타일 적용
+        grid.value.addRowClassName(index, "table-white");
       }
     });
 
@@ -404,8 +414,9 @@ watchEffect(() => {
   todoGetListAll();
 });
 
+//일지 단건조회
 const todoInfo = ref([]);
-const todoGetList = async (todoCd) => { //일지 단건조회
+const todoGetList = async (todoCd) => {
 
   try {
     const result = await axios.get(`/api/todo/info/${todoCd}`);
@@ -428,8 +439,9 @@ const todoGetList = async (todoCd) => { //일지 단건조회
   }
 };
 
+//해당 일자 건수조회
 const todoListCnt = ref([]);
-watch(month, async () => { //해당 월 건수조회
+watch(month, async () => { 
   try {
     const result = await axios.get(`/api/todo/list/cnt?year=${year.value}&month=${month.value}`);
 
@@ -447,7 +459,8 @@ watch(month, async () => { //해당 월 건수조회
   }
 }, { immediate: true });
 
-const todoAdd = async () => { //일지 등록
+//업무일지 등록
+const todoAdd = async () => { 
 
   if (!title.value) {
     Swal.fire({
@@ -474,9 +487,8 @@ const todoAdd = async () => { //일지 등록
         title: "등록완료",
         text: "일지등록을 완료하였습니다",
       })
-      todoGetListAll();
-
-      formReset();
+      todoGetListAll(); //업무일지 리스트 리로드
+      formReset(); //모달 닫힐 때 등록폼 초기화
     }
   } catch (err) {
     Swal.fire({
@@ -487,7 +499,8 @@ const todoAdd = async () => { //일지 등록
   }
 }
 
-const todoStateUpdate = async (mode) => { //일지 삭제
+//업무일지 다중 상태변경/삭제 처리
+const todoListUpdate = async (mode) => { 
   const checkedData = grid.value.getCheckedRows();
 
   const modeText = ref('상태변경');
@@ -497,12 +510,12 @@ const todoStateUpdate = async (mode) => { //일지 삭제
 
   try {
     const response = ref([]);
-    if (mode == 'del') {
+    if (mode == 'del') { //삭제
       response.value = await axios.delete(`/api/todo/delete`, {
         data: { todoArr: checkedData.map(row => row.todoCd) }
       });
 
-    } else {
+    } else { //상태변경
       response.value = await axios.put(`/api/todo/state`, {
         todoArr: checkedData.map(row => row.todoCd),
         state: mode
@@ -526,13 +539,3 @@ const todoStateUpdate = async (mode) => { //일지 삭제
   }
 }
 </script>
-<style>
-.table-white {
-  background-color: white !important;
-}
-
-.table-end {
-  background-color: #e7e7e7 !important;
-  color:#969696 !important;
-}
-</style>

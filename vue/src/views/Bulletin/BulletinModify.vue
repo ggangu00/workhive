@@ -134,7 +134,8 @@ const ntceEndde = ref('');         // 게시 종료일
 const showPasswordField = ref(false); // 비밀번호 입력 필드 노출 여부
 
 // TOAST UI Editor 인스턴스
-const editor = ref(null);
+let editor =null;
+
 // 파일 첨부용 ref
 const fileInput = ref(null);
 
@@ -149,7 +150,7 @@ const togglePasswordField = () => {
 
 // TOAST UI Editor 초기화
 const initEditor = () => {
-  editor.value = new Editor({
+  editor = new Editor({
     el: document.querySelector("#editor"),
     height: "500px",
     initialEditType: "WYSIWYG",
@@ -175,6 +176,11 @@ const fetchBulletinInfo = async () => {
       noticeAt.value = postData.noticeAt === 'Y';
       secretAt.value = postData.secretAt === 'Y';
       anoAt.value = postData.anoAt === 'Y';
+
+      if (editor) {
+        editor.setHTML(nttCn.value);
+      }
+      
     } else {
       responseMessage.value = "게시글을 찾을 수 없습니다.";
       isSuccess.value = false;
@@ -185,7 +191,6 @@ const fetchBulletinInfo = async () => {
     isSuccess.value = false;
   }
 };
-
 
 
 
@@ -206,7 +211,7 @@ const validateForm = () => {
     isSuccess.value = false;
     return false;
   }
-  nttCn.value = editor.value.getHTML().trim();
+  nttCn.value = editor.getHTML().trim();
   if (!nttCn.value) {
     responseMessage.value = "내용을 입력해주세요.";
     isSuccess.value = false;
@@ -248,8 +253,8 @@ const submitForm = async () => {
   try {
     let response;
     if (bbsId.value && nttId.value) {
-      // 기존 게시글 수정 (PUT 요청)
-      response = await axios.put(`/api/bulletinModify/${bbsId.value}/${nttId.value}`, formData);
+      // 기존 게시글 수정 (post 요청)
+      response = await axios.post(`/api/bulletin/bulletinModify/${bbsId.value}/${nttId.value}`, formData);
     } else {
       // 새 게시글 추가 (POST 요청)
       response = await axios.post("/api/bulletin/bulletinAdd", formData);

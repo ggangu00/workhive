@@ -124,7 +124,6 @@ import axios from "axios";
 import { Modal } from "bootstrap";
 import Swal from 'sweetalert2'
 
-
 export default {
   components: {
     FullCalendar
@@ -199,14 +198,12 @@ export default {
       const docKind = await axios.get(`/api/comm/codeList`, {
         params: {cd:'SK'}
       });
-      console.log("공통코드 => [" + docKind.data + "]");
      
       this.selectedData = [...docKind.data]
     },
 
     //달력 클릭이벤트
     async handleEventClick(e){
-      console.log("이벤트 유형 => [" + e.event.extendedProps.type + "]");
       const modal = new Modal(document.getElementById("scheduleModal"));
       modal.show();
       
@@ -252,7 +249,7 @@ export default {
           type: event.schdulSe,
           dept: event.deptNm
         }));
-        console.log(response.data)
+
     },
 
     //등록 메소드
@@ -274,7 +271,7 @@ export default {
       if(this.selectedEventId){
         addList.append("schdulId", this.selectedEventId);
         const response = await axios.post('/api/schedule/modify', addList );
-        console.log(response)
+
         if(response.request.status==200){
           Swal.fire({
           icon: "success",

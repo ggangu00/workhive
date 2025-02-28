@@ -54,7 +54,9 @@
                                     </tr>
                                     <tr>
                                         <th class="table-secondary">참여자</th>
-                                        <td colspan="3" class="text-start">김민진, 박주현, 신강현</td>
+                                        <td colspan="3" class="text-start">
+                                            {{ memArr.join(", ") }}
+                                        </td>
                                     </tr>
                                     <tr>
                                         <th class="table-secondary">회의안건</th>
@@ -85,23 +87,23 @@ import axios from "axios";
 import { useRouter } from "vue-router";
 import { onBeforeMount, ref, watch, onMounted } from 'vue';
 
-//---------------컴포넌트-------------- 
+//========================== 컴포넌트 ==========================
 import Swal from 'sweetalert2';
 import Grid from 'tui-grid';
 import Card from '../../components/Cards/Card.vue'
 import Modal from '../../components/Modal.vue';
 
-//---------------js-------------- 
-import { dateFormat, numberFormat } from '../../assets/js/common'
+//============================= js =============================
 import { dateGetDay } from '../../assets/js/project'
+import { dateFormat, numberFormat } from '../../assets/js/common'
 
-//---------------데이터-------------- 
-
+//========================= 데이터 초기화 =========================
 onBeforeMount(() => {
     meetGetNowList();
     meetGetList();
 });
 
+//========================= Toast grid =========================
 //회의 상세보기 모달
 class BtnRendererModal {
     constructor(props) {
@@ -205,8 +207,7 @@ onMounted(() => {
     initGrid(allGridInstance, 'allGrid', meetList, allCol);
 });
 
-//---------------모달--------------
-
+//========================= 모달 =========================
 const isShowModal = ref(false);
 const modalOpen = (code) => { //회의 정보 모달 열기
     isShowModal.value = true;
@@ -223,8 +224,7 @@ const modalClose = (e) => { //회의 정보 모달 닫기
     }
 }
 
-//-------------버튼이벤트------------
-
+//======================= 버튼이벤트 =======================
 const router = useRouter();
 const btnPageMove = (mode, code) => { //수정/일정관리 페이지로
     router.push({ path: `/project/${mode}`, query: { prCd: code } });
@@ -250,8 +250,7 @@ const btnMeetRemove = () => {
     });
 }
 
-//---------------axios--------------
-
+//======================= axios =======================
 const meetNowList = ref([]);
 const meetNowCount = ref(0);
 const meetGetNowList = async () => { //금일 예정 회의 조회
@@ -293,13 +292,21 @@ const meetGetList = async () => { //진행 예정 회의 전체출력
 }
 
 const meetInfo = ref([]);
+const memList = ref([]);
+const memArr = ref([]);
 const meetGetInfo = async (mtgId) => { //회의 단건조회
     try {
         const result = await axios.get(`/api/meet/info/${mtgId}`);
-        console.log(result.data[0]);
-        meetInfo.value = result.data[0];
+        meetInfo.value = result.data.result[0];
+        memList.value = result.data.list;
+
+        memArr.value = [];
+        memList.value.forEach((data) => {
+            memArr.value.push(data.memNm);
+        })
     } catch (err) {
         meetInfo.value = [];
+        memList.value = [];
 
         Swal.fire({
             icon: "error",

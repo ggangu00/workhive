@@ -1,5 +1,4 @@
 import { createStore } from "vuex";
-import axios from "axios";
 
 export default createStore({
    state: {
@@ -22,7 +21,7 @@ export default createStore({
       absolute: "position-absolute px-4 mx-0 w-100 z-index-2",
 
       // ksy
-      commuteList: [],
+      isCmt: false,
       startDate: "",
       endDate: "",
 
@@ -69,8 +68,8 @@ export default createStore({
       },
 
       // ksy
-      commuteSetList(state, data) {
-         state.commuteList = data;
+      isCmtSet(state, value) {
+         state.isCmt = value;
       },
       setStartDate(state, value) {
          state.startDate = value;
@@ -92,16 +91,6 @@ export default createStore({
       },
 
       // ksy
-      async commuteGetList({ commit, state }) {
-         const params = {
-         mberId: "user01",
-         startDate: state.startDate,
-         endDate: state.endDate
-         };
-         let result = await axios.get(`/api/commute/cmtList`, { params });
-         commit("commuteSetList", result.data);
-      },
-
       jobBxSelectedUpdate({ commit }, jobBxSelected) {
          commit('setJobBxSelected', jobBxSelected);
       },

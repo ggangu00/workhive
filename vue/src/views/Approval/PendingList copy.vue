@@ -50,7 +50,7 @@ const buttonClick = async (buttonName)=>{
         { header: '양식', name: 'formCd',sortable: true },
         { header: '제목', name: 'docTitle' ,sortable: true},
         { header: '기안부서', name: 'deptNm',sortable: true },
-        { header: '기안자', name: 'mberId' ,sortable: true},
+        { header: '기안자', name: 'mberNm' ,sortable: true},
         { header: '기안일시', name: 'draftDt' ,sortable: true},
       ])
 </script>

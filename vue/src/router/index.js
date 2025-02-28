@@ -41,7 +41,6 @@ import PendingInfo from "../views/Approval/PendingInfo.vue";
 import ProceedInfo from "../views/Approval/ProceedInfo.vue";
 import RetrieveList from "../views/Approval/RetrieveList.vue";
 import ReceivedList from "../views/Approval/ReceivedList.vue";
-import PendingListCopy from "../views/Approval/PendingList.vue";
 
 // pjh
 import Todo from '../views/Todo/TodoManage.vue'
@@ -79,6 +78,7 @@ import BulletinList from "../views/Bulletin/BulletinList.vue";
 import BulletinAdd from "../views/Bulletin/BulletinAdd.vue";
 import BulletinInfo from "../views/Bulletin/BulletinInfo.vue";
 import BulletinModify from "../views/Bulletin/BulletinModify.vue";
+import SecretAt from "../views/Bulletin/SecretAt.vue"
 
 
 
@@ -190,11 +190,6 @@ const routes = [
    },
    //skh
 
-   {
-      path:'/pendgingList',
-      name:'PendingListCopy',
-      component:PendingListCopy
-   },
    { //
       path: '/approval/restartDraft',
       name: 'RestartDraft',
@@ -368,6 +363,15 @@ const routes = [
       name: 'BulletinModify',
       component : BulletinModify,
    },
+      {//게시글 수정
+         path:'/bulletin/secretAt',
+         name: 'SecretAt',
+         component : SecretAt,
+      },
+       
+
+
+
 
 
 

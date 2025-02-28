@@ -165,8 +165,7 @@ const bulletinInfo = ref({
   attachFileUrl: ''
 });
 
-// 댓글 목록
-const comments = ref([]);
+
 
 // 새 댓글 등록 데이터
 const newComment = ref({
@@ -190,46 +189,72 @@ const fetchBulletinInfo = async () => {
 };
 
 
-// 댓글 목록 조회
+// 댓글 조회
 const fetchComments = async () => {
+  console.log(`GET 요청: /api/comment/commentList?bbsId=${bbsId}&nttId=${nttId}`);
   try {
-    const response = await axios.get('/api/comment/commentList', {
-      params: { nttId },
-    });
-    comments.value = response.data.map(comment => ({ ...comment, isEditing: false }));
+    const response = await axios.get(`/api/comment/commentList?bbsId=${bbsId}&nttId=${nttId}`);
+
+    // 응답 데이터 구조 확인
+    console.log('API 응답:', response.data);
+
+    // 댓글 목록이 배열인지 확인
+    if (Array.isArray(response.data)) {
+      comments.value = response.data;  // 댓글 목록을 배열로 저장
+    } else {
+      console.error('댓글 목록이 배열이 아닙니다:', response.data);
+      comments.value = [];  // 만약 배열이 아니면 빈 배열로 초기화
+    }
   } catch (error) {
-    console.error('댓글 조회 오류:', error.response || error);
+    console.error('댓글 조회 오류:', error);
    
   }
 };
 
-// 댓글 등록
+// 댓글 목록
+const comments = ref([]);
+
+// 댓글 추가
 const addComment = async () => {
+  console.log(" 댓글 등록 요청 - bbsId:", bbsId, "nttId:", nttId);
+
   if (!newComment.value.commentCn.trim() || !newComment.value.wrterNm.trim()) {
-    alert('댓글 내용과 작성자를 입력해주세요.');
+    alert("댓글 내용과 작성자를 입력해주세요.");
     return;
   }
-
   try {
-    const response = await axios.post('/api/comment/commentAdd', {
+    const response = await axios.post(`/api/comment/commentAdd/${bbsId}/${nttId}`, {
       commentCn: newComment.value.commentCn,
       wrterNm: newComment.value.wrterNm,
-      nttId,
     });
 
-    comments.value.push({
-      commentCn: response.data.commentCn,
-      wrterNm: response.data.wrterNm,
-      isEditing: false,
-    });
+    console.log("✅ 댓글 추가 응답:", response.data);
 
-    newComment.value.commentCn = '';
-    newComment.value.wrterNm = '';
+    if (response.data.status === "success") {
+      // 댓글 목록에 추가
+      comments.value.push({
+        commentCn: response.data.comment.commentCn,
+        wrterNm: response.data.comment.wrterNm,
+        isEditing: false,
+      });
+
+      // 댓글 목록 새로고침 (Vue의 반응성 문제 해결)
+      comments.value = [...comments.value];
+
+      // 입력 필드 초기화
+      newComment.value.commentCn = "";
+      newComment.value.wrterNm = "";
+    } else {
+      alert(`댓글 등록 실패: ${response.data.message}`);
+    }
   } catch (error) {
-    console.error('댓글 등록 오류:', error.response || error);
-    alert(`댓글 등록 실패: ${error.response?.statusText || '서버 오류'}`);
+    console.error(" 댓글 등록 오류:", error.response || error);
+   
   }
 };
+
+
+
 
 // 댓글 수정
 const enterEdit = (index) => {
@@ -269,24 +294,24 @@ const deleteComment = async (index) => {
 };
 
 // 📌 게시글 삭제
-const deleteBulletin = async () => {
-  if (!confirm('게시글을 삭제하시겠습니까?')) return;
+// const deleteBulletin = async () => {
+//   if (!confirm('게시글을 삭제하시겠습니까?')) return;
 
-  try {
-    await axios.delete(`/api/bulletin/bulletinRemove/${nttId}`);
+//   try {
+//     await axios.delete(`/api/bulletin/bulletinRemove/${nttId}`);
 
-    alert('게시글이 삭제되었습니다.');
+//     alert('게시글이 삭제되었습니다.');
 
-    // 📌 삭제 후, 해당 게시판 목록으로 이동
-    router.push({ path: `/bulletin/bulletinList/${bbsId}` });
-  } catch (error) {
-    console.error('게시글 삭제 오류:', error.response || error);
-    alert(`게시글 삭제 실패: ${error.response?.data?.message || '서버 오류'}`);
-  }
-};
+//     // 📌 삭제 후, 해당 게시판 목록으로 이동
+//     router.push({ path: `/bulletin/bulletinList/${bbsId}` });
+//   } catch (error) {
+//     console.error('게시글 삭제 오류:', error.response || error);
+//     alert(`게시글 삭제 실패: ${error.response?.data?.message || '서버 오류'}`);
+//   }
+// };
 
 
-
+//게시글 수정으로 이동
 const goToBulletinModify = () => {
   router.push({
     name: "BulletinModify",
@@ -301,8 +326,7 @@ const goToBulletinList = () => {
 };
 
 // 페이지 로드 시 데이터 가져오기
-onMounted(() => {
- 
+onMounted(() => { 
   fetchBulletinInfo();
   fetchComments();
 });
