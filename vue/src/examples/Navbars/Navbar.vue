@@ -80,8 +80,14 @@
 
                <!-- 출퇴근 버튼 추가 - 토글식으로 변경 예정 -->
                <li class="nav-item d-flex align-items-center me-2">
-                  <button class="btn btn-primary" @click="btnCommuteAdd" v-if="!lastCmt">출근</button>
-                  <button class="btn btn-danger" @click="btnCommuteModify" v-else>퇴근</button>
+                  <!-- <button class="btn btn-primary" @click="btnCommuteAdd" v-if="isLogin && !isCmt">출근</button>
+                  <button class="btn btn-danger" @click="btnCommuteModify" v-if="isLogin && isCmt">퇴근</button> -->
+                  <button class="btn btn-primary" @click="btnCommuteAdd" :disabled="isLoadingAdd" v-if="isLogin && !isCmt">
+                     {{ isLoadingAdd ? '⏳ 출근 중...' : '출근' }}
+                  </button>
+                  <button class="btn btn-danger" @click="btnCommuteModify" :disabled="isLoadingModify" v-if="isLogin && isCmt">
+                     {{ isLoadingModify ? '⏳ 퇴근 중...' : '퇴근' }}
+                  </button>
                </li>
 
 
@@ -112,7 +118,7 @@ import { mapMutations, mapState } from "vuex";
 // ksy 추가
 import axios from 'axios';
 import { useStore } from "vuex";
-import { ref, onBeforeMount } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import { cmtCheck } from "../../assets/js/commute";
 import { dateTimeFormat } from "../../assets/js/common";
@@ -157,69 +163,98 @@ export default {
       const store = useStore();  //vuex
       const router = useRouter();// router
 
+      // 로그인 체크
+      let lastCmt = ref(null);
+      let isLogin = ref(loginUser != "");
+      let isCmt = ref(false);
+      watch(() => lastCmt.value, () => {
+         console.log("lastCmt watch");
+         isCmt.value = lastCmt.value != null;
+      });
+      watch(() => isCmt.value, () => {
+         console.log("isCmt watch");
+         store.commit('isCmtSet', isCmt.value);
+      })
+
+      // 출퇴근 로딩
+      let isLoadingAdd = ref(false);
+      let isLoadingModify = ref(false);
+
       const btnLogout = () => {
          userInfoStore.logout();
          router.push('/login');
       };
-      //let loginUser = "user01";
 
       // 출근
       const btnCommuteAdd = async () => {
-         const result = await cmtCheck(null, null); // 현재 시간 기준 출근 체크
+         if (isLoadingAdd.value) return; // 중복 방지
+         isLoadingAdd.value = true;
 
-         console.log(result);
+         try {
+            const result = await cmtCheck(null, null); // 현재 시간 기준 출근 체크
+            const addData = new FormData();
+            addData.append("mberId", loginUser);
+            addData.append("goTime", dateTimeFormat(result.goTime, 'yyyy-MM-dd hh:mm:ss'));
+            addData.append("goState", result.goState);
 
-         const addData = new FormData();
-         addData.append("mberId", loginUser); // 로그인 유저 정보로 변경 예정
-         addData.append("goTime", dateTimeFormat(result.goTime, 'yyyy-MM-dd hh:mm:ss'));
-         addData.append("goState", result.goState); // 버튼 동작 시간 체크 후 지각여부 체크 후 입력
+            await axios.post('/api/commute/cmtAdd', addData);
 
-         await axios.post('/api/commute/cmtAdd', addData);
-         await store.dispatch("commuteGetList"); // Vuex에서 출퇴근 목록 갱신
+            store.commit("setStartDate", "");
+            store.commit("setEndDate", "");
 
-         // 출퇴근 버튼 클릭 후 날짜 초기화
-         store.commit("setStartDate", "");
-         store.commit("setEndDate", "");
-
-         lastCmtGetInfo(); // 출근 후 마지막 기록 갱신
+            await lastCmtGetInfo(); // 출근 후 마지막 기록 갱신
+         } catch (error) {
+            console.error('출근 처리 중 오류:', error);
+         } finally {
+            isLoadingAdd.value = false;
+         }
       }
+
 
       // 퇴근
       const btnCommuteModify = async () => {
-         let result = await cmtCheck(lastCmt.value.goTime, null);
+         if (isLoadingModify.value) return; // 중복 방지
+         isLoadingModify.value = true;
 
-         const modifyData = new FormData();
-         modifyData.append("commuteCd", lastCmt.value.commuteCd);
-         modifyData.append("leaveTime", dateTimeFormat(result.leaveTime, 'yyyy-MM-dd hh:mm:ss'));
-         modifyData.append("leaveState", result.leaveState);
-         modifyData.append("workTime", result.workTime);
-         modifyData.append("overWorkTime", result.overWorkTime);
-         await axios.post(`/api/commute/cmtModify`, modifyData);
-         await store.dispatch("commuteGetList"); // Vuex에서 출퇴근 목록 갱신
+         try {
+            let result = await cmtCheck(lastCmt.value.goTime, null);
+            const modifyData = new FormData();
+            modifyData.append("commuteCd", lastCmt.value.commuteCd);
+            modifyData.append("leaveTime", dateTimeFormat(result.leaveTime, 'yyyy-MM-dd hh:mm:ss'));
+            modifyData.append("leaveState", result.leaveState);
+            modifyData.append("workTime", result.workTime);
+            modifyData.append("overWorkTime", result.overWorkTime);
 
-         // 출퇴근 버튼 클릭 후 날짜 초기화
-         store.commit("setStartDate", "");
-         store.commit("setEndDate", "");
+            await axios.post(`/api/commute/cmtModify`, modifyData);
 
-         lastCmtGetInfo(); // 출근 후 마지막 기록 갱신
+            store.commit("setStartDate", "");
+            store.commit("setEndDate", "");
+
+            await lastCmtGetInfo(); // 퇴근 후 마지막 기록 갱신
+         } catch (error) {
+            console.error('퇴근 처리 중 오류:', error);
+         } finally {
+            isLoadingModify.value = false;
+         }
       }
 
-      // 마지막 출퇴근 기록
-      const lastCmt = ref(null);
+      // 마지막 출퇴근 기록 조회
       const lastCmtGetInfo = async () => {
-         console.log("출퇴근 기록 ")
-         // const result = await axios.get('/api/commute/lastCmtInfo?mberId=user01');
-         // lastCmt.value = result.data ? result.data : null;
+         const result = await axios.get(`/api/commute/lastCmtInfo?mberId=${loginUser}`);
+         lastCmt.value = result.data ? result.data : null;
       }
-      onBeforeMount(() => {
-         lastCmtGetInfo();
+      onMounted(async () => {
+         if(isLogin.value) await lastCmtGetInfo();
+         console.log("로그인 체크 : ", isLogin.value);
+         console.log("출퇴근 체크 : ", isCmt.value);
       })
 
       return {
          btnCommuteAdd,
          btnCommuteModify,
          lastCmtGetInfo,
-         lastCmt,
+         isLogin,
+         isCmt,
 
          userInfoStore, // 유저정보 저장소
          loginUser, // 현재 로그인되어있는 유저 id

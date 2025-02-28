@@ -17,4 +17,7 @@ public interface CommuteCrctMapper {
 	List<CommuteCrctDTO> crctSelectSigner(CommuteCrctDTO crctDTO);
 	List<CommuteCrctDTO> crctSelectSigned(CommuteCrctDTO crctDTO);
 	int signUpdate(CommuteCrctDTO crctDTO);
+	int crctSelectAllCnt(CommuteCrctDTO crctDTO);
+	int crctSelectSignerCnt(CommuteCrctDTO crctDTO);
+	int crctSelectSignedCnt(CommuteCrctDTO crctDTO);
 }

@@ -1,5 +1,6 @@
 package egovframework.com.commute.service;
 
+import egovframework.com.common.util.CommonPaging;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommuteCrctDTO {
+public class CommuteCrctDTO extends CommonPaging {
 	private String crctCd;
 	private String commuteCd;
 	private String crctGoTime;
