@@ -39,16 +39,14 @@
 
             <!-- 로그인 상태 유지 -->
             <div class="form-check text-start m-0">
-               <input class="form-check-input me-1" type="checkbox">
-               <label class="form-check-label">로그인 상태 유지</label>
+               <input class="form-check-input me-1" type="checkbox" v-model="rememberMe">
+               <label class="form-check-label">아이디 저장하기</label>
             </div>
 
             <div class="btn_login_wrap">
                <button type="button" class="btn_login" @click="btnLogin">로그인</button>
             </div>
          </div>
-
-
 
          <ul class="find_wrap">
             <li><a href="/findPw" class="find_text" @click="goToFindPw">비밀번호 찾기</a></li>
@@ -61,32 +59,52 @@
 </template>
 
 <script setup>
-   import { onBeforeMount, onBeforeUnmount, ref } from "vue";
+   import { onBeforeMount, onBeforeUnmount, ref, watch, nextTick } from "vue";
    import { useStore } from "vuex";
    import { useRouter } from "vue-router";
    import axios from "axios";
    import Swal from 'sweetalert2';
    import { useUserInfoStore  } from '../../store/userStore';
 
-// ================================================== side, header 숨기기 ==================================================
+// ================================================== Pinia 스토어 및 Vuex 설정 ==================================================
    const store = useStore();
+   const userInfoStore = useUserInfoStore();
+   const router = useRouter();
 
+   // 새로고침 시 저장된 데이터 불러오기
+   userInfoStore.loadStoredData();
+
+// ================================================== side, header 숨기기 ==================================================
    const toggleEveryDisplay = () => store.commit("toggleEveryDisplay");
    const toggleHideConfig = () => store.commit("toggleHideConfig");
 
+   // 페이지 진입 시 숨김 적용
    onBeforeMount(() => {
       toggleEveryDisplay();
       toggleHideConfig();
    });
 
+   // 다른 페이지로 이동할 때 다시 원래대로 복구
    onBeforeUnmount(() => {
       toggleEveryDisplay();
       toggleHideConfig();
    });
 
-   const userId = ref(""); // 아이디 입력값
-   const password = ref(""); // 비밀번호 입력값
-   const isPasswordVisible = ref(false); // 비밀번호 입력 체크
+// ================================================== id, password 입력창 ==================================================
+   // 로그인 시도한 아이디는 항상 저장되도록 설정
+   const userId = ref(userInfoStore.savedUserId ?? "");  // pinia에 저장된 아이디 불러오기
+   const password = ref("");  // 비밀번호
+   const isPasswordVisible = ref(false);  // 비밀번호 표시 여부
+   const rememberMe = ref(userInfoStore.isRemembered); // 아이디 저장 체크박스 값
+
+   // 체크박스 변경 시 자동 반영
+   watch(rememberMe, (newValue) => {
+      userInfoStore.isRemembered = newValue;
+
+      if (!newValue) {
+         userId.value = ""; // 체크 해제 시 아이디 입력 필드도 초기화
+      }
+   });
 
    // 비밀번호 가리기/보이기 토글
    const togglePasswordVisibility = () => {
@@ -104,7 +122,6 @@
    };
 
    // 비밀번호 찾기 페이지로 이동
-   const router = useRouter();
    const goToFindPw = () => {
       router.push({ path : '/findPw' });
    }
@@ -115,6 +132,7 @@
       loginSelect();
    }
 
+   // 엔터 키 이벤트 핸들러 (로그인 실행)
    const keyEventHandler = () => {
       btnLogin(); // 로그인 실행
    }
@@ -122,31 +140,48 @@
 // ============================================= Axios Event =============================================
    // id, pass값 서버로 보내기
    const loginSelect = async () => {
+      // const options = {
+      //    method: 'POST',
+      //    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      //    data: `username=${userId.value}&password=${password.value}`,
+      //    url : '/api/login'
+      // };
+
       const options = {
          method: 'POST',
-         headers: { 'content-type': 'application/x-www-form-urlencoded' },
-         data: `username=${userId.value}&password=${password.value}`,
+         headers: { 'content-type': 'application/json' },  // JSON 타입 지정
+         data: JSON.stringify({
+            username: userId.value,
+            password: password.value
+         }),
          url : '/api/login'
       };
 
       try {
          const result = await axios(options);
 
-         if(result.data.result == "success") {
+         userInfoStore.saveUserId(userId.value, rememberMe.value); // 아이디 저장하기 체크 시 로그인 시도한 아이디 저장
+         userInfoStore.setUser(result.data.user); // 로그인 성공 시 유저 정보 저장
 
-            const userInfoStore = useUserInfoStore(); // ✅ Pinia Store를 올바르게 호출
-            userInfoStore.setUser(result.data.user);
+         console.log("로그인 후 user 정보:", userInfoStore.user); // ✅ 콘솔 확인
+         console.log("로그인 후 isAuthenticated 값:", userInfoStore.isAuthenticated);
+
+         if(result.data.result == "success") {
 
             Swal.fire({
                icon: "success",
                title: "Login 성공 !!!",
             });
-            router.push({ path: `/home` });
+
+            await nextTick();
+            router.push('/home');
          }
 
       } catch (err) {
          console.log("로그인 실패 => ", err);
          console.log("err.result => ", err.response.data.result);
+         userInfoStore.saveUserId(userId.value, rememberMe.value); // 실패해도 아이디 저장
+
          if(err.status == 401 && err.response.data.result == "failed") {
             Swal.fire({
                icon: "error",
