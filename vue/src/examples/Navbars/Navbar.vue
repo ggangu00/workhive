@@ -29,7 +29,7 @@
                      id="dropdownMenuButton"
                      data-bs-toggle="dropdown"
                      aria-expanded="false"
-                     
+
                   >
                      <i class="fa-solid fa-user font-16"></i>
                      <span v-if="userInfoStore.isAuthenticated" class="ms-2 font-16">
@@ -111,6 +111,7 @@
       </div>
    </nav>
 </template>
+
 <script>
 import Breadcrumbs from "../Breadcrumbs.vue";
 import { mapMutations, mapState } from "vuex";
@@ -182,6 +183,8 @@ export default {
 
       const btnLogout = () => {
          userInfoStore.logout();
+         localStorage.removeItem("token"); // 토큰 삭제
+         
          router.push('/login');
       };
 
@@ -263,18 +266,19 @@ export default {
    },
 };
 </script>
-<style>
-.dropdown-menu { 
-   border: 1px solid #eee !important;
-   h5{
-      color: #7b809a;
+   
+<style lang="scss">
+   .dropdown-menu {
+      border: 1px solid #eee !important;
+      h5{
+         color: #7b809a;
+      }
+      li:first-child {
+         border-bottom: 1px solid #eee !important;
+      }
+      i {
+         width: 20px;
+         color: #7b809a;
+  }
    }
-   li:first-child {
-      border-bottom: 1px solid #eee !important;
-   }   
-   i {
-      width: 20px;
-      color: #7b809a;
-   }
-}
 </style>

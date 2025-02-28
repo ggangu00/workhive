@@ -9,6 +9,12 @@
 	            <entry key="pageSize" value="10"/>
 			</map>
 		</property>
+		
+		<property name="extFileName">
+			<set>
+				<value>classpath:/egovframework/egovProps/key.properties</value>
+			</set>
+		</property>
 	</bean>
 	
 </beans>	

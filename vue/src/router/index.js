@@ -429,14 +429,20 @@ const router = createRouter({
    linkActiveClass: "active",
 });
 
-// ✅ **전역 네비게이션 가드 설정**
+// **전역 네비게이션 가드 설정**
 router.beforeEach((to, from, next) => {
-   const store = useUserInfoStore(); // 🔥 여기서 `useUserInfoStore()` 호출
+   const store = useUserInfoStore(); // pinia 정보
 
-   if (to.path !== "/login" && !store.isAuthenticated) {
-   next("/login"); // 로그인 안 된 경우 로그인 페이지로 이동
+   // 로그인 없이 접근 가능한 페이지 목록
+   const publicPages = ["/login", "/findPw"];
+
+   // 현재 이동하려는 페이지가 로그인 필요한 페이지인지 확인
+   const authRequired = !publicPages.includes(to.path);
+
+   if (authRequired && !store.isAuthenticated) {
+      next("/login"); // 로그인 안 된 경우 로그인 페이지로 이동
    } else {
-   next(); // 정상 이동
+      next(); // 정상 이동
    }
 });
 
