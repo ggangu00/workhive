@@ -1,23 +1,32 @@
 package egovframework.com.securing.util;
 
-import java.util.Date;
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
-import java.security.Key;
 import java.nio.charset.StandardCharsets;
+import java.security.Key;
+import java.util.Date;
 
+import javax.annotation.Resource;
+
+import org.egovframe.rte.fdl.property.EgovPropertyService;
 import org.springframework.stereotype.Component;
+
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtUtil {
-    private static final String SECRET_KEY = "YOUR_SECRET_KEY_32BYTE"; // 32바이트 이상 필요
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60; // 1시간 (밀리초 단위)
+	@Resource(name="propertiesService")
+    private EgovPropertyService propService;
+
+    private static final long EXPIRATION_TIME = 1000 * 60 * 60; // 1시간
 
     private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+        String secretKey = propService.getString("jwt.secret");
+        return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
-    // ✅ JWT 생성
+    // JWT 생성
     public String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
@@ -27,7 +36,7 @@ public class JwtUtil {
                 .compact();
     }
 
-    // ✅ JWT에서 사용자 이름 추출
+    // JWT에서 사용자 이름 추출
     public String extractUsername(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
@@ -37,7 +46,7 @@ public class JwtUtil {
                 .getSubject();
     }
 
-    // ✅ 토큰 유효성 검사
+    // 토큰 유효성 검사
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()

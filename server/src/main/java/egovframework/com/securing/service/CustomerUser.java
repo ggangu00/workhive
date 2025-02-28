@@ -79,7 +79,7 @@ public class CustomerUser implements UserDetails {
 	 */
 	@Override
 	public boolean isEnabled() {
-		return "Y".equals(userDTO.getMberSttus());
+		return "J01".equals(userDTO.getMberSttus());
 	}
 
 	/**

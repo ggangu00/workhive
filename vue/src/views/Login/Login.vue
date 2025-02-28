@@ -140,12 +140,6 @@
 // ============================================= Axios Event =============================================
    // id, pass값 서버로 보내기
    const loginSelect = async () => {
-      // const options = {
-      //    method: 'POST',
-      //    headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      //    data: `username=${userId.value}&password=${password.value}`,
-      //    url : '/api/login'
-      // };
 
       const options = {
          method: 'POST',
@@ -154,19 +148,17 @@
             username: userId.value,
             password: password.value
          }),
-         url : '/api/login'
+         url : '/api/loginproc'
       };
 
       try {
          const result = await axios(options);
 
          userInfoStore.saveUserId(userId.value, rememberMe.value); // 아이디 저장하기 체크 시 로그인 시도한 아이디 저장
-         userInfoStore.setUser(result.data.user); // 로그인 성공 시 유저 정보 저장
-
-         console.log("로그인 후 user 정보:", userInfoStore.user); // ✅ 콘솔 확인
-         console.log("로그인 후 isAuthenticated 값:", userInfoStore.isAuthenticated);
 
          if(result.data.result == "success") {
+            localStorage.setItem("token", result.data.token);  // 토큰 저장
+            userInfoStore.setUser(result.data.user, result.data.token);
 
             Swal.fire({
                icon: "success",
