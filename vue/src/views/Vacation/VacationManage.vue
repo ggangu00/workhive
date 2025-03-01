@@ -2,7 +2,7 @@
   <!-- 휴가 신청 등록/수정 -->
   <div class="row mt-5">
     <div class="col">
-        
+
       <div class="row">
         <div class="col header">
           <h4 v-if="!isUpdate">  [ 휴가 신청 등록 ]</h4>
@@ -76,7 +76,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import axios from 'axios';
+import axios from '../../assets/js/customAxios';
 import { dateTimeFormat } from '../../assets/js/common';
 import * as vacation from '../../assets/js/vacation';
 
@@ -114,7 +114,7 @@ const vcGetInfo = async () => {
   vcData.value.atchFileId = result.data.atchFileId;
   vcData.value.signId = result.data.signId;
   vcData.value.createId = result.data.createId;
-  
+
   vcData.value.remainDays = '';
 
 }
@@ -128,13 +128,13 @@ let vcData = ref({
   vcReason: '',
   atchFileId: '',
   signId: '',
-  
+
   remainDays: '',
   createId: 'user01',
 })
 // 날짜 입력 감지 - 사용일수 계산
 watch(() => [vcData.value.vcStartDt, vcData.value.vcEndDt, vcData.value.vcType], async (newVal) => {
-  
+
   // 연차 정보 없는 경우 - 연차 생성
   let startYear;
   let startCheck;
@@ -173,7 +173,7 @@ watch(() => vcData.value.useDays, (newVal) => {
       vcData.value.remainDays = props.vcInfo.requestDays;
       firstRemainDays = vcData.value.useDays;
       isFirstLoad++; // 첫 로딩 이후 감지 시작
-  
+
       return;
     }
 
@@ -216,7 +216,7 @@ const btnVcManage = async () => {
   formData.append("vcReason", vcData.value.vcReason);
   // formData.append("atchFileId", vcData.value.atchFileId);
   formData.append("signId", 'admin');
-  
+
   if(!isUpdate.value) {
     formData.append("createId", vcData.value.createId);
     await axios.post('/api/vacation/vcAdd', formData);
@@ -252,5 +252,4 @@ button {
   padding: 5px 10px !important;
 }
 </style>
-  
-  
+

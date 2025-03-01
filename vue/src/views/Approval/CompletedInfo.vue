@@ -9,11 +9,11 @@
       <!--  이벤트추가-->
     </div>
   </template>
-  
+
   <script setup>
   import {onMounted, ref} from 'vue';
   import ApprovalInfo from '@/components/PaymentLayout/ApprovalInfo.vue';
-  //import axios from 'axios';
+  //import axios from '../../assets/js/customAxios';
   import { useRoute } from 'vue-router';
 
   const route = useRoute();
@@ -39,7 +39,7 @@
   })
   //버튼명
   const headButtons = ref([
-    { label: '인쇄/다운로드', class: 'btn-success btn-fill' },  
+    { label: '인쇄/다운로드', class: 'btn-success btn-fill' },
     { label: '공람발송', class: 'btn-primary btn-fill' },
   ]);
 
@@ -55,7 +55,7 @@
 
       case '인쇄/다운로드' :
         await downloadBtn();
-        break;  
+        break;
     }
 
 

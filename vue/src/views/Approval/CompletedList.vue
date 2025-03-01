@@ -1,7 +1,7 @@
 <template>
-  <ApprovalList 
-    :buttons="buttons" 
-    :columnDefs="columnDefs" 
+  <ApprovalList
+    :buttons="buttons"
+    :columnDefs="columnDefs"
     :status="status"
 
     @button-click="linkButton"
@@ -10,10 +10,10 @@
 
 <script>
 import ApprovalList from '@/components/PaymentLayout/ApprovalList.vue'
-//import axios from 'axios';
+//import axios from '../../assets/js/customAxios.js';
 
 export default {
-  
+
   components: { ApprovalList },
   methods:{
       //문서기안버튼
@@ -21,8 +21,8 @@ export default {
         window.location.href = action;
       },
   },
-  
-  data() { 
+
+  data() {
     return {
       buttons: [
         { label: '기안', class: 'btn-warning btn-fill', action: 'http://localhost:8077/registerTest'},

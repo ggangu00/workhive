@@ -87,5 +87,16 @@
 		WHERE
 		   authority_cd = #{authorityCd}
 	</update>
+	
+	<select id="isMenuAccessible" resultType="int">
+		SELECT 
+		   count(*) 
+		FROM 
+		   vw_member_menu
+		WHERE 
+		   mber_id = #{userId}
+		AND   
+		   menu_cd = #{menuCd}
+	</select>
 
 </mapper>

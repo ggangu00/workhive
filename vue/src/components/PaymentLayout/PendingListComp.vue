@@ -72,7 +72,7 @@
 import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import "tui-grid/dist/tui-grid.css";
-import axios from "axios";
+import axios from "../../assets/js/customAxios.js";
 import Swal from 'sweetalert2';
 import { useUserInfoStore } from '../../store/userStore.js';
 
@@ -187,14 +187,14 @@ const btnSelectChange = () => {
     } else {
       return; // 취소 시 함수 종료
     }
-    
+
     try {
       const response = await axios.put(`/api/document/state`, {
         approvalArr: checkedData.map(row => row.docCd),
         mberId: loginUser , // 실제 로그인 아이디로 변경
         signStat: newSignStat
       });
-      
+
       if (response.statusText == "OK") {
         Swal.fire({
           icon: "success",

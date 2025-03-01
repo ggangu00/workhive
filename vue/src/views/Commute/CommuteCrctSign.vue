@@ -6,7 +6,7 @@
       <div class="card">
         <div class="card-body">
           <h4 class="card-title float-left">출퇴근 정정 요청 결재</h4>
-          
+
           <button class="btn btn-danger btn-sm btn-fill float-right" value="D04" @click="btnCrctSign">반려</button>
           <button class="btn btn-warning btn-sm btn-fill float-right" value="D03" @click="btnCrctSign">보완</button>
           <button class="btn btn-primary btn-sm btn-fill float-right" value="D02" @click="btnCrctSign">승인</button>
@@ -67,7 +67,7 @@
 
             </div>
           </div>
-          
+
         </div>
       </div>
 
@@ -77,7 +77,7 @@
 </template>
 
 <script setup>
-import axios from 'axios';
+import axios from '../../assets/js/customAxios.js';
 import Grid from 'tui-grid';
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 // import { dateTimeFormat } from '../../assets/js/common';
@@ -157,7 +157,7 @@ let signCol = [
 //   originCrctList = JSON.parse(JSON.stringify(result.data)); // 깊은 복사
 //   crctList.value = result.data;
 //   listFormat(crctList.value);
-  
+
 //   crctGridInstance.value.resetData(crctList.value);
 // }
 // const signGetList = async () => {
@@ -225,7 +225,7 @@ const initGrid = (gridInstance, gridDiv, rowData, colData) => {
 onMounted(() => {
   initGrid(crctGridInstance, 'crctGrid', crctList, crctCol);
   initGrid(signGridInstance, 'signGrid', signList, signCol);
-  
+
   // crctGetList();
   // signGetList();
 });
@@ -292,8 +292,8 @@ const btnCrctSign = async (e) => {
   // 해당 데이터들을 서버에 보내도록 수정
   if (signDataArray.length) {
     if(e.target.value == 'D01' || e.target.value == 'D02')
-      await axios.post('/api/commute/crctSignModify', signDataArray.map(data => data.cmtData)); 
-    await axios.post('/api/commute/signModify', signDataArray.map(data => data.signData)); 
+      await axios.post('/api/commute/crctSignModify', signDataArray.map(data => data.cmtData));
+    await axios.post('/api/commute/signModify', signDataArray.map(data => data.signData));
   }
 
   // 리스트 새로 고침

@@ -49,10 +49,12 @@ public class UserDTO {
 	
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date createDt;			// 등록일시
+	
 	private String createId;		// 등록자
 	
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date update_dt;			// 수정일시
+	
 	private String updateId;		// 수정자
 	private String delYn;			// 삭제여부
 	private String respCd;			// 직책코드

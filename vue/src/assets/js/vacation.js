@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../../assets/js/customAxios";
 
 // 연차 조회
 export async function yearVcGetInfo(mberId, targetYear) {
@@ -17,7 +17,7 @@ export async function yearVcAdd(mberId, targetYear) {
   formData.append("targetYear", targetYear);
   formData.append("giveDays", 15);
   formData.append("useDays", 0);
-  
+
   await axios.post('/api/yearVc/yearVcAdd', formData);
 }
 

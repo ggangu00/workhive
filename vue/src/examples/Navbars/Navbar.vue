@@ -117,7 +117,8 @@ import Breadcrumbs from "../Breadcrumbs.vue";
 import { mapMutations, mapState } from "vuex";
 
 // ksy 추가
-import axios from 'axios';
+
+import axios from '../../assets/js/customAxios.js';
 import { useStore } from "vuex";
 import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
@@ -184,7 +185,7 @@ export default {
       const btnLogout = () => {
          userInfoStore.logout();
          localStorage.removeItem("token"); // 토큰 삭제
-         
+
          router.push('/login');
       };
 
@@ -266,7 +267,7 @@ export default {
    },
 };
 </script>
-   
+
 <style lang="scss">
    .dropdown-menu {
       border: 1px solid #eee !important;

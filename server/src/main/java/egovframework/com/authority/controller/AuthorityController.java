@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,12 +14,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import egovframework.com.authority.service.AuthorityDTO;
 import egovframework.com.authority.service.AuthorityService;
-import egovframework.com.securing.service.UserDTO;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController // data 
@@ -34,9 +30,7 @@ public class AuthorityController {
 	// 권한 조회 처리
 	@GetMapping("")
 	public List<AuthorityDTO> authorityList() {
-		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-		UserDTO loginUser = (UserDTO) request.getSession().getAttribute("loginUser");
-		log.info("loginUser => " + loginUser.getMberId().toString());
+				
 		log.info("권한 목록 조회" + authService.authoritySelectAll().toString());
 		
 		return authService.authoritySelectAll();

@@ -3,7 +3,9 @@ package egovframework.com.securing.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -21,84 +23,124 @@ import egovframework.com.securing.service.CustomUserDetailService;
 import egovframework.com.securing.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 
-@Configuration // Spring Security 설정을 위한 설정 클래스 선언
-@EnableWebSecurity // Spring Security를 활성화하는 어노테이션
-@RequiredArgsConstructor
+@Configuration  // Spring Security 설정 클래스
+@EnableWebSecurity // Spring Security 활성화
+@RequiredArgsConstructor // 생성자 주입을 자동으로 처리
 public class WebSecurityConfig {
-	
-    private final JwtUtil jwtUtil;  // 생성자 주입
-    private final CustomUserDetailService userDetailsService; // 생성자 주입
     
-	@Bean
-	PasswordEncoder passwordEncoder() {
-		// 비밀번호를 안전하게 저장하기 위해 BCryptPasswordEncoder 사용
-		return new BCryptPasswordEncoder();
-	}
+    private final JwtUtil jwtUtil; // JWT 토큰 생성 및 검증 유틸리티
+    private final CustomUserDetailService userDetailsService; // 사용자 정보 로드 서비스
 
-	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.authorizeHttpRequests((requests) -> requests
-				.requestMatchers("/**", "/menu", "/comm/*", "/department", "/project/*", "/todo/**", "/document/*", "/meet/*", "/css/*", "/js/*", "/assets/*", "/login").permitAll() // 홈, 정적 리소스는 인증 없이 접근 가능
+    /**
+     * 🔐 비밀번호 암호화를 위한 BCryptPasswordEncoder 설정
+     * - Spring Security는 기본적으로 평문(Plain Text) 비밀번호 사용을 허용하지 않음.
+     * - 따라서 모든 비밀번호를 안전하게 저장하기 위해 BCrypt 해싱을 적용해야 함.
+     */
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-//				.requestMatchers("/", "/menu", "/css/*", "/js/*", "/assets/*", "/login", "/loginproc").permitAll() // 홈, 정적 리소스는 인증 없이 접근 가능
+    /**
+     * 🔒 Spring Security 필터 체인 설정
+     * - HTTP 요청에 대한 보안 규칙을 정의
+     * - JWT 기반 인증을 적용하기 위해 CSRF 비활성화 및 세션 정책을 STATELESS로 설정
+     */
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    	  http
+	          .csrf(csrf -> csrf.disable())  // JWT 기반이므로 CSRF 비활성화
+	          .sessionManagement(session -> session
+	              .sessionCreationPolicy(SessionCreationPolicy.STATELESS)  // 세션 아예 사용 안 함
+	          )
+	          .authorizeHttpRequests(auth -> auth
+	              .requestMatchers("/loginProc", "/menu/**", "/css/**", "/js/**", "/assets/**").permitAll()  // 로그인 및 정적 리소스는 모두 허용
+	              .requestMatchers("/access/**").authenticated()  // 권한 체크 API는 인증 필요
+	              .anyRequest().authenticated()  // 그 외 모든 요청은 인증 필요
+	          )
+	          .exceptionHandling(ex -> ex
+	              .accessDeniedHandler(accessDeniedHandler())  // 권한 부족 시 핸들러
+	              .authenticationEntryPoint(authenticationEntryPoint())  // 인증 안 된 사용자 접근 시 핸들러
+	          )
+	          .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);  // JWT 필터를 UsernamePassword 앞에 추가
 
-				.anyRequest().authenticated()) // 위의 URL 외에는 모두 인증된 사용자만 접근 가능
-				.formLogin((form) -> form.successHandler(suthenticationSuccessHandler()) // 로그인 성공 시 실행할 핸들러
-										.failureHandler(suthenticationFaildHandler()) // 로그인 실패 시 실행할 핸들러
-										.permitAll()) // 로그인 페이지는 인증 없이 접근 가능하도록 설정
-				.logout((logout) -> logout.deleteCookies("JSESSIONID") // 로그아웃 시 JSESSIONID 쿠키 삭제
-										.permitAll()) // 로그아웃은 인증 없이도 가능하도록 설정
-				.csrf(csrf -> csrf.disable())
-				.sessionManagement(session -> session
-		                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-		            )
-		            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class); // 패스워드 체크 전에 확인함
+      return http.build();
+    }
 
-		// CSRF 설정 (현재 비활성화됨)
-
-		http.exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler())
-										.authenticationEntryPoint(authenticationEntryPoint())); // 접근 거부(403) 예외 발생 시 커스텀 핸들러 적용
-
-		return http.build(); // SecurityFilterChain 객체를 반환하여 Security 설정 적용
-	}
-
+    /**
+     * ️ JWT 인증 필터 등록
+     * JWT를 검증하여 사용자 인증을 수행하는 필터
+     */
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationFilter(jwtUtil, userDetailsService);
     }
-    
+
+    /**
+     * AuthenticationManager 설정
+     * Spring Security의 사용자 인증을 담당하는 핵심 객체
+     * AuthenticationManager가 UserDetailsService를 이용해 사용자 인증 수행
+     */
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http, PasswordEncoder passwordEncoder, CustomUserDetailService userDetailsService) throws Exception {
-        return http.getSharedObject(AuthenticationManagerBuilder.class)
-                .userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder)
-                .and()
-                .build();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
+    /**
+     * AuthenticationProvider 설정
+     * DaoAuthenticationProvider를 사용하여 인증 처리
+     * UserDetailsService 및 PasswordEncoder 설정
+     */
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
+    }
 
-	@Bean
-	public AuthenticationSuccessHandler suthenticationSuccessHandler() {
-		return new CustomLoginSuccessHandler(); // 로그인 성공 시 실행할 커스텀 핸들러 반환
-	}
+    /**
+     * 로그인 성공 핸들러 설정
+     * 로그인 성공 시 실행할 커스텀 핸들러 반환
+     */
+    @Bean
+    public AuthenticationSuccessHandler authenticationSuccessHandler() {
+        return new CustomLoginSuccessHandler();
+    }
 
-	@Bean
-	public AuthenticationFailureHandler suthenticationFaildHandler() {
-		return new CustomLoginFailedHandler(); // 로그인 실패 시 실행할 커스텀 핸들러 반환
-	}
+    /**
+     * 로그인 실패 핸들러 설정
+     * 로그인 실패 시 실행할 커스텀 핸들러 반환
+     */
+    @Bean
+    public AuthenticationFailureHandler authenticationFailedHandler() {
+        return new CustomLoginFailedHandler();
+    }
 
-	@Bean
-	public AuthenticationEntryPoint authenticationEntryPoint() {
-		return new CustomAuthenticationEntryPoint();
-	}
+    /**
+     * 인증되지 않은 사용자 접근 시 처리할 핸들러
+     * 예를 들어, JWT 토큰이 없는 요청이 보호된 API를 호출할 경우 이 핸들러가 실행됨
+     */
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint() {
+        return new CustomAuthenticationEntryPoint();
+    }
 
-	@Bean
-	public AccessDeniedHandler accessDeniedHandler() {
-		return new CustomAccessDeniedHandler(); // 접근 권한이 없을 때 실행할 커스텀 핸들러 반환
-	}
-	
-	@Bean(name = "mvcHandlerMappingIntrospector")
-	public HandlerMappingIntrospector mvcHandlerMappingIntrospector() {
-		return new HandlerMappingIntrospector(); // Spring MVC의 요청 매핑을 분석하는 Bean 등록 (Spring Security의 URL 인식에 필요)
-	}
+    /**
+     * 접근 권한이 없는 요청 시 처리할 핸들러
+     * 인증은 되었지만 특정 리소스에 접근할 권한이 없을 때 실행됨
+     */
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return new CustomAccessDeniedHandler();
+    }
+    
+    /**
+     * Spring MVC의 요청 매핑을 분석하는 Bean 등록
+     * Spring Security에서 URL 패턴을 정확히 인식하기 위해 필요
+     */
+    @Bean(name = "mvcHandlerMappingIntrospector")
+    public HandlerMappingIntrospector mvcHandlerMappingIntrospector() {
+        return new HandlerMappingIntrospector();
+    }
 }

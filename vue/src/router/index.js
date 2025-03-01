@@ -1,4 +1,6 @@
 import { useUserInfoStore } from "../store/userStore"; // Pinia Store 가져오기
+import axios from "../assets/js/customAxios.js"
+import Swal from 'sweetalert2';
 
 import { createRouter, createWebHistory } from "vue-router";
 import Dashboard from "../views/Dashboard.vue";
@@ -368,7 +370,7 @@ const routes = [
          name: 'SecretAt',
          component : SecretAt,
       },
-       
+
 
 
 
@@ -429,21 +431,95 @@ const router = createRouter({
    linkActiveClass: "active",
 });
 
+// const authorityGetList = async () => {
+//    try {
+//       const result = await axios.get('/api/authority');
+//       console.log("접근 권한 체크 => ", result.data);
+
+//    } catch (err) {
+//       Swal.fire({
+//          icon: "error",
+//          title: "API 조회 오류",
+//          text:  "Error : " + err.response.data.error
+//       });
+//    }
+// };
+
 // **전역 네비게이션 가드 설정**
-router.beforeEach((to, from, next) => {
-   const store = useUserInfoStore(); // pinia 정보
+// router.beforeEach((to, from, next) => {
+//    //authorityGetList();
+
+//    const store = useUserInfoStore(); // pinia 정보
+
+//    // 로그인 없이 접근 가능한 페이지 목록
+//    const publicPages = ["/login", "/findPw"];
+
+//    // 현재 이동하려는 페이지가 로그인 필요한 페이지인지 확인
+//    const authRequired = !publicPages.includes(to.path);
+
+//    if (authRequired && !store.isAuthenticated) {
+//       next("/login"); // 로그인 안 된 경우 로그인 페이지로 이동
+//    } else {
+//       // 이 부분에 권한체크가 들어와야해
+//    }
+// });
+
+router.beforeEach(async (to, from, next) => {
+   const store = useUserInfoStore();
 
    // 로그인 없이 접근 가능한 페이지 목록
-   const publicPages = ["/login", "/findPw"];
+   const publicPages = ["/login", "/findPw", "/home"];
 
    // 현재 이동하려는 페이지가 로그인 필요한 페이지인지 확인
    const authRequired = !publicPages.includes(to.path);
 
+   // 로그인 안 되어있으면 무조건 로그인 페이지로
    if (authRequired && !store.isAuthenticated) {
-      next("/login"); // 로그인 안 된 경우 로그인 페이지로 이동
+      return next("/login");
+   }
+
+   // ✅ 로그인한 경우, 권한 체크 수행 (publicPages가 아닌 경우)
+   if (authRequired) {
+      const menuCd = to.query.menuCd;
+
+      if (!menuCd) {
+         console.warn("메뉴코드가 없습니다. 권한체크 없이 이동합니다.");
+         return next();   // 메뉴코드 없으면 권한체크 패스하고 그냥 이동
+      }
+
+      try {
+         // 메뉴코드 있는 경우만 권한 체크
+         const response = await axios.get(`/api/access/${menuCd}`, {
+            withCredentials: true
+         });
+
+         if (response.status === 200 && response.data === true) {
+            return next(); // ✅ 권한 있음 → 정상 이동
+         } else {
+            Swal.fire({
+               icon: "warning",
+               title: "접근 불가",
+               text: "해당 메뉴에 접근할 권한이 없습니다."
+            });
+            return next(false); // 🚫 권한 없으면 이동 차단
+         }
+      } catch (error) {
+         if (error.response?.status === 401) {
+            return next("/login");
+         } else {
+            Swal.fire({
+               icon: "error",
+               title: "오류 발생",
+               text: "서버와의 통신 중 문제가 발생했습니다."
+            });
+            return next(false);
+         }
+      }
    } else {
-      next(); // 정상 이동
+      next(); // publicPages는 그냥 통과
    }
 });
+
+
 
 export default router;

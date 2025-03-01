@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../../assets/js/customAxios";
 
 
 //공통함수

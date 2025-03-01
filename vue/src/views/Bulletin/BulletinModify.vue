@@ -103,7 +103,7 @@
 import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor } from '@toast-ui/editor';
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import axios from '../../assets/js/customAxios';
 import { useRoute, useRouter } from 'vue-router';
 
 // 라우터 훅을 사용하여 파라미터를 가져옵니다
@@ -180,7 +180,7 @@ const fetchBulletinInfo = async () => {
       if (editor) {
         editor.setHTML(nttCn.value);
       }
-      
+
     } else {
       responseMessage.value = "게시글을 찾을 수 없습니다.";
       isSuccess.value = false;

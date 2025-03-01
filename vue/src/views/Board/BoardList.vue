@@ -4,7 +4,7 @@
       <div>
         <div class="card">
           <div class="card-body">
-            <h4 class="card-title float-left mt-1">게시판 목록</h4>           
+            <h4 class="card-title float-left mt-1">게시판 목록</h4>
           </div>
         </div>
       </div>
@@ -22,7 +22,7 @@
             @input="filterGrid"
             placeholder="검색어를 입력하세요"
             class="custom-input"
-          />           
+          />
         </div>
 
         <!-- 업무 목록 -->
@@ -39,7 +39,7 @@
 
 <script setup>
 import { onMounted, onBeforeUnmount, ref } from 'vue';
-import axios from 'axios';
+import axios from '../../assets/js/customAxios';
 import { useRouter } from 'vue-router';
 
 const searchKeyword = ref(''); // 검색어 상태
@@ -99,13 +99,13 @@ const destroyGrid = () => {
 
 const initializeGrid = () => {
   destroyGrid(); // 중복 방지 위해 기존 인스턴스 제거
-  
+
   gridInstance.value = new window.tui.Grid({
     el: document.getElementById('boardGrid'),
     data: BoardList.value,
     scrollX: false, // 수평 스크롤 제거 (열이 전체 너비 사용)
     scrollY: true,
-    bodyHeight: 480, // 표 높이 지정    
+    bodyHeight: 480, // 표 높이 지정
     pageOptions: {
       useClient: true, // 클라이언트 사이드 페이지네이션
       perPage: 10,
@@ -115,45 +115,45 @@ const initializeGrid = () => {
     },
     columns: [
       { header: '번호', name: 'rowNum', align: 'center', width: 60, sortable: true },
-      { 
-        header: '게시판명', 
-        name: 'bbsNm', 
-        sortable: true, 
-        align: 'left', 
+      {
+        header: '게시판명',
+        name: 'bbsNm',
+        sortable: true,
+        align: 'left',
         minWidth: 200, // 최소 너비 설정
       },
-      { 
-        header: '작성자', 
-        name: 'frstRegisterNm', 
-        sortable: true, 
-        align: 'center', 
-        width: 120, 
+      {
+        header: '작성자',
+        name: 'frstRegisterNm',
+        sortable: true,
+        align: 'center',
+        width: 120,
       },
-      { 
-        header: '작성일', 
-        name: 'frstRegisterPnttm', 
-        sortable: true, 
-        align: 'center', 
-        width: 140, 
+      {
+        header: '작성일',
+        name: 'frstRegisterPnttm',
+        sortable: true,
+        align: 'center',
+        width: 140,
       },
-      { 
-        header: '사용여부', 
-        name: 'useAt', 
-        sortable: true, 
-        align: 'center', 
-        width: 140, 
+      {
+        header: '사용여부',
+        name: 'useAt',
+        sortable: true,
+        align: 'center',
+        width: 140,
         formatter: ({ value }) => value === 'A01' ? 'Y' : value === 'A02' ? 'N' : value
       },
-      { 
-        header: '관리', 
-        name: 'action', 
-        align: 'center', 
+      {
+        header: '관리',
+        name: 'action',
+        align: 'center',
         width: 150, // 버튼 공간 확보
-        renderer: BtnRenderer, 
+        renderer: BtnRenderer,
       },
     ],
   });
-  
+
   // 열 너비 자동 맞춤
   gridInstance.value.refreshLayout();
 };
@@ -177,22 +177,22 @@ class BtnRenderer {
     el.innerHTML = `
       <button class="btn btn-success btn-fill me-2" data-type="edit">수정</button>
     `;
-    
+
     // 버튼 클릭 시 오직 수정 이벤트만 호출
     el.addEventListener('click', () => {
       const rowKey = props.rowKey;
-      
+
       if (rowKey === undefined) {
         console.error('BtnRenderer: rowKey를 가져올 수 없습니다.', props);
         return;
       }
-      
+
       udtEvent(rowKey);
     });
-    
+
     this.el = el;
   }
-  
+
   getElement() {
     return this.el;
   }
@@ -206,8 +206,8 @@ const udtEvent = (rowKey) => {
     alert('선택된 게시글을 찾을 수 없습니다.');
     return;
   }
-  console.log(`수정 버튼 클릭됨:`, selectedRow);  
-  
+  console.log(`수정 버튼 클릭됨:`, selectedRow);
+
   router.push({
     path: '/board/boardModify',
     query: {
@@ -217,7 +217,7 @@ const udtEvent = (rowKey) => {
       fileAtchPosblAt: selectedRow.fileAtchPosblAt,
       answerAt: selectedRow.answerAt,
       useAt: selectedRow.useAt
-    }    
+    }
   });
 };
 </script>

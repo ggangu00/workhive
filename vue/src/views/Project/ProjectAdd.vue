@@ -139,7 +139,7 @@
 </template>
 
 <script setup>
-import axios from "axios";
+import axios from "../../assets/js/customAxios";
 import { useRouter, useRoute } from 'vue-router';
 import { onBeforeMount, onMounted, ref } from 'vue';
 
@@ -191,7 +191,7 @@ const numberAutoFormat = () => {
 }
 
 //입력정보 초기화
-const formReset = () => { 
+const formReset = () => {
   Swal.fire({
     title: "작성내용을 초기화하시겠습니까?",
     icon: "question",
@@ -266,7 +266,7 @@ const modalOpen = () => {
 }
 
 //거래처 목록 모달 닫기
-const modalClose = (e) => { 
+const modalClose = (e) => {
   if (e.key === "Escape") {
     if (isShowModal.value) {
       isShowModal.value = !isShowModal.value
@@ -287,7 +287,7 @@ const btnWorkAdd = () => {
 
 //프로젝트 단건조회
 const projectInfo = ref([]);
-const projectGetInfo = async (prCd) => { 
+const projectGetInfo = async (prCd) => {
   try {
     const result = await axios.get(`/api/project/info/${prCd}`);
     projectInfo.value = result.data.info;
@@ -315,7 +315,7 @@ const projectGetInfo = async (prCd) => {
 //거래처 목록 조회
 const companyList = ref([]);
 const companyCount = ref(0);
-const comGetList = async () => { 
+const comGetList = async () => {
   try {
     const result = await axios.get('/api/comm/comList');
 
@@ -334,7 +334,7 @@ const comSelect = (params) => {
 }
 
 //프로젝트 등록
-const projectAdd = async () => { 
+const projectAdd = async () => {
 
   if (!prNm.value) {
     Swal.fire({
@@ -360,7 +360,7 @@ const projectAdd = async () => {
       state: row.state,
       seq: row.rowKey
     })),
-    prNm: prNm.value, 
+    prNm: prNm.value,
     typeCd: typeCd.value,
     startDt: startDt.value,
     endDt: endDt.value,

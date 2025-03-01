@@ -9,11 +9,11 @@
       <!--  이벤트추가-->
     </div>
   </template>
-  
+
   <script setup>
   import {onMounted, ref} from 'vue';
   import ApprovalInfo from '@/components/PaymentLayout/ApprovalInfo.vue';
-  import axios from 'axios';
+  import axios from '../../assets/js/customAxios.js';
   import { useRoute } from 'vue-router';
   import { useUserInfoStore } from '../../store/userStore.js';
   import Swal from 'sweetalert2';
@@ -46,7 +46,7 @@ let loginUser = userInfoStore.user ? userInfoStore.user.mberId : ""; // 로그�
   })
   //버튼명
   const headButtons = ref([
-    { label: '인쇄/다운로드', class: 'btn-success btn-fill' }, 
+    { label: '인쇄/다운로드', class: 'btn-success btn-fill' },
     { label: '결재', class: 'btn-primary' },
   ]);
 
@@ -80,14 +80,14 @@ const approvalBtn = () => {
     } else {
       return; // 취소 시 함수 종료
     }
-    
+
     try {
       const response = await axios.put(`/api/document/state`, {
         approvalArr: [docCd.value],
         mberId: loginUser , // 실제 로그인 아이디로 변경
         signStat: newSignStat
       });
-      
+
       if (response.statusText == "OK") {
         Swal.fire({
           icon: "success",
@@ -108,7 +108,7 @@ const approvalBtn = () => {
         text: "Error : " + err,
       });
     }
-   
+
 
   });
 

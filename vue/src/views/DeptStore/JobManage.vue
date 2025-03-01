@@ -108,7 +108,7 @@
 <script setup>
 import { computed, ref, watch } from 'vue';
 import Modal from '../../components/Modal.vue';
-import axios from 'axios';
+import axios from '../../assets/js/customAxios.js';
 import { useStore } from 'vuex';
 import { useUserInfoStore } from '../../store/userStore.js';
 

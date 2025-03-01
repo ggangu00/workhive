@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../../assets/js/customAxios";
 
 // 휴식 시간 계산
 const restTime = (go, leave, time) => {
@@ -52,14 +52,14 @@ export async function cmtCheck(goTimeInput, leaveTimeInput) {
     result.leaveState = "G03";
     result.overWorkTime = result.workTime;
     result.workTime = 0;
-    
+
     result.overWorkTime = restTime(goHour, leaveHour, result.overWorkTime);
-    
+
     return result;
 
   } else if (isNightWork || isNextDayWork) { // G04: 야간 근무
     result.leaveState = "G04";
-    
+
     // 야간 근무 시간 계산 (22시 ~ 익일 6시)
     let nightWorkHours = 0;
     if (leaveHour >= 22) {
@@ -85,10 +85,10 @@ export async function cmtCheck(goTimeInput, leaveTimeInput) {
       result.leaveState = "G02";
       result.overWorkTime = result.workTime - 8;
       result.workTime = 8;
-      
+
     } else if (leaveHour < endTime) { // G05: 조퇴
       result.leaveState = "G05";
-  
+
     } else if(leaveHour >= endTime) { // G01: 정상 퇴근
       result.leaveState = "G01";
     }

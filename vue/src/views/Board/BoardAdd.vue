@@ -69,11 +69,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import axios from '../../assets/js/customAxios';
 import { useRoute, useRouter } from 'vue-router';
 
-const route = useRoute();  
-const router = useRouter(); 
+const route = useRoute();
+const router = useRouter();
 
 //  쿼리 파라미터에서 데이터 추출 (쿼리 파라미터 이름과 일치시킴)
 let boardData = ref({
@@ -89,14 +89,14 @@ console.log('받은 데이터:', boardData.value);
 // 게시판 데이터 변수
 const formValues = ref({
   bbsId: 'abc',
-  bbsNm: '', 
+  bbsNm: '',
   bbsAttrbCode: 'abc',
-  bbsTyCode: '', 
-  fileAtchPosblAt: '', 
+  bbsTyCode: '',
+  fileAtchPosblAt: '',
   useAt: 'abc',
   frstRegisterId: 'abbc',
   frstRegisterPnttm: 'abc',
-  answerAt: '', 
+  answerAt: '',
 });
 
 // 응답 메시지와 성공 여부 변수
@@ -127,7 +127,7 @@ const validateForm = () => {
 
 // 게시판 등록 (FormData 방식)
 const BoardSave = async () => {
-  if (!validateForm()) return; 
+  if (!validateForm()) return;
 
   const addData = new FormData();
   Object.entries(formValues.value).forEach(([key, value]) => {
@@ -141,7 +141,7 @@ const BoardSave = async () => {
 
     setTimeout(() => {
       router.push('/board/boardList');
-    }, 1000); 
+    }, 1000);
   } catch (error) {
     responseMessage.value = "게시판 등록에 실패했습니다. 다시 시도해주세요.";
     isSuccess.value = false;
@@ -165,8 +165,8 @@ const resetForm = () => {
 
 // ✅ 페이지 로드 시 초기화 및 쿼리 데이터 적용
 onMounted(() => {
-  resetForm();             
-  setFormValuesFromQuery(); 
+  resetForm();
+  setFormValuesFromQuery();
 });
 </script>
 

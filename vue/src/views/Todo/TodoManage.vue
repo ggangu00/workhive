@@ -116,7 +116,7 @@
 </template>
 
 <script setup>
-import axios from "axios";
+import axios from "../../assets/js/customAxios";
 import { ref, computed, watch, watchEffect, onBeforeMount, onMounted, nextTick } from 'vue';
 
 //========================== 컴포넌트 ==========================
@@ -145,7 +145,7 @@ const todoDt = ref(dateFormat()); // 현재 선택된 날짜 (디폴트 : 오늘
 onBeforeMount(() => {
   getStatus();      //업무구분
   nowDateInfo();    //해당 월의 일수 표출
-  todoGetListAll(); //업무일지 전체조회 (금일)  
+  todoGetListAll(); //업무일지 전체조회 (금일)
 });
 
 //========================= Toast grid =========================
@@ -170,13 +170,13 @@ onMounted(() => {
     },
     rowHeight: 50,
     data: todoList.value,
-    rowHeaders: ["checkbox"],   
+    rowHeaders: ["checkbox"],
   });
 });
 
 //===================== Toast Grid Rendere =====================
 
-//일지 제목 
+//일지 제목
 class subjectRenderer {
   constructor(props) {
     const rowKey = props.row?.rowKey ?? props.grid.getRow(props.rowKey)?.rowKey;
@@ -253,7 +253,7 @@ const closeModal = () => {
 
 // 현재 월의 총 일수
 const dateArr = ref([]);
-const dayCnt = computed(() => new Date(year.value, month.value, 0).getDate()); 
+const dayCnt = computed(() => new Date(year.value, month.value, 0).getDate());
 const nowDateInfo = () => {
   dateArr.value = [];
   for (let i = 1; i <= dayCnt.value; i++) {
@@ -272,7 +272,7 @@ const todoGetDate = (date) => {
 };
 
 //입력정보 초기화
-const formReset = () => { 
+const formReset = () => {
   typeCd.value = 'B01';
   title.value = '';
   content.value = '';
@@ -369,7 +369,7 @@ const btnTodoListChange = (mode) => {
 //======================= axios =======================
 
 //업무구분 목록 호출
-const getStatus = async () => { 
+const getStatus = async () => {
   let arr = await getComm("WT");
   let arrAdd = { comm_dtl_cd: '', comm_dtl_nm: '전체' };
   typeCdArr.value.unshift(arrAdd);
@@ -379,7 +379,7 @@ const getStatus = async () => {
 //업무일지 전체조회
 const todoList = ref([]);
 const todoCount = ref(0);
-const todoGetListAll = async () => { 
+const todoGetListAll = async () => {
 
   const date = dateFormat(todoDt.value).replaceAll("-", ""); //선택된 날짜 없을 때 디폴트 금일
 
@@ -390,10 +390,10 @@ const todoGetListAll = async () => {
 
     grid.value.resetData(todoList.value); //toast grid로 데이터 전달
 
-    await nextTick(); //toast grid 로드될때까지 기다림 
+    await nextTick(); //toast grid 로드될때까지 기다림
     todoList.value.forEach((row, index) => { //toast grid 로드완료 후 상태별 rowClass 부여
       if (row.state == "A01") {
-        grid.value.addRowClassName(index, "table-end"); 
+        grid.value.addRowClassName(index, "table-end");
       } else {
         grid.value.addRowClassName(index, "table-white");
       }
@@ -441,7 +441,7 @@ const todoGetList = async (todoCd) => {
 
 //해당 일자 건수조회
 const todoListCnt = ref([]);
-watch(month, async () => { 
+watch(month, async () => {
   try {
     const result = await axios.get(`/api/todo/list/cnt?year=${year.value}&month=${month.value}`);
 
@@ -460,7 +460,7 @@ watch(month, async () => {
 }, { immediate: true });
 
 //업무일지 등록
-const todoAdd = async () => { 
+const todoAdd = async () => {
 
   if (!title.value) {
     Swal.fire({
@@ -500,7 +500,7 @@ const todoAdd = async () => {
 }
 
 //업무일지 다중 상태변경/삭제 처리
-const todoListUpdate = async (mode) => { 
+const todoListUpdate = async (mode) => {
   const checkedData = grid.value.getCheckedRows();
 
   const modeText = ref('상태변경');

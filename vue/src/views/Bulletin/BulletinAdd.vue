@@ -117,8 +117,8 @@
 import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor } from '@toast-ui/editor';
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
-import { useRoute, useRouter } from 'vue-router';
+import axios from '../../assets/js/customAxios';
+import { useRoute,useRouter } from 'vue-router';
 
 const route = useRoute();
 const router = useRouter();

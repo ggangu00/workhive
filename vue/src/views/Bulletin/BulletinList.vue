@@ -40,7 +40,7 @@
 <script setup>
 import { onMounted, onBeforeUnmount, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import axios from 'axios';
+import axios from '../../assets/js/customAxios';
 
 const route = useRoute();
 const router = useRouter();
@@ -63,7 +63,7 @@ const goToBulletinAdd = () => {
 const BulletinGetList = async () => {
   try {
     const { data } = await axios.get(`/api/bulletin/bulletinList?bbsId=${bbsId.value}`);
-    
+
     let noticeCount = 0; // 공지사항 개수
     BulletinList.value = (data.resultList || []).map((item, index) => {
       const isNotice = item.noticeAt?.trim().toUpperCase() === 'Y';
@@ -107,21 +107,21 @@ const initializeGrid = () => {
       resizable: true,
     },
     columns: [
-      { 
-        header: '번호', 
-        name: 'rowNum', 
-        align: 'center', 
-        width: 60, 
+      {
+        header: '번호',
+        name: 'rowNum',
+        align: 'center',
+        width: 60,
         className: 'bold-text',
         formatter: ({ value }) => {
           return value === '📢' ? `<span class="notice-icon">${value}</span>` : `${value}`;
         }
       },
-      { 
-        header: '제목', 
-        name: 'nttSj', 
-        align: 'left', 
-        minWidth: 200, 
+      {
+        header: '제목',
+        name: 'nttSj',
+        align: 'left',
+        minWidth: 200,
         sortable: true,
         formatter: ({ value, row }) => {
           return row.noticeAt === 'Y'
@@ -129,28 +129,28 @@ const initializeGrid = () => {
             : `<span class="normal-text">${value}</span>`; // 일반글: 덜 진하게
         }
       },
-      { 
-        header: '등록자', 
-        name: 'ntcrNm', 
-        align: 'center', 
-        width: 120, 
-        sortable: true, 
+      {
+        header: '등록자',
+        name: 'ntcrNm',
+        align: 'center',
+        width: 120,
+        sortable: true,
         className: 'bold-text'
       },
-      { 
-        header: '등록일', 
-        name: 'frstRegistPnttm', 
-        align: 'center', 
-        width: 140, 
+      {
+        header: '등록일',
+        name: 'frstRegistPnttm',
+        align: 'center',
+        width: 140,
         sortable: true,
         formatter: ({ value }) => `${value}`
       },
-      { 
-        header: '조회수', 
-        name: 'inqireCo', 
-        align: 'right', 
-        width: 100, 
-        sortable: true, 
+      {
+        header: '조회수',
+        name: 'inqireCo',
+        align: 'right',
+        width: 100,
+        sortable: true,
         className: 'bold-text'
       },
     ],

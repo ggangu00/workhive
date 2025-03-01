@@ -41,14 +41,14 @@
 </template>
 
 <script setup>
-import axios from "axios";
+import axios from "../../assets/js/customAxios.js";
 import Swal from 'sweetalert2';
 import { ref, onMounted, onBeforeMount } from 'vue';
 import Card from '../../components/Cards/Card.vue'
 import Grid from 'tui-grid';
 import { dateFormat } from '../../assets/js/common.js'
 
-//---------------데이터-------------- 
+//---------------데이터--------------
 
 let gridInstance = ref();
 let rowData = ref([]);

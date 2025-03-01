@@ -59,10 +59,10 @@
 </template>
 
 <script setup>
-   import { onBeforeMount, onBeforeUnmount, ref, watch, nextTick } from "vue";
+   import { onBeforeMount, onBeforeUnmount, ref, watch } from "vue";
    import { useStore } from "vuex";
    import { useRouter } from "vue-router";
-   import axios from "axios";
+   import axios from "../../assets/js/customAxios";
    import Swal from 'sweetalert2';
    import { useUserInfoStore  } from '../../store/userStore';
 
@@ -141,44 +141,42 @@
    // id, pass값 서버로 보내기
    const loginSelect = async () => {
 
-      const options = {
-         method: 'POST',
-         headers: { 'content-type': 'application/json' },  // JSON 타입 지정
-         data: JSON.stringify({
-            username: userId.value,
-            password: password.value
-         }),
-         url : '/api/loginproc'
-      };
+      userInfoStore.saveUserId(userId.value, rememberMe.value); // 아이디 저장하기 체크 시 로그인 시도한 아이디 저장
 
       try {
-         const result = await axios(options);
+         const response = await axios.post('/api/loginProc', { // ✅ data 객체 직접 전달
+            username: userId.value,
+            password: password.value
+         }, {
+            headers: { 'Content-Type': 'application/json' } // ✅ 올바른 Content-Type
+         });
 
-         userInfoStore.saveUserId(userId.value, rememberMe.value); // 아이디 저장하기 체크 시 로그인 시도한 아이디 저장
-
-         if(result.data.result == "success") {
-            localStorage.setItem("token", result.data.token);  // 토큰 저장
-            userInfoStore.setUser(result.data.user, result.data.token);
+         if(response.data.result == "success") {
+            localStorage.setItem("token", response.data.token);  // 토큰 저장
+            userInfoStore.setUser(response.data.user);
 
             Swal.fire({
                icon: "success",
                title: "Login 성공 !!!",
+            }).then(() => {
+               router.push('/home');
             });
-
-            await nextTick();
-            router.push('/home');
          }
 
       } catch (err) {
-         console.log("로그인 실패 => ", err);
-         console.log("err.result => ", err.response.data.result);
-         userInfoStore.saveUserId(userId.value, rememberMe.value); // 실패해도 아이디 저장
+         userInfoStore.saveUserId(userId.value, rememberMe.value); // 실패해도 pinia에 저장
 
-         if(err.status == 401 && err.response.data.result == "failed") {
+         if (err.response?.status === 401 && err.response?.data?.result === "fail") {
             Swal.fire({
-               icon: "error",
-               title: "Login 실패",
-               text:  "아이디 또는 비밀번호를 확인하세요"
+                  icon: "error",
+                  title: "Login 실패",
+                  text: err.response.data.message || "로그인에 실패했습니다."
+            });
+         } else {
+            Swal.fire({
+                  icon: "error",
+                  title: "오류 발생",
+                  text: "서버와의 통신 중 문제가 발생했습니다."
             });
          }
 

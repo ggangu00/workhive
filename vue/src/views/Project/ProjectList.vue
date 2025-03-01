@@ -156,7 +156,7 @@
 </template>
 
 <script setup>
-import axios from "axios";
+import axios from "../../assets/js/customAxios";
 import { useRouter } from "vue-router";
 import { onMounted, ref, watch, nextTick } from 'vue';
 
@@ -229,7 +229,7 @@ const exportToExcel = () => {
 
 //===================== Toast Grid Rendere =====================
 
-//프로젝트명 
+//프로젝트명
 class subjectRenderer {
   constructor(props) {
     const termClass = ref('');
@@ -408,7 +408,7 @@ const projectGetList = async () => {
 
 //프로젝트 단건조회
 const projectInfo = ref([]);
-const projectGetInfo = async (prCd) => { 
+const projectGetInfo = async (prCd) => {
   try {
     const result = await axios.get(`/api/project/info/${prCd}`);
     projectInfo.value = result.data.info;
@@ -425,7 +425,7 @@ const projectGetInfo = async (prCd) => {
 }
 
 //프로젝트 단건삭제
-const projectRemove = async (prCd) => { 
+const projectRemove = async (prCd) => {
 
   try {
     const response = await axios.delete(`/api/project/${prCd}`);
@@ -448,7 +448,7 @@ const projectRemove = async (prCd) => {
 }
 
 //프로젝트 다중삭제
-const projectListRemove = async () => { 
+const projectListRemove = async () => {
   const checkedData = grid.value.getCheckedRows();
 
   try {
@@ -477,7 +477,7 @@ const projectListRemove = async () => {
 //프로젝트 과업조회
 const workList = ref([]);
 const workCount = ref(0);
-const projectWorkGetList = async (prCd) => { 
+const projectWorkGetList = async (prCd) => {
   try {
     const result = await axios.get(`/api/project/work/${prCd}`);
     console.log(result);

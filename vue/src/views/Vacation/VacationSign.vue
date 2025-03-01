@@ -66,7 +66,7 @@
 
           </div>
         </div>
-        
+
       </div>
     </div>
 
@@ -76,7 +76,7 @@
 </template>
 
 <script setup>
-import axios from 'axios';
+import axios from '../../assets/js/customAxios';
 import Grid from 'tui-grid';
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 import { dateTimeFormat } from '../../assets/js/common';
@@ -155,6 +155,37 @@ let signCol = [
   { header: '결재상태', name: 'signState', align: 'center'},
 ];
 
+// 조회 조건
+const vcSrchData = ref({
+  signId: 'admin',
+  startDate: '',
+  endDate: '',
+})
+const signSrchData = ref({
+  signId: 'admin',
+  startDate: '',
+  endDate: '',
+})
+
+// 그리드 데이터 조회 메소드
+const vcGetList = async () => {
+  const result = await axios.get('/api/vacation/signerList', { params : vcSrchData.value });
+
+  originVcList = JSON.parse(JSON.stringify(result.data)); // 깊은 복사
+  vcList.value = result.data;
+  listFormat(vcList.value);
+
+  vcGridInstance.value.resetData(vcList.value);
+}
+const signGetList = async () => {
+  const result = await axios.get('/api/vacation/signedList', { params : signSrchData.value });
+
+  originSignList = JSON.parse(JSON.stringify(result.data)); // 깊은 복사
+  signList.value = result.data;
+  listFormat(signList.value);
+
+  signGridInstance.value.resetData(signList.value);
+}
 // 그리드 데이터 형식 변경
 // const listFormat = (list) => {
 //   list.forEach(i => {
@@ -216,9 +247,9 @@ const initGrid = (gridInstance, gridDiv, rowData, colData) => {
 onMounted(async () => {
   initGrid(vcGridInstance, 'vcGrid', vcList, vcCol);
   initGrid(signGridInstance, 'signGrid', signList, signCol);
-  
+ 
   // vcGetList();
-  // signGetList();
+  // signGetList
 });
 
 // 컴포넌트가 파괴될 때 기존 Grid 삭제
@@ -227,7 +258,7 @@ onBeforeUnmount(() => {
   if (signGridInstance.value) signGridInstance.value.destroy();
 });
 
-// 결재 - 휴가 신청자의 연차 정보, 신청일자의 대상 연도, -> 연차정보 없을시 생성, 
+// 결재 - 휴가 신청자의 연차 정보, 신청일자의 대상 연도, -> 연차정보 없을시 생성,
 const btnVcSign = async (e) => {
   let selectedRows = e.target.value === 'D01' ? signGridInstance.value.getCheckedRows() : vcGridInstance.value.getCheckedRows();
   // let originList = e.target.value === 'D01' ? originSignList : originVcList;
@@ -273,8 +304,8 @@ const btnVcSign = async (e) => {
   // 해당 데이터들을 서버에 보내도록 수정
   if (signDataArray.length) {
     if(e.target.value == 'D01' || e.target.value == 'D02')
-      await axios.post('/api/yearVc/yearVcModify', signDataArray.map(data => data.yearVcData)); 
-    await axios.post('/api/vacation/signModify', signDataArray.map(data => data.signData)); 
+      await axios.post('/api/yearVc/yearVcModify', signDataArray.map(data => data.yearVcData));
+    await axios.post('/api/vacation/signModify', signDataArray.map(data => data.signData));
   }
 
   // 리스트 새로 고침
@@ -288,4 +319,3 @@ const btnVcSign = async (e) => {
 <style scoped>
 </style>
 
-  
