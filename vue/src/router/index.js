@@ -3,11 +3,6 @@ import axios from "../assets/js/customAxios.js"
 import Swal from 'sweetalert2';
 
 import { createRouter, createWebHistory } from "vue-router";
-import Dashboard from "../views/Dashboard.vue";
-import Tables from "../views/Tables.vue";
-import Billing from "../views/Billing.vue";
-import Notifications from "../views/Notifications.vue";
-import Profile from "../views/Profile.vue";
 import Guide from "../views/Guide.vue";
 import Layout from '../views/Layout.vue';
 
@@ -91,31 +86,6 @@ const routes = [
       name: "/",
       redirect: "/home",
    },
-   {
-      path: "/dashboard",
-      name: "Dashboard",
-      component: Dashboard,
-   },
-   {
-      path: "/tables",
-      name: "Tables",
-      component: Tables,
-   },
-   {
-      path: "/billing",
-      name: "Billing",
-      component: Billing,
-   },
-   {
-      path: "/notifications",
-      name: "Notifications",
-      component: Notifications,
-   },
-   {
-      path: "/profile",
-      name: "Profile",
-      component: Profile,
-   },
    { // ui가이드
       path: '/guide',
       name: 'Guide',
@@ -139,7 +109,7 @@ const routes = [
       component: FindPw,
    },
    { // 개인정보 설정
-      path: '/personal/manage',
+      path: '/personal/manage/',
       name: 'PersonalManage',
       component: PersonalManage
    },
@@ -154,7 +124,7 @@ const routes = [
       component: DepartmentManage
    },
    { // 권한 관리
-      path: '/setting/organization/authority',
+      path: '/setting/organization/authority/:menuCd',
       name: 'AuthorityManage',
       component: AuthorityManage
    },
@@ -360,16 +330,16 @@ const routes = [
       name: 'BulletinInfo',
       component : BulletinInfo,
    },
-    {//게시글 수정
+   {//게시글 수정
       path:'/bulletin/bulletinModify/:bbsId/:nttId',
       name: 'BulletinModify',
       component : BulletinModify,
    },
-      {//게시글 수정
-         path:'/bulletin/secretAt',
-         name: 'SecretAt',
-         component : SecretAt,
-      },
+   {//게시글 수정
+      path:'/bulletin/secretAt',
+      name: 'SecretAt',
+      component : SecretAt,
+   },
 
 
 
@@ -428,98 +398,64 @@ const routes = [
 const router = createRouter({
    history: createWebHistory(process.env.BASE_URL),
    routes,
-   linkActiveClass: "active",
+   linkActiveClass: 'active',
 });
 
-// const authorityGetList = async () => {
-//    try {
-//       const result = await axios.get('/api/authority');
-//       console.log("접근 권한 체크 => ", result.data);
-
-//    } catch (err) {
-//       Swal.fire({
-//          icon: "error",
-//          title: "API 조회 오류",
-//          text:  "Error : " + err.response.data.error
-//       });
-//    }
-// };
-
-// **전역 네비게이션 가드 설정**
-// router.beforeEach((to, from, next) => {
-//    //authorityGetList();
-
-//    const store = useUserInfoStore(); // pinia 정보
-
-//    // 로그인 없이 접근 가능한 페이지 목록
-//    const publicPages = ["/login", "/findPw"];
-
-//    // 현재 이동하려는 페이지가 로그인 필요한 페이지인지 확인
-//    const authRequired = !publicPages.includes(to.path);
-
-//    if (authRequired && !store.isAuthenticated) {
-//       next("/login"); // 로그인 안 된 경우 로그인 페이지로 이동
-//    } else {
-//       // 이 부분에 권한체크가 들어와야해
-//    }
-// });
-
 router.beforeEach(async (to, from, next) => {
+   console.log(`[Router] beforeEach 실행 - 이동: ${from.fullPath} -> ${to.fullPath}`);
+
    const store = useUserInfoStore();
-
-   // 로그인 없이 접근 가능한 페이지 목록
    const publicPages = ["/login", "/findPw", "/home"];
-
-   // 현재 이동하려는 페이지가 로그인 필요한 페이지인지 확인
    const authRequired = !publicPages.includes(to.path);
 
-   // 로그인 안 되어있으면 무조건 로그인 페이지로
+   // 비로그인 접근 차단
    if (authRequired && !store.isAuthenticated) {
+      console.log("[Router] 비로그인 상태 - 로그인 페이지로 이동");
       return next("/login");
    }
 
-   // ✅ 로그인한 경우, 권한 체크 수행 (publicPages가 아닌 경우)
+   // 메뉴 권한 체크
    if (authRequired) {
-      const menuCd = to.query.menuCd;
+      const menuCd = to.query.menuCd; // 현재 query 기준이니까 확인 필요
+      console.log(`[Router] 접근 메뉴 코드 = ${menuCd}`);
 
       if (!menuCd) {
-         console.warn("메뉴코드가 없습니다. 권한체크 없이 이동합니다.");
-         return next();   // 메뉴코드 없으면 권한체크 패스하고 그냥 이동
+         console.log("[Router] 메뉴 코드 없음 - 그냥 이동");
+         return next();
       }
 
       try {
-         // 메뉴코드 있는 경우만 권한 체크
-         const response = await axios.get(`/api/access/${menuCd}`, {
-            withCredentials: true
-         });
-
+         const response = await axios.get(`/api/access/${menuCd}`);
          if (response.status === 200 && response.data === true) {
-            return next(); // ✅ 권한 있음 → 정상 이동
+            console.log("[Router] 권한 확인 완료 - 정상 진입");
+            return next();
          } else {
-            Swal.fire({
+            console.warn("[Router] 권한 없음 - 홈으로 강제 이동");
+            await Swal.fire({
                icon: "warning",
                title: "접근 불가",
                text: "해당 메뉴에 접근할 권한이 없습니다."
             });
-            return next(false); // 🚫 권한 없으면 이동 차단
+            return next("/home");  // 여기서 확실히 next 호출
          }
       } catch (error) {
          if (error.response?.status === 401) {
+            console.warn("[Router] 세션 만료 - 로그인 페이지로 이동");
             return next("/login");
          } else {
-            Swal.fire({
+            console.error("[Router] 권한 체크 중 오류 발생", error);
+            await Swal.fire({
                icon: "error",
                title: "오류 발생",
-               text: "서버와의 통신 중 문제가 발생했습니다."
+               text: "권한 체크 중 문제가 발생했습니다."
             });
-            return next(false);
+            return next("/home");  // 에러도 홈으로 가는 게 안전
          }
       }
-   } else {
-      next(); // publicPages는 그냥 통과
    }
+
+   // 공개 페이지거나 권한 체크 안 해도 되는 경우
+   next();
 });
-
-
 
 export default router;

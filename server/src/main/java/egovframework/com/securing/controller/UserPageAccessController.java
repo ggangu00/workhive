@@ -24,10 +24,12 @@ public class UserPageAccessController {
 
 	@GetMapping("/{menuCd}")
 	public ResponseEntity<?> menuAccessCheck(@PathVariable("menuCd") String menuCd, HttpSession session) {
-		log.info("메뉴 코드 => {}", menuCd);
+		log.info("===== [menuAccessCheck 호출됨] 메뉴코드: {} =====", menuCd);
 
-		// ✅ 세션에서 사용자 정보 가져오기
+		// 세션에서 사용자 정보 가져오기
 		UserDTO user = (UserDTO) session.getAttribute("loginUser");
+		log.info("세션에서 가져온 사용자 정보: {}", user);
+		
 		if (user == null) {
 			log.warn("미인증 사용자!!");
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
@@ -37,13 +39,14 @@ public class UserPageAccessController {
 		log.info("로그인 사용자 => {}", userId);
 
 		boolean isAccess = authService.isMenuAccessible(menuCd, userId);
-		log.info("접근 권한 가능 ? => {}", isAccess);
+		log.info(">>> 메뉴 접근 권한 체크 결과: menuCd={}, userId={}, result={}", menuCd, userId, isAccess);
 
 		if (!isAccess) {
-			log.warn("접근 권한 없음: 메뉴={}, 사용자={}", menuCd, userId);
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("해당 메뉴에 대한 접근 권한이 없습니다.");
+		    log.warn(">>> 접근 거부됨: 메뉴={}, 사용자={}", menuCd, userId);
+		    return ResponseEntity.status(HttpStatus.FORBIDDEN).body("해당 메뉴에 대한 접근 권한이 없습니다.");
+		} else {
+		    log.info(">>> 접근 허용됨: 메뉴={}, 사용자={}", menuCd, userId);
+		    return ResponseEntity.ok(true);
 		}
-
-		return ResponseEntity.ok(true); // 접근 가능
 	}
 }

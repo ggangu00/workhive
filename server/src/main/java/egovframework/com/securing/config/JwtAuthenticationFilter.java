@@ -96,15 +96,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             chain.doFilter(request, response);
 
         } catch (io.jsonwebtoken.ExpiredJwtException e) {
-            // ✅ 토큰 만료 예외 → 401 반환
+            // 토큰 만료 예외 → 401 반환
             handleJwtException(response, "세션이 만료되었습니다. 다시 로그인해주세요.", HttpServletResponse.SC_UNAUTHORIZED);
 
         } catch (io.jsonwebtoken.MalformedJwtException | io.jsonwebtoken.SignatureException e) {
-            // ✅ 잘못된 토큰 형식 또는 서명 불일치 → 401 반환
+            // 잘못된 토큰 형식 또는 서명 불일치 → 401 반환
             handleJwtException(response, "유효하지 않은 인증 정보입니다.", HttpServletResponse.SC_UNAUTHORIZED);
 
         } catch (Exception e) {
-            // ✅ 기타 예상치 못한 서버 에러 → 500 반환
+            // 기타 예상치 못한 서버 에러 → 500 반환
             e.printStackTrace();
             handleJwtException(response, "서버 내부 오류가 발생했습니다.", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
