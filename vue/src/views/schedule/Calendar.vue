@@ -143,6 +143,7 @@ export default {
         selectedData:[],
         dateClick: this.handleDateClick, //연결헤ㅐ줘야함 이벤트
         eventClick: this.handleEventClick,  
+         datesSet: this.handleDateChange
       },
       isAllDay: false,
       
@@ -158,7 +159,6 @@ export default {
       dept:"",
       name:""
     }
-
     }
   },
   mounted() {
@@ -167,6 +167,32 @@ export default {
     this.commonDtlList();
   },
   methods: {
+    async handleDateChange(info) {
+    const year = info.view.currentStart.getFullYear();
+    const month = (info.view.currentStart.getMonth() + 1).toString().padStart(2, '0');
+
+    const response = await axios.get('/api/schedule/month', {
+        params: { year: year, month: month }
+    });
+
+    this.calendarOptions.events = response.data.map(event => {
+        return {
+            id: event.schdulId,
+            title: event.schdulNm,
+            start: this.formatDate(event.schdulBgnde),
+            end: this.formatDate(event.schdulEndde),
+            schdulCn: event.schdulCn,
+            place: event.schdulPlace,
+            charger: event.schdulChargerId,
+            register: event.mberId,
+            kind: event.schdulKndCode,
+            name: event.mberId,
+            type: event.schdulSe,
+            dept: event.deptNm
+        };
+    });
+}
+,
     //종일버튼시 시간값 초기화
     toggle(){
       if (this.isAllDay) {
@@ -234,6 +260,7 @@ export default {
 
     //일정 정보 호출 메소드
     async scheduleGetList() {
+      
         const response = await axios.get('/api/schedule/month'); 
         this.calendarOptions.events = response.data.map(event => ({
           id: event.schdulId,

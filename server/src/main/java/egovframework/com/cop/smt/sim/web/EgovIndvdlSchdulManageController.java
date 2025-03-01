@@ -375,7 +375,7 @@ public class EgovIndvdlSchdulManageController {
                         iYear = Integer.parseInt(sYear);
                         iMonth = Integer.parseInt(sMonth);
                         sSearchDate += sYear;
-                        sSearchDate += Integer.toString(iMonth+1).length() == 1 ? "0" + Integer.toString(iMonth+1) :Integer.toString(iMonth+1);
+                        sSearchDate += Integer.toString(iMonth).length() == 1 ? "0" + Integer.toString(iMonth) :Integer.toString(iMonth);
                 }
 
 
@@ -387,6 +387,7 @@ public class EgovIndvdlSchdulManageController {
     	List<CmmnDetailCode> listComCode = cmmUseService.selectCmmCodeDetail(voComCode);
     	model.addAttribute("schdulSe", listComCode);
 
+    	
     	commandMap.put("searchMonth", sSearchDate);
     	commandMap.put("searchMode", "MONTH");
 
