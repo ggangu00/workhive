@@ -153,13 +153,16 @@ const getParams = ({
   mberId: loginUser,
 });
 
-
+const token = localStorage.getItem("token");
 const dataSource = {
   api: {
     readData: {
       url: "/api/document/pendingList",
       method: "GET",
-      initParams: getParams, // 페이지, 상태코드(미결, 반려, 진행완료)
+      initParams: getParams,
+      headers: {
+      'Authorization': `Bearer ${token}`  // 백틱 사용
+      }, // 페이지, 상태코드(미결, 반려, 진행완료)
     },
   },
 }

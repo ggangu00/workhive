@@ -79,7 +79,6 @@ import { useUserInfoStore } from '../../store/userStore.js';
 
 const userInfoStore = useUserInfoStore();
 let loginUser = userInfoStore.user ? userInfoStore.user.mberId : ""; // 로그인한 사용자 정보 가져오기
-
 // Props 정의
 const props = defineProps({
   buttons: { type: Array, required: true },
@@ -145,26 +144,25 @@ const resetBtn = () =>{
 
 // API 요청 파라미터
 const getParams = ({
-  status: props.status,
+  status: '',
   deptNm: '',
   docKind: '',
   formCd: '',
   startDate: '',
   endDate: '',
-  mberId:loginUser,
-
+  mberId: loginUser,
 });
 
 const token = localStorage.getItem("token");
 const dataSource = {
   api: {
     readData: {
-      url: "/api/document/list",
+      url: "/api/document/receivedList",
       method: "GET",
-      initParams: getParams, // 페이지, 상태코드(미결, 반려, 진행완료)
+      initParams: getParams,
       headers: {
       'Authorization': `Bearer ${token}`  // 백틱 사용
-      },
+      }, // 페이지, 상태코드(미결, 반려, 진행완료)
     },
   },
 }
@@ -196,7 +194,7 @@ const btnSelectChange = () => {
     try {
       const response = await axios.put(`/api/document/state`, {
         approvalArr: checkedData.map(row => row.docCd),
-        mberId: loginUser, // 실제 로그인 아이디로 변경
+        mberId: loginUser , // 실제 로그인 아이디로 변경
         signStat: newSignStat
       });
 
@@ -238,27 +236,18 @@ const TueGrid = () => {
 const handleRowClick = (e) => {
   if (!grid.value || e.rowKey == null || e.rowKey == undefined ) return;
   const dataRow = grid.value.getRow(e.rowKey);
-  if (e.nativeEvent.target.type == "checkbox") {
-    console.log("체크박스 클릭 감지, 행 클릭 이벤트 무시");
+  if (e.nativeEvent.target.type == "checkbox") {//행클릭무시 체크박스면
     return;
   }
 
   let routePath ='';
 
   // 특정 조건일 때 페이지 이동
-  if (dataRow?.crntSignStat == "반려") {
-    routePath = "/approval/rejectedInfo"
-  }else if (dataRow?.crntSignStat == "완료") {
-    routePath = "/approval/completedInfo";
-  }else if (dataRow?.crntSignStat == "미결") {
-    routePath = "/approval/pendingInfo"
-  }else if (dataRow?.crntSignStat == "진행중") {
-    routePath = "/approval/proceedInfo"
-  }else if (dataRow?.crntSignStat == "회수"){
-    routePath = "/approval/restartDraft"
-  }
 
-  console.log(dataRow)
+    routePath = "/approval/ReceivedInfo"
+
+
+
   router.push({
     path: routePath,
     query :{
@@ -269,7 +258,6 @@ const handleRowClick = (e) => {
       deptNm : dataRow.deptNm,
       docTitle : dataRow.docTitle,
       docCnEditor : dataRow.docCnEditor,
-      atchFileId : dataRow.atchFileId,
     }
   });
 };
@@ -283,7 +271,7 @@ onMounted(() => {
 
 //문서 유형 셀렉트박스 변경시 필터 감지하여 재로딩
 watch([docKind, deptNm, formType, startDate, endDate], async ([newDodKind, newDeptNm, newFormType, newStartDate, newEndDate]) => {
-    const response = await axios.get("/api/document/list", { params: {
+    const response = await axios.get("/api/document/pendingList", { params: {
       docKind : newDodKind,
       deptNm : newDeptNm == "전체" ? "" : newDeptNm,
       formCd : newFormType,

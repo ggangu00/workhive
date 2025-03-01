@@ -454,7 +454,7 @@ const approvalInfo = async() => {
       docTitle : docTitle.value,
       docCnEditor : editor.getHTML(),
       mberId : loginUser,
-      docKind : 'I01',
+      docKind : docKind.value =="수신결재" ? "I02" : "I01",
       formCd : formCd.value,
       deptNm : deptNm.value,
       formType : formType.value

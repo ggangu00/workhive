@@ -1,6 +1,5 @@
 package egovframework.com.approval.controller;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +9,7 @@ import javax.annotation.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,7 +35,7 @@ import egovframework.com.approval.service.FormDTO;
 import egovframework.com.approval.service.MemberDTO;
 import egovframework.com.approval.service.Reception;
 import egovframework.com.approval.service.SearchDTO;
-import egovframework.com.cmm.service.FileVO;
+import egovframework.com.securing.service.CustomerUser;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController // data 
@@ -200,6 +200,59 @@ public class DocumentController {
 		return map;
 	}
 	
+	//리스트조회(수신함)
+	@GetMapping("/receivedList")
+	public Map<String, Object> getReceivedDocuments(
+												     @RequestParam(required = false) int page,
+												     @RequestParam(required = false) int perPage,
+												     @ModelAttribute SearchDTO searchDTO
+												     ,@AuthenticationPrincipal CustomerUser customerUser) throws JsonMappingException, JsonProcessingException {
+		
+		
+	 if (customerUser.getUserDTO() != null) {
+		 searchDTO.setMberId(customerUser.getUserDTO().getMberId());
+		 searchDTO.setDeptCd(customerUser.getUserDTO().getDeptCd());	        
+	    }
+		
+		searchDTO.setPageUnit(perPage);
+
+		// 페이징 조건
+		searchDTO.setStartPage(searchDTO.getFirst());
+		searchDTO.setEndPage(searchDTO.getLast());
+
+		
+		// 페이징처리
+		searchDTO.setTotalRecord(documentService.getCount(searchDTO));
+		
+	    
+	    String str = """
+						{
+						  "result": true,
+						  "data": {
+						    "contents": [],
+						    "pagination": {
+						      "page": 1,
+						      "totalCount": 100
+						    }
+						  }
+						}
+										""";
+		ObjectMapper objectMapper = new ObjectMapper();
+		
+		Map<String, Object> map = objectMapper.readValue(str, Map.class);
+		
+		Map<String, Object> data = (Map) map.get("data");
+		Map<String, Object> pagination = (Map) data.get("pagination");
+		
+		// 페이징처리
+		pagination.put("page", searchDTO.getPage());
+		pagination.put("totalCount", documentService.receivedDocCount(searchDTO));
+		
+		data.put("contents", documentService.receivedSelectAll(searchDTO));
+		
+		return map;
+	}
+	
 	//문서양식조회
 	@GetMapping("/form")
 	public List<FormDTO> formList() {
@@ -250,7 +303,7 @@ public class DocumentController {
 	//결재의견 추가(update)
 	@PutMapping("/approvalOpn")
 	public boolean approvalOpnModify(@RequestBody ApprovalLine approvalLine) {		
-	    
+
 	    return documentService.approvalCnUpdate(approvalLine);
 	}
 }

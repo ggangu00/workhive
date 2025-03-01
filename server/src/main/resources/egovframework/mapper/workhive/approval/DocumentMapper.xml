@@ -213,6 +213,59 @@
 		    ]]>
 		</select>
 		
+		<!-- 문서조회(수신함) -->
+		<select id="receivedSelectAll" resultType="egovframework.com.approval.service.DocumentDTO" parameterType="egovframework.com.approval.service.SearchDTO">
+		    SELECT * FROM (
+		        SELECT 
+		            ROWNUM AS rn,
+		            D.doc_cd,
+		            D.doc_title,
+		            D.doc_cn_editor,
+		            D.mber_id,
+		            fn_get_memnm(D.mber_id) AS mber_nm,
+		            fn_get_deptNm(D.mber_id) AS dept_nm,
+		            fn_get_codename(D.CRNT_SIGN_STAT) AS crnt_sign_stat,
+		            D.draft_dt,
+		            D.complete_dt,
+		            fn_get_codename(D.DOC_KIND) AS doc_kind,
+		            D.atch_file_id,
+		            D.form_cd,
+		            fn_get_formnm(D.form_cd) AS form_type,
+		            D.del_yn
+		        FROM DOCUMENT D
+		        WHERE 1=1
+		            AND D.del_yn = UPPER('N')
+		            AND EXISTS (
+		                SELECT 1 
+		                FROM RECEPTION R 
+		                WHERE R.doc_cd = D.doc_cd 
+		                AND (
+		                    R.MBER_ID = #{mberId}
+		                    OR R.DEPT_CD = (SELECT DEPT_CD FROM comtngnrlmber WHERE MBER_ID = #{mberId})
+		                )
+		            )
+		        <![CDATA[AND ROWNUM <= #{end}]]>
+		    ) 
+		    WHERE rn >= #{start}
+		    ORDER BY draft_dt DESC
+		</select>
+		
+				<!-- 수신문서카운트 -->
+		<select id="receivedDocCount" resultType="int" parameterType="egovframework.com.approval.service.SearchDTO">
+		    SELECT COUNT(DISTINCT D.doc_cd) 
+		    FROM DOCUMENT D
+		    WHERE 1=1
+		        AND D.del_yn = UPPER('N')
+		        AND EXISTS (
+		            SELECT 1 
+		            FROM RECEPTION R 
+		            WHERE R.doc_cd = D.doc_cd 
+		            AND (
+		                R.MBER_ID = #{mberId}
+		                OR R.DEPT_CD = (SELECT DEPT_CD FROM comtngnrlmber WHERE MBER_ID = #{mberId})
+		            )
+		        )
+		</select>
 		<!-- 미결문서카운트 -->
 		<select id="pendingDocCount" resultType="int" parameterType="egovframework.com.approval.service.SearchDTO">	  
 				    SELECT COUNT(*)

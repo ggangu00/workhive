@@ -1,5 +1,5 @@
 <template>
-    <ApprovalList 
+    <RecevingListComp 
       :buttons="buttons" 
       :columnDefs="columnDefs" 
       :status="status"
@@ -9,8 +9,9 @@
   </template>
   
   <script setup>
-  import ApprovalList from '@/components/PaymentLayout/ApprovalList.vue'
+
   import {ref} from'vue';
+  import RecevingListComp from '../../components/PaymentLayout/RecevingListComp.vue';
   
   const buttons = ref([
           { label: '수신접수', class: 'btn-warning btn-fill'},

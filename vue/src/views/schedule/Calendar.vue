@@ -162,7 +162,7 @@ export default {
     }
   },
   mounted() {
-    this.scheduleGetList();
+    //this.scheduleGetList();
     this.dataReset();
     this.commonDtlList();
   },
@@ -256,30 +256,30 @@ export default {
       this.schedule.type = e.event.extendedProps.type;
 
       this.selectedEventId = e.event.id;//수정용 스케쥴아이디
-
+console.log(e.event.extendedProps)
     },
 
 
 
-    //일정 정보 호출 메소드
-    async scheduleGetList() {
-        const response = await axios.get('/api/schedule/month');
-        this.calendarOptions.events = response.data.map(event => ({
-          id: event.schdulId,
-          title: event.schdulNm,
-          start: this.formatDate(event.schdulBgnde),  // 받은 날짜형식변환
-          end: this.formatDate(event.schdulEndde),
-          schdulCn: event.schdulCn,
-          place: event.schdulPlace,
-          charger: event.schdulChargerId,
-          register: event.mberId,
-          kind: event.schdulKndCode,
-          name: event.mberId,
-          type: event.schdulSe,
-          dept: event.deptNm
-        }));
+    // //일정 정보 호출 메소드
+    // async scheduleGetList() {
+    //     const response = await axios.get('/api/schedule/month');
+    //     this.calendarOptions.events = response.data.map(event => ({
+    //       id: event.schdulId,
+    //       title: event.schdulNm,
+    //       start: this.formatDate(event.schdulBgnde),  // 받은 날짜형식변환
+    //       end: this.formatDate(event.schdulEndde),
+    //       schdulCn: event.schdulCn,
+    //       place: event.schdulPlace,
+    //       charger: event.schdulChargerId,
+    //       register: event.mberId,
+    //       kind: event.schdulKndCode,
+    //       name: event.mberId,
+    //       type: event.schdulSe,
+    //       dept: event.deptNm
+    //     }));
 
-    },
+    // },
 
     //등록 메소드
     async scheduleAdd(){
