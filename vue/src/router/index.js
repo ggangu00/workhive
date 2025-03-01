@@ -9,7 +9,7 @@ import Layout from '../views/Layout.vue';
 // kmj
 import Login from "../views/Login/Login.vue";
 import FindPw from '../views/Login/findPassword.vue';
-import PersonalManage from '../views/Setting/PersonalManage.vue';
+import PersonalManage from '../views/personal/PersonalManage.vue';
 import MemberManage from '../views/Setting/MemberManage.vue'
 import DepartmentManage from "../views/Setting/DepartmentManage.vue";
 import AuthorityManage from "../views/Setting/AuthorityManage.vue";
@@ -109,7 +109,7 @@ const routes = [
       component: FindPw,
    },
    { // 개인정보 설정
-      path: '/personal/manage/',
+      path: '/personal/manage',
       name: 'PersonalManage',
       component: PersonalManage
    },
@@ -124,7 +124,7 @@ const routes = [
       component: DepartmentManage
    },
    { // 권한 관리
-      path: '/setting/organization/authority/:menuCd',
+      path: '/setting/organization/authority',
       name: 'AuthorityManage',
       component: AuthorityManage
    },
@@ -410,27 +410,22 @@ router.beforeEach(async (to, from, next) => {
 
    // 비로그인 접근 차단
    if (authRequired && !store.isAuthenticated) {
-      console.log("[Router] 비로그인 상태 - 로그인 페이지로 이동");
       return next("/login");
    }
 
    // 메뉴 권한 체크
    if (authRequired) {
       const menuCd = to.query.menuCd; // 현재 query 기준이니까 확인 필요
-      console.log(`[Router] 접근 메뉴 코드 = ${menuCd}`);
 
       if (!menuCd) {
-         console.log("[Router] 메뉴 코드 없음 - 그냥 이동");
          return next();
       }
 
       try {
          const response = await axios.get(`/api/access/${menuCd}`);
          if (response.status === 200 && response.data === true) {
-            console.log("[Router] 권한 확인 완료 - 정상 진입");
             return next();
          } else {
-            console.warn("[Router] 권한 없음 - 홈으로 강제 이동");
             await Swal.fire({
                icon: "warning",
                title: "접근 불가",
@@ -440,10 +435,8 @@ router.beforeEach(async (to, from, next) => {
          }
       } catch (error) {
          if (error.response?.status === 401) {
-            console.warn("[Router] 세션 만료 - 로그인 페이지로 이동");
             return next("/login");
          } else {
-            console.error("[Router] 권한 체크 중 오류 발생", error);
             await Swal.fire({
                icon: "error",
                title: "오류 발생",

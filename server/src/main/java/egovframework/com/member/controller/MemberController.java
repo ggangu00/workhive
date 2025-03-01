@@ -1,8 +1,8 @@
 package egovframework.com.member.controller;
 
-import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,11 +21,14 @@ public class MemberController {
 	private  MemberService memberService;
 	
 	//사원 전체조회
-	@GetMapping("/memList")
-	public List<UserDTO> memList() {
-	  
-	  List<UserDTO> result = memberService.memberSelectAll();
-	  
-	  return result;
+	@GetMapping("")
+	public UserDTO memList(HttpSession session) {
+		log.info("===== [MemberController 호출됨] =====");
+
+		UserDTO user = (UserDTO) session.getAttribute("loginUser");
+		String userId = user.getMberId();
+		log.info("세션에서 가져온 사용자 정보: {}", user);
+	
+	  return memberService.memberSelect(userId);
 	}
 }
