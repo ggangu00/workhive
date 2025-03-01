@@ -40,4 +40,10 @@ public interface DocumentService {
 	public List<DocumentDTO> pendingDocumentSelectAll(SearchDTO searchDTO);
 	
 	public boolean approvalCnUpdate(ApprovalLine approvalLine);
+	
+	//수신목록 불러오기
+	public List<DocumentDTO> receivedSelectAll(SearchDTO searchDTO);
+	
+	//문서 개수
+	int receivedDocCount(SearchDTO searchDTO);
 }

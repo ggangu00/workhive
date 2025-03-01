@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 import org.egovframe.rte.fdl.property.EgovPropertyService;
 import org.egovframe.rte.psl.dataaccess.util.EgovMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -41,6 +41,7 @@ import egovframework.com.cmm.service.FileVO;
 import egovframework.com.cmm.util.EgovUserDetailsHelper;
 import egovframework.com.cop.smt.sim.service.EgovIndvdlSchdulManageService;
 import egovframework.com.cop.smt.sim.service.IndvdlSchdulManageVO;
+import egovframework.com.securing.service.CustomerUser;
 import egovframework.com.securing.service.UserDTO;
 import egovframework.com.utl.fcc.service.EgovStringUtil;
 /**
@@ -348,18 +349,18 @@ public class EgovIndvdlSchdulManageController {
 			@RequestParam Map<String, String> commandMap,
 			IndvdlSchdulManageVO indvdlSchdulManageVO,
     		ModelMap model,
-    		HttpServletRequest request)
+    		@AuthenticationPrincipal CustomerUser customerUser)
     throws Exception {
 //		로그인한정보가져오기
-		UserDTO loginUser = (UserDTO) request.getSession().getAttribute("loginUser");
-		 if (loginUser != null) {
-		        searchVO.setMberId(loginUser.getMberId());
-		        searchVO.setDeptCd(loginUser.getDeptCd());
+		System.out.println("adsfdasf=>" + customerUser);
+		 if (customerUser.getUserDTO() != null) {
+		        searchVO.setMberId(customerUser.getUserDTO().getMberId());
+		        searchVO.setDeptCd(customerUser.getUserDTO().getDeptCd());
 		        
-		        commandMap.put("mberId", loginUser.getMberId());
-		        commandMap.put("deptCd", loginUser.getDeptCd());
+		        commandMap.put("mberId", customerUser.getUserDTO().getMberId());
+		        commandMap.put("deptCd", customerUser.getUserDTO().getDeptCd());
+		        
 		    }
-		
 		
 		//일정구분 검색 유지
         model.addAttribute("searchKeyword", commandMap.get("searchKeyword") == null ? "" : (String)commandMap.get("searchKeyword"));

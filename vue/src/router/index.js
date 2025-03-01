@@ -29,6 +29,7 @@ import ApprovalLine from "../components/PaymentLayout/ApprovalLine.vue";
 import ApprovalRegister from "../components/PaymentLayout/ApprovalRegister.vue";
 import ApprovalInfo from "../components/PaymentLayout/ApprovalInfo.vue";
 import PendingListComp from "../components/PaymentLayout/PendingListComp.vue";
+import RecevingListComp from "../components/PaymentLayout/RecevingListComp.vue";
 //skh
 import RegisterTest from "../views/Approval/RegisterTest.vue";
 import CompletedList from "../views/Approval/CompletedList.vue";
@@ -43,6 +44,7 @@ import PendingInfo from "../views/Approval/PendingInfo.vue";
 import ProceedInfo from "../views/Approval/ProceedInfo.vue";
 import RetrieveList from "../views/Approval/RetrieveList.vue";
 import ReceivedList from "../views/Approval/ReceivedList.vue";
+import ReceivedInfo from "../views/Approval/ReceivedInfo.vue";
 
 // pjh
 import Todo from '../views/Todo/TodoManage.vue'
@@ -190,6 +192,11 @@ const routes = [
       name: 'PendingListComp',
       component: PendingListComp
    },
+   {
+      path: '/recevingListComp',
+      name: 'RecevingListComp',
+      component: RecevingListComp
+   },
    //skh
 
    { //
@@ -256,6 +263,11 @@ const routes = [
       path: '/approval/receivedList',
       name: 'ReceivedList',
       component : ReceivedList
+   },
+   {//수신문서 상세보기
+      path: '/approval/receivedInfo',
+      name: 'ReceivedInfo',
+      component:ReceivedInfo
    },
 
 

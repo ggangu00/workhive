@@ -148,9 +148,9 @@
         C.DEPT_CD,                        
         fn_get_deptnmDeptCd(C.DEPT_CD) AS DEPT_NM,
         NULL AS SCHDUL_KND_CODE,          
-        TO_CHAR(TO_DATE(B.MTG_DE, 'YYYY/MM/DD'), 'YYYYMMDD') || 
+        TO_CHAR(TO_DATE(B.MTG_DE, 'RRRR/MM/DD'), 'YYYYMMDD') || 
         LPAD(REPLACE(B.MTG_BEGIN_TM, ':', ''), 4, '0') AS SCHDUL_BGNDE,  
-        TO_CHAR(TO_DATE(B.MTG_DE, 'YYYY/MM/DD'), 'YYYYMMDD') || 
+        TO_CHAR(TO_DATE(B.MTG_DE, 'RRRR/MM/DD'), 'YYYYMMDD') || 
         LPAD(REPLACE(B.MTG_END_TM, ':', ''), 4, '0') AS SCHDUL_ENDDE,    
         B.MTG_NM AS SCHDUL_NM,            
         B.MTG_MTR_CN AS SCHDUL_CN,        
@@ -159,9 +159,9 @@
         NULL AS SCHDUL_CHARGER_ID,       
         NULL AS SCHDUL_CHARGER_NAME,      
         NULL AS ATCH_FILE_ID,             
-        TO_DATE(B.CREATE_DT, 'YYYY/MM/DD') AS FRST_REGIST_PNTTM,  
+        TO_DATE(B.CREATE_DT, 'RRRR/MM/DD') AS FRST_REGIST_PNTTM,  
         C.MBER_ID,                         
-        TO_DATE(B.UPDATE_DT, 'YYYY/MM/DD') AS UPDATE_DT,  
+        TO_DATE(B.UPDATE_DT, 'RRRR/MM/DD') AS UPDATE_DT,  
         NULL AS LAST_UPDUSR_ID,           
         NULL AS REPTIT_SE_CODE            
     FROM COMTNMTGINFO B
@@ -182,20 +182,20 @@
 
     <if test='searchMode == "MONTH" and searchMonth != null and searchMonth != ""'>
         <![CDATA[
-        AND SUBSTR(TO_CHAR(TO_DATE(B.MTG_DE, 'YYYY/MM/DD'), 'YYYYMMDD'), 1, 6) = #{searchMonth}
+        AND SUBSTR(TO_CHAR(TO_DATE(B.MTG_DE, 'RRRR/MM/DD'), 'YYYYMMDD'), 1, 6) = #{searchMonth}
         ]]>
     </if>
 
     <if test='searchMode == "WEEK"'>
         <![CDATA[
-        AND (SUBSTR(TO_CHAR(TO_DATE(B.MTG_DE, 'YYYY/MM/DD'), 'YYYYMMDD'), 1, 8) >= #{schdulBgnde}
-        AND SUBSTR(TO_CHAR(TO_DATE(B.MTG_DE, 'YYYY/MM/DD'), 'YYYYMMDD'), 1, 8) <= #{schdulEndde})
+        AND (SUBSTR(TO_CHAR(TO_DATE(B.MTG_DE, 'RRRR/MM/DD'), 'YYYYMMDD'), 1, 8) >= #{schdulBgnde}
+        AND SUBSTR(TO_CHAR(TO_DATE(B.MTG_DE, 'RRRR/MM/DD'), 'YYYYMMDD'), 1, 8) <= #{schdulEndde})
         ]]>
     </if>
 
     <if test='searchMode == "DAILY" and searchDay != null and searchDay != ""'>
         <![CDATA[
-        AND SUBSTR(TO_CHAR(TO_DATE(B.MTG_DE, 'YYYY/MM/DD'), 'YYYYMMDD'), 1, 8) = #{searchDay}
+        AND SUBSTR(TO_CHAR(TO_DATE(B.MTG_DE, 'RRRR/MM/DD'), 'YYYYMMDD'), 1, 8) = #{searchDay}
         ]]>
     </if>
 

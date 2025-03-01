@@ -39,6 +39,7 @@ onMounted(()=>{
   docCnEditor.value = route.query.docCnEditor || "";
   atchFileId.value=route.query.atchFileId || "";
 
+  console.log(docKind.value)
   window.history.replaceState({}, '', route.path);
 })
 //버튼명
@@ -88,7 +89,7 @@ const restartDraft = () => {
   path: '/approval/restartDraft',
   query: {
     docCd: docCd.value,
-    docKind: docKind.value,
+    docKind: '수신결재',
     formType: formType.value,
     formCd: formCd.value,
     deptNm: deptNm.value,

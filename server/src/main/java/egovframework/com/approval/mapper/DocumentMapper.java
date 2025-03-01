@@ -65,4 +65,10 @@ public interface DocumentMapper {
 	
 	//결재 의견작성()
 	public int approvalCnUpdate(ApprovalLine approvalLine);
+	
+	//문서조회(수신함)
+	List<DocumentDTO> receivedSelectAll(SearchDTO searchDTO);
+	
+	//문서개수(수신함)
+	int receivedDocCount(SearchDTO searchDTO);
 }

@@ -171,6 +171,16 @@ public class DocumentServiceImpl implements DocumentService{
 		int updatedRows = documentMapper.approvalCnUpdate(approvalLine); 
 		return updatedRows > 0;
 	}
+
+	@Override
+	public List<DocumentDTO> receivedSelectAll(SearchDTO searchDTO) {
+		return documentMapper.receivedSelectAll(searchDTO);
+	}
+
+	@Override
+	public int receivedDocCount(SearchDTO searchDTO) {
+		return documentMapper.receivedDocCount(searchDTO);
+	}
 	
 	
 }

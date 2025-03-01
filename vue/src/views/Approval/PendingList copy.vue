@@ -11,6 +11,9 @@
 <script setup>
 import PendingListComp from '@/components/PaymentLayout/PendingListComp.vue'
 import {ref} from'vue';
+import { useRouter } from 'vue-router'; 
+
+const router = useRouter(); 
 
 const buttons = ref([
         { label: '기안', class: 'btn-warning btn-fill'},
@@ -21,15 +24,12 @@ const buttons = ref([
 const buttonClick = async (buttonName)=>{
     switch(buttonName){
       case '기안' :       
-        {
-          const registerPage = 'http://localhost:8077/approval/registerTest';
-          window.location.href = registerPage;
-          break;
-        }
-    
-        case '결재' :
-        await approvalBtn();
-        break;
+      router.push('/approval/registerTest');
+      break;
+      
+      case '결재' :
+      await approvalBtn();
+      break;
 
       // case '인쇄/다운로드' :
       //   await approvalBtn();
