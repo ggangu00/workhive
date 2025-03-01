@@ -172,7 +172,10 @@ export default {
     const month = (info.view.currentStart.getMonth() + 1).toString().padStart(2, '0');
 
     const response = await axios.get('/api/schedule/month', {
-        params: { year: year, month: month }
+        params: { year: year,
+                  month: month,
+
+                 }
     });
 
     this.calendarOptions.events = response.data.map(event => {
@@ -293,7 +296,6 @@ export default {
       addList.append("schdulPlace", this.schedule.place);
       addList.append("schdulBgnde", this.schedule.start.replace(/-/g, '')  + bgndeTime);
       addList.append("schdulEndde", this.schedule.end.replace(/-/g, '') + enddeTime);
-      addList.append("schdulPlace", this.schedule.place);
 
       if(this.selectedEventId){
         addList.append("schdulId", this.selectedEventId);

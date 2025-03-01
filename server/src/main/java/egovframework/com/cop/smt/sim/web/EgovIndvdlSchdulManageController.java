@@ -7,19 +7,19 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
+import org.egovframe.rte.fdl.property.EgovPropertyService;
+import org.egovframe.rte.psl.dataaccess.util.EgovMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,11 +41,8 @@ import egovframework.com.cmm.service.FileVO;
 import egovframework.com.cmm.util.EgovUserDetailsHelper;
 import egovframework.com.cop.smt.sim.service.EgovIndvdlSchdulManageService;
 import egovframework.com.cop.smt.sim.service.IndvdlSchdulManageVO;
+import egovframework.com.securing.service.UserDTO;
 import egovframework.com.utl.fcc.service.EgovStringUtil;
-import lombok.extern.slf4j.XSlf4j;
-
-import org.egovframe.rte.fdl.property.EgovPropertyService;
-import org.egovframe.rte.psl.dataaccess.util.EgovMap;
 /**
  * 일정관리를 처리하는 Controller Class 구현
  * @author 공통서비스 장동한
@@ -350,9 +347,20 @@ public class EgovIndvdlSchdulManageController {
 			@ModelAttribute("searchVO") ComDefaultVO searchVO,
 			@RequestParam Map<String, String> commandMap,
 			IndvdlSchdulManageVO indvdlSchdulManageVO,
-    		ModelMap model)
+    		ModelMap model,
+    		HttpServletRequest request)
     throws Exception {
-
+//		로그인한정보가져오기
+		UserDTO loginUser = (UserDTO) request.getSession().getAttribute("loginUser");
+		 if (loginUser != null) {
+		        searchVO.setMberId(loginUser.getMberId());
+		        searchVO.setDeptCd(loginUser.getDeptCd());
+		        
+		        commandMap.put("mberId", loginUser.getMberId());
+		        commandMap.put("deptCd", loginUser.getDeptCd());
+		    }
+		
+		
 		//일정구분 검색 유지
         model.addAttribute("searchKeyword", commandMap.get("searchKeyword") == null ? "" : (String)commandMap.get("searchKeyword"));
         model.addAttribute("searchCondition", commandMap.get("searchCondition") == null ? "" : (String)commandMap.get("searchCondition"));

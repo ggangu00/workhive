@@ -62,7 +62,26 @@ public class ComDefaultVO implements Serializable {
     private Date searchStartDt;
     private Date searchEndDt;
     
-    public Date getSearchStartDt() {
+    private String mberId;
+    private String deptCd;
+    
+    public String getDeptCd() {
+		return deptCd;
+	}
+
+	public void setDeptCd(String deptCd) {
+		this.deptCd = deptCd;
+	}
+
+	public String getMberId() {
+		return mberId;
+	}
+
+	public void setMberId(String mberId) {
+		this.mberId = mberId;
+	}
+
+	public Date getSearchStartDt() {
 		return searchStartDt;
 	}
 
