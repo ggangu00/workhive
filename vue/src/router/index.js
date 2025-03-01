@@ -402,8 +402,6 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-   console.log(`[Router] beforeEach 실행 - 이동: ${from.fullPath} -> ${to.fullPath}`);
-
    const store = useUserInfoStore();
    const publicPages = ["/login", "/findPw", "/home"];
    const authRequired = !publicPages.includes(to.path);
@@ -413,9 +411,9 @@ router.beforeEach(async (to, from, next) => {
       return next("/login");
    }
 
-   // 메뉴 권한 체크
+   // 메뉴 권한 체크 (query에 menuCd가 있어야 함)
    if (authRequired) {
-      const menuCd = to.query.menuCd; // 현재 query 기준이니까 확인 필요
+      const menuCd = to.query.menuCd;
 
       if (!menuCd) {
          return next();
@@ -431,7 +429,7 @@ router.beforeEach(async (to, from, next) => {
                title: "접근 불가",
                text: "해당 메뉴에 접근할 권한이 없습니다."
             });
-            return next("/home");  // 여기서 확실히 next 호출
+            return next("/home");
          }
       } catch (error) {
          if (error.response?.status === 401) {
@@ -442,7 +440,7 @@ router.beforeEach(async (to, from, next) => {
                title: "오류 발생",
                text: "권한 체크 중 문제가 발생했습니다."
             });
-            return next("/home");  // 에러도 홈으로 가는 게 안전
+            return next("/home");
          }
       }
    }

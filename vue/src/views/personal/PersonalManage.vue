@@ -99,7 +99,7 @@
 
    const memberGet = async () => {
       try {
-         const result = await axios.get('/api/member');
+         const result = await axios.get('/api/member/info');
 
          console.log(result.data);
       } catch (err) {

@@ -1,10 +1,11 @@
 package egovframework.com.securing.controller;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,41 +13,53 @@ import org.springframework.web.bind.annotation.RestController;
 
 import egovframework.com.authority.service.AuthorityService;
 import egovframework.com.menu.service.MenuInfoService;
-import egovframework.com.securing.service.UserDTO;
+import egovframework.com.securing.service.CustomerUser;
 import lombok.extern.slf4j.Slf4j;
 
-@RestController // data
+@RestController
 @RequestMapping("/access")
 @Slf4j
 public class UserPageAccessController {
-	@Resource AuthorityService authService;
-	@Resource MenuInfoService menuService;
 
-	@GetMapping("/{menuCd}")
-	public ResponseEntity<?> menuAccessCheck(@PathVariable("menuCd") String menuCd, HttpSession session) {
-		log.info("===== [menuAccessCheck 호출됨] 메뉴코드: {} =====", menuCd);
+    @Resource 
+    AuthorityService authService;
 
-		// 세션에서 사용자 정보 가져오기
-		UserDTO user = (UserDTO) session.getAttribute("loginUser");
-		log.info("세션에서 가져온 사용자 정보: {}", user);
-		
-		if (user == null) {
-			log.warn("미인증 사용자!!");
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
-		}
+    @Resource 
+    MenuInfoService menuService;
 
-		String userId = user.getMberId();
-		log.info("로그인 사용자 => {}", userId);
+    @GetMapping("/{menuCd}")
+    public ResponseEntity<?> menuAccessCheck(@PathVariable("menuCd") String menuCd) {
 
-		boolean isAccess = authService.isMenuAccessible(menuCd, userId);
-		log.info(">>> 메뉴 접근 권한 체크 결과: menuCd={}, userId={}, result={}", menuCd, userId, isAccess);
+        log.info(">>> [menuAccessCheck 호출됨] 메뉴코드: {}", menuCd);
+        
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUser user = (CustomerUser) auth.getPrincipal();
+        String userId = user.getUserDTO().getMberId();
+        String deptCd = user.getUserDTO().getDeptCd();
 
-		if (!isAccess) {
-		    log.warn(">>> 접근 거부됨: 메뉴={}, 사용자={}", menuCd, userId);
-		    return ResponseEntity.status(HttpStatus.FORBIDDEN).body("해당 메뉴에 대한 접근 권한이 없습니다.");
-		} else {
-		    log.info(">>> 접근 허용됨: 메뉴={}, 사용자={}", menuCd, userId);
-		    return ResponseEntity.ok(true);
-		}
-	}
+        log.info(">>> SecurityContext 인증 객체: {}", auth);
+        log.info(">>> 인증 객체 타입: {}", (auth != null ? auth.getClass().getName() : "null"));
+        log.info(">>> Principal: {}", (auth != null ? auth.getPrincipal() : "null"));
+
+        if (auth == null || !(auth.getPrincipal() instanceof CustomerUser)) {
+            log.warn("인증 정보가 없거나 올바르지 않습니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+        }
+        
+        log.info("메뉴 권한 체크 호출 - menuCd={}, userId={}", menuCd, userId);
+
+        boolean isAccess = authService.isMenuAccessible(menuCd, userId);
+        log.info("메뉴 권한 체크 결과 = {}", isAccess);
+
+        if (!isAccess) {
+            log.warn(">>> 접근 거부됨: 메뉴={}, 사용자={}", menuCd, userId);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("해당 메뉴에 대한 접근 권한이 없습니다.");
+        } else {
+            log.info(">>> 접근 허용됨: 메뉴={}, 사용자={}", menuCd, userId);
+            return ResponseEntity.ok(true);
+        }
+    }
+
+
 }
+
