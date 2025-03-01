@@ -72,8 +72,7 @@
 import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import "tui-grid/dist/tui-grid.css";
-//import axios from "axios";
-import  axios from "../../assets/js/customAxios.js";
+import axios from "axios";
 import Swal from 'sweetalert2';
 import { useUserInfoStore } from '../../store/userStore.js';
 

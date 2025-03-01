@@ -202,8 +202,7 @@ import ApprovalLine from '../../components/PaymentLayout/ApprovalLine.vue';
 import { useRoute } from 'vue-router';
 import Swal from 'sweetalert2';
 import Modal from '../../components/Modal.vue';
-//import axios from 'axios';
-import  axios from "../../assets/js/customAxios.js";
+import axios from 'axios';
 import { useUserInfoStore } from '../../store/userStore.js';
 
 
