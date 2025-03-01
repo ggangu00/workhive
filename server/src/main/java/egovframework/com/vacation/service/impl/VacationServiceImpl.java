@@ -61,4 +61,19 @@ public class VacationServiceImpl implements VacationService {
 		return vacationMapper.signUpdate(vcDTO) == 1 ? true : false;
 	}
 
+	@Override
+	public int vcSelectAllCnt(VacationDTO vcDTO) {
+		return vacationMapper.vcSelectAllCnt(vcDTO);
+	}
+
+	@Override
+	public int vcSelectSignerCnt(VacationDTO vcDTO) {
+		return vacationMapper.vcSelectSignerCnt(vcDTO);
+	}
+
+	@Override
+	public int vcSelectSignedCnt(VacationDTO vcDTO) {
+		return vacationMapper.vcSelectSignedCnt(vcDTO);
+	}
+
 }

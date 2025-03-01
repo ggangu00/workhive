@@ -74,6 +74,11 @@
 	
 	<!-- 휴가 목록 조회 -->
 	<select id="vcSelectAll" parameterType="vacationDTO" resultType="vacationDTO">
+		SELECT *
+		FROM (
+		SELECT T0.*, ROWNUM RNUM
+		FROM (
+			
 		select vc_cd
 			 , vc_start_dt
 			 , vc_end_dt
@@ -86,6 +91,34 @@
 			 , sign_id
 			 , sign_dt
 			 , sign_state
+		from vacation
+		where create_id = #{createId}
+		and del_yn = 'N'
+		<if test='!vcType.isEmpty()'>
+			and vc_type = #{vcType}
+		</if>
+		<if test='!signState.isEmpty()'>
+			and sign_state = #{signState}
+		</if>
+		<if test='!startDate.isEmpty()'>
+			<![CDATA[
+			and create_dt >= to_date(#{startDate}, 'yyyy-mm-dd')
+			]]>
+		</if>
+		<if test='!endDate.isEmpty()'>
+			<![CDATA[
+			and create_dt < to_date(#{endDate}, 'yyyy-mm-dd') + 1
+			]]>
+		</if>
+		order by create_dt desc
+		
+		) T0
+		)
+		WHERE RNUM BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}
+	</select>
+	<!-- 휴가 목록 카운트 -->
+	<select id="vcSelectAllCnt" parameterType="vacationDTO" resultType="Integer">
+		select count(vc_cd) as cnt
 		from vacation
 		where create_id = #{createId}
 		and del_yn = 'N'
@@ -125,6 +158,11 @@
 	
 	<!-- 휴가 신청 결재 요청 조회 -->
 	<select id="vcSelectSigner" parameterType="vacationDTO" resultType="vacationDTO">
+		SELECT *
+		FROM (
+		SELECT T0.*, ROWNUM RNUM
+		FROM (
+			
 		select vc_cd
 			 , vc_start_dt
 			 , vc_end_dt
@@ -152,10 +190,38 @@
 			]]>
 		</if>
 		order by create_dt
+		
+		) T0
+		)
+		WHERE RNUM BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}
+	</select>
+	<!-- 휴가 신청 결재 요청 카운트 -->
+	<select id="vcSelectSignerCnt" parameterType="vacationDTO" resultType="Integer">
+		select count(vc_cd) as cnt
+		from vacation
+		where sign_id = #{signId}
+		and sign_state in ('D01', 'D03')
+		and del_yn = 'N'
+		<if test='!startDate.isEmpty()'>
+			<![CDATA[
+			and create_dt >= to_date(#{startDate}, 'yyyy-mm-dd')
+			]]>
+		</if>
+		<if test='!endDate.isEmpty()'>
+			<![CDATA[
+			and create_dt < to_date(#{endDate}, 'yyyy-mm-dd') + 1
+			]]>
+		</if>
+		order by create_dt
 	</select>
 	
 	<!-- 휴가 신청 결재 내역 조회 -->
 	<select id="vcSelectSigned" parameterType="vacationDTO" resultType="vacationDTO">
+		SELECT *
+		FROM (
+		SELECT T0.*, ROWNUM RNUM
+		FROM (
+			
 		select vc_cd
 			 , vc_start_dt
 			 , vc_end_dt
@@ -168,6 +234,29 @@
 			 , sign_id
 			 , sign_dt
 			 , sign_state
+		from vacation
+		where sign_id = #{signId}
+		and sign_state not in ('D01', 'D03')
+		and del_yn = 'N'
+		<if test='!startDate.isEmpty()'>
+			<![CDATA[
+			and create_dt >= to_date(#{startDate}, 'yyyy-mm-dd')
+			]]>
+		</if>
+		<if test='!endDate.isEmpty()'>
+			<![CDATA[
+			and create_dt < to_date(#{endDate}, 'yyyy-mm-dd') + 1
+			]]>
+		</if>
+		order by create_dt desc
+		
+		) T0
+		)
+		WHERE RNUM BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}
+	</select>
+	<!-- 휴가 신청 결재 내역 카운트 -->
+	<select id="vcSelectSignedCnt" parameterType="vacationDTO" resultType="Integer">
+		select count(vc_cd) as cnt
 		from vacation
 		where sign_id = #{signId}
 		and sign_state not in ('D01', 'D03')
