@@ -80,18 +80,49 @@ import axios from 'axios';
 import Grid from 'tui-grid';
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 import { dateTimeFormat } from '../../assets/js/common';
+import { useUserInfoStore } from '../../store/userStore.js';
+
+const userInfoStore = useUserInfoStore();
+let loginUser = userInfoStore.user.mberId;
+console.log("로그인 정보 : ", loginUser);
+
+// 조회 조건
+const vcSrchData = ref({
+  signId: loginUser,
+  startDate: '',
+  endDate: '',
+})
+const signSrchData = ref({
+  signId: loginUser,
+  startDate: '',
+  endDate: '',
+})
 
 // 그리드 인스턴스
 let vcGridInstance = ref();
 let signGridInstance = ref();
 
 // 그리드 로우 데이터
-let vcList = ref();
-let signList = ref();
+const vcGetList = () => {
+  vcGridInstance.value.readData(1,  vcSrchData.value);
+}
+let vcList = {
+  api: {
+    readData: { url: '/api/vacation/signerList', method: 'GET', initParams: vcSrchData.value}
+  }
+};
+const signGetList = () => {
+  signGridInstance.value.readData(1, signSrchData.value);
+}
+const signList = {
+  api: {
+    readData: { url: '/api/vacation/signedList', method: 'GET', initParams: signSrchData.value}
+  }
+};
 
 // 가져온 원본 목록 데이터
-let originVcList;
-let originSignList;
+// let originVcList;
+// let originSignList;
 
 // 그리드 컬럼 데이터
 let vcCol = [
@@ -124,74 +155,43 @@ let signCol = [
   { header: '결재상태', name: 'signState', align: 'center'},
 ];
 
-// 조회 조건
-const vcSrchData = ref({
-  signId: 'admin',
-  startDate: '',
-  endDate: '',
-})
-const signSrchData = ref({
-  signId: 'admin',
-  startDate: '',
-  endDate: '',
-})
-
-// 그리드 데이터 조회 메소드
-const vcGetList = async () => {
-  const result = await axios.get('/api/vacation/signerList', { params : vcSrchData.value });
-
-  originVcList = JSON.parse(JSON.stringify(result.data)); // 깊은 복사
-  vcList.value = result.data;
-  listFormat(vcList.value);
-  
-  vcGridInstance.value.resetData(vcList.value);
-}
-const signGetList = async () => {
-  const result = await axios.get('/api/vacation/signedList', { params : signSrchData.value });
-
-  originSignList = JSON.parse(JSON.stringify(result.data)); // 깊은 복사
-  signList.value = result.data;
-  listFormat(signList.value);
-
-  signGridInstance.value.resetData(signList.value);
-}
 // 그리드 데이터 형식 변경
-const listFormat = (list) => {
-  list.forEach(i => {
-    i.vcStartDt = dateTimeFormat(i.vcStartDt, 'yyyy-MM-dd');
-    i.vcEndDt = dateTimeFormat(i.vcEndDt, 'MM/dd hh:mm');
-    i.createDt = dateTimeFormat(i.createDt, 'yyyy-MM-dd');
-    i.signDt = dateTimeFormat(i.signDt, 'yyyy-MM-dd');
-    switch(i.vcType ) {
-      case "E01":
-        i.vcType = "연차";
-        break;
-      case "E02":
-        i.vcType = "오전반차";
-        break;
-      case "E03":
-        i.vcType = "오후반차";
-        break;
-      case "E04":
-        i.vcType = `<a>공가</a>`;
-        break;
-    }
-    switch(i.signState) {
-      case "D01":
-        i.signState = "미결재";
-        break;
-      case "D02":
-        i.signState = "승인";
-        break;
-      case "D03":
-        i.signState = "보완";
-        break;
-      case "D04":
-        i.signState = `<a>반려</a>`;
-        break;
-    }
-  });
-}
+// const listFormat = (list) => {
+//   list.forEach(i => {
+//     i.vcStartDt = dateTimeFormat(i.vcStartDt, 'yyyy-MM-dd');
+//     i.vcEndDt = dateTimeFormat(i.vcEndDt, 'MM/dd hh:mm');
+//     i.createDt = dateTimeFormat(i.createDt, 'yyyy-MM-dd');
+//     i.signDt = dateTimeFormat(i.signDt, 'yyyy-MM-dd');
+//     switch(i.vcType ) {
+//       case "E01":
+//         i.vcType = "연차";
+//         break;
+//       case "E02":
+//         i.vcType = "오전반차";
+//         break;
+//       case "E03":
+//         i.vcType = "오후반차";
+//         break;
+//       case "E04":
+//         i.vcType = `<a>공가</a>`;
+//         break;
+//     }
+//     switch(i.signState) {
+//       case "D01":
+//         i.signState = "미결재";
+//         break;
+//       case "D02":
+//         i.signState = "승인";
+//         break;
+//       case "D03":
+//         i.signState = "보완";
+//         break;
+//       case "D04":
+//         i.signState = `<a>반려</a>`;
+//         break;
+//     }
+//   });
+// }
 // 실시간 조회 조건
 watch(() => vcSrchData, () => {
   vcGetList();
@@ -204,7 +204,7 @@ watch(() => signSrchData, () => {
 const initGrid = (gridInstance, gridDiv, rowData, colData) => {
   gridInstance.value = new Grid({
     el: document.getElementById(gridDiv),
-    data: rowData.value,
+    data: rowData,
     scrollX: false,
     scrollY: true,
     rowHeaders: ['checkbox'],
@@ -217,8 +217,8 @@ onMounted(async () => {
   initGrid(vcGridInstance, 'vcGrid', vcList, vcCol);
   initGrid(signGridInstance, 'signGrid', signList, signCol);
   
-  await vcGetList();
-  await signGetList();
+  // vcGetList();
+  // signGetList();
 });
 
 // 컴포넌트가 파괴될 때 기존 Grid 삭제
@@ -230,28 +230,42 @@ onBeforeUnmount(() => {
 // 결재 - 휴가 신청자의 연차 정보, 신청일자의 대상 연도, -> 연차정보 없을시 생성, 
 const btnVcSign = async (e) => {
   let selectedRows = e.target.value === 'D01' ? signGridInstance.value.getCheckedRows() : vcGridInstance.value.getCheckedRows();
-  let originList = e.target.value === 'D01' ? originSignList : originVcList;
+  // let originList = e.target.value === 'D01' ? originSignList : originVcList;
 
   let signDataArray = [];
 
   for (const row of selectedRows) {
-    let originalRow = originList.find(item => item.vcCd === row.vcCd);
-    if (originalRow) {
-      let signData = {
-        vcCd: originalRow.vcCd,
-        signState: e.target.value
-      };
+    let signData = {
+      vcCd: row.vcCd,
+      signState: e.target.value
+    };
 
-      console.log('originalRow : ', originalRow);
-      let yearVcData = {
-        mberId: originalRow.createId,
-        targetYear: dateTimeFormat(originalRow.vcStartDt, 'yyyy'),
-        useDays: e.target.value === 'D02' ? originalRow.useDays : 
-                 e.target.value === 'D01' && originalRow.signState === 'D02' ? -originalRow.useDays : 0
-      }
-
-      signDataArray.push({ signData, yearVcData });
+    let yearVcData = {
+      mberId: row.createId,
+      targetYear: dateTimeFormat(row.vcStartDt, 'yyyy'),
+      useDays: e.target.value === 'D02' ? row.useDays : 
+                e.target.value === 'D01' && row.signState === 'D02' ? -row.useDays : 0
     }
+
+    signDataArray.push({ signData, yearVcData });
+
+    // let originalRow = originList.find(item => item.vcCd === row.vcCd);
+    // if (originalRow) {
+    //   let signData = {
+    //     vcCd: originalRow.vcCd,
+    //     signState: e.target.value
+    //   };
+
+    //   console.log('originalRow : ', originalRow);
+    //   let yearVcData = {
+    //     mberId: originalRow.createId,
+    //     targetYear: dateTimeFormat(originalRow.vcStartDt, 'yyyy'),
+    //     useDays: e.target.value === 'D02' ? originalRow.useDays : 
+    //              e.target.value === 'D01' && originalRow.signState === 'D02' ? -originalRow.useDays : 0
+    //   }
+
+    //   signDataArray.push({ signData, yearVcData });
+    // }
   }
 
   console.log("전체 데이터 : ", signDataArray);

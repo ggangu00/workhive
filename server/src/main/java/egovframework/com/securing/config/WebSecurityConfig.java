@@ -38,8 +38,8 @@ public class WebSecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.authorizeHttpRequests((requests) -> requests
-				//.requestMatchers("/**", "/menu", "/comm/*", "/department", "/project/*", "/todo/**", "/document/*", "/meet/*", "/css/*", "/js/*", "/assets/*", "/login").permitAll() // 홈, 정적 리소스는 인증 없이 접근 가능
-				.requestMatchers("/", "/menu", "/css/*", "/js/*", "/assets/*", "/login", "/loginproc").permitAll() // 홈, 정적 리소스는 인증 없이 접근 가능
+				.requestMatchers("/**", "/menu", "/comm/*", "/department", "/project/*", "/todo/**", "/document/*", "/meet/*", "/css/*", "/js/*", "/assets/*", "/login").permitAll() // 홈, 정적 리소스는 인증 없이 접근 가능
+//				.requestMatchers("/", "/menu", "/css/*", "/js/*", "/assets/*", "/login", "/loginproc").permitAll() // 홈, 정적 리소스는 인증 없이 접근 가능
 				.anyRequest().authenticated()) // 위의 URL 외에는 모두 인증된 사용자만 접근 가능
 				.formLogin((form) -> form.successHandler(suthenticationSuccessHandler()) // 로그인 성공 시 실행할 핸들러
 										.failureHandler(suthenticationFaildHandler()) // 로그인 실패 시 실행할 핸들러

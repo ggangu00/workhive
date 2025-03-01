@@ -1,5 +1,6 @@
 package egovframework.com.vacation.service;
 
+import egovframework.com.common.util.CommonPaging;
 import egovframework.com.commute.service.CommuteDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class VacationDTO {
+public class VacationDTO extends CommonPaging {
 	private String vcCd;
 	private String vcStartDt;
 	private String vcEndDt;
