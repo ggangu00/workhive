@@ -1,4 +1,6 @@
 import { useUserInfoStore } from "../store/userStore"; // Pinia Store 가져오기
+import axios from "../assets/js/customAxios.js"
+import Swal from 'sweetalert2';
 
 import { createRouter, createWebHistory } from "vue-router";
 import Dashboard from "../views/Dashboard.vue";
@@ -368,7 +370,7 @@ const routes = [
          name: 'SecretAt',
          component : SecretAt,
       },
-       
+
 
 
 
@@ -429,8 +431,24 @@ const router = createRouter({
    linkActiveClass: "active",
 });
 
+const authorityGetList = async () => {
+   try {
+      const result = await axios.get('/api/authority');
+      console.log("접근 권한 체크 => ", result.data);
+
+   } catch (err) {
+      Swal.fire({
+         icon: "error",
+         title: "API 조회 오류",
+         text:  "Error : " + err.response.data.error
+      });
+   }
+};
+
 // **전역 네비게이션 가드 설정**
 router.beforeEach((to, from, next) => {
+   authorityGetList();
+
    const store = useUserInfoStore(); // pinia 정보
 
    // 로그인 없이 접근 가능한 페이지 목록

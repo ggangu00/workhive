@@ -109,9 +109,7 @@
 
    onBeforeMount(() => {
       authorityGetList();  // 권한 목록 조회
-      menuGetList();   // 메뉴 목록 조회
-
-      authorityCustomGetList(); // 커스텀한 axios
+      menuGetList();       // 메뉴 목록 조회
    });
 
    onMounted(() => {
@@ -233,26 +231,6 @@
          });
       }
    };
-
-   const authorityCustomGetList = async () => {
-      //const axios = customAxios();  // 여기서 공통 인스턴스 생성
-
-      try {
-         const result = await axios.get('/api/authority');  // 기존 axios -> axiosInstance로 변경
-         
-         // roles.value = result.data;
-         console.log("???? => ", result)
-      } catch (err) {
-         roles.value = [];
-
-         Swal.fire({
-            icon: "error",
-            title: "API 조회 오류",
-            text: "Error : " + (err.response?.data?.error || err.message)  // 에러 메시지 보완
-         });
-      }
-   };
-
 
    let authorityCd = ref(""); // 권한코드
    /**
