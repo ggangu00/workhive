@@ -3,7 +3,7 @@
   <!-- 휴가 신청 등록/수정 -->
   <div class="row mt-5">
     <div class="col">
-
+        
       <div class="row">
         <div class="col header">
           <h4>  [ 휴가 신청 목록 ]</h4>
@@ -49,14 +49,14 @@
 
     </div>
   </div>
-
+  
 </template>
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 // import { dateTimeFormat } from '../../assets/js/common.js';
 import Grid from 'tui-grid';
-import axios from '../../assets/js/customAxios.js';
+import axios from 'axios';
 import { useRouter } from 'vue-router';
 // import { useUserInfoStore } from '../../store/userStore.js';
 
@@ -144,7 +144,7 @@ onMounted(() => {
       { header: '결재상태', name: 'signState', align: 'center', renderer: BtnRenderer }
     ]
   })
-
+  
   // vcGetList();
 })
 
