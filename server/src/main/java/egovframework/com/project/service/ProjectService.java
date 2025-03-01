@@ -21,7 +21,7 @@ public interface ProjectService {
 	public boolean projectInsert(ProjectDTO project);
 	
 	//프로젝트 헤더/디테일 등록
-	public boolean saveProject(ProjectDTO project);
+	public boolean projectSave(ProjectDTO project);
 	
 	//프로젝트 수정
 	public boolean projectUpdate(ProjectDTO project);

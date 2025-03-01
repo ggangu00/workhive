@@ -89,7 +89,7 @@ public class ProjectController {
 	//프로젝트 등록
 	@PostMapping("")
 	public boolean projectAdd(@RequestBody ProjectDTO project) {
-		boolean result = projectService.saveProject(project);
+		boolean result = projectService.projectSave(project);
 	  return result;
 	}
 	

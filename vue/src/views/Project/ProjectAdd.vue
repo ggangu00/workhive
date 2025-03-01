@@ -4,7 +4,7 @@
       <card>
         <h4 class="card-title float-left">프로젝트 등록</h4>
         <button class="btn btn-sm btn-fill float-right" :class="isUpdated ? 'btn-success' : 'btn-primary'"
-          @click="projectAdd">{{ isUpdated ? '수정' : '등록' }}</button>
+          @click="projectAdd">{{ txt }}</button>
         <button class="btn btn-secondary btn-sm btn-fill float-right" @click="formReset">초기화</button>
       </card>
       <input type="hidden" :name="createId" v-model="createId">
@@ -147,6 +147,7 @@ import { onBeforeMount, onMounted, ref } from 'vue';
 import Swal from 'sweetalert2';
 import Modal from '../../components/Modal.vue';
 import Card from '../../components/Cards/Card.vue'
+import { dateFormat } from "../../assets/js/common";
 
 //========================= 데이터 초기화 =========================
 
@@ -165,10 +166,14 @@ const entrprsMberId = ref('');
 const cmpnyNm = ref('');
 const createId = ref('admin');
 const isUpdated = ref(false);
+let txt = '';
 
 if (route.query.prCd) { //수정일 경우
   prCd.value = route.query.prCd;
   isUpdated.value = true;
+  txt = '수정';
+}else{
+  txt = '등록';
 }
 
 //======================== 공통함수 ========================
@@ -287,19 +292,19 @@ const btnWorkAdd = () => {
 
 //프로젝트 단건조회
 const projectInfo = ref([]);
-const projectGetInfo = async (prCd) => {
+const projectGetInfo = async (prCd) => { // 수정 시 쓰임
   try {
     const result = await axios.get(`/api/project/info/${prCd}`);
     projectInfo.value = result.data.info;
 
     prNm.value = projectInfo.value.prNm;
     typeCd.value = projectInfo.value.typeCd;
-    startDt.value = projectInfo.value.startDt;
-    endDt.value = projectInfo.value.endDt;
+    startDt.value = dateFormat(projectInfo.value.startDt);
+    endDt.value = dateFormat(projectInfo.value.endDt);
     price.value = projectInfo.value.price;
-    aheadDt.value = projectInfo.value.aheadDt;
+    aheadDt.value = dateFormat(projectInfo.value.aheadDt);
     entrprsMberId.value = projectInfo.value.entrprsMberId;
-    cmpnyNm.value = projectInfo.value.cmpnyNm;
+    cmpnyNm.value = projectInfo.value.comNm;
 
   } catch (err) {
     projectInfo.value = [];
@@ -360,6 +365,7 @@ const projectAdd = async () => {
       state: row.state,
       seq: row.rowKey
     })),
+    prCd: prCd.value,
     prNm: prNm.value,
     typeCd: typeCd.value,
     startDt: startDt.value,
@@ -371,13 +377,15 @@ const projectAdd = async () => {
   };
 
   try {
-    const response = await axios.post("/api/project", requestData);
+    const response = ref([]);
+    if(isUpdated.value) response.value = await axios.put(`/api/project`, requestData); //수정
+    else response.value = await axios.post("/api/project", requestData); //등록
 
-    if (response.data === true) {
+    if (response.value.data === true) {
       Swal.fire({
         icon: "success",
-        title: "등록완료",
-        text: "등록한 프로젝트는 목록에서 확인할 수 있습니다",
+        title: txt+"완료",
+        text: txt+"한 프로젝트는 목록에서 확인할 수 있습니다",
       }).then(() => {
         router.replace({ name: 'ProjectList' }) //프로젝트 조회페이지로 이동
       });
@@ -385,8 +393,8 @@ const projectAdd = async () => {
   } catch (err) {
     Swal.fire({
       icon: "error",
-      title: "등록실패",
-      text: "프로젝트 등록 실패",
+      title: txt+"실패",
+      text: "프로젝트 "+txt+" 실패",
     })
   }
 }

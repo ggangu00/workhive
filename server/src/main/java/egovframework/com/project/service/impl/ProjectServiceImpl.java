@@ -48,7 +48,7 @@ public class ProjectServiceImpl implements ProjectService{
 	}	
 	
 	@Transactional
-    public boolean saveProject(ProjectDTO project) {
+    public boolean projectSave(ProjectDTO project) {
 		 try {
 		        projectMapper.projectInsert(project);
 		        
@@ -71,10 +71,28 @@ public class ProjectServiceImpl implements ProjectService{
     }
 
 	//프로젝트 수정
-	@Override
-	public boolean projectUpdate(ProjectDTO project) {
-		return projectMapper.projectUpdate(project) == 1 ? true : false;
-	}
+	@Transactional
+    public boolean projectUpdate(ProjectDTO project) {
+		 try {
+		        projectMapper.projectUpdate(project);
+		        
+		        String prCd = projectMapper.getLastInsertedPrCd();
+		        project.setPrCd(prCd);  // DTO에 prCd 설정
+
+		        // 작업 리스트가 존재할 경우
+		        if (project.getWorkArr() != null && !project.getWorkArr().isEmpty()) {
+		            
+		            for (ProjectWorkDTO work : project.getWorkArr()) {
+		                work.setPrCd(prCd);  // 각 작업 항목에 prCd 설정
+		                projectMapper.projectWorkInsert(work);  // 개별 INSERT 실행
+		            }
+		        }
+		        return true; 
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		        return false;
+		    }
+    }
 
 	//프로젝트 삭제
 	@Override
