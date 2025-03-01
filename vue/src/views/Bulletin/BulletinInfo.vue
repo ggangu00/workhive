@@ -109,7 +109,7 @@
                   placeholder="작성자"
                   :readonly="!commentItem.isEditing"
                   style="border-radius: 5px; margin-right: 10px;">
-                
+
                 <template v-if="!commentItem.isEditing">
                   <button class="btn btn-success btn-fill" @click="enterEdit(index)" style="border-radius: 5px; margin-right: 10px;">수정</button>
                   <button class="btn btn-danger btn-fill" @click="deleteComment(index)" style="border-radius: 5px;">삭제</button>
@@ -131,7 +131,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import axios from '../../assets/js/customAxios';
 import { useRoute, useRouter } from 'vue-router';
 
 
@@ -153,7 +153,7 @@ const formatDate = (date) => {
 
 
 // 게시글 상세 데이터
-const bulletinInfo = ref({ 
+const bulletinInfo = ref({
   nttSj: '',
   ntcrNm: '',
   frstRegistPnttm: '',
@@ -184,7 +184,7 @@ const fetchBulletinInfo = async () => {
     bulletinInfo.value = response.data.result;
   } catch (error) {
     console.error('게시글 상세 조회 오류:', error.response || error);
-   
+
   }
 };
 
@@ -207,7 +207,7 @@ const fetchComments = async () => {
     }
   } catch (error) {
     console.error('댓글 조회 오류:', error);
-   
+
   }
 };
 
@@ -249,7 +249,7 @@ const addComment = async () => {
     }
   } catch (error) {
     console.error(" 댓글 등록 오류:", error.response || error);
-   
+
   }
 };
 
@@ -326,7 +326,7 @@ const goToBulletinList = () => {
 };
 
 // 페이지 로드 시 데이터 가져오기
-onMounted(() => { 
+onMounted(() => {
   fetchBulletinInfo();
   fetchComments();
 });

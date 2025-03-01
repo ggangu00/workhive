@@ -88,7 +88,7 @@
 </template>
 
 <script setup>
-import axios from "axios";
+import axios from "../../assets/js/customAxios.js";
 import { useRouter } from 'vue-router';
 import { onBeforeMount, ref } from 'vue';
 
@@ -153,7 +153,7 @@ const formReset = () => {
 //======================= axios =======================
 
 //회의실 목록 호출
-const getStatus = async () => { 
+const getStatus = async () => {
     let arr = await getComm("MP");
     let arrAdd = { comm_dtl_cd: '', comm_dtl_nm: '전체' };
     mtgPlaceArr.value.unshift(arrAdd);
@@ -166,7 +166,7 @@ const getStatus = async () => {
 
 //프로젝트 전체조회
 const memList = ref([]);
-const memberGetList = async () => { 
+const memberGetList = async () => {
 
     try {
         const result = await axios.get(`/api/member/memList`);
@@ -188,7 +188,7 @@ const memberGetList = async () => {
 }
 
 //회의 등록
-const meetAdd = async () => { 
+const meetAdd = async () => {
 
     const requestData = {
         memberArr: selected.value.map(row => ({

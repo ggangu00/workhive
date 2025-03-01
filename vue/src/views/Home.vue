@@ -178,7 +178,7 @@
 </template>
 
 <script setup>
-   import axios from "axios";
+   import axios from "../assets/js/customAxios.js";
    import Swal from 'sweetalert2';
    import { onBeforeMount, ref } from 'vue';
    import { numberFormat, dateFormat } from '../assets/js/common.js'

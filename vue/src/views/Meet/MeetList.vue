@@ -83,7 +83,7 @@
 </template>
 
 <script setup>
-import axios from "axios";
+import axios from "../../assets/js/customAxios";
 import { useRouter } from "vue-router";
 import { onBeforeMount, ref, watch, onMounted } from 'vue';
 

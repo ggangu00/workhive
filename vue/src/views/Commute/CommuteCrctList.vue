@@ -8,7 +8,7 @@
           <h4 class="card-title float-left">출퇴근 정정 요청 조회</h4>
         </div>
       </div>
-  
+
       <!-- 바디 -->
       <div class="card">
         <div class="card-body">
@@ -26,14 +26,14 @@
                     <option value="D04">반려</option>
                   </select>
                 </div>
-      
+
                 <div class="col-auto">
                   <input type="date" id="startDate" class="input-custom" v-model="searchData.startDate">
                   <a class="align-middle"> ~ </a>
                   <input type="date" id="endDate" class="input-custom" v-model="searchData.endDate">
                 </div>
               </div>
-      
+
               <!-- 목록 -->
               <div class="row mt-3">
                 <div class="col">
@@ -41,19 +41,19 @@
 
                 </div>
               </div>
-      
+
             </div>
           </div>
         </div>
       </div>
-      
+
     </div>
   </div>
 
 </template>
 
 <script setup>
-import axios from 'axios';
+import axios from '../../assets/js/customAxios.js';
 import Grid from 'tui-grid';
 import { ref, onBeforeUnmount, onMounted, watch } from 'vue';
 // import { dateTimeFormat } from '../../assets/js/common.js';
@@ -110,7 +110,7 @@ onMounted(() => {
       { header: '결재상태', name: 'signState', align: 'center', renderer: BtnRenderer }
     ]
   })
-  
+
   // crctGetList();
 })
 
@@ -169,7 +169,7 @@ class BtnRenderer {
 const router = useRouter();
 const btnCrctUpdate = (rowKey) => {
   let selectedRowData = gridInstance.value.getRow(rowKey);
-  
+
   router.push({ name: 'CrctManage', query: { crctCd: selectedRowData.crctCd, isUpdate: 'true' } });
 };
 const btnCrctDelete = async (rowKey) => {
@@ -192,4 +192,3 @@ onBeforeUnmount(() => {
 <style scoped>
 </style>
 
-  

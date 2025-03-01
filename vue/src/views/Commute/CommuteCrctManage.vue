@@ -8,14 +8,14 @@
           <h4 class="card-title float-left">출퇴근 정정 요청 관리</h4>
         </div>
       </div>
-  
+
       <!-- 바디 -->
       <div class="card">
         <div class="card-body">
 
           <div class="row">
             <div class="col">
-              
+
               <!-- 테이블 -->
               <div class="table-responsive">
                 <table class="table" style="table-layout: fixed;">
@@ -72,7 +72,7 @@
                   </tbody>
                 </table>
               </div>
-        
+
               <div class="row justify-content-center">
                 <div class="col-auto">
                   <button class="btn btn-secondary btn-fill mx-2" @click="btnCrctCancle">취소</button>
@@ -81,19 +81,19 @@
               </div>
             </div>
           </div>
-  
+
         </div>
       </div>
-      
-  
+
+
     </div>
   </div>
-  
+
 </template>
 
 <script setup>
 import { useRoute, useRouter } from 'vue-router';
-import axios from 'axios';
+import axios from '../../assets/js/customAxios.js';
 import { ref , onMounted, watch } from 'vue';
 import { dateTimeFormat } from '../../assets/js/common.js';
 import { useUserInfoStore } from '../../store/userStore.js';
@@ -135,7 +135,7 @@ let crctData = ref({
 watch (() => crctData.value.commuteDt, async () => {
   if(cmtCd == null) {
     let result = await axios.get(`/api/commute/dateCmtInfo`, {params: {commuteDt: crctData.value.commuteDt}});
-    
+
     crctData.value.commuteCd = result.data.commuteCd;
     crctData.value.goTime = result.data.goTime;
     crctData.value.leaveTime = result.data.leaveTime;
@@ -183,11 +183,11 @@ const btnCrctManage = async () => {
   formData.append("crctLeaveTime", dateTimeFormat(crctData.value.crctLeaveTime, 'yyyy-MM-dd hh:mm:ss'));
   formData.append("crctReason", crctData.value.crctReason);
   formData.append("signId", crctData.value.signId);
-  
+
   fileList.value.forEach((file) => {
     formData.append("files[]", file);
   });
-  
+
   if(!isUpdate.value) {
     formData.append("createId", loginUser);
     formData.append("preGoTime", crctData.value.goTime);
@@ -219,5 +219,4 @@ th {
   text-align: left;
 }
 </style>
-  
-    
+

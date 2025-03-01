@@ -1,4 +1,4 @@
-<template>    
+<template>
 <div class="content">
     <div class="container-fluid">
       <div class="card card-header d-flex justify-content-between align-items-center flex-row">
@@ -10,8 +10,8 @@
 
       <div class="card" style="padding: 10px;">
         <div class='calendar'>
-          <FullCalendar 
-          :options="calendarOptions" 
+          <FullCalendar
+          :options="calendarOptions"
           />
         </div>
     </div>
@@ -37,7 +37,7 @@
               <div class="mb-3">
                 <label class="form-label">일정유형 <em class="point-red">*</em></label>
                   <select class="form-select w30" aria-label="Default select example" v-model="schedule.type">
-                    <option v-for="(data, idx) in selectedData" 
+                    <option v-for="(data, idx) in selectedData"
                     :key="idx"
                     :value="data.commDtlCd">
                     {{ data.commDtlNm }}
@@ -120,7 +120,7 @@ import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
-import axios from "axios";
+import axios from "../../assets/js/customAxios";
 import { Modal } from "bootstrap";
 import Swal from 'sweetalert2'
 
@@ -132,20 +132,20 @@ export default {
     //캘린더 옵션
     return {
       calendarOptions: {
-        plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],  
-        initialView: 'dayGridMonth',  
-        headerToolbar: { 
+        plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
+        initialView: 'dayGridMonth',
+        headerToolbar: {
           left: 'prev, next today',
           center: 'title',
-          right: 'dayGridMonth,timeGridWeek,timeGridDay'  
+          right: 'dayGridMonth,timeGridWeek,timeGridDay'
         },
         events: [],
         selectedData:[],
         dateClick: this.handleDateClick, //연결헤ㅐ줘야함 이벤트
-        eventClick: this.handleEventClick,  
+        eventClick: this.handleEventClick,
       },
       isAllDay: false,
-      
+
       schedule:{
       type:"",
       title:"",
@@ -198,7 +198,7 @@ export default {
       const docKind = await axios.get(`/api/comm/codeList`, {
         params: {cd:'SK'}
       });
-     
+
       this.selectedData = [...docKind.data]
     },
 
@@ -206,7 +206,7 @@ export default {
     async handleEventClick(e){
       const modal = new Modal(document.getElementById("scheduleModal"));
       modal.show();
-      
+
       // 날짜 변환
       const startDate = e.event.start ? e.event.start.toISOString().slice(0, 10) : "";
       const endDate = e.event.end ? e.event.end.toISOString().slice(0, 10) : "";
@@ -234,7 +234,7 @@ export default {
 
     //일정 정보 호출 메소드
     async scheduleGetList() {
-        const response = await axios.get('/api/schedule/month'); 
+        const response = await axios.get('/api/schedule/month');
         this.calendarOptions.events = response.data.map(event => ({
           id: event.schdulId,
           title: event.schdulNm,
@@ -285,7 +285,7 @@ export default {
           Swal.fire({
           icon: "success",
           title: "일정 등록완료",
-          
+
         })
       }
     }
@@ -316,11 +316,11 @@ export default {
           title: "삭제 완료",
           icon: "success",
           buttons: {
-            cancel : "취소", 
+            cancel : "취소",
             catch: {
                 text: "확인",
                 value: "catch"
-            }, 
+            },
           }
 
       });
@@ -329,7 +329,7 @@ export default {
   },
 
   //풀캘린더 데이터형식
-    formatDate(date) { 
+    formatDate(date) {
       if (!date) return null;
       return `${date.substring(0, 4)}-${date.substring(4, 6)}-${date.substring(6, 8)}T${date.substring(8, 10)}:${date.substring(10, 12)}:00`;
     }

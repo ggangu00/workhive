@@ -1,6 +1,6 @@
 <template>
   <div class="content">
-    <div class="container-fluid">     
+    <div class="container-fluid">
       <!-- 부서 선택-->
       <div class="row">
         <!-- 부서 트리 구조 -->
@@ -54,7 +54,7 @@
               <div v-for="(receiver, index) in receivers" :key="index" class="approval-item">
                 <span class="badge bg-warning text-dark">수신</span>
                 <span v-if="receiver.mberNm">[{{ receiver.gradeNm }}] {{ receiver.mberNm }}<button @click="removeReceiver(index)" class="btn btn-sm btn-danger">삭제</button></span> <!-- [직책]사원 -->
-                <span v-else>[{{ receiver.deptNm }}]<button @click="removeReceiver(index)" class="btn btn-sm btn-danger">삭제</button></span> <!-- 부서 -->                
+                <span v-else>[{{ receiver.deptNm }}]<button @click="removeReceiver(index)" class="btn btn-sm btn-danger">삭제</button></span> <!-- 부서 -->
               </div>
             </div>
           </div>
@@ -83,7 +83,7 @@
             <div class="approval-box">
               <div v-for="(approver, index) in approvers " :key="index" class="approval-item">
                 <select v-model="approver.signName" class="form-select form-select-sm">
-                  <option v-for="(data, idx) in selectedData" 
+                  <option v-for="(data, idx) in selectedData"
                   :key="idx"
                   :value="data.commDtlCd">
                   {{ data.commDtlNm }}
@@ -104,14 +104,14 @@
 import { ref, onMounted, watch, toRefs } from 'vue';
 import "tui-grid/dist/tui-grid.css";
 import Grid from "tui-grid";
-import axios from 'axios';
+import axios from '../../assets/js/customAxios.js';
 import { useUserInfoStore } from '../../store/userStore.js';
 
 
 const userInfoStore = useUserInfoStore();
 let loginUser = userInfoStore.user ? userInfoStore.user.mberId : ""; // 로그인한 사용자 정보 가져오기
 
-  let gridInstance = null; 
+  let gridInstance = null;
 
     const selectedDept = ref(''); //UI가 자동 업데이트
     const employees = ref([]); // 직원 목록
@@ -156,12 +156,12 @@ let loginUser = userInfoStore.user ? userInfoStore.user.mberId : ""; // 로그�
         console.error("부서 목록 불러오기 실패:", error);
       }
     };
-    
+
     //사원목로가져오기
     const getDeptMembers = async (deptCd) => {
       try {
-          const response = await axios.get(`/api/document/deptMember`, 
-          { params: { deptCd : deptCd } 
+          const response = await axios.get(`/api/document/deptMember`,
+          { params: { deptCd : deptCd }
         });
         employees.value =response.data;
         updateGridData();
@@ -172,7 +172,7 @@ let loginUser = userInfoStore.user ? userInfoStore.user.mberId : ""; // 로그�
 
     const toggleDept = (dept) => {
       if (!dept.expanded) {
-        dept.expanded = false; 
+        dept.expanded = false;
       }
       dept.expanded = !dept.expanded;
     };
@@ -189,9 +189,9 @@ let loginUser = userInfoStore.user ? userInfoStore.user.mberId : ""; // 로그�
       //부서추가
       if (selectedDept.value && !receivers.value.some(receiver => receiver.dept == selectedDept.value)) {
         receivers.value.push({
-          deptNm: selectedDept.value.deptNm, 
-          deptCd: selectedDept.value.deptCd, 
-          status: "수신" 
+          deptNm: selectedDept.value.deptNm,
+          deptCd: selectedDept.value.deptCd,
+          status: "수신"
         });
       }
       //사원추가
@@ -222,11 +222,11 @@ let loginUser = userInfoStore.user ? userInfoStore.user.mberId : ""; // 로그�
       const selectedData = gridInstance.getCheckedRows();
       selectedData.forEach(emp => {
         if (!approvers.value.find(appr => appr.mberNm == emp.mberNm)) {
-          approvers.value.unshift({ 
-            mberNm: emp.mberNm,  
-            deptNm: emp.deptNm, 
+          approvers.value.unshift({
+            mberNm: emp.mberNm,
+            deptNm: emp.deptNm,
             deptCd: emp.deptCd,
-            gradeNm: emp.gradeNm, 
+            gradeNm: emp.gradeNm,
             gradeCd: emp.gradeCd,
             signName: 'K02',
             mberId: emp.mberId});
@@ -274,7 +274,7 @@ let loginUser = userInfoStore.user ? userInfoStore.user.mberId : ""; // 로그�
 
     //로그인정보(임시)
     const login = ref({
-      mberNm: userInfoStore.user.mberNm, 
+      mberNm: userInfoStore.user.mberNm,
       deptNm: userInfoStore.user.deptNm,
       gradeNm: userInfoStore.user.gradeNm,
       mberId: loginUser
@@ -287,11 +287,11 @@ let loginUser = userInfoStore.user ? userInfoStore.user.mberId : ""; // 로그�
         } else {
           gridInstance.resetData(employees.value);
         }
-        
+
         if (selectedDept.value) {
           gridInstance.resetData(employees.value);
         }
-        
+
       },300);
       //로그인 기안자
       if (!approvers.value.find(a => a.signName == "K01")) {

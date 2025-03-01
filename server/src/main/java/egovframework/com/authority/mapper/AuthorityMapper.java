@@ -2,6 +2,8 @@ package egovframework.com.authority.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import egovframework.com.authority.service.AuthorityDTO;
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 
@@ -22,5 +24,8 @@ public interface AuthorityMapper {
 
 	// 권한 삭제
 	public int authorityDelete(String authorityCd);
+
+	// 메뉴 접근 권한 조회
+	public int isMenuAccessible(@Param("menuCd") String menuCd, @Param("userId") String userId);
 
 }

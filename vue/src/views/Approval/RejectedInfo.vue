@@ -9,11 +9,11 @@
       <!--  이벤트추가-->
     </div>
   </template>
-  
+
   <script setup>
   import {onMounted, ref} from 'vue';
   import ApprovalInfo from '@/components/PaymentLayout/ApprovalInfo.vue';
-  import axios from 'axios';
+  import axios from '../../assets/js/customAxios';
   import { useRoute } from 'vue-router';
   import { useRouter } from 'vue-router';
   //import Modal from '../../components/Modal.vue';
@@ -62,7 +62,7 @@
       case '삭제':
         await deleteDocument();
         break;
-  
+
     }
   }
 
@@ -114,6 +114,6 @@
           alert("삭제 실패");
           router.push({path: '/approval/rejectedList'})
         }
-    
+
   }
   </script>

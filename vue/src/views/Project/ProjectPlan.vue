@@ -100,7 +100,7 @@
 </template>
 
 <script setup>
-import axios from "axios";
+import axios from "../../assets/js/customAxios";
 import { onBeforeMount, ref } from 'vue';
 import { useRoute } from "vue-router";
 
@@ -153,19 +153,19 @@ const modalClose = (e) => { //일정 등록/수정 모달 닫기
 //======================= 버튼이벤트 =======================
 
 //일정 등록
-const btnProjectPlanAdd = () => { 
+const btnProjectPlanAdd = () => {
   projectPlanAdd();
   isShowModal.value = false;
 }
 
 //일정 수정
-const btnProjectPlanUpdate = (code) => { 
+const btnProjectPlanUpdate = (code) => {
   modalOpen();
   projectPlanGetInfo(code);
 }
 
 //일정 삭제
-const btnProjectPlanRemove = (code) => { 
+const btnProjectPlanRemove = (code) => {
   Swal.fire({
     title: "해당 일정을 삭제 하시겠습니까?",
     icon: "question",
@@ -185,8 +185,8 @@ const btnProjectPlanRemove = (code) => {
 
 //======================== 공통함수 ========================
 
-// 시작일 ~ 종료일 사이의 날짜 배열로 담는 함수 
-const projectDateTerm = (startDate, endDate) => { 
+// 시작일 ~ 종료일 사이의 날짜 배열로 담는 함수
+const projectDateTerm = (startDate, endDate) => {
   let start = new Date(startDate);
   let end = new Date(endDate);
 
@@ -198,7 +198,7 @@ const projectDateTerm = (startDate, endDate) => {
 };
 
 //입력정보 초기화
-const formReset = () => { 
+const formReset = () => {
   planNm.value = '';
   color.value = '';
   startDt.value = '';
@@ -209,7 +209,7 @@ const formReset = () => {
 
 //프로젝트 단건조회
 const projectInfo = ref([]);
-const projectGetInfo = async (prCd) => { 
+const projectGetInfo = async (prCd) => {
   try {
     const result = await axios.get(`/api/project/info/${prCd}`);
 
@@ -240,7 +240,7 @@ const projectGetInfo = async (prCd) => {
 //프로젝트 일정 전체조회
 const planList = ref([]);
 const planCount = ref(0);
-const projectPlanGetList = async (prCd) => { 
+const projectPlanGetList = async (prCd) => {
   try {
     const result = await axios.get(`/api/project/plan/${prCd}`);
 
@@ -258,7 +258,7 @@ const projectPlanGetList = async (prCd) => {
 
 //프로젝트 일정 단건조회
 const projectPlanInfo = ref([]);
-const projectPlanGetInfo = async (prPlanCd) => { 
+const projectPlanGetInfo = async (prPlanCd) => {
   try {
     const result = await axios.get(`/api/project/plan/info/${prPlanCd}`);
 
@@ -280,7 +280,7 @@ const projectPlanGetInfo = async (prPlanCd) => {
 }
 
 //프로젝트 일정 등록
-const projectPlanAdd = async () => { 
+const projectPlanAdd = async () => {
 
   if (!planNm.value) {
     Swal.fire({
@@ -320,7 +320,7 @@ const projectPlanAdd = async () => {
 }
 
 //프로젝트 일정삭제
-const projectPlanRemove = async (prPlanCd) => { 
+const projectPlanRemove = async (prPlanCd) => {
 
   try {
     const response = await axios.delete(`/api/project/plan/${prPlanCd}`);

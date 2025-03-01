@@ -2,6 +2,8 @@ package egovframework.com.authority.service;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 public interface AuthorityService {
 	
 	// 권한 전체조회
@@ -19,7 +21,7 @@ public interface AuthorityService {
 	// 권한 삭제
 	public boolean authorityDelete(String authorityCd);
 	
-	// 접근 권한 조회
-	public boolean authorityAuthCheckSelect();
+	// 메뉴 접근 권한 조회
+	public boolean isMenuAccessible(@Param("menuCd") String menuCd, @Param("userId") String userId);
 	
 }

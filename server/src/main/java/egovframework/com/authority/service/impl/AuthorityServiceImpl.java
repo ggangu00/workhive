@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 
 import egovframework.com.authority.mapper.AuthorityMapper;
@@ -31,7 +32,7 @@ public class AuthorityServiceImpl implements AuthorityService {
 	// 권한 등록
 	@Override
 	public boolean authorityInsert(AuthorityDTO dto) {
-		
+
 		return authMapper.authorityInsert(dto) == 1 ? true : false;
 	}
 
@@ -45,6 +46,12 @@ public class AuthorityServiceImpl implements AuthorityService {
 	@Override
 	public boolean authorityDelete(String authorityCd) {
 		return authMapper.authorityDelete(authorityCd) == 1 ? true : false;
+	}
+
+	// 메뉴 접근 권한 조회
+	@Override
+	public boolean isMenuAccessible(@Param("menuCd") String menuCd, @Param("userId") String userId) {
+		return authMapper.isMenuAccessible(menuCd, userId) > 0 ? true : false;
 	}
 
 }

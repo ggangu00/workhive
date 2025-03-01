@@ -76,10 +76,10 @@
                   <div class="mb-1">
                     <span>첨부된 파일 목록</span>
                   </div>
-                  <ul class="file-list">                   
+                  <ul class="file-list">
                     <li v-for="(file, index) in fileList" :key="index" @click="showFileInfo(file)">
                       {{ file.orignlFileNm }}
-                    </li>                 
+                    </li>
                     <li v-if="fileList.length == 0">첨부된 파일이 없습니다.</li>
                   </ul>
                 </div>
@@ -108,7 +108,7 @@
                 <div v-for="(approver, index) in approvers" :key="index" class="approval-item  tooltip-container">
                     <span class='badge bg-info text-dark'>
                         <span class="tooltip-text">신강현 바보</span>
-                      {{ getApprovalStatusName(approver.signName) }}</span> 
+                      {{ getApprovalStatusName(approver.signName) }}</span>
                     [{{ approver.deptNm }}] {{ approver.mberNm }} {{ approver.gradeNm }}
                 </div>
               </div>
@@ -130,7 +130,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
-import axios from 'axios';
+import axios from '../../assets/js/customAxios';
 import FileSaver from 'file-saver';
 
 const route = useRoute();

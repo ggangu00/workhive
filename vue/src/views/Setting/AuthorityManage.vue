@@ -98,7 +98,6 @@
 
 <script setup>
    import { ref, onMounted, onBeforeMount, onBeforeUnmount } from 'vue';
-  // import axios from "axios";
    import Swal from 'sweetalert2';
    import Card from '../../components/Cards/Card.vue'
    import Modal from '../../components/Modal.vue';

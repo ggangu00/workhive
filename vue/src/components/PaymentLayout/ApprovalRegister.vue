@@ -10,8 +10,8 @@
                           <h4 class="card-title me-auto" >문서기안</h4>
                       </div>
                       <div>
-                        <button 
-                          v-for="(btn, index) in headButtons" 
+                        <button
+                          v-for="(btn, index) in headButtons"
                           :key="index"
                           :class="['btn', btn.class, 'btn-fill']"
                           @click="$emit('button-click', btn.label)">
@@ -20,11 +20,11 @@
                         </button>
                       </div>
                   </div>
-                  <!-- 제목구분선 --> 
+                  <!-- 제목구분선 -->
                   <div class="divid_line"></div>
                   <!-- body -->
                   <div class="document-input-section">
-                    <div class=''> 
+                    <div class=''>
                       <div class="d-flex justify-content-between mb-1">
                           <div class="col-3 title-box"><strong>결재종류</strong></div>
                           <div class="col-3 title-box"><strong>양식</strong></div>
@@ -100,11 +100,11 @@
 
               <div class="divid_line"></div>
               <div class="d-flex flex-column flex-grow-1">
-               <span>결재</span>    
+               <span>결재</span>
                 <!-- 결재 목록 -->
                 <div  class="approval-box">
                   <div v-for="(approver, index) in approvers" :key="index" class="approval-item">
-                      <span class='badge bg-info text-dark'>{{ getApprovalStatusName(approver.signName) }}</span> 
+                      <span class='badge bg-info text-dark'>{{ getApprovalStatusName(approver.signName) }}</span>
                       [{{ approver.deptNm }}] {{ approver.mberNm }} {{ approver.gradeNm }}
                   </div>
                 </div>
@@ -118,7 +118,7 @@
                 </div>
               </div>
           </div>
-        </div>  
+        </div>
       </div>
     </div>
   </div>
@@ -136,7 +136,7 @@
 
       <!-- 모달 바디 -->
       <div class="modal-body">
-        <ApprovalLine ref="approvalLineRef" 
+        <ApprovalLine ref="approvalLineRef"
         :approvers="approvers"
         :receivers="receivers"/>
       </div>
@@ -202,7 +202,7 @@ import ApprovalLine from '../../components/PaymentLayout/ApprovalLine.vue';
 import { useRoute } from 'vue-router';
 import Swal from 'sweetalert2';
 import Modal from '../../components/Modal.vue';
-import axios from 'axios';
+import axios from '../../assets/js/customAxios.js';
 import { useUserInfoStore } from '../../store/userStore.js';
 
 
@@ -246,7 +246,7 @@ onMounted(() => {
 
   initEditor();
 
-  
+
   if(docCd.value){
     approvalList();
     receiverList();
@@ -468,7 +468,7 @@ const approvalInfo = async() => {
   fileList.value.forEach((file) => {
     formData.append("files[]", file);
   });
-  
+
   try {
           const response = await axios.post('/api/document/register', formData,
           {headers: { "Content-Type": "multipart/form-data" }});

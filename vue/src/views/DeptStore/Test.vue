@@ -14,7 +14,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import axios from 'axios';
+import axios from '../../assets/js/customAxios';
 import Swal from 'sweetalert2';
 import TreeNode from './TreeNode.vue';
 

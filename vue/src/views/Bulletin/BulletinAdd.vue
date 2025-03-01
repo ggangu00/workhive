@@ -104,7 +104,7 @@
 import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor } from '@toast-ui/editor';
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import axios from '../../assets/js/customAxios';
 import { useRoute,useRouter } from 'vue-router';
 
 const route = useRoute();
@@ -250,7 +250,7 @@ const scrollToTop = () => {
 
 // 컴포넌트 마운트 시 에디터 초기화
 onMounted(() => {
-  initEditor(); 
+  initEditor();
 });
 </script>
 

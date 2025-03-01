@@ -8,7 +8,7 @@
           <h4 class="card-title float-left">부서 업무 관리</h4>
         </div>
       </div>
-  
+
       <div class="card">
         <div class="card-body">
           <!-- 페이지 바디 시작 -->
@@ -25,9 +25,9 @@
                     :jobBoxes="jobBoxes"
                   />
                 </ul>
-  
+
               </div>
-              
+
               <!-- 업무함 관리(등록/수정) -->
               <Modal
                 :isShowModal="isShowModal"
@@ -37,7 +37,7 @@
                 <template v-slot:body>
                   <div class="content">
                     <div class="container-fluid">
-  
+
                       <div class="row">
                         <div class="col">
                           <div class="mb-3">
@@ -60,25 +60,25 @@
                           </div>
                         </div>
                       </div>
-  
+
                     </div>
                   </div>
                 </template>
                 <template v-slot:footer>
                   <button class="btn btn-secondary btn-fill mx-2" @click="modalClose">닫기</button>
-                  <button class="btn btn-success btn-fill mx-2" @click="modalConfirm">저장</button>     
+                  <button class="btn btn-success btn-fill mx-2" @click="modalConfirm">저장</button>
                 </template>
               </Modal>
-  
+
             </div>
-      
+
             <div class="col-9">
               <!-- 업무 관리 기능 -->
               <div class="row justify-content-between align-items-center">
                 <div class="col-auto">
                   <button class="btn btn-danger btn-fill me-2" @click="btnJobListRemove">선택 삭제</button>
                   <button class="btn btn-primary btn-fill" @click="modalAddJob">업무 등록</button>
-      
+
                   <!-- 업무 등록 모달 -->
                   <JobManage
                     :isShowJobModal="isShowJobModal"
@@ -91,35 +91,35 @@
                 </div>
                 <div class="col d-flex justify-content-end align-items-center">
                   <label for="title-search" class="m-0 me-2">제목 검색</label>
-                  
+
                   <input type="text" class="form-control w-auto me-2" placeholder="제목을 입력해주세요" id="title-search" v-model="jobSearch.searchWrd">
                   <button class="btn btn-info btn-fill" @click="jobGetList">검색</button>
                 </div>
               </div>
-              
+
               <!-- 업무 목록 -->
               <div class="row mt-2">
                 <div class="col" style="height: 550px;">
                   <div id="jobGrid"></div>
                   <div id="pagination" class="tui-pagination"></div>
-      
+
                 </div>
               </div>
             </div>
-      
+
           </div>
           <!-- 페이지 바디 끝 -->
         </div>
       </div>
-  
+
     </div>
   </div>
-  
+
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue';
-import axios from 'axios';
+import axios from '../../assets/js/customAxios.js';
 import Grid from 'tui-grid';
 import "tui-grid/dist/tui-grid.css";
 import Swal from 'sweetalert2';
@@ -148,7 +148,7 @@ let jobSearch = ref({
 });
 
 // 선택한 업무함 변경시 업무 목록 갱신
-watch(jobBxSelected, () => { 
+watch(jobBxSelected, () => {
   jobSearch.value.searchWrd = '';
   jobSearch.value = Object.assign(jobSearch.value, jobBxSelected.value);
 
@@ -178,7 +178,7 @@ const jobBxGetList  = async () => {
   try {
     const result = await axios.get('/api/deptstore/jobBxList');
     jobBoxes.value = result.data;
-    
+
   } catch (err) {
     Swal.fire({ icon: "error", title: "업무함 조회 실패", text: "Error : " + err });
   }
@@ -227,7 +227,7 @@ const jobBxCheck = async (type, data) => {
       jobBxGetList();
       break;
   }
-  
+
 }
 provide('jobBxCheck', jobBxCheck);
 
@@ -345,7 +345,7 @@ const delEvent = async (rowKey) => {
   selectedRowData = gridInstance.value.getRow(rowKey);
 
   await axios.delete('/api/deptstore/jobRemove', { params: { deptJobId: selectedRowData.deptJobId } });
-  
+
   jobGetList();
 };
 // 업무 목록 삭제
@@ -385,12 +385,12 @@ const btnJobListRemove = async () => {
 //   .catch(error => console.error("에러 :", error));
 
 //   rowData.value = [...jobList.data.resultList];
-  
+
 //   rowData.value = rowData.value.map((item, index) => ({
 //     rowNum: index + 1, // 1부터 시작하는 행번호
 //     ...item
 //   }));
-  
+
 //   let paginationInfo = jobList.data.paginationInfo;
 //   console.log(jobList.data);
 //   /*
@@ -405,7 +405,7 @@ const btnJobListRemove = async () => {
 //     }
 //   }
 //   */
-    
+
 //   gridInstance.value.resetData(rowData.value);
 //   gridInstance.value.setPaginationTotalCount(paginationInfo.totalRecordCount);
 // };
@@ -415,7 +415,7 @@ let isShowJobModal = ref(false);
 let isUpdate = ref(false);
 
 // 업무 등록
-const modalAddJob = () => { 
+const modalAddJob = () => {
   isUpdate.value = false;
   isShowJobModal.value = true;
 }
@@ -491,5 +491,4 @@ div::v-deep .nav-link {
 }
 
 </style>
-  
-    
+
