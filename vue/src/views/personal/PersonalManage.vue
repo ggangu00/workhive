@@ -79,8 +79,9 @@
 </template>
 
 <script setup>
-   // import { onBeforeMount, ref } from 'vue';
-   import { ref } from 'vue';
+   import { onBeforeMount, ref } from 'vue';
+   import axios from '../../assets/js/customAxios';
+   import Swal from 'sweetalert2';
 
    const department = ref("총무팀");
    const position = ref("부장");
@@ -91,27 +92,24 @@
    const email = ref("ongsim@mail.com");
    const phone = ref("053-425-1234");
    const mobile = ref("010-1234-5678");
-   //const memberList = ref([]);
 
-   // onBeforeMount(() => {
-   //   memberGetList();
-   // });
+   onBeforeMount(() => {
+      memberGet();
+   });
 
-   // const memberGetList = async () => {
-   //   try {
-   //     const result = await axios.get('/api/member');
-   //     memberList.value = result;
-   //     console.log(result.data);
-   //   } catch (err) {
-   //     memberList.value = [];
+   const memberGet = async () => {
+      try {
+         const result = await axios.get('/api/member/info');
 
-   //     // Swal.fire({
-   //     //   icon: "error",
-   //     //   title: "API 요청 오류:",
-   //     //   text: err.message || err
-   //     // });
-   //   }
-   // }
+         console.log(result.data);
+      } catch (err) {
+         Swal.fire({
+            icon: "error",
+            title: "API 요청 오류:",
+            text: err.message || err
+         });
+      }
+   }
 </script>
 
 <style scoped>

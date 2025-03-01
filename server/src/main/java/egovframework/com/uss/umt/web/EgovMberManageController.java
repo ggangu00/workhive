@@ -58,7 +58,6 @@ import egovframework.com.utl.sim.service.EgovFileScrty;
  */
 
 @RestController // data 
-@RequestMapping("/member") // 대메뉴 
 public class EgovMberManageController {
 
     /** mberManageService */

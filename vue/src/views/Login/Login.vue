@@ -153,6 +153,7 @@
 
          if(response.data.result == "success") {
             localStorage.setItem("token", response.data.token);  // 토큰 저장
+
             userInfoStore.setUser(response.data.user);
 
             Swal.fire({
@@ -168,15 +169,15 @@
 
          if (err.response?.status === 401 && err.response?.data?.result === "fail") {
             Swal.fire({
-                  icon: "error",
-                  title: "Login 실패",
-                  text: err.response.data.message || "로그인에 실패했습니다."
+               icon: "error",
+               title: "Login 실패",
+               text: err.response.data.message || "로그인에 실패했습니다."
             });
          } else {
             Swal.fire({
-                  icon: "error",
-                  title: "오류 발생",
-                  text: "서버와의 통신 중 문제가 발생했습니다."
+               icon: "error",
+               title: "오류 발생",
+               text: "서버와의 통신 중 문제가 발생했습니다."
             });
          }
 

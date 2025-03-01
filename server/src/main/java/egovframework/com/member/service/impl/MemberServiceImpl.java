@@ -9,10 +9,8 @@ import org.springframework.stereotype.Service;
 import egovframework.com.member.mapper.MemberMapper;
 import egovframework.com.member.service.MemberService;
 import egovframework.com.securing.service.UserDTO;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
-@Service("MemberService")
+@Service("memberService")
 public class MemberServiceImpl implements MemberService{
 	
 	@Resource
@@ -22,6 +20,12 @@ public class MemberServiceImpl implements MemberService{
 	@Override
 	public List<UserDTO> memberSelectAll() {
 		return memberMapper.memberSelectAll();
+	}
+
+	// 사원 단건조회
+	@Override
+	public UserDTO memberSelect(String userId) {
+		return memberMapper.memberSelect(userId);
 	}
 
 }

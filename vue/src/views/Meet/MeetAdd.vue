@@ -169,7 +169,7 @@ const memList = ref([]);
 const memberGetList = async () => {
 
     try {
-        const result = await axios.get(`/api/member/memList`);
+        const result = await axios.get(`/api/member`);
         memList.value = result.data;
         options.value = result.data.map((row) => ({
             label: `[${row.deptNm}] ${row.mberNm} ${row.gradeNm}`, // 드롭다운에 표시될 값

@@ -6,14 +6,14 @@
 	
 	<!-- 프로젝트 전체조회 -->
     
-	<select id="memberSelectAll" parameterType="int" resultType="userDTO">
+	<select id="memberSelectAll" resultType="userDTO">
 		
 		select mber_id,			--회원코드
 			   mber_nm,			--회원명
 			   zip,				--우편번호
 			   adres,			--주소
 			   area_no,			--지역번호
-			   meddle_telno,	--중간 전화번호
+			   middle_telno,	--중간 전화번호
 			   end_telno,		--끝 전화번호
 			   detail_adres,	--상세주소
 			   dept_cd, 		--부서코드
@@ -22,6 +22,49 @@
 			   fn_get_deptnm(mber_id) as dept_nm,
                FN_GET_GRADENM(grade_cd) as gradeNm
 		from COMTNGNRLMBER
+	</select>
+	
+	<select id="memberSelect" resultType="userDTO">
+		SELECT 
+	         mber_id,
+	         password,
+		     password_hint,
+		     password_cnsr,
+		     ihidnum,
+		     mber_nm,
+		     zip,
+		     adres,
+		     area_no,
+		     mber_sttus,
+		     detail_adres,
+		     end_telno,
+		     mbtlnum,
+		     group_id,
+		     mber_fxnum,
+		     mber_email_adres,
+		     meddle_telno,
+		     sbscrb_de,
+		     quit_dt,
+		     sexdstn_code,
+		     esntl_id,
+		     lock_at,
+		     lock_cnt,
+		     lock_last_pnttm,
+		     create_dt,
+		     create_id,
+		     update_dt,
+		     update_id,
+		     del_yn,
+		     resp_cd,
+		     grade_cd,
+		     FN_GET_GRADENM(grade_cd) AS grade_nm,
+			 fn_get_deptNm(mber_id) AS dept_nm,
+		     dept_cd
+      	FROM   
+	         comtngnrlmber
+      	WHERE
+	         mber_id = #{mberId}
+		
 	</select>
 </mapper>
 
