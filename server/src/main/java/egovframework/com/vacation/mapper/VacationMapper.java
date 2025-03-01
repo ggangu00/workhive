@@ -16,5 +16,8 @@ public interface VacationMapper {
 	List<VacationDTO> vcSelectSigner(VacationDTO vcDTO);
 	List<VacationDTO> vcSelectSigned(VacationDTO vcDTO);
 	int signUpdate(VacationDTO vcDTO);
+	int vcSelectAllCnt(VacationDTO vcDTO);
+	int vcSelectSignerCnt(VacationDTO vcDTO);
+	int vcSelectSignedCnt(VacationDTO vcDTO);
 	
 }

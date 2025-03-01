@@ -1,9 +1,13 @@
 package egovframework.com.vacation.controller;
 
 import java.util.List;
+import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.annotation.Resource;
 
+import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +19,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import egovframework.com.commute.service.CommuteCrctDTO;
-import egovframework.com.commute.service.CommuteDTO;
+import egovframework.com.common.util.GridUtil;
+import egovframework.com.securing.service.LoginRequest;
+import egovframework.com.securing.service.UserDTO;
 import egovframework.com.vacation.service.VacationDTO;
 import egovframework.com.vacation.service.VacationService;
 
@@ -54,11 +59,28 @@ public class VacationController {
 	
 	// 휴가 전제 조회
 	@GetMapping("/vcList")
-	public List<VacationDTO> vcList(@ModelAttribute VacationDTO searchDTO) {
+	public Map<String, Object> vcList(HttpSession session,
+			@ModelAttribute VacationDTO vcDTO,
+			@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+			@RequestParam(name = "perPage", required = false, defaultValue = "5") int perPage) {
+
+		UserDTO user = (UserDTO) session.getAttribute("loginUser");
+		String userId = user.getMberId();
+		vcDTO.setCreateId(userId);
+		System.out.println("\n\n아이디 = "+ userId + "\n\n");
+
+		PaginationInfo paginationInfo = new PaginationInfo();
+		paginationInfo.setCurrentPageNo(page);
+		paginationInfo.setRecordCountPerPage(perPage);
+
+		vcDTO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+		vcDTO.setLastIndex(paginationInfo.getLastRecordIndex());
+		vcDTO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
 		
-		List<VacationDTO> result = service.vcSelectAll(searchDTO);
+		List<VacationDTO> result = service.vcSelectAll(vcDTO);
+		int total = service.vcSelectAllCnt(vcDTO);
 		
-		return result;
+		return GridUtil.responseData(page, total, result);
 	}
 	
 	// 사용 예정량 조회
@@ -69,20 +91,42 @@ public class VacationController {
 	
 	// 휴가 신청 결재 요청 조회
 	@GetMapping("/signerList")
-	public List<VacationDTO> vcSignerList(@ModelAttribute VacationDTO searchDTO) {
+	public Map<String, Object> vcSignerList(@ModelAttribute VacationDTO vcDTO,
+			@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+			@RequestParam(name = "perPage", required = false, defaultValue = "5") int perPage) {
+
+		PaginationInfo paginationInfo = new PaginationInfo();
+		paginationInfo.setCurrentPageNo(page);
+		paginationInfo.setRecordCountPerPage(perPage);
+
+		vcDTO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+		vcDTO.setLastIndex(paginationInfo.getLastRecordIndex());
+		vcDTO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
 		
-		List<VacationDTO> result = service.vcSelectSigner(searchDTO);
+		List<VacationDTO> result = service.vcSelectSigner(vcDTO);
+		int total = service.vcSelectSignerCnt(vcDTO);
 		
-		return result;
+		return GridUtil.responseData(page, total, result);
 	}
 	
 	// 휴가 신청 결재 내역 조회
 	@GetMapping("/signedList")
-	public List<VacationDTO> vcSignedList(@ModelAttribute VacationDTO searchDTO) {
+	public Map<String, Object> vcSignedList(@ModelAttribute VacationDTO vcDTO,
+			@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+			@RequestParam(name = "perPage", required = false, defaultValue = "5") int perPage) {
+
+		PaginationInfo paginationInfo = new PaginationInfo();
+		paginationInfo.setCurrentPageNo(page);
+		paginationInfo.setRecordCountPerPage(perPage);
+
+		vcDTO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+		vcDTO.setLastIndex(paginationInfo.getLastRecordIndex());
+		vcDTO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
 		
-		List<VacationDTO> result = service.vcSelectSigned(searchDTO);
+		List<VacationDTO> result = service.vcSelectSigned(vcDTO);
+		int total = service.vcSelectSignedCnt(vcDTO);
 		
-		return result;
+		return GridUtil.responseData(page, total, result);
 	}
 	
 	// 휴가 신청 결재

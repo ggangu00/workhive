@@ -13,4 +13,7 @@ public interface VacationService {
 	public List<VacationDTO> vcSelectSigner(VacationDTO vcDTO);
 	public List<VacationDTO> vcSelectSigned(VacationDTO vcDTO);
 	public boolean signUpdate(VacationDTO vcDTO);
+	public int vcSelectAllCnt(VacationDTO vcDTO);
+	public int vcSelectSignerCnt(VacationDTO vcDTO);
+	public int vcSelectSignedCnt(VacationDTO vcDTO);
 }
