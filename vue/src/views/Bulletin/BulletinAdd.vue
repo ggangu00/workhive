@@ -1,7 +1,7 @@
 <template>
   <div class="content">
     <div class="container-fluid">
-      <!-- 등록폼 [S] -->
+      <!-- 등록폼 -->
       <div class="card">
         <div class="card-body">
           <h4 class="card-title float-left mt-1">게시글 등록</h4>
@@ -10,8 +10,7 @@
         </div>
       </div>
 
-      <!-- 입력폼 -->
-      <div class="card" :class="{'sticky-top': noticeAt}">
+      <div class="card">
         <div class="card-body">
           <form @submit.prevent="submitForm">
             <div class="mb-3">
@@ -29,14 +28,26 @@
             <div class="mb-3">
               <label>공지여부</label>
               <div class="form-check form-check-inline" style="margin-left: 10px;">
-                <input class="form-check-input" type="checkbox" v-model="noticeAt" @change="handleNoticeChange" />
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  v-model="noticeAt"
+                  :disabled="isDisabled('notice')"
+                  @change="handleCheckChange('notice')"
+                />
               </div>
             </div>
 
             <div class="mb-3">
               <label>익명여부</label>
               <div class="form-check form-check-inline" style="margin-left: 10px;">
-                <input class="form-check-input" type="checkbox" v-model="anoAt" />
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  v-model="anoAt"
+                  :disabled="isDisabled('anonymous')"
+                  @change="handleCheckChange('anonymous')"
+                />
               </div>
             </div>
 
@@ -47,12 +58,14 @@
                   class="form-check-input"
                   type="checkbox"
                   v-model="secretAt"
-                  @click="togglePasswordField"
+                  :disabled="isDisabled('secret')"
+                  @change="handleCheckChange('secret')"
                 />
               </div>
             </div>
 
-            <div class="mb-3" v-show="showPasswordField">
+            <!-- 비밀번호 입력 필드 -->
+            <div class="mb-3" v-show="secretAt">
               <label>비밀번호 4자리를 입력해주세요</label>
               <input
                 type="password"
@@ -105,21 +118,13 @@ import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor } from '@toast-ui/editor';
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import { useRoute,useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
 const router = useRouter();
 
-
-console.log("전체테스트:",route.params);
-
-
-
-
 // 필드 데이터
-const bbsId = ref(route.query.bbsId);              //게시판id
-console.log(bbsId.value);
-
+const bbsId = ref(route.query.bbsId);              // 게시판id
 const nttSj = ref('');             // 제목
 const nttCn = ref('');             // 에디터의 HTML 내용 (게시글 내용)
 const noticeAt = ref(false);       // 공지여부
@@ -138,11 +143,6 @@ const fileInput = ref(null);
 // 응답 메시지 및 성공 여부
 const responseMessage = ref('');
 const isSuccess = ref(false);
-
-// 비밀번호 필드 토글 함수
-const togglePasswordField = () => {
-  showPasswordField.value = !showPasswordField.value;
-};
 
 // TOAST UI Editor 초기화
 const initEditor = () => {
@@ -185,6 +185,7 @@ const validateForm = () => {
   }
   return true;
 };
+
 const submitForm = async () => {
   if (!validateForm()) return;
 
@@ -197,60 +198,64 @@ const submitForm = async () => {
   formData.append('password', password.value);
   formData.append('ntceBgnde', formatDate(ntceBgnde.value));
   formData.append('ntceEndde', formatDate(ntceEndde.value));
-  formData.append('bbsId', bbsId.value);  // 확인 필요
+  formData.append('bbsId', bbsId.value);  // 게시판 ID 확인
 
   if (fileInput.value.files.length > 0) {
-    console.log("첨부 파일:", fileInput.value.files[0]);
     formData.append('file_1', fileInput.value.files[0]);
   }
 
   try {
-    console.log("전송 데이터:", [...formData.entries()]);
-    console.log("bbsId 값:", bbsId?.value);
-
     const response = await axios.post("/api/bulletin/bulletinAdd", formData);
-
-    console.log("서버 응답:", response.data);
 
     responseMessage.value = response.data?.message ?? "게시글이 성공적으로 등록되었습니다!";
     isSuccess.value = true;
 
     setTimeout(() => {
-      router.push({ path: '/bulletin/bulletinList/'+ bbsId.value});
+      router.push({ path: '/bulletin/bulletinList/'+ bbsId.value });
     }, 1000); // 1초 후 페이지 이동
 
   } catch (error) {
-    console.error("게시글 등록 실패", error);
-    if (error.response) {
-      console.error("서버 오류 응답:", error.response.data);  // 서버 오류 내용 확인
-      console.error("응답 상태 코드:", error.response.status);
-    }
     responseMessage.value = "게시글 등록에 실패했습니다. 다시 시도해주세요.";
     isSuccess.value = false;
   }
 };
 
 const goToBulletinList = () => {
-  router.push({ path: '/bulletin/bulletinList/'+ bbsId.value});
+  router.push({ path: '/bulletin/bulletinList/'+ bbsId.value });
 };
 
-const handleNoticeChange = () => {
-  if (noticeAt.value) {
-    // 공지사항이 체크되면 페이지 상단으로 이동
-    scrollToTop();
+// 체크박스를 클릭하면 나머지 두 개는 비활성화
+const isDisabled = (target) => {
+  if (target === 'notice' && (secretAt.value || anoAt.value)) return true;
+  if (target === 'anonymous' && (secretAt.value || noticeAt.value)) return true;
+  if (target === 'secret' && (noticeAt.value || anoAt.value)) return true;
+  return false;
+};
+
+// 체크박스 클릭 시 나머지 체크박스를 비활성화하는 함수
+const handleCheckChange = (target) => {
+  if (target === 'notice' && (secretAt.value || anoAt.value)) {
+    secretAt.value = false;
+    anoAt.value = false;
+  } else if (target === 'anonymous' && (secretAt.value || noticeAt.value)) {
+    secretAt.value = false;
+    noticeAt.value = false;
+  } else if (target === 'secret' && (noticeAt.value || anoAt.value)) {
+    noticeAt.value = false;
+    anoAt.value = false;
+  }
+
+  // 비밀여부가 체크되면 비밀번호 필드 표시
+  if (secretAt.value) {
+    showPasswordField.value = true;
+  } else {
+    showPasswordField.value = false;
   }
 };
 
-const scrollToTop = () => {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-};
-
-
-
-
 // 컴포넌트 마운트 시 에디터 초기화
 onMounted(() => {
-  initEditor(); 
+  initEditor();
 });
 </script>
 
