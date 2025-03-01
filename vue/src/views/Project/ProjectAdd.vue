@@ -74,10 +74,6 @@
       <div class="card">
         <div class="card-body">
           <h5 class="card-title float-left mt-1">2. 프로젝트 과업</h5>
-        </div>
-
-
-        <div class="card-body">
           <button class="btn btn-danger btn-sm btn-fill float-right" @click="btnWorkRemove">선택삭제</button>
           <button class="btn btn-primary btn-sm btn-fill float-right" @click="btnWorkAdd">과업추가</button>
 
@@ -180,7 +176,8 @@ if (route.query.prCd) { //수정일 경우
 
 onBeforeMount(() => {
   if (isUpdated.value == true) {
-    projectGetInfo(prCd.value);
+    projectGetInfo();
+    projctWorkGetList();
   }
 });
 
@@ -222,10 +219,10 @@ const formReset = () => {
 
 //========================= Toast grid =========================
 
-const gridInstance = ref();
+const grid = ref();
 const workList = ref([]);
 onMounted(() => {
-  gridInstance.value = new window.tui.Grid({
+  grid.value = new window.tui.Grid({
     el: document.getElementById('jobGrid'),
     data: workList.value,
     scrollX: false,
@@ -285,16 +282,35 @@ const modalClose = (e) => {
 
 //행 추가 버튼
 const btnWorkAdd = () => {
-  gridInstance.value.appendRow(appendedData);
+  grid.value.appendRow(appendedData);
+};
+
+const btnWorkRemove = () => {
+  if (!grid.value) return;
+
+  const checkedRows = grid.value.getCheckedRows(); 
+
+  if (checkedRows.length === 0) {
+    alert("삭제할 항목을 선택하세요.");
+    return;
+  }
+
+  const checkedIds = checkedRows.map(row => row.id);
+
+  workList.value = workList.value.filter(row => !checkedIds.includes(row.id));
+
+  checkedRows.forEach(row => {
+    grid.value.removeRow(row.rowKey);
+  });
 };
 
 //======================= axios =======================
 
 //프로젝트 단건조회
 const projectInfo = ref([]);
-const projectGetInfo = async (prCd) => { // 수정 시 쓰임
+const projectGetInfo = async () => { // 수정 시 쓰임
   try {
-    const result = await axios.get(`/api/project/info/${prCd}`);
+    const result = await axios.get(`/api/project/info/${prCd.value}`);
     projectInfo.value = result.data.info;
 
     prNm.value = projectInfo.value.prNm;
@@ -353,9 +369,21 @@ const projectAdd = async () => {
       title: "프로젝트 구분을 선택하세요"
     });
     return;
+  } else if (!startDt.value) {
+    Swal.fire({
+      icon: "info",
+      title: "프로젝트 시작일을 선택하세요"
+    });
+    return;
+  } else if (!endDt.value) {
+    Swal.fire({
+      icon: "info",
+      title: "프로젝트 종료일을 선택하세요"
+    });
+    return;
   }
 
-  const modifiedRows = gridInstance.value.getModifiedRows(); // 변경된 데이터 가져오기
+  const modifiedRows = grid.value.getModifiedRows(); // 변경된 데이터 가져오기
   const newData = modifiedRows.createdRows; // 새로 추가된 데이터만 추출
 
   const requestData = {
@@ -396,6 +424,17 @@ const projectAdd = async () => {
       title: txt+"실패",
       text: "프로젝트 "+txt+" 실패",
     })
+  }
+}
+
+//프로젝트 과업 조회
+const projctWorkGetList = async () => {
+  try {
+    const result = await axios.get(`/api/project/work/${prCd.value}`);
+    workList.value = result.data;
+    grid.value.resetData(workList.value); //toast grid로 데이터 전달
+  } catch (err) {
+    workList.value = [];
   }
 }
 </script>

@@ -45,7 +45,7 @@ public interface ProjectMapper {
 	public int projectWorkInsert(ProjectWorkDTO work);
 	
 	// 프로젝트 과업삭제
-	public int projectWorkDelete(String prWorkCd);
+	public int projectWorkDelete(String prCd);
 	
 	//======================프로젝트 일정=====================
 	

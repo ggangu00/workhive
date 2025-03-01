@@ -90,20 +90,14 @@ public class ProjectController {
 	@PostMapping("")
 	public boolean projectAdd(@RequestBody ProjectDTO project) {
 		boolean result = projectService.projectSave(project);
-	  return result;
+		return result;
 	}
 	
 	//프로젝트 수정
 	@PutMapping("")
-	public Map<String, Object> projectModify(@RequestBody ProjectDTO dto) {
-		
-		Map<String, Object> map = new HashMap<>();
-		
-		boolean result = projectService.projectUpdate(dto);
-		
-		map.put("result", result);
-		
-		return map;
+	public boolean projectModify(@RequestBody ProjectDTO dto) {
+		boolean result = projectService.projectUpdate(dto);		
+		return result;
 	}
 	
 	//프로젝트 삭제
@@ -151,20 +145,6 @@ public class ProjectController {
 	    	map.put("result", false);
 	    	map.put("info", "해당 권한이 없습니다.");
 	    }
-		
-		return map;
-	}
-	
-	//프로젝트 과업 삭제
-	@DeleteMapping("/work/{prWorkCd}")
-	public Map<String, Object> projectWorkRemove(@PathVariable("prWorkCd") String prWorkCd) {
-	    
-	    // 서비스 로직 실행
-		boolean result = projectService.projectWorkDelete(prWorkCd);
-		
-		Map<String, Object> map = new HashMap<>();
-		map.put("result", result);
-		map.put("list", projectService.projectWorkSelectAll(prWorkCd));
 		
 		return map;
 	}

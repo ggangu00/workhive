@@ -89,7 +89,7 @@
 
 <script setup>
 import axios from "../../assets/js/customAxios.js";
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { onBeforeMount, ref } from 'vue';
 
 //========================== 컴포넌트 ==========================
@@ -103,10 +103,14 @@ import { getComm } from '../../assets/js/common.js'
 
 //========================= 데이터 초기화 =========================
 
+const route = useRoute();
+const router = useRouter();
+
 const selected = ref([]);   //선택된 참여자 목록
 const options = ref([]);    //참여자 목록 데이터
 const typeCd = ref('B01');  //회의실 구분
 const typeCdArr = ref([]);  //회의실 공통함수 목록
+const mtgId = ref('');      //회의주제
 const mtgNm = ref('');      //회의주제
 const mtgMtrCn = ref('');   //회의 안건
 const mtgResultCn = ref('');//회의 결과
@@ -115,12 +119,25 @@ const mtgBeginTm = ref(''); //회의 시작시간
 const mtgEndTm = ref('');   //회의 종료시간
 const mtgPlace = ref('M01');//회의 장소
 const mtgPlaceArr = ref([]);//회의 장소 공통함수 목록
+const isUpdated = ref(false);
+let txt = '';
 
-const router = useRouter();
+if (route.query.mtgId) { //수정일 경우
+    mtgId.value = route.query.mtgId;
+    isUpdated.value = true;
+    txt = '수정';
+} else {
+    txt = '등록';
+}
+
+//======================== 공통함수 ========================
 
 onBeforeMount(() => {
     getStatus();
     memberGetList();
+    if (isUpdated.value == true) {
+        meetGetInfo();
+    }    
 });
 
 //입력정보 초기화
@@ -152,6 +169,32 @@ const formReset = () => {
 
 //======================= axios =======================
 
+//회의 단건조회
+const meetInfo = ref([]);
+const meetGetInfo = async (mtgId) => { //회의 단건조회
+    try {
+        const result = await axios.get(`/api/meet/info/${mtgId.value}`);
+        meetInfo.value = result.data.result[0];
+
+        mtgNm.value = meetInfo.value.mtgNm;
+        typeCd.value = meetInfo.value.typeCd;
+        mtgPlace.value = meetInfo.value.mtgPlace;
+        mtgDe.value = meetInfo.value.mtgDe;
+        mtgBeginTm.value = meetInfo.value.mtgBeginTm;
+        mtgEndTm.value = meetInfo.value.mtgEndTm;
+        mtgMtrCn.value = meetInfo.value.mtgMtrCn;
+        mtgResultCn.value = meetInfo.value.mtgResultCn;
+    } catch (err) {
+        meetInfo.value = [];
+
+        Swal.fire({
+            icon: "error",
+            title: "API 조회 오류",
+            text: "Error : " + err
+        });
+    }
+}
+
 //회의실 목록 호출
 const getStatus = async () => {
     let arr = await getComm("MP");
@@ -164,12 +207,13 @@ const getStatus = async () => {
     typeCdArr.value = arr2;
 }
 
-//프로젝트 전체조회
+//구성원 전체조회
 const memList = ref([]);
 const memberGetList = async () => {
 
     try {
         const result = await axios.get(`/api/member`);
+        console.log(result);
         memList.value = result.data;
         options.value = result.data.map((row) => ({
             label: `[${row.deptNm}] ${row.mberNm} ${row.gradeNm}`, // 드롭다운에 표시될 값
@@ -207,13 +251,15 @@ const meetAdd = async () => {
     };
 
     try {
-        const response = await axios.post('/api/meet', requestData);
+        const response = ref([]);
+        if(isUpdated.value) response.value = await axios.put(`/api/meet`, requestData); //수정
+        else response.value = await axios.post("/api/meet", requestData); //등록
 
-        if (response.data === true) {
+        if (response.value.data === true) {
             Swal.fire({
                 icon: "success",
-                title: "등록완료",
-                text: "등록한 회의는 목록에서 확인할 수 있습니다",
+                title: txt+"완료",
+                text: txt+"한 회의는 목록에서 확인할 수 있습니다",
             }).then(() => {
                 router.replace({ name: 'MeetList' }) //프로젝트 조회페이지로 이동
             });
@@ -221,8 +267,8 @@ const meetAdd = async () => {
     } catch (err) {
         Swal.fire({
             icon: "error",
-            title: "등록실패",
-            text: "회의 등록 실패",
+            title: txt+"실패",
+            text: "회의 "+txt+" 실패",
         })
     }
 }

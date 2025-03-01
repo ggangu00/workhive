@@ -1,4 +1,4 @@
-6<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="egovframework.com.project.mapper.ProjectMapper">	
 	
@@ -151,28 +151,31 @@
 
 	<!-- 프로젝트 수정 -->
 	<update id="projectUpdate" parameterType="projectDTO">
-		update project
-		set	
-			<if test="typeCd != null and !typeCd.equals('')">
-			type_cd = #{typeCd}, 
-			</if>
-			<if test="prNm != null and !prNm.equals('')">
-			pr_nm = #{prNm},
-			</if>
-			<if test="aheadDt != null and !aheadDt.equals('')">
-			ahead_dt = #{aheadDt},
-			</if>
-			<if test="(startDt != null and !startDt.equals('')) and endDt != null and !endDt.equals(''))">
-			start_dt = #{startDt},
-			end_dt = #{endDt},
-			</if>
-			entrprs_mber_id = #{entrprsMberId},
-			price = #{price},
-			update_id = #{updateId},
-			update_dt = sysdate
-		where 
-			pr_cd = ${prCd}				
+	    update project
+	    set    
+	        <if test="typeCd != null and typeCd != ''">
+	            type_cd = #{typeCd}, 
+	        </if>
+	        <if test="prNm != null and prNm != ''">
+	            pr_nm = #{prNm},
+	        </if>
+	        <if test="aheadDt != null">
+	            ahead_dt = #{aheadDt},
+	        </if>
+	        <if test="startDt != null">
+	            start_dt = #{startDt},
+	        </if>
+	        <if test="endDt != null">
+	            end_dt = #{endDt},
+	        </if>
+	        entrprs_mber_id = #{entrprsMberId},
+	        price = #{price},
+	        update_dt = sysdate
+	    where 
+	        pr_cd = #{prCd}   
 	</update>
+
+
 	
 	<!-- 프로젝트 삭제 -->
 	<update id="projectDelete" parameterType="String">
@@ -209,6 +212,16 @@
 			pr_cd = #{prCd}
 		order by seq asc
 	</select>	
+	
+	
+	<!-- 프로젝트 과업삭제 -->
+	<delete id="projectWorkDelete" parameterType="String">
+		delete 
+		from
+		   project_work
+		WHERE
+		   pr_cd = #{prCd}
+	</delete>
 	
 	<!-- ======================프로젝트 일정=====================  -->
 	
@@ -271,7 +284,7 @@
 		from
 		   project_plan
 		WHERE
-		   pr_plan_cd = #{prPlanCd}
+		   pr_cd = #{prCd}
 	</delete>
 
 </mapper>

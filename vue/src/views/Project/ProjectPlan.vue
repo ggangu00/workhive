@@ -43,8 +43,8 @@
                 </tr>
               </template>
               <tr v-else class="list-nodata">
-                <td :colspan="dateTermArr.length">
-                  <div>등록된 일정이 없습니다.</div>
+                <td :colspan="13">
+                  <div>프로젝트 일정을 등록해주세요</div>
                 </td>
               </tr>
             </tbody>
@@ -286,6 +286,18 @@ const projectPlanAdd = async () => {
     Swal.fire({
       icon: "info",
       title: "일정명을 입력하세요"
+    });
+    return;
+  }else if (!startDt.value) {
+    Swal.fire({
+      icon: "info",
+      title: "시작일을 입력하세요"
+    });
+    return;
+  }else if (!endDt.value) {
+    Swal.fire({
+      icon: "info",
+      title: "종료일을 입력하세요"
     });
     return;
   }

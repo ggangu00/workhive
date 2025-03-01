@@ -17,9 +17,6 @@ public interface ProjectService {
 	//프로젝트 단건조회
 	public ProjectDTO projectSelect(String prCd);	
 	
-	//프로젝트 등록
-	public boolean projectInsert(ProjectDTO project);
-	
 	//프로젝트 헤더/디테일 등록
 	public boolean projectSave(ProjectDTO project);
 	
@@ -39,10 +36,6 @@ public interface ProjectService {
 	
 	//프로젝트 과업 단건조회
 	public ProjectWorkDTO projectWorkSelect(String prWorkCd);	
-		
-	
-	//프로젝트 과업 삭제
-	public boolean projectWorkDelete(String prWorkCd);
 	
 	//======================프로젝트 일정=====================
 	
