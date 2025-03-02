@@ -45,16 +45,11 @@
 <script setup>
 import { ref, onMounted, computed, watch, onBeforeUnmount } from 'vue';
 import { useStore } from "vuex";
-// import axios from 'axios';
 import Grid from 'tui-grid';
 import { useRouter } from 'vue-router';
-// import { dateTimeFormat } from '../../assets/js/common.js';
+import * as cmtFormat from '../../assets/js/formatter';
 
-import { useUserInfoStore } from '../../store/userStore.js';
-
-const userInfoStore = useUserInfoStore();
-let loginUser = userInfoStore.user.mberId;
-console.log("로그인 정보 : ", loginUser);
+const token = localStorage.getItem("token");
 
 const store = useStore();
 const isCmt = computed(() => store.state.isCmt);
@@ -66,7 +61,6 @@ let gridInstance = ref();
 
 // 조회 조건
 let params = {
-  mberId: loginUser,
   startDate: '',
   endDate: ''
 };
@@ -93,8 +87,6 @@ watch ([startDate, endDate], async () => {
   params.endDate = endDate.value;
 
   cmtGetList();
-  // let result = await axios.get(`/api/commute/cmtList`, { params });
-  // store.commit('commuteSetList', result.data);
 });
 
 // 출퇴근 기록
@@ -103,7 +95,12 @@ const cmtGetList = () => {
 }
 const dataSource = {
   api: {
-    readData: { url: '/api/commute/cmtList', method: 'GET', initParams: params}
+    readData: { 
+      url: '/api/commute/cmtList', 
+      method: 'GET', 
+      initParams: params,
+      headers: {'Authorization': `Bearer ${token}`},
+    }
   }
 };
 // Grid 초기화
@@ -123,12 +120,12 @@ const initGrid = () => {
       perPage: 5,
     },
     columns: [
-      { header: '근무일자', name: 'commuteDt', align: 'center' },
+      { header: '근무일자', name: 'commuteDt', align: 'center', formatter: cmtFormat.dateFormatter },
       { header: '사원정보', name: 'mberId', align: 'center' },
-      { header: '출근시간', name: 'goTime', align: 'center' },
-      { header: '출근상태', name: 'goState', align: 'center' },
-      { header: '퇴근시간', name: 'leaveTime', align: 'center' },
-      { header: '퇴근상태', name: 'leaveState', align: 'center' },
+      { header: '출근시간', name: 'goTime', align: 'center', formatter: cmtFormat.timeFormatter },
+      { header: '출근상태', name: 'goState', align: 'center', formatter: cmtFormat.goFormatter },
+      { header: '퇴근시간', name: 'leaveTime', align: 'center', formatter: cmtFormat.timeFormatter },
+      { header: '퇴근상태', name: 'leaveState', align: 'center', formatter: cmtFormat.leaveFormatter },
       { header: '근무시간', name: 'workTime', align: 'center' },
       { header: '초과근무시간', name: 'overWorkTime', align: 'center' },
       { header: '관리', name: 'action', align: 'center', renderer: BtnRenderer }
@@ -141,18 +138,6 @@ onMounted(() => {
   initGrid();
   // store.dispatch("commuteGetList");
 });
-
-// rowData가 변경될 때 Toast Grid 업데이트
-// watch(rowData, (newData) => {
-//   rowData.value.forEach(i => {
-//     i.commuteDt = dateTimeFormat(i.commuteDt, 'yyyy-MM-dd');
-//     i.goTime = dateTimeFormat(i.goTime, 'MM/dd hh:mm');
-//     i.leaveTime = dateTimeFormat(i.leaveTime, 'MM/dd hh:mm');
-//   });
-//   if (gridInstance.value) {
-//     gridInstance.value.resetData(newData);
-//   }
-// });
 
 // 페이지 이동 시 Grid 제거하여 중복 방지
 onBeforeUnmount(() => {

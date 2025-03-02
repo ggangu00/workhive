@@ -96,11 +96,6 @@ import { useRoute, useRouter } from 'vue-router';
 import axios from '../../assets/js/customAxios.js';
 import { ref , onMounted, watch } from 'vue';
 import { dateTimeFormat } from '../../assets/js/common.js';
-import { useUserInfoStore } from '../../store/userStore.js';
-
-const userInfoStore = useUserInfoStore();
-let loginUser = userInfoStore.user.mberId;
-console.log("로그인 정보 : ", loginUser);
 
 const route = useRoute();
 let isUpdate = ref(route.query.isUpdate === 'true');;
@@ -110,6 +105,7 @@ let crctCd;
 // 첨부파일
 const fileList = ref([]);
 const addFileList = (target) => {
+  fileList.value = [];
   const newFile = Array.from(target.files);
   fileList.value.push(...newFile);
 }
@@ -160,6 +156,28 @@ const crctGetInfo = async () => {
 
   crctData.value = result.data;
   crctData.value.commuteDt = dateTimeFormat(result.data.commuteDt, 'yyyy-MM-dd');
+  files();
+}
+
+/////////////////////첨부파일 가져오기/////////////////////
+const files = async () => {
+  if (!crctData.value.atchFileId) return;
+
+  try{
+    const response = await axios.get("/api/cmm/fms/selectFileInfs.do",{
+      params: {
+        param_atchFileId: crctData.value.atchFileId
+      },
+    });
+
+    console.log("파일내용=> ",response.data);
+    fileList.value = response.data; // 결과 저장
+    fileList.value.forEach(i => {
+      i.name = i.orignlFileNm;
+    })
+  } catch (error) {
+    console.error("파일 목록 불러오기 실패:", error);
+  }
 }
 
 onMounted(() => {
@@ -189,13 +207,11 @@ const btnCrctManage = async () => {
   });
 
   if(!isUpdate.value) {
-    formData.append("createId", loginUser);
     formData.append("preGoTime", crctData.value.goTime);
     formData.append("preLeaveTime", crctData.value.leaveTime);
     await axios.post('/api/commute/crctAdd', formData);
   }
   else {
-    formData.append("updateId", loginUser);
     await axios.post('/api/commute/crctModify', formData);
   }
 
@@ -215,8 +231,5 @@ th {
   font-size: 16px;
 }
 
-.custom-file-div{
-  text-align: left;
-}
 </style>
 

@@ -87,7 +87,6 @@ const route = useRoute();
 
 // 사용자 연차 정보 조회(있으면 사용, 없으면 생성) => 로그인 완성되면 로그인 이후 동작하게 변경
 let searchData = {
-  mberId: 'user01',
   targetYear: dateTimeFormat(new Date(), 'yyyy'),
 }
 
@@ -111,18 +110,18 @@ onMounted(() => {
 
 const yearVcCheck = async () => {
   // 연차 정보 조회
-  let yearVcData = await vacation.yearVcGetInfo(searchData.mberId, searchData.targetYear);
+  let yearVcData = await vacation.yearVcGetInfo(searchData.targetYear);
 
   // 연차 정보 없는 경우 - 연차 생성
   if(yearVcData == '') {
     // 새 연차 정보 생성
-    await vacation.yearVcAdd(searchData.mberId, searchData.targetYear);
+    await vacation.yearVcAdd(searchData.targetYear);
     // 연차 정보 재조회
-    yearVcData = await vacation.yearVcGetInfo(searchData.mberId, searchData.targetYear);
+    yearVcData = await vacation.yearVcGetInfo(searchData.targetYear);
   }
 
   // 사용 예정일 조회
-  let requestData = await vacation.reqVcGetInfo(searchData.mberId, searchData.targetYear);
+  let requestData = await vacation.reqVcGetInfo(searchData.targetYear);
 
   // 휴가 정보 입력
   vcInfo.value = vacation.vcGetInfo(yearVcData, requestData);

@@ -53,7 +53,22 @@
             </tr>
             <tr>
               <th>파일 첨부</th>
-              <td colspan="5"><input type="file" class="form-control"></td>
+              <td colspan="5">
+                <div class="form-control custom-file-div">
+                  <label class="btn btn-fill cell-btn-custom" for="inputFile">파일선택</label>
+                  <a>{{ (fileList.length == 0) ? "선택된 파일 없음" : `파일 ${fileList.length}개` }}</a>
+                  <p class="file-info">개별 파일 기준 최대 30MB까지 첨부할 수 있습니다.</p>
+                  <input type="file" id="inputFile" style="display: none;" @change="addFileList($event.target)" multiple>
+                  <hr>
+                  <div class="row file-list">
+                    <div class="col-4" v-for="(file, index) in fileList" :key="index">
+                    {{ file.name }}
+                    <button class="btn btn-sm btn-danger cell-btn-custom" @click="removeFile(index)">삭제</button>
+                    </div>
+                    <div class="col" v-if="fileList.length == 0">첨부된 파일이 없습니다.</div>
+                  </div>
+                </div>
+              </td>
             </tr>
             <tr>
               <th>결재자</th>
@@ -116,7 +131,28 @@ const vcGetInfo = async () => {
   vcData.value.createId = result.data.createId;
 
   vcData.value.remainDays = '';
+  files();
+}
 
+/////////////////////첨부파일 가져오기/////////////////////
+const files = async () => {
+  if (!vcData.value.atchFileId) return;
+
+  try{
+    const response = await axios.get("/api/cmm/fms/selectFileInfs.do",{
+      params: {
+        param_atchFileId: vcData.value.atchFileId
+      },
+    });
+
+    console.log("파일내용=> ",response.data);
+    fileList.value = response.data; // 결과 저장
+    fileList.value.forEach(i => {
+      i.name = i.orignlFileNm;
+    })
+  } catch (error) {
+    console.error("파일 목록 불러오기 실패:", error);
+  }
 }
 
 // 입력 데이터
@@ -128,10 +164,20 @@ let vcData = ref({
   vcReason: '',
   atchFileId: '',
   signId: '',
-
   remainDays: '',
-  createId: 'user01',
 })
+
+// 첨부파일
+const fileList = ref([]);
+const addFileList = (target) => {
+  fileList.value = [];
+  const newFile = Array.from(target.files);
+  fileList.value.push(...newFile);
+}
+const removeFile = (index) => {
+  fileList.value.splice(index, 1);
+};
+
 // 날짜 입력 감지 - 사용일수 계산
 watch(() => [vcData.value.vcStartDt, vcData.value.vcEndDt, vcData.value.vcType], async (newVal) => {
 
@@ -167,9 +213,6 @@ watch(() => vcData.value.useDays, (newVal) => {
 
     // 처음 실행에만 실행되어야 하는 코드 시작
     if (isFirstLoad < 2) {
-      console.log('요청 가능 일자', vcData.value.remainDays);
-      console.log('입력값', props.vcInfo.requestDays);
-      console.log('사용일', vcData.value.useDays);
       vcData.value.remainDays = props.vcInfo.requestDays;
       firstRemainDays = vcData.value.useDays;
       isFirstLoad++; // 첫 로딩 이후 감지 시작
@@ -214,16 +257,17 @@ const btnVcManage = async () => {
   formData.append("vcType", vcData.value.vcType);
   formData.append("useDays", vcData.value.useDays);
   formData.append("vcReason", vcData.value.vcReason);
-  // formData.append("atchFileId", vcData.value.atchFileId);
-  formData.append("signId", 'admin');
+  formData.append("signId", vcData.value.signId);
+
+  fileList.value.forEach((file) => {
+    formData.append("files[]", file);
+  });
 
   if(!isUpdate.value) {
-    formData.append("createId", vcData.value.createId);
     await axios.post('/api/vacation/vcAdd', formData);
 
   } else {
     formData.append("vcCd", vcCd.value);
-    formData.append("updateId", "user01");
     await axios.post('/api/vacation/vcModify', formData);
 
   }
