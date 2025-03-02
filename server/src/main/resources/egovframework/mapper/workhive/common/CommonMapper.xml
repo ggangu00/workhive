@@ -54,6 +54,23 @@
 		  ORDER BY create_dt desc
 	</select>
 	
+	<!-- 로그인 로그 등록 -->
+	<insert id="loginLogInsert" parameterType="commonDTO">
+		INSERT INTO 
+		   login_log (
+		      log_cd,
+		      log_id,
+		      log_ip,
+		      create_dt
+		   )
+		VALUES (
+		   seq_log_cd.NEXTVAL,
+		   #{logId},
+		   #{logIp},
+		   SYSDATE
+		)
+	</insert>
+	
 	<!-- 홈 대시보드 건수 조회 (진행중인 프로젝트, 금일 예정 일정, 미완료 일지) -->
 	<select id="homeInfo" parameterType="String">
 	<![CDATA[

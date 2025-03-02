@@ -62,7 +62,7 @@
    import { onBeforeMount, onBeforeUnmount, ref, watch } from "vue";
    import { useStore } from "vuex";
    import { useRouter } from "vue-router";
-   import axios from "../../assets/js/customAxios";
+   import axios from "axios";
    import Swal from 'sweetalert2';
    import { useUserInfoStore  } from '../../store/userStore';
 
@@ -151,10 +151,12 @@
             headers: { 'Content-Type': 'application/json' } // ✅ 올바른 Content-Type
          });
 
-         if(response.data.result == "success") {
-            localStorage.setItem("token", response.data.token);  // 토큰 저장
+         // 성공 처리
+         const { result, token, user } = response.data;
 
-            userInfoStore.setUser(response.data.user);
+         if (result === "success") {
+            localStorage.setItem("token", token);
+            userInfoStore.setUser(user);
 
             Swal.fire({
                icon: "success",
@@ -165,22 +167,38 @@
          }
 
       } catch (err) {
-         userInfoStore.saveUserId(userId.value, rememberMe.value); // 실패해도 pinia에 저장
+         const { response } = err;
 
-         if (err.response?.status === 401 && err.response?.data?.result === "fail") {
-            Swal.fire({
-               icon: "error",
-               title: "Login 실패",
-               text: err.response.data.message || "로그인에 실패했습니다."
-            });
-         } else {
-            Swal.fire({
+         if (response?.data) {
+               const { code, message } = response.data;
+
+               if (code === 423) {
+                  // 계정 잠금 (LOCKED)
+                  await Swal.fire({
+                     icon: "warning",
+                     title: "계정 잠김",
+                     text: message || "비밀번호 5회 실패로 계정이 잠겼습니다. 관리자에게 문의하세요."
+                  });
+                  return;
+               }
+
+               if (code === 401) {
+                  // 로그인 실패 (UNAUTHORIZED)
+                  await Swal.fire({
+                     icon: "error",
+                     title: "로그인 실패",
+                     text: message || "아이디 또는 비밀번호가 틀렸습니다."
+                  });
+                  return;
+               }
+         }
+
+         // 그 외 예상 못한 오류
+         await Swal.fire({
                icon: "error",
                title: "오류 발생",
                text: "서버와의 통신 중 문제가 발생했습니다."
-            });
-         }
-
+         });
       }
    }
 

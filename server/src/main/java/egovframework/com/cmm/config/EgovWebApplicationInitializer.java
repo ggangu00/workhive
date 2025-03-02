@@ -17,7 +17,6 @@ import org.springframework.web.servlet.DispatcherServlet;
 import egovframework.com.cmm.filter.HTMLTagFilter;
 import egovframework.com.cmm.filter.SessionTimeoutCookieFilter;
 import egovframework.com.cmm.service.EgovProperties;
-import egovframework.com.sec.security.filter.EgovSpringSecurityLoginFilter;
 import egovframework.com.sec.security.filter.EgovSpringSecurityLogoutFilter;
 import egovframework.com.uat.uap.filter.EgovLoginPolicyFilter;
 import egovframework.com.utl.wed.filter.CkFilter;

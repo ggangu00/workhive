@@ -20,7 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import egovframework.com.securing.service.CustomUserDetailService;
-import egovframework.com.securing.util.JwtUtil;
+//import egovframework.com.securing.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 
 @Configuration  // Spring Security 설정 클래스
@@ -28,9 +28,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor // 생성자 주입을 자동으로 처리
 public class WebSecurityConfig {
     
-    private final JwtUtil jwtUtil; // JWT 토큰 생성 및 검증 유틸리티
+    //private final JwtUtil jwtUtil; // JWT 토큰 생성 및 검증 유틸리티
     private final CustomUserDetailService userDetailsService; // 사용자 정보 로드 서비스
-
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
     /**
      * 🔐 비밀번호 암호화를 위한 BCryptPasswordEncoder 설정
      * - Spring Security는 기본적으로 평문(Plain Text) 비밀번호 사용을 허용하지 않음.
@@ -62,7 +62,7 @@ public class WebSecurityConfig {
 	              .accessDeniedHandler(accessDeniedHandler())  // 권한 부족 시 핸들러
 	              .authenticationEntryPoint(authenticationEntryPoint())  // 인증 안 된 사용자 접근 시 핸들러
 	          )
-	          .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);  // JWT 필터를 UsernamePassword 앞에 추가
+	          .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);  // JWT 필터를 UsernamePassword 앞에 추가
 
       return http.build();
     }
@@ -71,10 +71,10 @@ public class WebSecurityConfig {
      * ️ JWT 인증 필터 등록
      * JWT를 검증하여 사용자 인증을 수행하는 필터
      */
-    @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(jwtUtil, userDetailsService);
-    }
+//    @Bean
+//    public JwtAuthenticationFilter jwtAuthenticationFilter(ObjectMapper objectMapper) {
+//        return new JwtAuthenticationFilter(jwtUtil, userDetailsService, objectMapper);
+//    }
 
     /**
      * AuthenticationManager 설정

@@ -65,4 +65,13 @@ public class UserDTO {
 	
 	// 직급정보
 	private String gradeNm;
+
+	public int getLoginFailCount() {
+	    return lockCnt;
+	}
+
+	public void setLoginFailCount(int loginFailCount) {
+		this.lockCnt = loginFailCount;
+	}
+
 }

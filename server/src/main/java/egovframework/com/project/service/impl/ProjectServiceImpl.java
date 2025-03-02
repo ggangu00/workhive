@@ -12,9 +12,7 @@ import egovframework.com.project.mapper.ProjectMapper;
 import egovframework.com.project.service.ProjectDTO;
 import egovframework.com.project.service.ProjectService;
 import egovframework.com.project.service.ProjectWorkDTO;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Service("ProjectService")
 public class ProjectServiceImpl implements ProjectService{
 	
