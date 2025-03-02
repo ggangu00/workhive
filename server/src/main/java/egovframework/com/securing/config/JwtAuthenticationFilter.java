@@ -1,6 +1,8 @@
 package egovframework.com.securing.config;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -10,22 +12,27 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import egovframework.com.securing.service.CustomerUser;
 import egovframework.com.securing.util.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -42,7 +49,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
             String token = authHeader.substring(7);
-            log.info("🔑 [JWT 필터] 추출한 토큰: {}", token);
 
             String username = jwtUtil.extractUsername(token);
             log.info("🔑 [JWT 필터] 토큰에서 추출한 username: {}", username);
@@ -57,7 +63,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(customerUser, null, customerUser.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(authentication);
-                    log.info("✅ [JWT 필터] SecurityContext에 인증 정보 저장 완료");
                 } else {
                     log.warn("❌ [JWT 필터] 토큰 유효성 검사 실패");
                 }
@@ -75,11 +80,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             handleJwtException(response, "서버 내부 오류가 발생했습니다.", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
-
+    // 예외사항 핸들러
     private void handleJwtException(HttpServletResponse response, String message, int statusCode) throws IOException {
         response.setStatus(statusCode);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        response.getWriter().write("{\"message\": \"" + message + "\"}");
+        
+        Map<String, Object> error = new HashMap<>();
+        error.put("code", statusCode);
+        error.put("message", message);
+
+        response.getWriter().write(objectMapper.writeValueAsString(error));
     }
 }

@@ -16,50 +16,54 @@ import egovframework.com.menu.service.MenuInfoService;
 import egovframework.com.securing.service.CustomerUser;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 사용자 메뉴 접근 권한을 체크하는 컨트롤러
+ */
 @RestController
 @RequestMapping("/access")
 @Slf4j
 public class UserPageAccessController {
 
-    @Resource 
-    AuthorityService authService;
+	@Resource
+	AuthorityService authService; // 권한 관련 서비스 의존성 주입
+	@Resource
+	MenuInfoService menuService; // 메뉴 정보 관련 서비스 의존성 주입
 
-    @Resource 
-    MenuInfoService menuService;
+	/**
+	 * 특정 메뉴에 대한 사용자 접근 권한 체크
+	 * 
+	 * @param menuCd 메뉴코드 (URL 경로 변수로 전달받음)
+	 * @return 접근 가능 여부에 따른 응답 반환
+	 */
+	@GetMapping("/{menuCd}")
+	public ResponseEntity<?> menuAccessCheck(@PathVariable("menuCd") String menuCd) {
+		log.info(">>> [menuAccessCheck 호출됨] 메뉴코드: {}", menuCd);
 
-    @GetMapping("/{menuCd}")
-    public ResponseEntity<?> menuAccessCheck(@PathVariable("menuCd") String menuCd) {
+		// 현재 인증 정보 조회
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        log.info(">>> [menuAccessCheck 호출됨] 메뉴코드: {}", menuCd);
-        
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        CustomerUser user = (CustomerUser) auth.getPrincipal();
-        String userId = user.getUserDTO().getMberId();
-        String deptCd = user.getUserDTO().getDeptCd();
+		// 인증 정보가 없거나, 인증 주체가 기대한 타입이 아니면 로그인 필요 응답 반환
+		if (auth == null || !(auth.getPrincipal() instanceof CustomerUser)) {
+			log.warn("인증 정보가 없거나 올바르지 않습니다.");
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+		}
 
-        log.info(">>> SecurityContext 인증 객체: {}", auth);
-        log.info(">>> 인증 객체 타입: {}", (auth != null ? auth.getClass().getName() : "null"));
-        log.info(">>> Principal: {}", (auth != null ? auth.getPrincipal() : "null"));
+		// 사용자 정보 추출
+		CustomerUser user = (CustomerUser) auth.getPrincipal();
+		String userId = user.getUserDTO().getMberId();
 
-        if (auth == null || !(auth.getPrincipal() instanceof CustomerUser)) {
-            log.warn("인증 정보가 없거나 올바르지 않습니다.");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
-        }
-        
-        log.info("메뉴 권한 체크 호출 - menuCd={}, userId={}", menuCd, userId);
+		// 메뉴 접근 권한 체크
+		boolean isAccess = authService.isMenuAccessible(menuCd, userId);
+		log.info("메뉴 권한 체크 결과 = {}", isAccess);
 
-        boolean isAccess = authService.isMenuAccessible(menuCd, userId);
-        log.info("메뉴 권한 체크 결과 = {}", isAccess);
+		// 권한이 없으면 접근 거부 응답 반환
+		if (!isAccess) {
+			log.warn(">>> 접근 거부됨: 메뉴={}, 사용자={}", menuCd, userId);
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("해당 메뉴에 대한 접근 권한이 없습니다.");
+		}
 
-        if (!isAccess) {
-            log.warn(">>> 접근 거부됨: 메뉴={}, 사용자={}", menuCd, userId);
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("해당 메뉴에 대한 접근 권한이 없습니다.");
-        } else {
-            log.info(">>> 접근 허용됨: 메뉴={}, 사용자={}", menuCd, userId);
-            return ResponseEntity.ok(true);
-        }
-    }
-
-
+		// 권한이 있으면 접근 허용 응답 반환
+		log.info(">>> 접근 허용됨: 메뉴={}, 사용자={}", menuCd, userId);
+		return ResponseEntity.ok(true);
+	}
 }
-

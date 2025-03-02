@@ -4,13 +4,9 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import com.raonsecure.omnione.core.eoscommander.util.StringUtils;
 
 import egovframework.com.cmm.EgovWebUtil;
 import org.egovframe.rte.fdl.property.EgovPropertyService;
@@ -40,7 +36,6 @@ public class EgovComUtlController {
 
     //@Resource(name = "egovUserManageService")
     //private EgovUserManageService egovUserManageService;
-	private static final Logger LOGGER = LoggerFactory.getLogger(EgovComUtlController.class);
 	
 	@Resource(name = "egovPageLinkWhitelist")
     protected List<String> egovWhitelist;

@@ -13,11 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 import egovframework.com.member.service.MemberService;
 import egovframework.com.securing.service.CustomerUser;
 import egovframework.com.securing.service.UserDTO;
-import lombok.extern.slf4j.Slf4j;
 
 @RestController // data
 @RequestMapping("/member")
-@Slf4j
 public class MemberController {
 
 	@Resource

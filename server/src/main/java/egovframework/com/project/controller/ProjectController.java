@@ -23,11 +23,9 @@ import egovframework.com.cmm.ComDefaultVO;
 import egovframework.com.project.service.ProjectDTO;
 import egovframework.com.project.service.ProjectService;
 import egovframework.com.project.service.ProjectWorkDTO;
-import lombok.extern.slf4j.Slf4j;
 
 @RestController // data 
 @RequestMapping("/project")
-@Slf4j
 public class ProjectController {
 	
 	@Resource

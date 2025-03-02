@@ -25,15 +25,12 @@ public class JwtUtil {
 
     private Key getSigningKey() {
         String secretKey = propService.getString("jwt.secret");
-        log.info("🔑 현재 JWT secretKey = {}", propService.getString("jwt.secret"));
 
         return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
     // JWT 생성
     public String generateToken(String username) {
-        log.info("✅ 토큰 발급 시작 - username: {}, 유효시간: {}ms", username, ACCESS_TOKEN_VALIDITY);
-        log.info("✅ 사용 중인 secretKey = {}", propService.getString("jwt.secret"));
 
         return Jwts.builder()
                 .setSubject(username)
@@ -56,9 +53,6 @@ public class JwtUtil {
     // 토큰 유효성 검사
     public boolean validateToken(String token) {
         try {
-            log.info("✅ 토큰 검증 시작 - token: {}", token);
-            log.info("✅ 사용 중인 secretKey = {}", propService.getString("jwt.secret"));
-
             Jwts.parserBuilder()
                     .setSigningKey(getSigningKey())
                     .build()

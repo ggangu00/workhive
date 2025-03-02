@@ -12,7 +12,12 @@ public interface CommonService {
 	// 로그인 로그 전체조회
 	public List<CommonDTO> loginLogSelectAll();
 	
+	// 로그인 로그 등록
+	public boolean loginLogInsert(CommonDTO dto);
+	
 	// 홈 대시보드 건수 조회 (진행중인 프로젝트, 금일 예정 일정, 미완료 일지)
 	public CommonDTO homeInfo(String memCd);
+	
+	
 	
 }
