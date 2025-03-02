@@ -32,7 +32,7 @@ public class UserDTO {
 	
 	@Email(message = "올바른 이메일 형식이 아닙니다.")
 	private String mberEmailAdres;	// 회원 이메일 주소
-	private String meddleTelno;		// 중간 전화번호
+	private String middleTelno;		// 중간 전화번호
 			
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date sbscrbDe;			// 가입일

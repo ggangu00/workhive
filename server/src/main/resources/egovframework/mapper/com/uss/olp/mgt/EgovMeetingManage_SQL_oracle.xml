@@ -154,11 +154,13 @@
 	<select id="selectMeetingManageDetail" parameterType="egovframework.com.uss.olp.mgt.service.MeetingManageVO" resultType="egovMap" resultMap="meetingManageMap">
 		SELECT
 			A.MTG_ID,
-			fn_get_codename(A.TYPE_CD) as TYPE_CD,
+			A.TYPE_CD,
+			fn_get_codename(A.TYPE_CD) as TYPE_NM,		
 			A.MTG_NM,
 			A.MTG_MTR_CN,
 			A.MTG_DE,
-			fn_get_codename(A.MTG_PLACE) as MTG_PLACE,
+			A.MTG_PLACE,
+			fn_get_codename(A.MTG_PLACE) as MTG_PLACE_NM,
 			A.MTG_BEGIN_TM,
 			A.MTG_END_TM,
 			A.MTG_RESULT_CN,
@@ -196,14 +198,16 @@
 	 
 		SELECT
 		A.MTG_ID,
-		fn_get_codename(A.TYPE_CD) as TYPE_CD,
+		A.TYPE_CD,
+		fn_get_codename(A.TYPE_CD) as TYPE_NM,		
 		A.MTG_NM,
 		A.MTG_MTR_CN,
 		A.MTG_RESULT_CN,
 		A.MTG_DE,
 		A.MTG_BEGIN_TM,
 		A.MTG_END_TM,
-		fn_get_codename(A.MTG_PLACE) as MTG_PLACE,
+		A.MTG_PLACE,
+		fn_get_codename(A.MTG_PLACE) as MTG_PLACE_NM,
 		A.CREATE_DT,
 		A.CREATE_ID
 		FROM COMTNMTGINFO A

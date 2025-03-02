@@ -39,12 +39,7 @@ public class ProjectServiceImpl implements ProjectService{
 		return projectMapper.projectSelect(prCd);
 	}
 
-	//프로젝트 등록
-	@Override
-	public boolean projectInsert(ProjectDTO project) {
-		return projectMapper.projectInsert(project) == 1 ? true : false;
-	}	
-	
+	//프로젝트 등록	
 	@Transactional
     public boolean projectSave(ProjectDTO project) {
 		 try {
@@ -74,8 +69,9 @@ public class ProjectServiceImpl implements ProjectService{
 		 try {
 		        projectMapper.projectUpdate(project);
 		        
-		        String prCd = projectMapper.getLastInsertedPrCd();
-		        project.setPrCd(prCd);  // DTO에 prCd 설정
+		        String prCd = project.getPrCd();
+		        
+		        projectMapper.projectWorkDelete(prCd); //과업 전체 삭제
 
 		        // 작업 리스트가 존재할 경우
 		        if (project.getWorkArr() != null && !project.getWorkArr().isEmpty()) {
@@ -115,12 +111,6 @@ public class ProjectServiceImpl implements ProjectService{
 	@Override
 	public ProjectWorkDTO projectWorkSelect(String prWorkCd) {
 		return projectMapper.projectWorkSelect(prWorkCd);
-	}
-	
-	//프로젝트 과업삭제
-	@Override
-	public boolean projectWorkDelete(String prWorkCd) {
-		return projectMapper.projectPlanDelete(prWorkCd) == 1 ? true : false;
 	}
 	
 	//======================프로젝트 일정=====================

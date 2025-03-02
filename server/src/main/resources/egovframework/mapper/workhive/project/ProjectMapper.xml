@@ -21,6 +21,7 @@
 			   create_id,	
 			   create_dt,
 			   entrprs_mber_id,	--거래처id
+			   state, 		--진행상태
                fn_get_comnm(entrprs_mber_id) as com_nm	--거래처명
 		from project
 		where 
@@ -101,6 +102,7 @@
 			   create_id,
 			   create_dt,
 			   entrprs_mber_id,	--거래처id
+			   state, 		--진행상태
                fn_get_comnm(entrprs_mber_id) as com_nm	--거래처명
 		from project
 		where 
@@ -151,28 +153,38 @@
 
 	<!-- 프로젝트 수정 -->
 	<update id="projectUpdate" parameterType="projectDTO">
-		update project
-		set	
-			<if test="typeCd != null and !typeCd.equals('')">
-			type_cd = #{typeCd}, 
-			</if>
-			<if test="prNm != null and !prNm.equals('')">
-			pr_nm = #{prNm},
-			</if>
-			<if test="aheadDt != null and !aheadDt.equals('')">
-			ahead_dt = #{aheadDt},
-			</if>
-			<if test="(startDt != null and !startDt.equals('')) and endDt != null and !endDt.equals(''))">
-			start_dt = #{startDt},
-			end_dt = #{endDt},
-			</if>
-			entrprs_mber_id = #{entrprsMberId},
-			price = #{price},
-			update_id = #{updateId},
-			update_dt = sysdate
-		where 
-			pr_cd = ${prCd}				
+	    update project
+	    set    
+	        <if test="typeCd != null and typeCd != ''">
+	            type_cd = #{typeCd}, 
+	        </if>
+	        <if test="prNm != null and prNm != ''">
+	            pr_nm = #{prNm},
+	        </if>
+	        <if test="aheadDt != null">
+	            ahead_dt = #{aheadDt},
+	        </if>
+	        <if test="startDt != null">
+	            start_dt = #{startDt},
+	        </if>
+	        <if test="endDt != null">
+	            end_dt = #{endDt},
+	        </if>
+	        <if test="state != null">
+	            state = #{state},
+	        </if>
+	        <if test="entrprsMberId != null">
+	            entrprs_mber_id = #{entrprsMberId},
+	        </if>
+	        <if test="price != null">
+	            price = #{price},
+	        </if>
+	        update_dt = sysdate
+	    where 
+	        pr_cd = #{prCd}   
 	</update>
+
+
 	
 	<!-- 프로젝트 삭제 -->
 	<update id="projectDelete" parameterType="String">
@@ -209,6 +221,16 @@
 			pr_cd = #{prCd}
 		order by seq asc
 	</select>	
+	
+	
+	<!-- 프로젝트 과업삭제 -->
+	<delete id="projectWorkDelete" parameterType="String">
+		delete 
+		from
+		   project_work
+		WHERE
+		   pr_cd = #{prCd}
+	</delete>
 	
 	<!-- ======================프로젝트 일정=====================  -->
 	
@@ -271,7 +293,7 @@
 		from
 		   project_plan
 		WHERE
-		   pr_plan_cd = #{prPlanCd}
+		   pr_cd = #{prCd}
 	</delete>
 
 </mapper>

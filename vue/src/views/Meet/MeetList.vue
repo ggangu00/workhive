@@ -147,7 +147,7 @@ class BtnRendererSetting {
             const rowData = props.grid.getRow(rowKey);
 
             if (type === "edit") {
-                btnPageMove("add", rowData.mtgId);
+                btnPageMove(rowData.mtgId);
             } else if (type === "del") {
                 btnMeetRemove(rowData.mtgId);
             }
@@ -226,8 +226,8 @@ const modalClose = (e) => { //회의 정보 모달 닫기
 
 //======================= 버튼이벤트 =======================
 const router = useRouter();
-const btnPageMove = (mode, code) => { //수정/일정관리 페이지로
-    router.push({ path: `/project/${mode}`, query: { prCd: code } });
+const btnPageMove = (code) => { //수정/일정관리 페이지로
+    router.push({ path: `/meet/add`, query: { mtgId: code } });
 }
 
 // 회의 삭제 버튼
