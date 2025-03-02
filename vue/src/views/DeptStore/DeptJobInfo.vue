@@ -128,11 +128,6 @@ import { provide } from 'vue'; // 자식에게 전달
 import DeptJobBx from "./DeptJobBx.vue";
 import JobManage from "./JobManage.vue";
 import Modal from '../../components/Modal.vue';
-// import { useUserInfoStore } from '../../store/userStore.js';
-
-// const userInfoStore = useUserInfoStore();
-// let loginUser = userInfoStore.user.mberId;
-// console.log("로그인 정보 : ", loginUser);
 
 const token = localStorage.getItem("token");
 
@@ -246,8 +241,6 @@ const modalConfirm = async () => {
   formData.append("deptCd", jobBxData.value.deptCd);
   formData.append("deptJobBxNm", jobBxData.value.deptJobBxNm);
   formData.append("indictOrdr", jobBxData.value.indictOrdr);
-  // formData.append("frstRegisterId", loginUser);
-  // formData.append("lastUpdusrId", loginUser);
 
   if(jobBxModalType == 'add') {
     await axios.post('/api/deptstore/jobBxAdd', formData);

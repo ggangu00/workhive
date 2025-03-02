@@ -30,8 +30,6 @@ const buttonClick = async (buttonName) => {
 
   const buttons = ref([
   { label: '기안', class: 'btn-warning btn-fill' },
-  { label: '공람발송', class: 'btn-primary btn-fill' },
-  { label: '인쇄/다운로드', class: 'btn-excel' }
   ]);
 
   const columnDefs = ref([

@@ -54,18 +54,12 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
-// import { dateTimeFormat } from '../../assets/js/common.js';
 import Grid from 'tui-grid';
 import axios from '../../assets/js/customAxios.js';
 import { useRouter } from 'vue-router';
-// import { useUserInfoStore } from '../../store/userStore.js';
-
-// const userInfoStore = useUserInfoStore();
-// let loginUser = userInfoStore.user.mberId;
-// console.log("로그인 정보 : ", loginUser);
+import * as vcFormat from '../../assets/js/formatter.js';
 
 let gridInstance = ref();
-// let rowData = ref([]);
 
 const token = localStorage.getItem("token");
 
@@ -124,25 +118,16 @@ onMounted(() => {
       perPage: 5,
     },
     columns: [ // 시작일 / 종료일 / 휴가종류 / 사용일수 / 신청일 / 결재자 / 결재상태
-      { header: '시작일', name: 'vcStartDt', align: 'center'},
-      { header: '종료일', name: 'vcEndDt', align: 'center'},
-      { header: '휴가종류', name: 'vcType', align: 'center',
-        formatter: ({ value }) => {
-          let type = '';
-          if(value === 'E01') type = '연차';
-          else if(value === 'E02') type = '오전반차';
-          else if(value === 'E03') type = '오후반차';
-          else if(value === 'E04') type = '공가';
-          return type;
-        }
-      },
+      { header: '시작일', name: 'vcStartDt', align: 'center', formatter: vcFormat.dateFormatter },
+      { header: '종료일', name: 'vcEndDt', align: 'center', formatter: vcFormat.dateFormatter },
+      { header: '휴가종류', name: 'vcType', align: 'center', formatter: vcFormat.vcTypeFormatter },
       { header: '사용일수', name: 'useDays', align: 'center',
         formatter: ({ value }) => { // 소숫점 숫자 표시
           const num = Number(value);
           return num % 1 === 0 ? num : num.toFixed(1);
         }
       },
-      { header: '신청일', name: 'createDt', align: 'center'},
+      { header: '신청일', name: 'createDt', align: 'center', formatter: vcFormat.dateFormatter },
       { header: '결재자', name: 'signId', align: 'center'},
       { header: '결재상태', name: 'signState', align: 'center', renderer: BtnRenderer }
     ]
@@ -203,7 +188,7 @@ class BtnRenderer {
   }
 }
 
-
+const emit = defineEmits(['manageClick']);
 const router = useRouter();
 const btnVcUpdate = (rowKey) => {
   let selectedRowData = gridInstance.value.getRow(rowKey);
@@ -215,6 +200,7 @@ const btnVcDelete = async (rowKey) => {
 
   await axios.post(`/api/vacation/vcRemove?vcCd=${vcCd}`);
   vcGetList();
+  emit('manageClick'); // 저장 동작 확인
 };
 
 // 페이지 이동 시 Grid 제거하여 중복 방지

@@ -1,9 +1,8 @@
 import axios from "../../assets/js/customAxios";
 
 // 연차 조회
-export async function yearVcGetInfo(mberId, targetYear) {
+export async function yearVcGetInfo(targetYear) {
   let searchData = {
-    mberId: mberId,
     targetYear: targetYear,
   }
   let result = await axios.get('/api/yearVc/yearVcInfo', { params : searchData });
@@ -11,9 +10,8 @@ export async function yearVcGetInfo(mberId, targetYear) {
 }
 
 // 연차 생성
-export async function yearVcAdd(mberId, targetYear) {
+export async function yearVcAdd(targetYear) {
   let formData = new FormData();
-  formData.append("mberId", mberId);
   formData.append("targetYear", targetYear);
   formData.append("giveDays", 15);
   formData.append("useDays", 0);
@@ -22,9 +20,8 @@ export async function yearVcAdd(mberId, targetYear) {
 }
 
 // 사용 예정일 조회
-export async function reqVcGetInfo(mberId, targetYear) {
+export async function reqVcGetInfo(targetYear) {
   let searchData = {
-    createId: mberId,
     createDt: targetYear,
   }
   let result = await axios.get('/api/vacation/expectInfo', { params : searchData });

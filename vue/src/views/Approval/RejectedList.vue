@@ -28,12 +28,12 @@ const buttonClick = async (buttonName) => {
   }
 };
 
-  const buttons = ref([
+const buttons = ref([
   { label: '기안', class: 'btn-warning btn-fill' },
-  { label: '인쇄/다운로드', class: 'btn-excel' }
-  ]);
+  { label: '회수', class: 'btn-primary btn-fill' },
+]);
 
-  const columnDefs = ref([
+const columnDefs = ref([
   { header: '문서번호', name: 'docCd', sortable: true },
   { header: '현재결재상태', name: 'crntSignStat', sortable: true },
   { header: '종류', name: 'docKind', sortable: true },

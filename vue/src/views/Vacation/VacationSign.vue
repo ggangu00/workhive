@@ -80,23 +80,16 @@
   import Grid from 'tui-grid';
   import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
   import { dateTimeFormat } from '../../assets/js/common';
-  import { signFormatter } from '../../assets/js/formatter.js';
-  // import { useUserInfoStore } from '../../store/userStore.js';
-  
-  // const userInfoStore = useUserInfoStore();
-  // let loginUser = userInfoStore.user.mberId;
-  // console.log("로그인 정보 : ", loginUser);
+  import * as vcFormat from '../../assets/js/formatter.js';
   
   const token = localStorage.getItem("token");
 
   // 조회 조건
   const vcSrchData = ref({
-    // signId: loginUser,
     startDate: '',
     endDate: '',
   })
   const signSrchData = ref({
-    // signId: loginUser,
     startDate: '',
     endDate: '',
   })
@@ -133,78 +126,37 @@
     }
   };
   
-  // 가져온 원본 목록 데이터
-  // let originVcList;
-  // let originSignList;
-  
   // 그리드 컬럼 데이터
   let vcCol = [
-    { header: '시작일', name: 'vcStartDt', align: 'center'},
-    { header: '종료일', name: 'vcEndDt', align: 'center'},
-    { header: '휴가종류', name: 'vcType', align: 'center'},
+    { header: '시작일', name: 'vcStartDt', align: 'center', formatter: vcFormat.dateFormatter },
+    { header: '종료일', name: 'vcEndDt', align: 'center', formatter: vcFormat.dateFormatter },
+    { header: '휴가종류', name: 'vcType', align: 'center', formatter: vcFormat.vcTypeFormatter },
     { header: '휴가일수', name: 'useDays', align: 'center',
       formatter: ({ value }) => { // 소숫점 숫자 표시
         const num = Number(value);
         return num % 1 === 0 ? num : num.toFixed(1);
       }
     },
-    { header: '신청일', name: 'createDt', align: 'center'},
+    { header: '신청일', name: 'createDt', align: 'center', formatter: vcFormat.dateFormatter },
     { header: '신청자', name: 'createId', align: 'center'},
-    { header: '결재상태', name: 'signState', align: 'center', formatter: signFormatter },
+    { header: '결재상태', name: 'signState', align: 'center', formatter: vcFormat.signFormatter },
   ];
   let signCol = [
-    { header: '시작일', name: 'vcStartDt', align: 'center'},
-    { header: '종료일', name: 'vcEndDt', align: 'center'},
-    { header: '휴가종류', name: 'vcType', align: 'center'},
+    { header: '시작일', name: 'vcStartDt', align: 'center', formatter: vcFormat.dateFormatter },
+    { header: '종료일', name: 'vcEndDt', align: 'center', formatter: vcFormat.dateFormatter },
+    { header: '휴가종류', name: 'vcType', align: 'center', formatter: vcFormat.vcTypeFormatter },
     { header: '휴가일수', name: 'useDays', align: 'center',
       formatter: ({ value }) => { // 소숫점 숫자 표시
         const num = Number(value);
         return num % 1 === 0 ? num : num.toFixed(1);
       }
     },
-    { header: '신청일', name: 'createDt', align: 'center'},
+    { header: '신청일', name: 'createDt', align: 'center', formatter: vcFormat.dateFormatter },
     { header: '신청자', name: 'createId', align: 'center'},
-    { header: '결재일', name: 'signDt', align: 'center'},
-    { header: '결재상태', name: 'signState', align: 'center', formatter: signFormatter },
+    { header: '결재일', name: 'signDt', align: 'center', formatter: vcFormat.dateFormatter },
+    { header: '결재상태', name: 'signState', align: 'center', formatter: vcFormat.signFormatter },
   ];
   
-  // 그리드 데이터 형식 변경
-  // const listFormat = (list) => {
-  //   list.forEach(i => {
-  //     i.vcStartDt = dateTimeFormat(i.vcStartDt, 'yyyy-MM-dd');
-  //     i.vcEndDt = dateTimeFormat(i.vcEndDt, 'MM/dd hh:mm');
-  //     i.createDt = dateTimeFormat(i.createDt, 'yyyy-MM-dd');
-  //     i.signDt = dateTimeFormat(i.signDt, 'yyyy-MM-dd');
-  //     switch(i.vcType ) {
-  //       case "E01":
-  //         i.vcType = "연차";
-  //         break;
-  //       case "E02":
-  //         i.vcType = "오전반차";
-  //         break;
-  //       case "E03":
-  //         i.vcType = "오후반차";
-  //         break;
-  //       case "E04":
-  //         i.vcType = `<a>공가</a>`;
-  //         break;
-  //     }
-  //     switch(i.signState) {
-  //       case "D01":
-  //         i.signState = "미결재";
-  //         break;
-  //       case "D02":
-  //         i.signState = "승인";
-  //         break;
-  //       case "D03":
-  //         i.signState = "보완";
-  //         break;
-  //       case "D04":
-  //         i.signState = `<a>반려</a>`;
-  //         break;
-  //     }
-  //   });
-  // }
   // 실시간 조회 조건
   watch(() => vcSrchData, () => {
     vcGetList();

@@ -6,9 +6,12 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +23,7 @@ import egovframework.com.common.util.GridUtil;
 import egovframework.com.commute.service.CommuteDTO;
 import egovframework.com.commute.service.CommuteService;
 import egovframework.com.project.service.ProjectDTO;
+import egovframework.com.securing.service.CustomerUser;
 
 @RestController
 @RequestMapping("/commute")
@@ -72,22 +76,19 @@ public class CommuteController {
 	
 	// 출퇴근 전체 조회
 	@GetMapping("/cmtList")
-	public Map<String, Object> cmtList(@RequestParam(name="mberId") String mberId, 
-									@RequestParam(name="startDate") String startDate,
-									@RequestParam(name="endDate") String endDate,
+	public Map<String, Object> cmtList(@ModelAttribute CommuteDTO cmtDTO,
 									@RequestParam(name = "page", required = false, defaultValue = "1") int page,
 									@RequestParam(name = "perPage", required = false, defaultValue = "5") int perPage) {
 		
-
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUser user = (CustomerUser) auth.getPrincipal();
+        String userId = user.getUserDTO().getMberId();
+        cmtDTO.setMberId(userId);
+        
 		PaginationInfo paginationInfo = new PaginationInfo();
 		paginationInfo.setCurrentPageNo(page);
 		paginationInfo.setRecordCountPerPage(perPage);
 
-		CommuteDTO cmtDTO = new CommuteDTO();
-		cmtDTO.setMberId(mberId);
-		cmtDTO.setStartDate(startDate);
-		cmtDTO.setEndDate(endDate);
-		
 		cmtDTO.setFirstIndex(paginationInfo.getFirstRecordIndex());
 		cmtDTO.setLastIndex(paginationInfo.getLastRecordIndex());
 		cmtDTO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());

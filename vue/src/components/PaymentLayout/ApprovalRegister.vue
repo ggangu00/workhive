@@ -205,15 +205,12 @@ import Modal from '../../components/Modal.vue';
 import axios from '../../assets/js/customAxios.js';
 import { useUserInfoStore } from '../../store/userStore.js';
 
-
 const userInfoStore = useUserInfoStore();
 let loginUser = userInfoStore.user ? userInfoStore.user.mberId : ""; // 로그인한 사용자 정보 가져오기
-
 let editor ;
 const route = useRoute();
 
 //에디터객체
-
 const editorElement = ref('');
 
 //데이터받기
@@ -227,14 +224,23 @@ const fileList = ref([]);
 const formFile = ref("");
 const formCd = ref("");
 
+//  ApprovalLine을 참조할 ref 생성
+const approvalLineRef = ref(null);
+
+//결재자목록 수신자목록 가져오기
+const approvers = ref([]);
+const receivers = ref([]);
+
+//양식유형 가져오기
+const formList =ref([]);
+const formCount = ref(0);
+
 //  Bootstrap 모달 이벤트 리스너 추가
 onMounted(() => {
   const modalElement = document.getElementById('approvalRegiModal');
   if (modalElement) {
     modalElement.addEventListener('shown.bs.modal', handleModalOpen);
   }
-
-  //query값 가져오기
   // 앞전 페이지에서 정보 받아옴
   docCd.value = route.query.docCd || "";
   docKind.value = route.query.docKind || "";
@@ -243,15 +249,13 @@ onMounted(() => {
   docTitle.value = route.query.docTitle || "";
   docCnEditor.value = route.query.docCnEditor || "";
   formCd.value = route.query.formCd || "";
-
-  initEditor();
-
+  
+  initEditor();//바로 에디터생성
 
   if(docCd.value){
     approvalList();
     receiverList();
   }
-
   //param값 제거
   window.history.replaceState({}, '', route.path);
 });
@@ -267,18 +271,13 @@ const initEditor = () => {
     usageStatistics: false,
     plugins: [tableMergedCell]
   });
-
 };
 
-/////////////////////////////////
 defineProps({
   headButtons: { type: Array, required: true },
   ApprovalButtons: { type: Boolean, default: true },
   showFile: { type: Boolean, default: true }
 });
-
-//  ApprovalLine을 참조할 ref 생성
-const approvalLineRef = ref(null);
 
 //  모달이 열릴 때 Toast Grid를 초기화하는 함수
 const handleModalOpen = () => {
@@ -288,11 +287,9 @@ const handleModalOpen = () => {
 };
  // 파일 삭제 기능
 const removeFile = (index) => {
-    fileList.value.splice(index, 1);
-    };
-//결재자목록 수신자목록 가져오기
-const approvers = ref([]);
-const receivers = ref([]);
+  fileList.value.splice(index, 1);
+};
+
 const registerApprovals = () => {
   if (approvalLineRef.value) {
     approvers.value = approvalLineRef.value.approvers;//이값으로 디비에넘기기
@@ -303,12 +300,10 @@ const registerApprovals = () => {
 /////////////////////수신자 가져오기/////////////////////
 const receiverList = async () => {
   if (!route.query.docCd) return; // docCd가 없으면 실행하지 않음
-
   try {
     const response = await axios.get("/api/document/receiverList", {
       params: { docCd: route.query.docCd }
     });
-
     if (response.data) {
       // 수신자 목록 설정
       receivers.value = response.data.map((approver) => ({
@@ -328,14 +323,11 @@ const receiverList = async () => {
 /////////////////////결재선 가져오기/////////////////////
 const approvalList = async () => {
   if (!docCd.value) return; // docCd가 없으면 실행하지 않음
-
   try {
     const response = await axios.get("/api/document/approvalList", {
       params: { docCd: docCd.value }
     });
-
     if (response.data) {
-
       approvers.value = response.data.map((approver) => ({
         mberId: approver.mberId,
         mberNm: approver.mberNm,
@@ -344,19 +336,16 @@ const approvalList = async () => {
         signName: approver.signName, // 상태 코드 변환
       }));
     }
-
   } catch (error) {
     console.error("결재선 정보 불러오기 실패:", error);
   }
 };
-
 
 /////////////////////첨부파일/////////////////////////
 const addFileList = (target) => {
   const newFile = Array.from(target.files);
   console.log(target.files);
   fileList.value.push(...newFile);
-
 }
 
 //  컴포넌트 언마운트 시 이벤트 리스너 제거 (페이지이동)
@@ -365,7 +354,6 @@ onUnmounted(() => {
     if (modalElement) {
       modalElement.removeEventListener('shown.bs.modal', handleModalOpen);
     }
-
     if (editor) {
     editor.destroy();
     editor = null;
@@ -373,7 +361,6 @@ onUnmounted(() => {
 });
 
 //--------------양식 모달--------------
-
 const isShowModal = ref(false);
 const modalOpen = () => { //양식 정보 모달 열기
   isShowModal.value = true;
@@ -390,9 +377,6 @@ const modalClose = (e) => { //양식 정보 모달 닫기
   }
 }
 
-//양식유형 가져오기
-const formList =ref([]);
-const formCount = ref(0);
 const formGetList = async () =>{
   const formType = await axios.get('/api/document/form')
   formList.value = formType.data;
@@ -417,18 +401,31 @@ const conditionReset = () => { // 정보 리셋
 
 }
 
-//입력값 검사
-const inputCheck = () => {
-  if (docTitle.value.trim() == '' || formCd.value.trim() == '') {
+//문서제목 검사
+const inputCheckDoc = () => {
+  if (docTitle.value.trim() == '') {
     Swal.fire({
       icon: 'warning',
       title: '필수 항목 누락',
-      text: '문서 제목과 양식 코드가 비어있습니다.'
+      text: '문서 제목이 비어있습니다.'
     });
     return false;
   }
   return true;
 }
+//양식 검사
+const inputCheckForm = () => {
+  if ( formCd.value.trim() == '') {
+    Swal.fire({
+      icon: 'warning',
+      title: '필수 항목 누락',
+      text: '양식 코드가 비어있습니다.'
+    });
+    return false;
+  }
+  return true;
+}
+
 
 // 결재선 포멧
 const approvalStatusMap = {
@@ -443,12 +440,31 @@ const getApprovalStatusName = (code) => {
   return approvalStatusMap[code] || code; // 코드가 없으면 기존 코드 그대로 표시
 };
 
-//const sessionId = this.$session.get('user_id');
 ///////////////////상신버튼////////////////////////////
 const approvalInfo = async() => {
-  if (!inputCheck()) return;
-  const formData = new FormData();
+  if (!inputCheckDoc()) return;
+  if (!inputCheckForm()) return;
+  const approvalCheck1 = approvers.value.some(a => a.signName == "K01");
+  const approvalCheck4 = approvers.value.some(a => a.signName == "K04");
 
+  if(!approvalCheck1){
+    Swal.fire({
+      icon: "warning",
+      title: "결재선 오류",
+      text: "기안자가 반드시 필요"
+    });
+    return;
+  }
+  if (!approvalCheck4) {
+    Swal.fire({
+      icon: "warning",
+      title: "결재선 오류",
+      text: "최소 한 명의 결정이 필요."
+    });
+    return;
+  }
+  //데이터담기
+  const formData = new FormData();
   formData.append(
     "document", JSON.stringify({
       docTitle : docTitle.value,
@@ -460,40 +476,38 @@ const approvalInfo = async() => {
       formType : formType.value
     })
   )
-
+  //결재쟈
   formData.append("approvalLine", JSON.stringify([...approvers.value].reverse()));
-
+  //수신자
   formData.append("reception", JSON.stringify(receivers.value));
-
+  //첨부파일  
   fileList.value.forEach((file) => {
     formData.append("files[]", file);
   });
-
   try {
-          const response = await axios.post('/api/document/register', formData,
-          {headers: { "Content-Type": "multipart/form-data" }});
-          if(response.status == 200) {
-              Swal.fire({
-                icon: "success",
-                title: "등록 성공",
-              });
-
-          }else if(formCd.value == ''){
-            Swal.fire({
-              icon: "error",
-              title: "등록 실패",
-              text:  "Error : "
-          });
-          }
-        } catch (err) {
+    const response = await axios.post('/api/document/register', formData,
+      {headers: { "Content-Type": "multipart/form-data" }});
+      if(response.status == 200) {
           Swal.fire({
-              icon: "error",
-              title: "등록 실패",
-              text:  "Error : " + err.response.data.error
+            icon: "success",
+            title: "등록 성공",
           });
-        }
-}
 
+      }else if(formCd.value == ''){
+        Swal.fire({
+          icon: "error",
+          title: "등록 실패",
+          text:  "Error : "
+      });
+      }
+    } catch (err) {
+      Swal.fire({
+          icon: "error",
+          title: "등록 실패",
+          text:  "Error : " + err.response.data.error
+      });
+    }
+  }
 defineExpose({  // modalOpen expose
   modalOpen,
   conditionReset,
@@ -506,7 +520,6 @@ watch(()=> docCnEditor.value, async()=>{
     editor.setHTML(docCnEditor.value)
   }
 );
-
 </script>
 <style scoped>
   .modal-xl {

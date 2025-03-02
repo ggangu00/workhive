@@ -81,7 +81,9 @@ import axios from '../../assets/js/customAxios.js';
 import Grid from 'tui-grid';
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 import { cmtCheck } from '../../assets/js/commute';
-import { timeFormatter, dateFormatter } from '../../assets/js/formatter.js';
+import * as crctFormat from '../../assets/js/formatter.js';
+
+const token = localStorage.getItem("token");
 
 // 조회 조건
 const crctSrchData = ref({
@@ -104,7 +106,12 @@ const crctGetList = () => {
 }
 const crctList = {
   api: {
-    readData: { url: '/api/commute/signerList', method: 'GET', initParams: crctSrchData.value}
+    readData: { 
+      url: '/api/commute/signerList', 
+      method: 'GET', 
+      initParams: crctSrchData.value,
+      headers: {'Authorization': `Bearer ${token}`},
+    }
   }
 };
 const signGetList = () => {
@@ -112,7 +119,12 @@ const signGetList = () => {
 }
 const signList = {
   api: {
-    readData: { url: '/api/commute/signedList', method: 'GET', initParams: signSrchData.value}
+    readData: { 
+      url: '/api/commute/signedList', 
+      method: 'GET', 
+      initParams: signSrchData.value,
+      headers: {'Authorization': `Bearer ${token}`},
+    }
   }
 };
 
@@ -123,25 +135,25 @@ const signList = {
 
 // 그리드 컬럼 데이터
 let crctCol = [
-  { header: '근무일자', name: 'commuteDt', align: 'center', formatter: dateFormatter },
-  { header: '출근시간', name: 'preGoTime', align: 'center', formatter: timeFormatter },
-  { header: '퇴근시간', name: 'preLeaveTime', align: 'center', formatter: timeFormatter },
-  { header: '정정출근시간', name: 'crctGoTime', align: 'center', formatter: timeFormatter },
-  { header: '정정퇴근시간', name: 'crctLeaveTime', align: 'center', formatter: timeFormatter },
-  { header: '신청일', name: 'createDt', align: 'center', formatter: dateFormatter },
+  { header: '근무일자', name: 'commuteDt', align: 'center', formatter: crctFormat.dateFormatter },
+  { header: '출근시간', name: 'preGoTime', align: 'center', formatter: crctFormat.timeFormatter },
+  { header: '퇴근시간', name: 'preLeaveTime', align: 'center', formatter: crctFormat.timeFormatter },
+  { header: '정정출근시간', name: 'crctGoTime', align: 'center', formatter: crctFormat.timeFormatter },
+  { header: '정정퇴근시간', name: 'crctLeaveTime', align: 'center', formatter: crctFormat.timeFormatter },
+  { header: '신청일', name: 'createDt', align: 'center', formatter: crctFormat.dateFormatter },
   { header: '신청자', name: 'createId', align: 'center'},
-  { header: '결재상태', name: 'signState', align: 'center'},
+  { header: '결재상태', name: 'signState', align: 'center', formatter: crctFormat.signFormatter },
 ];
 let signCol = [
-  { header: '근무일자', name: 'commuteDt', align: 'center', formatter: dateFormatter },
-  { header: '출근시간', name: 'preGoTime', align: 'center', formatter: timeFormatter },
-  { header: '퇴근시간', name: 'preLeaveTime', align: 'center', formatter: timeFormatter },
-  { header: '정정출근시간', name: 'crctGoTime', align: 'center', formatter: timeFormatter },
-  { header: '정정퇴근시간', name: 'crctLeaveTime', align: 'center', formatter: timeFormatter },
-  { header: '신청일', name: 'createDt', align: 'center', formatter: dateFormatter },
+  { header: '근무일자', name: 'commuteDt', align: 'center', formatter: crctFormat.dateFormatter },
+  { header: '출근시간', name: 'preGoTime', align: 'center', formatter: crctFormat.timeFormatter },
+  { header: '퇴근시간', name: 'preLeaveTime', align: 'center', formatter: crctFormat.timeFormatter },
+  { header: '정정출근시간', name: 'crctGoTime', align: 'center', formatter: crctFormat.timeFormatter },
+  { header: '정정퇴근시간', name: 'crctLeaveTime', align: 'center', formatter: crctFormat.timeFormatter },
+  { header: '신청일', name: 'createDt', align: 'center', formatter: crctFormat.dateFormatter },
   { header: '신청자', name: 'createId', align: 'center'},
   { header: '결재일', name: 'signDt', align: 'center'},
-  { header: '결재상태', name: 'signState', align: 'center'},
+  { header: '결재상태', name: 'signState', align: 'center', formatter: crctFormat.signFormatter },
 ];
 
 
