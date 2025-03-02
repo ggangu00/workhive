@@ -45,12 +45,41 @@
 	<!-- 로그인 로그 전체조회 -->
 	<select id="loginLogSelectAll" parameterType="String" resultType="commonDTO">
 		SELECT
-		    log_cd, 	--로그 코드
-		    log_id,	 	--로그인 아이디
-		    log_ip, 	--로그인 ip
-		    state,		--성공여부
-		    create_dt
-		  FROM login_log
+			*
+		FROM 
+		    (select 
+		        log_cd, 	--로그 코드
+		        log_id,	 	--로그인 아이디
+		        log_ip, 	--로그인 ip
+		        state,		--성공여부
+		        TO_CHAR(create_dt, 'YYYY-MM-DD HH24:MI:SS') as create_dt
+		    from login_log) log 
+		join 
+		    (select
+		        mber_id,
+		        fn_get_memnm(mber_id) as mber_nm,
+		        fn_get_deptnm(mber_id) as dept_nm,
+		        fn_get_grademberid(mber_id) as grade_nm,
+		        lock_at
+		    from comtngnrlmber) mem
+		on log.log_id = mem.mber_id
+		WHERE 1=1
+		  
+		  <if test="searchCondition == 0">AND
+               log_id LIKE '%' || #{searchKeyword} || '%'
+          </if>
+          <if test="searchCondition == 1">AND
+               log_ip LIKE '%' ||#{searchKeyword} || '%'
+          </if>
+            
+		  <if test="searchStartDt != null and !searchStartDt.equals('')">AND
+             <![CDATA[ create_dt <= #{searchStartDt} ]]>
+          </if>
+         
+          <if test="searchEndDt != null and !searchEndDt.equals('')">AND
+           	 <![CDATA[ create_dt <= #{searchEndDt} ]]>
+          </if>
+         
 		  ORDER BY create_dt desc
 	</select>
 	
