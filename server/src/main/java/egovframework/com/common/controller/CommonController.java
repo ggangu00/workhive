@@ -22,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @RestController // data 
 @RequestMapping("/comm")
-@Slf4j
 public class CommonController {
 	
 	@Resource

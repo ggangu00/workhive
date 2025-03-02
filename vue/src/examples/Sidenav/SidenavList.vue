@@ -43,7 +43,7 @@
                      <div v-for="(child, k) in sub.subSubMenus" class="sub2-item" :key="k" v-show="sub.isHidden"
                         :id="'menuDropdown' + sub.menuCd">
                         <template v-if="sub.subSubMenus.length > 0">
-                           <li @click.stop="childMovePage(child.routerNm, child.menuCd)">
+                           <li @click.stop="childMovePage(child.url, child.menuCd)">
                               {{ child.menuNm }}
                            </li>
                         </template>

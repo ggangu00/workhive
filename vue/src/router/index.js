@@ -13,7 +13,7 @@ import PersonalManage from '../views/personal/PersonalManage.vue';
 import MemberManage from '../views/Setting/MemberManage.vue'
 import DepartmentManage from "../views/Setting/DepartmentManage.vue";
 import AuthorityManage from "../views/Setting/AuthorityManage.vue";
-
+import CompanyManage from "../views/Setting/CompanyManage.vue";
 
 
 
@@ -115,6 +115,11 @@ const routes = [
       name: 'PersonalManage',
       component: PersonalManage
    },
+   { // 회사정보 관리
+      path: '/setting/basic/company',
+      name: 'CompanyManage',
+      component: CompanyManage
+   },
    { // 부서 구성원 관리
       path: '/setting/organization/member',
       name: 'MemberManage',
@@ -125,6 +130,11 @@ const routes = [
       name: 'DepartmentManage',
       component: DepartmentManage
    },
+   // { // 직책&직급 관리
+   //    path: '/setting/organization/positions',
+   //    name: 'PositionsManage',
+   //    component: PositionsManage
+   // },
    { // 권한 관리
       path: '/setting/organization/authority',
       name: 'AuthorityManage',

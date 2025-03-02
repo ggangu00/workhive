@@ -19,7 +19,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
-import egovframework.com.securing.service.CustomUserDetailService;
+import egovframework.com.securing.service.impl.CustomUserDetailService;
 //import egovframework.com.securing.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 

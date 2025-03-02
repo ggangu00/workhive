@@ -11,21 +11,18 @@ import egovframework.com.securing.service.UserDTO;
  */
 public interface MemberService {
 
-	/**
-	 * 회원 전체 조회
-	 * 
-	 * @return 전체 회원 목록
-	 */
+	// 회원 전체조회
 	public List<UserDTO> memberSelectAll();
 
-	/**
-	 * 회원 단건 조회
-	 * 
-	 * @param mberId 조회할 회원 아이디
-	 * @return 회원 정보
-	 */
+	// 회원 단건조회
 	public UserDTO memberSelect(String mberId);
 
+	// 회원 등록
+	public boolean memberInsert(UserDTO dto);
+	
+	// 회원 수정
+	public boolean memberUpdate(UserDTO dto);
+	
 	/**
 	 * 로그인 실패 횟수 업데이트
 	 * 

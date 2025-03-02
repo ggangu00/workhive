@@ -51,8 +51,8 @@
                         </div>
                      </div>
                      <div>
-                        <!-- <menuTree v-for="(item, idx) in menuData" :key="idx" :item="item" ></menuTree> -->
-                        <menuListView></menuListView>
+                        <menuTree v-for="(item, idx) in menuData" :key="idx" :item="item" ></menuTree>
+                        <!-- <menuListView></menuListView> -->
                      </div>
                   </div>
 
@@ -101,8 +101,8 @@
    import Swal from 'sweetalert2';
    import Card from '../../components/Cards/Card.vue'
    import Modal from '../../components/Modal.vue';
-   // import menuTree from './components/MenuComponent.vue'
-   import menuListView from './components/MenuListViewComponent.vue'
+   import menuTree from './components/MenuComponent.vue';
+   // import menuListView from './components/MenuListViewComponent.vue'
    import  axios from "../../assets/js/customAxios.js";  // 공통함수 위치 맞게 변경
 
 
@@ -210,8 +210,6 @@
    }
 
 // ======================================== 권한 관리 Axios 통신 ========================================
-   //
-
    const roles = ref([]);  // 권한 목록 배열
    /**
     * @description 권한 전체 조회
@@ -255,7 +253,7 @@
          Swal.fire({
             icon: "error",
             title: "API 조회 오류",
-            text: "Error : " + err.response?.data?.error || "알 수 없는 오류"
+            text: "Error : " + err.response?.data?.error
          });
       }
    };

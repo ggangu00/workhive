@@ -6,7 +6,8 @@
 	<select id="commonSelectAll" parameterType="String" resultType="commonDTO">
 		SELECT
 		    comm_dtl_nm, 
-		    comm_dtl_cd
+		    comm_dtl_cd,
+		    comm_note
 		  FROM
 		    common_detail
 		    <![CDATA[
@@ -51,7 +52,7 @@
 		        log_cd, 	--로그 코드
 		        log_id,	 	--로그인 아이디
 		        log_ip, 	--로그인 ip
-		        state,		--성공여부
+		        fn_get_codename(state) AS state,		--성공여부
 		        TO_CHAR(create_dt, 'YYYY-MM-DD HH24:MI:SS') as create_dt
 		    from login_log) log 
 		join 
@@ -90,12 +91,14 @@
 		      log_cd,
 		      log_id,
 		      log_ip,
+		      state,
 		      create_dt
 		   )
 		VALUES (
 		   seq_log_cd.NEXTVAL,
 		   #{logId},
 		   #{logIp},
+		   #{state},
 		   SYSDATE
 		)
 	</insert>
