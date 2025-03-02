@@ -20,10 +20,10 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import egovframework.com.common.service.CommonDTO;
 import egovframework.com.common.service.CommonService;
 import egovframework.com.member.service.MemberService;
-import egovframework.com.securing.service.CustomUserDetailService;
 import egovframework.com.securing.service.CustomerUser;
 import egovframework.com.securing.service.LoginRequest;
 import egovframework.com.securing.service.UserDTO;
+import egovframework.com.securing.service.impl.CustomUserDetailService;
 import egovframework.com.securing.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -87,7 +87,7 @@ public class LoginController {
         }
         
         // 3. 계정잠금 확인
-        if ("Y".equals(user.getLockAt())) {
+        if ("A01".equals(user.getLockAt())) {
             loginLogInsert(user.getMberId(), getClientIp(), "A02");
             log.warn("❌ 로그인 실패 - 계정 잠금");
             
@@ -135,7 +135,7 @@ public class LoginController {
             
             // 11. 5회 이상 실패 시 계정 잠금 처리
             if (failCount >= 5) {
-            	memberService.memberLockUpdate(user.getMberId(), "Y");
+            	memberService.memberLockUpdate(user.getMberId(), "A01");
             	response.put("code", HttpStatus.LOCKED.value());
                 response.put("message", "계정이 잠겼습니다. 관리자에게 문의하세요.");
 

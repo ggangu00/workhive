@@ -51,8 +51,8 @@
                         </div>
                      </div>
                      <div>
-                        <!-- <menuTree v-for="(item, idx) in menuData" :key="idx" :item="item" ></menuTree> -->
-                        <menuListView></menuListView>
+                        <menuTree v-for="(item, idx) in menuData" :key="idx" :item="item" ></menuTree>
+                        <!-- <menuListView></menuListView> -->
                      </div>
                   </div>
 
@@ -101,8 +101,8 @@
    import Swal from 'sweetalert2';
    import Card from '../../components/Cards/Card.vue'
    import Modal from '../../components/Modal.vue';
-   // import menuTree from './components/MenuComponent.vue'
-   import menuListView from './components/MenuListViewComponent.vue'
+   import menuTree from './components/MenuComponent.vue';
+   // import menuListView from './components/MenuListViewComponent.vue'
    import  axios from "../../assets/js/customAxios.js";  // 공통함수 위치 맞게 변경
 
 
