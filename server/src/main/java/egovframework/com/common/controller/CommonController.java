@@ -20,6 +20,7 @@ import egovframework.com.common.service.CommonService;
 import egovframework.com.member.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController // data 
 @RequestMapping("/comm")
 public class CommonController {

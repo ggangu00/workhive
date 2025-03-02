@@ -8,7 +8,7 @@ import Layout from '../views/Layout.vue';
 
 // kmj
 import Login from "../views/Login/Login.vue";
-import FindPw from '../views/Login/findPassword.vue';
+import FindPw from '../views/Login/FindPassword.vue';
 import PersonalManage from '../views/personal/PersonalManage.vue';
 import MemberManage from '../views/Setting/MemberManage.vue'
 import DepartmentManage from "../views/Setting/DepartmentManage.vue";

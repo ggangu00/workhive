@@ -122,5 +122,14 @@
             mber_id = #{mberId}
     </update>
     
+    <update id="userPasswordUpdate">
+    	UPDATE 
+    		comtngnrlmber
+	    SET 
+	    	password = #{password}
+	    WHERE 
+	    	mber_id = #{mberId}
+    </update>
+    
 </mapper>
 
