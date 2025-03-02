@@ -13,7 +13,8 @@ import org.egovframe.rte.psl.dataaccess.util.EgovMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -42,7 +43,6 @@ import egovframework.com.cmm.util.EgovUserDetailsHelper;
 import egovframework.com.cop.smt.sim.service.EgovIndvdlSchdulManageService;
 import egovframework.com.cop.smt.sim.service.IndvdlSchdulManageVO;
 import egovframework.com.securing.service.CustomerUser;
-import egovframework.com.securing.service.UserDTO;
 import egovframework.com.utl.fcc.service.EgovStringUtil;
 /**
  * 일정관리를 처리하는 Controller Class 구현
@@ -348,17 +348,17 @@ public class EgovIndvdlSchdulManageController {
 			@ModelAttribute("searchVO") ComDefaultVO searchVO,
 			@RequestParam Map<String, String> commandMap,
 			IndvdlSchdulManageVO indvdlSchdulManageVO,
-    		ModelMap model,
-    		@AuthenticationPrincipal CustomerUser customerUser)
+    		ModelMap model)
     throws Exception {
 //		로그인한정보가져오기
-		System.out.println("adsfdasf=>" + customerUser);
-		 if (customerUser.getUserDTO() != null) {
-		        searchVO.setMberId(customerUser.getUserDTO().getMberId());
-		        searchVO.setDeptCd(customerUser.getUserDTO().getDeptCd());
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUser user = (CustomerUser) auth.getPrincipal();
+        String userId = user.getUserDTO().getMberId();
+		System.out.println("adsfdasf=>" + user);
+		 if (user.getUserDTO() != null) {
+		        searchVO.setMberId(userId);
 		        
-		        commandMap.put("mberId", customerUser.getUserDTO().getMberId());
-		        commandMap.put("deptCd", customerUser.getUserDTO().getDeptCd());
+		        commandMap.put("mberId", userId);
 		        
 		    }
 		
@@ -600,8 +600,14 @@ public class EgovIndvdlSchdulManageController {
 //        	return "redirect:/uat/uia/egovLoginUsr.do";
 //    	}
 
+    	// 로그인한 사용자 정보 가져오기
+    	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    	CustomerUser user = (CustomerUser) auth.getPrincipal();
+
+    	// 사용자 아이디 가져오기
+    	String userId = user.getUserDTO().getMberId();
 		//로그인 객체 선언
-		LoginVO loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+		//LoginVO loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
 
 		//String sLocationUrl = "egovframework/com/cop/smt/sim/EgovIndvdlSchdulManageModify";
 
@@ -644,8 +650,14 @@ public class EgovIndvdlSchdulManageController {
     		/* *****************************************************************
         	// 아이디 설정
 			****************************************************************** */
-    		indvdlSchdulManageVO.setFrstRegisterId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
-    		indvdlSchdulManageVO.setLastUpdusrId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
+    		
+    		if (user.getUserDTO() != null) {
+    		    indvdlSchdulManageVO.setFrstRegisterId(userId);
+    		    indvdlSchdulManageVO.setLastUpdusrId(userId);
+    		    indvdlSchdulManageVO.setSchdulChargerId(userId);
+    		}
+    		//indvdlSchdulManageVO.setFrstRegisterId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
+    		//indvdlSchdulManageVO.setLastUpdusrId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
     		/* *****************************************************************
         	// 첨부파일 관련 ID 생성 start....
 			****************************************************************** */
@@ -777,7 +789,15 @@ public class EgovIndvdlSchdulManageController {
 //    	}
 
 		//로그인 객체 선언
-		LoginVO loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+		//LoginVO loginVO = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+
+		// 로그인한 사용자 정보 가져오기
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		CustomerUser user = (CustomerUser) auth.getPrincipal();
+
+		// 사용자 아이디 가져오기
+		String userId = user.getUserDTO().getMberId();
+
 
 		String sLocationUrl = "egovframework/com/cop/smt/sim/EgovIndvdlSchdulManageRegist";
 
@@ -811,15 +831,20 @@ public class EgovIndvdlSchdulManageController {
         	// 리턴받은 첨부파일ID를 셋팅한다..
     		indvdlSchdulManageVO.setAtchFileId(_atchFileId);			// 첨부파일 ID
 
+    		// 일정 정보에 로그인한 사용자 정보 저장
+    		if (user.getUserDTO() != null) {
+    		    indvdlSchdulManageVO.setFrstRegisterId(userId);
+    		    indvdlSchdulManageVO.setLastUpdusrId(userId);
+    		    indvdlSchdulManageVO.setSchdulChargerId(userId);
+    		}
     		//아이디 설정
-    		indvdlSchdulManageVO.setFrstRegisterId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
-    		indvdlSchdulManageVO.setLastUpdusrId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
+    		//indvdlSchdulManageVO.setFrstRegisterId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
+    		//indvdlSchdulManageVO.setLastUpdusrId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
     		//일정 담당자 자신으로 등록(2017.08.12 modify by jdh)
-    		indvdlSchdulManageVO.setSchdulChargerId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
+    		//indvdlSchdulManageVO.setSchdulChargerId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
 
         	egovIndvdlSchdulManageService.insertIndvdlSchdulManage(indvdlSchdulManageVO);
         	sLocationUrl = "redirect:/cop/smt/sim/EgovIndvdlSchdulManageList.do";
-        	LOGGER.info("🔹 받은 데이터: {}", commandMap);
        
             response.put("result", true);
         }else {

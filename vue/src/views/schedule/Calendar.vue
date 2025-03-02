@@ -89,7 +89,11 @@
                 <label class="form-label">부서</label>
                 <div class="row">
                   <div class="col-auto">
-                    <input type="text" class="form-control" v-model="schedule.dept">
+                    <select class="form-select" v-model="schedule.deptCd">
+                      <option v-for="(dept, idx) in departments" :key="idx" :value="dept.deptCd">
+                        {{ dept.deptNm }}
+                      </option>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -97,7 +101,7 @@
                 <label class="form-label">담당자</label>
                 <div class="row">
                   <div class="col-auto">
-                    <input type="text" class="form-control" v-model="schedule.name">
+                    <input type="text" class="form-control" v-model="schedule.name" readonly/>
                   </div>
                 </div>
               </div>
@@ -107,8 +111,11 @@
         <!-- 모달 푸터 -->
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary btn-fill" data-bs-dismiss="modal">닫기</button>
-          <button type="button" class="btn btn-primary btn-fill" data-bs-dismiss="modal" @click='scheduleAdd'>저장</button>
-          <button type="button" class="btn btn-primary btn-fill" data-bs-dismiss="modal" @click='scheduleRemove'>삭제</button>
+          <button v-if="isNewSchedule" type="button" class="btn btn-primary btn-fill" data-bs-dismiss="modal" @click="scheduleAdd">저장</button>
+          <template v-else>
+            <button v-if="isScheduleName" type="button" class="btn btn-primary btn-fill" data-bs-dismiss="modal" @click="scheduleAdd">수정</button>
+            <button v-if="isScheduleName" type="button" class="btn btn-danger btn-fill" data-bs-dismiss="modal" @click="scheduleRemove">삭제</button>
+          </template>
         </div>
       </div>
     </div>
@@ -122,7 +129,8 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import axios from "../../assets/js/customAxios";
 import { Modal } from "bootstrap";
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
+import { useUserInfoStore } from '../../store/userStore.js';
 
 export default {
   components: {
@@ -140,13 +148,13 @@ export default {
           right: 'dayGridMonth,timeGridWeek,timeGridDay'
         },
         events: [],
-        selectedData:[],
-        dateClick: this.handleDateClick, //연결헤ㅐ줘야함 이벤트
+        selectedData:[], //일정종류 
+        dateClick: this.handleDateClick, //연결해줘야함 이벤트
         eventClick: this.handleEventClick,  
-         datesSet: this.handleDateChange
+        datesSet: this.handleDateChange
       },
+      isNewSchedule: true, //등록(true)인지 수정인지
       isAllDay: false,
-
       schedule:{
       type:"",
       title:"",
@@ -156,14 +164,24 @@ export default {
       end:"",
       bgntm: "",
       endtm: "",
-      dept:"",
-      name:""
+      deptCd:"",
+      deptNm:"",
+      name: ""
+    },
+    loginUser: "" 
     }
+  },
+  computed: {
+    isScheduleName() {
+      return this.loginUser == this.schedule.name; // 로그인한 사용자와 일정 등록자가 동일한지 확인
     }
   },
   mounted() {
-    //this.scheduleGetList();
-    this.dataReset();
+    const userInfoStore = useUserInfoStore();
+    this.loginUser = userInfoStore.user ? userInfoStore.user.mberNm : "";
+
+    this.departmentlist();
+    this.dataReset(); //일정등록(안에 데이터 초기화)
     this.commonDtlList();
   },
   methods: {
@@ -174,10 +192,10 @@ export default {
     const response = await axios.get('/api/schedule/month', {
         params: { year: year,
                   month: month,
-
                  }
     });
 
+    console.log(response.data)
     this.calendarOptions.events = response.data.map(event => {
         return {
             id: event.schdulId,
@@ -189,14 +207,15 @@ export default {
             charger: event.schdulChargerId,
             register: event.mberId,
             kind: event.schdulKndCode,
-            name: event.mberId,
+            name: event.mberNm,
             type: event.schdulSe,
-            dept: event.deptNm
+            deptCd: event.deptCd,
+            deptNm: event.deptNm
         };
     });
 }
 ,
-    //종일버튼시 시간값 초기화
+    //종일버튼시 시간값 초기화(하루종일 => 0000)
     toggle(){
       if (this.isAllDay) {
               this.schedule.bgntm = "";
@@ -204,9 +223,21 @@ export default {
           }
     },
 
-    //모달클릭시 데이터 초기화
+    //부서정보불러오기
+    async departmentlist() {
+      try {
+        const response = await axios.get('/api/department'); // API 호출
+        this.departments = [...response.data]; // 부서 목록 저장
+        
+      } catch (error) {
+        console.error("부서 목록을 불러오는 중 오류 발생:", error);
+      }
+    },
+
+    //일정등록 모달클릭시 데이터 초기화
     dataReset(){
       document.getElementById("openModalButton").addEventListener('click', ()=>{
+        this.isNewSchedule = true;  // 등록 모드로 전환
         this.schedule = {
           type:"",
           title:"",
@@ -216,8 +247,10 @@ export default {
           end:"",
           bgntm: "",
           endtm: "",
-          dept:"",
-          name:""
+          deptCd:"",
+          deptNm:"",
+          name:"",
+          mberNm:"", 
         }
       })
     },
@@ -235,6 +268,8 @@ export default {
     async handleEventClick(e){
       const modal = new Modal(document.getElementById("scheduleModal"));
       modal.show();
+
+      this.isNewSchedule = false;  // 수정 모드로 전환
 
       // 날짜 변환
       const startDate = e.event.start ? e.event.start.toISOString().slice(0, 10) : "";
@@ -254,9 +289,11 @@ export default {
       this.schedule.bgntm = startTime;
       this.schedule.endtm = endTime;
       this.schedule.type = e.event.extendedProps.type;
-
+      this.schedule.deptNm = e.event.extendedProps.deptNm;
+      this.schedule.deptCd = e.event.extendedProps.deptCd;  // 부서 코드 추가
+      
       this.selectedEventId = e.event.id;//수정용 스케쥴아이디
-console.log(e.event.extendedProps)
+      console.log(e.event.extendedProps)
     },
 
 
@@ -278,7 +315,6 @@ console.log(e.event.extendedProps)
     //       type: event.schdulSe,
     //       dept: event.deptNm
     //     }));
-
     // },
 
     //등록 메소드
@@ -288,7 +324,7 @@ console.log(e.event.extendedProps)
 
       const addList = new FormData();
       addList.append("cmd", "save");
-      addList.append("schdulDeptId", this.schedule.dept);
+      addList.append("schdulDeptId", this.schedule.deptCd);
       addList.append("schdulSe", this.schedule.type);
       addList.append("schdulNm", this.schedule.title);
       addList.append("schdulCn", this.schedule.content);
@@ -319,7 +355,13 @@ console.log(e.event.extendedProps)
     }
 
     //다시불러오기
-    this.scheduleGetList();
+    this.handleDateChange({
+    view: {
+      currentStart: new Date() // 현재 달력의 시작 날짜를 기준으로 API 요청
+    }
+  });
+
+  this.selectedEventId = null;
 
     //필드초기화
     this.schedule = {
@@ -331,11 +373,12 @@ console.log(e.event.extendedProps)
       end: "",
       bgntm: "",
       endtm: "",
-      dept: "",
-      name: ""
+      deptNm: "",
+      name: "",
+      deptCd:"",
     }
-    this.selectedEventId = null;
   },
+
   //삭제메소드(id받을 수있으면 id에따라 버튼 다르게 할예정)
   async scheduleRemove(){
     let response = await axios.delete(`/api/schedule/delete/${this.selectedEventId}`);
@@ -352,7 +395,11 @@ console.log(e.event.extendedProps)
           }
 
       });
-      this.scheduleGetList();
+      this.handleDateChange({
+      view: {
+        currentStart: new Date() // 현재 달력의 시작 날짜를 기준으로 API 요청
+      }
+  });
     }
   },
 

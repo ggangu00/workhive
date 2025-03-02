@@ -107,8 +107,8 @@ public class DocumentServiceImpl implements DocumentService{
         
 		//문서
         Document document = approvalParentDTO.getDocument();
-        document.setAtchFileId(atchFileId);
-        documentMapper.documentInsert(document);
+        document.setAtchFileId(atchFileId);// 첨부파일 ID
+        documentMapper.documentInsert(document); 
         
         //문서코드가져오기
         String docCd = documentMapper.lastDocCdGet();

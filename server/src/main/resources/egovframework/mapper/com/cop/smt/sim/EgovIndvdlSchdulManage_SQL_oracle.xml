@@ -16,6 +16,7 @@
 	<resultMap id="IndvdlSchdulManage" type="egovframework.com.cop.smt.sim.service.IndvdlSchdulManageVO">
 		<result property="schdulId" column="SCHDUL_ID"/>
 		<result property="schdulSe" column="SCHDUL_SE"/>
+		<result property="mberNm" column="MBER_NM"/>
 		<result property="schdulDeptId" column="DEPT_CD"/>
 		<result property="schdulDeptName" column="SCHDUL_DEPT_NAME"/>
 		
@@ -100,6 +101,7 @@
         A.ATCH_FILE_ID,
         A.FRST_REGIST_PNTTM FRST_REGISTER_PNTTM,
         A.MBER_ID,
+        fn_get_memnm(A.MBER_ID)as MBER_NM,
         A.UPDATE_DT,
         A.LAST_UPDUSR_ID,
         A.REPTIT_SE_CODE
@@ -160,7 +162,8 @@
         NULL AS SCHDUL_CHARGER_NAME,      
         NULL AS ATCH_FILE_ID,             
         TO_DATE(B.CREATE_DT, 'RRRR/MM/DD') AS FRST_REGIST_PNTTM,  
-        C.MBER_ID,                         
+        C.MBER_ID,  
+        fn_get_memnm(C.MBER_ID)as MBER_NM,                       
         TO_DATE(B.UPDATE_DT, 'RRRR/MM/DD') AS UPDATE_DT,  
         NULL AS LAST_UPDUSR_ID,           
         NULL AS REPTIT_SE_CODE            
