@@ -59,15 +59,14 @@ public class VacationController {
 	
 	// 휴가 전제 조회
 	@GetMapping("/vcList")
-	public Map<String, Object> vcList(HttpSession session,
-			@ModelAttribute VacationDTO vcDTO,
+	public Map<String, Object> vcList(@ModelAttribute VacationDTO vcDTO,
 			@RequestParam(name = "page", required = false, defaultValue = "1") int page,
-			@RequestParam(name = "perPage", required = false, defaultValue = "5") int perPage) {
+			@RequestParam(name = "perPage", required = false, defaultValue = "5") int perPage,
+			HttpSession session) {
 
 		UserDTO user = (UserDTO) session.getAttribute("loginUser");
 		String userId = user.getMberId();
 		vcDTO.setCreateId(userId);
-		System.out.println("\n\n아이디 = "+ userId + "\n\n");
 
 		PaginationInfo paginationInfo = new PaginationInfo();
 		paginationInfo.setCurrentPageNo(page);
@@ -93,8 +92,13 @@ public class VacationController {
 	@GetMapping("/signerList")
 	public Map<String, Object> vcSignerList(@ModelAttribute VacationDTO vcDTO,
 			@RequestParam(name = "page", required = false, defaultValue = "1") int page,
-			@RequestParam(name = "perPage", required = false, defaultValue = "5") int perPage) {
+			@RequestParam(name = "perPage", required = false, defaultValue = "5") int perPage,
+			HttpSession session) {
 
+		UserDTO user = (UserDTO) session.getAttribute("loginUser");
+		String userId = user.getMberId();
+		vcDTO.setSignId(userId);
+		
 		PaginationInfo paginationInfo = new PaginationInfo();
 		paginationInfo.setCurrentPageNo(page);
 		paginationInfo.setRecordCountPerPage(perPage);
@@ -113,8 +117,13 @@ public class VacationController {
 	@GetMapping("/signedList")
 	public Map<String, Object> vcSignedList(@ModelAttribute VacationDTO vcDTO,
 			@RequestParam(name = "page", required = false, defaultValue = "1") int page,
-			@RequestParam(name = "perPage", required = false, defaultValue = "5") int perPage) {
+			@RequestParam(name = "perPage", required = false, defaultValue = "5") int perPage,
+			HttpSession session) {
 
+		UserDTO user = (UserDTO) session.getAttribute("loginUser");
+		String userId = user.getMberId();
+		vcDTO.setSignId(userId);
+		
 		PaginationInfo paginationInfo = new PaginationInfo();
 		paginationInfo.setCurrentPageNo(page);
 		paginationInfo.setRecordCountPerPage(perPage);

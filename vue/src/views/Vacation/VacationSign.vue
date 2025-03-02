@@ -76,24 +76,27 @@
   </template>
   
   <script setup>
-  import axios from 'axios';
+  import axios from '../../assets/js/customAxios.js';
   import Grid from 'tui-grid';
   import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
   import { dateTimeFormat } from '../../assets/js/common';
-  import { useUserInfoStore } from '../../store/userStore.js';
+  import { signFormatter } from '../../assets/js/formatter.js';
+  // import { useUserInfoStore } from '../../store/userStore.js';
   
-  const userInfoStore = useUserInfoStore();
-  let loginUser = userInfoStore.user.mberId;
-  console.log("로그인 정보 : ", loginUser);
+  // const userInfoStore = useUserInfoStore();
+  // let loginUser = userInfoStore.user.mberId;
+  // console.log("로그인 정보 : ", loginUser);
   
+  const token = localStorage.getItem("token");
+
   // 조회 조건
   const vcSrchData = ref({
-    signId: loginUser,
+    // signId: loginUser,
     startDate: '',
     endDate: '',
   })
   const signSrchData = ref({
-    signId: loginUser,
+    // signId: loginUser,
     startDate: '',
     endDate: '',
   })
@@ -108,7 +111,12 @@
   }
   let vcList = {
     api: {
-      readData: { url: '/api/vacation/signerList', method: 'GET', initParams: vcSrchData.value}
+      readData: { 
+        url: '/api/vacation/signerList', 
+        method: 'GET', 
+        initParams: vcSrchData.value,
+        headers: {'Authorization': `Bearer ${token}`},
+      }
     }
   };
   const signGetList = () => {
@@ -116,7 +124,12 @@
   }
   const signList = {
     api: {
-      readData: { url: '/api/vacation/signedList', method: 'GET', initParams: signSrchData.value}
+      readData: { 
+        url: '/api/vacation/signedList', 
+        method: 'GET', 
+        initParams: signSrchData.value,
+        headers: {'Authorization': `Bearer ${token}`},
+      }
     }
   };
   
@@ -137,7 +150,7 @@
     },
     { header: '신청일', name: 'createDt', align: 'center'},
     { header: '신청자', name: 'createId', align: 'center'},
-    { header: '결재상태', name: 'signState', align: 'center'},
+    { header: '결재상태', name: 'signState', align: 'center', formatter: signFormatter },
   ];
   let signCol = [
     { header: '시작일', name: 'vcStartDt', align: 'center'},
@@ -152,7 +165,7 @@
     { header: '신청일', name: 'createDt', align: 'center'},
     { header: '신청자', name: 'createId', align: 'center'},
     { header: '결재일', name: 'signDt', align: 'center'},
-    { header: '결재상태', name: 'signState', align: 'center'},
+    { header: '결재상태', name: 'signState', align: 'center', formatter: signFormatter },
   ];
   
   // 그리드 데이터 형식 변경

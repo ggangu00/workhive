@@ -56,7 +56,7 @@
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 // import { dateTimeFormat } from '../../assets/js/common.js';
 import Grid from 'tui-grid';
-import axios from 'axios';
+import axios from '../../assets/js/customAxios.js';
 import { useRouter } from 'vue-router';
 // import { useUserInfoStore } from '../../store/userStore.js';
 
@@ -71,8 +71,6 @@ const token = localStorage.getItem("token");
 
 // 검색 데이터
 const searchData = ref({
-  // createId: loginUser,
-  headers: {'Authorization': `Bearer ${token}`},
   vcType: '',
   signState: '',
   startDate: '',
@@ -84,7 +82,12 @@ const vcGetList = () => {
 }
 const dataSource = {
   api: {
-    readData: { url: '/api/vacation/vcList', method: 'GET', initParams: searchData.value }
+    readData: { 
+      url: '/api/vacation/vcList', 
+      method: 'GET', 
+      initParams: searchData.value ,
+      headers: {'Authorization': `Bearer ${token}`},
+    }
   }
 };
 

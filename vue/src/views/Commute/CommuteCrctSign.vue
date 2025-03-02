@@ -80,22 +80,15 @@
 import axios from '../../assets/js/customAxios.js';
 import Grid from 'tui-grid';
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
-// import { dateTimeFormat } from '../../assets/js/common';
 import { cmtCheck } from '../../assets/js/commute';
-import { useUserInfoStore } from '../../store/userStore.js';
-
-const userInfoStore = useUserInfoStore();
-let loginUser = userInfoStore.user.mberId;
-console.log("로그인 정보 : ", loginUser);
+import { timeFormatter, dateFormatter } from '../../assets/js/formatter.js';
 
 // 조회 조건
 const crctSrchData = ref({
-  signId: loginUser,
   startDate: '',
   endDate: '',
 })
 const signSrchData = ref({
-  signId: loginUser,
   startDate: '',
   endDate: '',
 })
@@ -127,28 +120,30 @@ const signList = {
 // let originCrctList;
 // let originSignList;
 
+
 // 그리드 컬럼 데이터
 let crctCol = [
-  { header: '근무일자', name: 'commuteDt', align: 'center'},
-  { header: '출근시간', name: 'preGoTime', align: 'center'},
-  { header: '퇴근시간', name: 'preLeaveTime', align: 'center'},
-  { header: '정정출근시간', name: 'crctGoTime', align: 'center'},
-  { header: '정정퇴근시간', name: 'crctLeaveTime', align: 'center'},
-  { header: '신청일', name: 'createDt', align: 'center'},
+  { header: '근무일자', name: 'commuteDt', align: 'center', formatter: dateFormatter },
+  { header: '출근시간', name: 'preGoTime', align: 'center', formatter: timeFormatter },
+  { header: '퇴근시간', name: 'preLeaveTime', align: 'center', formatter: timeFormatter },
+  { header: '정정출근시간', name: 'crctGoTime', align: 'center', formatter: timeFormatter },
+  { header: '정정퇴근시간', name: 'crctLeaveTime', align: 'center', formatter: timeFormatter },
+  { header: '신청일', name: 'createDt', align: 'center', formatter: dateFormatter },
   { header: '신청자', name: 'createId', align: 'center'},
   { header: '결재상태', name: 'signState', align: 'center'},
 ];
 let signCol = [
-  { header: '근무일자', name: 'commuteDt', align: 'center'},
-  { header: '출근시간', name: 'preGoTime', align: 'center'},
-  { header: '퇴근시간', name: 'preLeaveTime', align: 'center'},
-  { header: '정정출근시간', name: 'crctGoTime', align: 'center'},
-  { header: '정정퇴근시간', name: 'crctLeaveTime', align: 'center'},
-  { header: '신청일', name: 'createDt', align: 'center'},
+  { header: '근무일자', name: 'commuteDt', align: 'center', formatter: dateFormatter },
+  { header: '출근시간', name: 'preGoTime', align: 'center', formatter: timeFormatter },
+  { header: '퇴근시간', name: 'preLeaveTime', align: 'center', formatter: timeFormatter },
+  { header: '정정출근시간', name: 'crctGoTime', align: 'center', formatter: timeFormatter },
+  { header: '정정퇴근시간', name: 'crctLeaveTime', align: 'center', formatter: timeFormatter },
+  { header: '신청일', name: 'createDt', align: 'center', formatter: dateFormatter },
   { header: '신청자', name: 'createId', align: 'center'},
   { header: '결재일', name: 'signDt', align: 'center'},
   { header: '결재상태', name: 'signState', align: 'center'},
 ];
+
 
 // 그리드 데이터 조회 메소드
 // const crctGetList = async () => {
