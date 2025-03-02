@@ -57,6 +57,11 @@ public class CommuteCrctController {
 			return "commute/crctAdd";
 		}
 
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUser user = (CustomerUser) auth.getPrincipal();
+        String userId = user.getUserDTO().getMberId();
+		crctDTO.setCreateId(userId);
+		
 		// 첨부파일 관련 첨부파일ID 생성
 		List<FileVO> _result = null;
 		String _atchFileId = "";
@@ -79,6 +84,11 @@ public class CommuteCrctController {
 	@PostMapping("/crctModify")
 	public boolean crctModify(@Validated CommuteCrctDTO crctDTO, RedirectAttributes rttr) {
 
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUser user = (CustomerUser) auth.getPrincipal();
+        String userId = user.getUserDTO().getMberId();
+		crctDTO.setUpdateId(userId);
+		
 		return service.crctUpdate(crctDTO);
 	}
 	

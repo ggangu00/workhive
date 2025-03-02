@@ -110,11 +110,6 @@ import { computed, ref, watch } from 'vue';
 import Modal from '../../components/Modal.vue';
 import axios from '../../assets/js/customAxios.js';
 import { useStore } from 'vuex';
-// import { useUserInfoStore } from '../../store/userStore.js';
-
-// const userInfoStore = useUserInfoStore();
-// let loginUser = userInfoStore.user.mberId;
-// console.log("로그인 정보 : ", loginUser);
 
 const props = defineProps({
   isShowJobModal: Boolean,
@@ -240,7 +235,6 @@ const jobAdd = async () => {
   addData.append("deptJobNm", formValues.value.deptJobNm);
   addData.append("deptJobCn", formValues.value.deptJobCn);
   addData.append("chargerId", formValues.value.chargerId);
-  // addData.append("frstRegisterId", loginUser);
   fileList.value.forEach((file) => {
     addData.append("files[]", file);
   });
@@ -259,7 +253,6 @@ const jobUpdate = async () => {
   modifyData.append("deptJobNm", formValues.value.deptJobNm);
   modifyData.append("deptJobCn", formValues.value.deptJobCn);
   modifyData.append("chargerId", formValues.value.chargerId);
-  // modifyData.append("lastUpdusrId", loginUser);
   fileList.value.forEach((file) => {
     modifyData.append("files[]", file);
   });

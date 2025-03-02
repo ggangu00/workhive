@@ -56,20 +56,15 @@
 import axios from '../../assets/js/customAxios.js';
 import Grid from 'tui-grid';
 import { ref, onBeforeUnmount, onMounted, watch } from 'vue';
-// import { dateTimeFormat } from '../../assets/js/common.js';
 import { useRouter } from 'vue-router';
-import { useUserInfoStore } from '../../store/userStore.js';
+import { timeFormatter, dateFormatter } from '../../assets/js/formatter.js';
 
-const userInfoStore = useUserInfoStore();
-let loginUser = userInfoStore.user.mberId;
-console.log("로그인 정보 : ", loginUser);
+const token = localStorage.getItem("token");
 
 let gridInstance = ref();
-// let rowData = ref([]);
 
 // 검색 데이터
 const searchData = ref({
-  createId: loginUser,
   startDate: '',
   endDate: '',
   searchState: ''
@@ -80,7 +75,12 @@ const crctGetList = () => {
 }
 const dataSource = {
   api: {
-    readData: { url: '/api/commute/crctList', method: 'GET', initParams: searchData.value}
+    readData: { 
+      url: '/api/commute/crctList', 
+      method: 'GET', 
+      initParams: searchData.value,
+      headers: {'Authorization': `Bearer ${token}`},
+    }
   }
 };
 
@@ -100,12 +100,12 @@ onMounted(() => {
       perPage: 5,
     },
     columns: [ //근무일자 / 출근시간 / 퇴근시간 / 정정출근시간 / 정정퇴근시간 / 신청일 / 결재자
-      { header: '근무일자', name: 'commuteDt', align: 'center'},
-      { header: '출근시간', name: 'preGoTime', align: 'center'},
-      { header: '퇴근시간', name: 'preLeaveTime', align: 'center'},
-      { header: '정정출근시간', name: 'crctGoTime', align: 'center'},
-      { header: '정정퇴근시간', name: 'crctLeaveTime', align: 'center'},
-      { header: '신청일', name: 'createDt', align: 'center'},
+      { header: '근무일자', name: 'commuteDt', align: 'center', formatter: dateFormatter },
+      { header: '출근시간', name: 'preGoTime', align: 'center', formatter: timeFormatter },
+      { header: '퇴근시간', name: 'preLeaveTime', align: 'center', formatter: timeFormatter },
+      { header: '정정출근시간', name: 'crctGoTime', align: 'center', formatter: timeFormatter },
+      { header: '정정퇴근시간', name: 'crctLeaveTime', align: 'center', formatter: timeFormatter },
+      { header: '신청일', name: 'createDt', align: 'center', formatter: dateFormatter },
       { header: '결재자', name: 'signId', align: 'center'},
       { header: '결재상태', name: 'signState', align: 'center', renderer: BtnRenderer }
     ]
