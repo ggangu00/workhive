@@ -106,6 +106,8 @@
               <span class="mt-1 mb-1">결재</span>
               <div class="approval-box">
                 <div v-for="(approver, index) in approvers" :key="index" class="approval-item  tooltip-container">
+                  <span v-if="approver.signStat == 'D02'" class="text-success ms-2">✔️</span>
+                  <span v-if="approver.signStat == 'D04'" class="text-danger ms-2">❌</span>
                     <span class='badge bg-info text-dark'>
                         <span class="tooltip-text">신강현 바보</span>
                       {{ getApprovalStatusName(approver.signName) }}</span>
@@ -223,6 +225,7 @@ const approvalList = async () => {
         mberNm: approver.mberNm,
         deptNm: approver.deptNm,
         signName: approver.signName, // 상태 코드 변환
+        signStat: approver.signStat
       }));
     }
 

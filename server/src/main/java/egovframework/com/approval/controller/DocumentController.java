@@ -206,13 +206,8 @@ public class DocumentController {
 												     @RequestParam(required = false) int page,
 												     @RequestParam(required = false) int perPage,
 												     @ModelAttribute SearchDTO searchDTO
-												     ,@AuthenticationPrincipal CustomerUser customerUser) throws JsonMappingException, JsonProcessingException {
+												     ) throws JsonMappingException, JsonProcessingException {
 		
-		
-	 if (customerUser.getUserDTO() != null) {
-		 searchDTO.setMberId(customerUser.getUserDTO().getMberId());
-		 searchDTO.setDeptCd(customerUser.getUserDTO().getDeptCd());	        
-	    }
 		
 		searchDTO.setPageUnit(perPage);
 
