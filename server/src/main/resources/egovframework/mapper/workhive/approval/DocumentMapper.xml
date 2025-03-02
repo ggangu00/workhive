@@ -244,6 +244,7 @@
 		                    OR R.DEPT_CD = (SELECT DEPT_CD FROM comtngnrlmber WHERE MBER_ID = #{mberId})
 		                )
 		            )
+		        <include refid="searchCriteria" />
 		        <![CDATA[AND ROWNUM <= #{end}]]>
 		    ) 
 		    WHERE rn >= #{start}
@@ -265,6 +266,7 @@
 		                OR R.DEPT_CD = (SELECT DEPT_CD FROM comtngnrlmber WHERE MBER_ID = #{mberId})
 		            )
 		        )
+		        <include refid="searchCriteria" />
 		</select>
 		<!-- 미결문서카운트 -->
 		<select id="pendingDocCount" resultType="int" parameterType="egovframework.com.approval.service.SearchDTO">	  
