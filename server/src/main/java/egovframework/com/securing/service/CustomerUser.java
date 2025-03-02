@@ -89,24 +89,24 @@ public class CustomerUser implements UserDetails {
 
 	/**
 	 * 계정 잠금 여부 반환
-	 * - lockAt이 'N'이면 잠금 아님
+	 * - lockAt이 'A02'이면 잠금 아님
 	 * 
 	 * @return 계정이 잠금되지 않았는지 여부
 	 */
 	@Override
 	public boolean isAccountNonLocked() {
-		return "N".equalsIgnoreCase(userDTO.getLockAt());
+		return "A02".equalsIgnoreCase(userDTO.getLockAt());
 	}
 
 	/**
 	 * 계정 활성화 여부 반환
-	 * - 회원상태 코드가 'J01'(정상회원)인 경우만 true
+	 * - 회원상태 코드가 'J03'이 아닌 경우 true
 	 * 
 	 * @return 계정이 활성화되어 있는지 여부
 	 */
 	@Override
 	public boolean isEnabled() {
-		return "J01".equals(userDTO.getMberSttus());
+		return !"J03".equals(userDTO.getMberSttus());
 	}
 
 	/**

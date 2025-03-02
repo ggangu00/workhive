@@ -210,8 +210,6 @@
    }
 
 // ======================================== 권한 관리 Axios 통신 ========================================
-   //
-
    const roles = ref([]);  // 권한 목록 배열
    /**
     * @description 권한 전체 조회
@@ -255,7 +253,7 @@
          Swal.fire({
             icon: "error",
             title: "API 조회 오류",
-            text: "Error : " + err.response?.data?.error || "알 수 없는 오류"
+            text: "Error : " + err.response?.data?.error
          });
       }
    };

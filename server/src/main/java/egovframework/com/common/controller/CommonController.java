@@ -15,11 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import egovframework.com.common.service.CommonDTO;
 import egovframework.com.common.service.CommonService;
-import lombok.extern.slf4j.Slf4j;
 
 @RestController // data 
 @RequestMapping("/comm")
-@Slf4j
 public class CommonController {
 	
 	@Resource

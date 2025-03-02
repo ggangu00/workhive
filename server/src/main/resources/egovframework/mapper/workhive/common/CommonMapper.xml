@@ -6,7 +6,8 @@
 	<select id="commonSelectAll" parameterType="String" resultType="commonDTO">
 		SELECT
 		    comm_dtl_nm, 
-		    comm_dtl_cd
+		    comm_dtl_cd,
+		    comm_note
 		  FROM
 		    common_detail
 		    <![CDATA[
@@ -61,12 +62,14 @@
 		      log_cd,
 		      log_id,
 		      log_ip,
+		      state,
 		      create_dt
 		   )
 		VALUES (
 		   seq_log_cd.NEXTVAL,
 		   #{logId},
 		   #{logIp},
+		   #{state},
 		   SYSDATE
 		)
 	</insert>

@@ -18,26 +18,30 @@ import egovframework.com.securing.service.UserDTO;
 @Service("memberService") // 스프링 서비스 빈 등록
 public class MemberServiceImpl implements MemberService {
 	
-	@Resource // MemberMapper 주입
-	private MemberMapper memberMapper;
+	@Resource private MemberMapper memberMapper; // MemberMapper 주입
 
-	/**
-	 * 회원 전체 조회
-	 * @return 회원 목록 (List<UserDTO>)
-	 */
+	// 회원 전체 조회
 	@Override
 	public List<UserDTO> memberSelectAll() {
 		return memberMapper.memberSelectAll();
 	}
 
-	/**
-	 * 회원 단건 조회
-	 * @param userId 조회할 회원ID
-	 * @return 회원 정보 (UserDTO)
-	 */
+	// 회원 단건조회
 	@Override
 	public UserDTO memberSelect(String userId) {
 		return memberMapper.memberSelect(userId);
+	}
+	
+	// 회원 등록
+	@Override
+	public boolean memberInsert(UserDTO dto) {
+		return memberMapper.memberInsert(dto) == 1 ? true : false;
+	}
+
+	// 회원 수정
+	@Override
+	public boolean memberUpdate(UserDTO dto) {
+		return memberMapper.memberUpdate(dto) == 1 ? true : false;
 	}
 
 	/**
@@ -59,4 +63,5 @@ public class MemberServiceImpl implements MemberService {
 	public void memberLockUpdate(@Param("mberId") String mberId, @Param("lockAt") String lockAt) {
 	    memberMapper.memberLockUpdate(mberId, lockAt);
 	}
+
 }
