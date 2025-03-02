@@ -37,7 +37,7 @@
                     <div class="task" v-if="date == plan.startDt"
                       :style="'width: ' + (dateTermCalc(plan.startDt, plan.endDt) * 100 - 10) + '%; background-color:' + plan.color">
                       <span @click="btnProjectPlanUpdate(plan.prPlanCd)">{{ plan.planNm }}</span>
-                      <button class="close" @click="btnProjectPlanRemove(plan.prPlanCd)">×</button>
+                      <button class="close" @click="btnProjectPlanRemove(plan.prPlanCd)" v-show="projectInfo.state == 'A03'">×</button>
                     </div>
                   </td>
                 </tr>
@@ -136,7 +136,15 @@ onBeforeMount(() => {
 
 const isShowModal = ref(false);
 const modalOpen = () => { //일정 등록/수정 모달 열기
-  isShowModal.value = true;
+  if (projectInfo.value.state == 'A04') {
+    Swal.fire({
+      icon: "error",
+      title: "등록불가",
+      text: "완료된 프로젝트는 일정을 등록할 수 없습니다."
+    });
+  } else {
+    isShowModal.value = true;
+  }
 }
 
 const modalClose = (e) => { //일정 등록/수정 모달 닫기
@@ -288,13 +296,13 @@ const projectPlanAdd = async () => {
       title: "일정명을 입력하세요"
     });
     return;
-  }else if (!startDt.value) {
+  } else if (!startDt.value) {
     Swal.fire({
       icon: "info",
       title: "시작일을 입력하세요"
     });
     return;
-  }else if (!endDt.value) {
+  } else if (!endDt.value) {
     Swal.fire({
       icon: "info",
       title: "종료일을 입력하세요"

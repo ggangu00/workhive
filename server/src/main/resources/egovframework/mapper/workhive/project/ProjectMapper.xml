@@ -21,6 +21,7 @@
 			   create_id,	
 			   create_dt,
 			   entrprs_mber_id,	--거래처id
+			   state, 		--진행상태
                fn_get_comnm(entrprs_mber_id) as com_nm	--거래처명
 		from project
 		where 
@@ -101,6 +102,7 @@
 			   create_id,
 			   create_dt,
 			   entrprs_mber_id,	--거래처id
+			   state, 		--진행상태
                fn_get_comnm(entrprs_mber_id) as com_nm	--거래처명
 		from project
 		where 
@@ -168,8 +170,15 @@
 	        <if test="endDt != null">
 	            end_dt = #{endDt},
 	        </if>
-	        entrprs_mber_id = #{entrprsMberId},
-	        price = #{price},
+	        <if test="state != null">
+	            state = #{state},
+	        </if>
+	        <if test="entrprsMberId != null">
+	            entrprs_mber_id = #{entrprsMberId},
+	        </if>
+	        <if test="price != null">
+	            price = #{price},
+	        </if>
 	        update_dt = sysdate
 	    where 
 	        pr_cd = #{prCd}   

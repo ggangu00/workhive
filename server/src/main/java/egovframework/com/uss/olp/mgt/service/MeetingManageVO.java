@@ -27,6 +27,7 @@ public class MeetingManageVO implements Serializable {
 	
 	/** 회의구분 */
 	private String typeCd = "";
+	private String typeNm = "";
 
 	/** 회의명 */
 	private String mtgNm = "";
@@ -45,6 +46,7 @@ public class MeetingManageVO implements Serializable {
 
 	/** 회의장소 */
 	private String mtgPlace = "";
+	private String mtgPlaceNm = "";
 
 	/** 회의시작시간 */
 	private String mtgBeginTm = "";
@@ -621,5 +623,17 @@ public class MeetingManageVO implements Serializable {
     public void setMemberArr(List<MeetingMemberVO> memberArr) {
         this.memberArr = memberArr;
     }
+	public String getTypeNm() {
+		return typeNm;
+	}
+	public void setTypeNm(String typeNm) {
+		this.typeNm = typeNm;
+	}
+	public String getMtgPlaceNm() {
+		return mtgPlaceNm;
+	}
+	public void setMtgPlaceNm(String mtgPlaceNm) {
+		this.mtgPlaceNm = mtgPlaceNm;
+	}
 
 }

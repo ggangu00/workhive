@@ -171,11 +171,10 @@ const formReset = () => {
 
 //회의 단건조회
 const meetInfo = ref([]);
-const meetGetInfo = async (mtgId) => { //회의 단건조회
+const meetGetInfo = async () => { //회의 단건조회
     try {
         const result = await axios.get(`/api/meet/info/${mtgId.value}`);
         meetInfo.value = result.data.result[0];
-
         mtgNm.value = meetInfo.value.mtgNm;
         typeCd.value = meetInfo.value.typeCd;
         mtgPlace.value = meetInfo.value.mtgPlace;

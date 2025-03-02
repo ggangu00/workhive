@@ -107,6 +107,10 @@
                     <th class="table-secondary">참여자</th>
                     <td colspan="3" class="text-start">김민진, 박주현, 신강현</td>
                   </tr>
+                  <tr>
+                    <th class="table-secondary">진행상태</th>
+                    <td colspan="3" class="text-start">{{projectInfo.state == 'A03' ? '진행중' : '완료'}}</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -114,7 +118,9 @@
 
           <card>
             <p class="card-title mb-2">프로젝트 과업</p>
-
+            <div class="progress-bar ">
+              <div class="progress-bar-fill " :style="'width:' + progress + '%'">{{ workProgress }}%</div>
+            </div>
             <div class="table-responsive">
               <table class="table table-hover project">
                 <thead class="table-secondary">
@@ -128,10 +134,11 @@
                 <tbody>
                   <template v-if="workCount > 0">
                     <tr :key="i" v-for="(work, i) in workList">
-                      <th>{{ i + 1 }}</th>
+                      <td>{{ i + 1 }}</td>
                       <td>{{ work.prWorkNm }}</td>
-                      <th>{{ work.progress }}%</th>
-                      <td>{{ work.state == 'A02' ? '미완료' : '완료' }}</td>
+                      <td>{{ work.progress }}%</td>
+                      <td :class="work.state == 'A02' ? 'point-red' : 'point-blue'">{{ work.state == 'A02' ? '미완료' :
+                        '완료' }}</td>
                     </tr>
                   </template>
                   <tr v-else class="list-nodata">
@@ -170,6 +177,29 @@ import Card from '../../components/Cards/Card.vue'
 import { dateFormat } from '../../assets/js/common'
 import { dateTermCalc } from '../../assets/js/project'
 
+//========================= 공통함수 =========================
+const progress = ref(0);
+
+// 애니메이션 실행 함수 (requestAnimationFrame 사용)
+const animateProgress = (endValue) => {
+  let startTime = null;
+  const duration = 2000; // 애니메이션 지속 시간 (1초)
+
+  const step = (timestamp) => {
+    if (!startTime) startTime = timestamp;
+    const elapsed = timestamp - startTime;
+    const progressValue = Math.min((elapsed / duration) * endValue, endValue);
+
+    progress.value = progressValue.toFixed(2); // 소수점 제거
+
+    if (elapsed < duration) {
+      requestAnimationFrame(step);
+    }
+  };
+
+  requestAnimationFrame(step);
+};
+
 //========================= Toast grid =========================
 
 //검색조건
@@ -197,11 +227,12 @@ onMounted(() => {
     scrollX: true,
     scrollY: true,
     columns: [
-      { header: "진행상태", name: "state", align: "center", width: 80, formatter: ({ row }) => `${row.state == 'A04' ? '완료' : '진행중'}` },
+      { header: "진행상태", name: "state", align: "center", width: 80, formatter: ({ row }) => `${row.state == 'A03' ? '진행중' : '완료'}` },
       { header: "프로젝트명", name: "prNm", align: "center", renderer: subjectRenderer },
       { header: "프로젝트 기간", name: "startDt", align: "center", width: 200, formatter: ({ row }) => `${row.startDt} ~ ${row.endDt}` },
       { header: "금액", name: "price", align: "center", width: 120, },
       { header: "일정", name: "plan", align: "center", width: 100, renderer: BtnRendererPlan },
+      { header: "완료처리", name: "end", align: "center", width: 100, renderer: BtnRendererEnd },
       { header: "등록일", name: "createDt", align: "center", width: 100, formatter: ({ row }) => dateFormat(row.createDt) },
       { header: "관리", name: "managementSetting", align: "center", width: 150, renderer: BtnRendererSetting }
     ],
@@ -235,7 +266,7 @@ class subjectRenderer {
     const termClass = ref('');
     const rowKey = props.row?.rowKey ?? props.grid.getRow(props.rowKey)?.rowKey;
     const rowData = props.grid.getRow(rowKey);
-
+    
     const el = document.createElement("div");
     el.className = "mlp10";
 
@@ -319,6 +350,35 @@ class BtnRendererPlan {
   }
 }
 
+//프로젝트 완료처리관리 버튼
+class BtnRendererEnd {
+  constructor(props) {
+    const rowKey = props.row?.rowKey ?? props.grid.getRow(props.rowKey)?.rowKey;
+    const rowData = props.grid.getRow(rowKey);
+    const el = document.createElement("div");
+
+    if (rowData.state == 'A03') { //미완료 상태일 때 완료처리하기
+      el.innerHTML = `
+        <button class="btn btn-success btn-sm">완료처리</button>
+      `;
+    } else { //완료 상태일 때 완료취소 처리하기
+      el.innerHTML = `
+        <button class="btn btn-secondary btn-sm">완료처리됨</button>
+      `;
+    }
+
+    el.addEventListener("click", () => {
+      btnProjectEnd(rowData.prCd, rowData.state); //완료처리 버튼 클릭 시 완료처리 함수 수행
+    });
+
+    this.el = el;
+  }
+
+  getElement() {
+    return this.el;
+  }
+}
+
 //========================= 모달 =========================
 
 const isShowModal = ref(false);
@@ -368,6 +428,43 @@ const btnProjectRemove = (code) => {
   });
 }
 
+const btnProjectEnd = (code, mode) => {
+  if (mode == 'A03') { //미완료 상태일 때 완료처리하기
+    Swal.fire({
+      title: "프로젝트를 완료처리하시겠습니까?",
+      text: "완료처리 시 프로젝트 정보 및 일정을 수정 할 수 없습니다.",
+      icon: "question",
+      showCancelButton: true,
+      customClass: {
+        confirmButton: "btn btn-secondary btn-fill",
+        cancelButton: "btn btn-danger btn-fill"
+      },
+      confirmButtonText: "아니오",
+      cancelButtonText: "예",
+    }).then((result) => {
+      if (result.dismiss == Swal.DismissReason.cancel) {
+        projectEnd(code, mode); //완료처리 함수
+      }
+    });
+  } else { //완료 상태일 때 완료취소 처리하기
+    Swal.fire({
+      title: "완료된 상태를 취소하시겠습니까?",
+      icon: "question",
+      showCancelButton: true,
+      customClass: {
+        confirmButton: "btn btn-secondary btn-fill",
+        cancelButton: "btn btn-danger btn-fill"
+      },
+      confirmButtonText: "아니오",
+      cancelButtonText: "예",
+    }).then((result) => {
+      if (result.dismiss == Swal.DismissReason.cancel) {
+        projectEnd(code, mode); //완료처리 함수
+      }
+    });
+  }
+}
+
 //======================= axios =======================
 
 //프로젝트 전체조회
@@ -383,15 +480,15 @@ const projectGetList = async () => {
       endDt: dateFormat(item.endDt),
       term: dateTermCalc(dateFormat(item.endDt), dateFormat()) //프로젝트 종료일까지 남은기간
     }));
-
+console.log(projectList.value);
     grid.value.resetData(projectList.value); //toast grid로 데이터 전달
 
     await nextTick(); //toast grid 로드될때까지 기다림
     projectList.value.forEach((row, index) => { //toast grid 로드완료 후 상태별 rowClass 부여
       if (row.state == "A03") {
-        grid.value.addRowClassName(index, "table-end");
-      } else {
         grid.value.addRowClassName(index, "table-white");
+      } else {
+        grid.value.addRowClassName(index, "table-end");
       }
     });
 
@@ -474,16 +571,57 @@ const projectListRemove = async () => {
   }
 }
 
+//프로젝트 진행상태 변경
+const projectEnd = async (code, mode) => {
+
+  mode == 'A03' ? mode = 'A04' : mode = 'A03'; //미완료일때 완료로, 완료일때 미완료로 
+
+  try {
+    const requestData = {
+      prCd: code,
+      state: mode
+    };
+
+    const response = ref([]);
+    response.value = await axios.put(`/api/project`, requestData);
+
+    if (response.value.data === true) {
+      Swal.fire({
+        icon: "success",
+        title: "상태변경 완료",
+      });
+      projectGetList();
+    }
+
+  } catch (err) {
+    Swal.fire({
+      icon: "error",
+      title: "상태변경 실패",
+    })
+  }
+}
+
 //프로젝트 과업조회
+const workProgress = ref('');
 const workList = ref([]);
 const workCount = ref(0);
 const projectWorkGetList = async (prCd) => {
   try {
     const result = await axios.get(`/api/project/work/${prCd}`);
-    console.log(result);
 
     workList.value = result.data;
     workCount.value = result.data.length;
+
+    //프로젝트 진행률 퍼센트 계산
+    if (workCount.value > 0) {
+      workProgress.value = (((workList.value.reduce((sum, item) => sum + (item.progress || 0), 0)) / workCount.value) / 100) * 100;
+    } else {
+      workProgress.value = 0;
+    }
+
+    setTimeout(() => {
+      animateProgress(workProgress.value); // 원하는 진행률 설정
+    }, 100); // 0.5초 후 시작
   } catch (err) {
     workList.value = [];
   }
