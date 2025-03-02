@@ -45,44 +45,42 @@
 	
 	<!-- 로그인 로그 전체조회 -->
 	<select id="loginLogSelectAll" parameterType="String" resultType="commonDTO">
-		SELECT
-			*
-		FROM 
-		    (select 
-		        log_cd, 	--로그 코드
-		        log_id,	 	--로그인 아이디
-		        log_ip, 	--로그인 ip
-		        fn_get_codename(state) AS state,		--성공여부
-		        TO_CHAR(create_dt, 'YYYY-MM-DD HH24:MI:SS') as create_dt
-		    from login_log) log 
-		join 
-		    (select
-		        mber_id,
-		        fn_get_memnm(mber_id) as mber_nm,
-		        fn_get_deptnm(mber_id) as dept_nm,
-		        fn_get_grademberid(mber_id) as grade_nm,
-		        lock_at
-		    from comtngnrlmber) mem
-		on log.log_id = mem.mber_id
-		WHERE 1=1
-		  
-		  <if test="searchCondition == 0">AND
-               log_id LIKE '%' || #{searchKeyword} || '%'
-          </if>
-          <if test="searchCondition == 1">AND
-               log_ip LIKE '%' ||#{searchKeyword} || '%'
-          </if>
-            
-		  <if test="searchStartDt != null and !searchStartDt.equals('')">AND
-             <![CDATA[ create_dt <= #{searchStartDt} ]]>
-          </if>
+    SELECT
+        log.log_cd, 	-- 로그 코드
+        log.log_id,	 	-- 로그인 아이디
+        log.log_ip, 	-- 로그인 IP
+        fn_get_codename(log.state) AS state,	-- 성공 여부
+        TO_CHAR(log.create_dt, 'YYYY-MM-DD HH24:MI:SS') AS create_dt, -- 시:분:초 포함
+        mem.mber_id,
+        fn_get_memnm(mem.mber_id) AS mber_nm,
+        fn_get_deptnm(mem.mber_id) AS dept_nm,
+        fn_get_grademberid(mem.mber_id) AS grade_nm,
+        mem.lock_at
+    FROM 
+        login_log log
+    JOIN 
+        comtngnrlmber mem
+    ON log.log_id = mem.mber_id
+    WHERE 1=1
+          
+    <if test="searchCondition == 0">
+        AND log.log_id LIKE '%' || #{searchKeyword} || '%'
+    </if>
+    <if test="searchCondition == 1">
+        AND log.log_ip LIKE '%' || #{searchKeyword} || '%'
+    </if>
+
+    <if test="searchStartDt != null and searchStartDt != ''">
+        <![CDATA[ AND log.create_dt >= TO_DATE(#{searchStartDt}, 'YYYY-MM-DD') ]]>
+    </if>
+
+    <if test="searchEndDt != null and searchEndDt != ''">
+        <![CDATA[ AND log.create_dt <= TO_DATE(#{searchEndDt}, 'YYYY-MM-DD') ]]>
+    </if>
          
-          <if test="searchEndDt != null and !searchEndDt.equals('')">AND
-           	 <![CDATA[ create_dt <= #{searchEndDt} ]]>
-          </if>
-         
-		  ORDER BY create_dt desc
-	</select>
+    ORDER BY log.create_dt DESC
+</select>
+
 	
 	<!-- 로그인 로그 등록 -->
 	<insert id="loginLogInsert" parameterType="commonDTO">
