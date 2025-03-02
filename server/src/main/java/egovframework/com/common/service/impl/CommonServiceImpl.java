@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
+import egovframework.com.cmm.ComDefaultVO;
 import egovframework.com.common.mapper.CommonMapper;
 import egovframework.com.common.service.CommonDTO;
 import egovframework.com.common.service.CommonService;
@@ -30,14 +31,19 @@ public class CommonServiceImpl implements CommonService {
 
 	// 로그인 로그 전체조회
 	@Override
-	public List<CommonDTO> loginLogSelectAll() {
-		return commonMapper.loginLogSelectAll();
+	public List<CommonDTO> loginLogSelectAll(ComDefaultVO searchVO) {
+		return commonMapper.loginLogSelectAll(searchVO);
 	}
 	
 	// 로그인 로그 등록
 	@Override
 	public boolean loginLogInsert(CommonDTO dto) {
 		return commonMapper.loginLogInsert(dto) == 1 ? true : false;
+	}
+	
+	// 로그인 잠금해제
+	public boolean loginLogUpdate(String mberId) {
+		return commonMapper.loginLogUpdate(mberId) == 1 ? true : false;
 	}
 
 	// 홈 대시보드 건수 조회 (진행중인 프로젝트, 금일 예정 일정, 미완료 일지)
