@@ -6,9 +6,12 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +29,7 @@ import egovframework.com.common.util.GridUtil;
 import egovframework.com.commute.service.CommuteCrctDTO;
 import egovframework.com.commute.service.CommuteCrctService;
 import egovframework.com.commute.service.CommuteDTO;
+import egovframework.com.securing.service.CustomerUser;
 
 @RestController
 @RequestMapping("/commute")
@@ -94,18 +98,14 @@ public class CommuteCrctController {
 	
 	// 출퇴근 정정 전체 조회
 	@GetMapping("/crctList")
-	public Map<String, Object> crctList(@RequestParam(name="createId") String createId, 
-										 @RequestParam(name="startDate") String startDate,
-										 @RequestParam(name="endDate") String endDate,
-										 @RequestParam(name="searchState") String searchState,
+	public Map<String, Object> crctList(@ModelAttribute CommuteCrctDTO crctDTO,
 										 @RequestParam(name = "page", required = false, defaultValue = "1") int page,
 										 @RequestParam(name = "perPage", required = false, defaultValue = "5") int perPage) {
-		
-		CommuteCrctDTO crctDTO = new CommuteCrctDTO();
-		crctDTO.setCreateId(createId);
-		crctDTO.setStartDate(startDate);
-		crctDTO.setEndDate(endDate);
-		crctDTO.setSearchState(searchState);
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUser user = (CustomerUser) auth.getPrincipal();
+        String userId = user.getUserDTO().getMberId();
+		crctDTO.setCreateId(userId);
 
 		PaginationInfo paginationInfo = new PaginationInfo();
 		paginationInfo.setCurrentPageNo(page);
@@ -123,16 +123,14 @@ public class CommuteCrctController {
 
 	// 출퇴근 정정 요청 조회 : 결재자
 	@GetMapping("/signerList")
-	public Map<String, Object> crctSignList(@RequestParam(name="signId") String signId, 
-										     @RequestParam(name="startDate") String startDate,
-										     @RequestParam(name="endDate") String endDate,
+	public Map<String, Object> crctSignList(@ModelAttribute CommuteCrctDTO crctDTO,
 											 @RequestParam(name = "page", required = false, defaultValue = "1") int page,
 											 @RequestParam(name = "perPage", required = false, defaultValue = "5") int perPage) {
-		
-		CommuteCrctDTO crctDTO = new CommuteCrctDTO();
-		crctDTO.setSignId(signId);
-		crctDTO.setStartDate(startDate);
-		crctDTO.setEndDate(endDate);
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUser user = (CustomerUser) auth.getPrincipal();
+        String userId = user.getUserDTO().getMberId();
+		crctDTO.setSignId(userId);
 
 		PaginationInfo paginationInfo = new PaginationInfo();
 		paginationInfo.setCurrentPageNo(page);
@@ -150,16 +148,14 @@ public class CommuteCrctController {
 
 	// 출퇴근 정정 결재 내역 조회
 	@GetMapping("/signedList")
-	public Map<String, Object> crctSignedList(@RequestParam(name="signId") String signId, 
-		     								   @RequestParam(name="startDate") String startDate,
-		     								   @RequestParam(name="endDate") String endDate,
+	public Map<String, Object> crctSignedList(@ModelAttribute CommuteCrctDTO crctDTO,
 											   @RequestParam(name = "page", required = false, defaultValue = "1") int page,
 											   @RequestParam(name = "perPage", required = false, defaultValue = "5") int perPage) {
-		
-		CommuteCrctDTO crctDTO = new CommuteCrctDTO();
-		crctDTO.setSignId(signId);
-		crctDTO.setStartDate(startDate);
-		crctDTO.setEndDate(endDate);
+        
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUser user = (CustomerUser) auth.getPrincipal();
+        String userId = user.getUserDTO().getMberId();
+		crctDTO.setSignId(userId);
 
 		PaginationInfo paginationInfo = new PaginationInfo();
 		paginationInfo.setCurrentPageNo(page);

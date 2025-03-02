@@ -110,11 +110,11 @@ import { computed, ref, watch } from 'vue';
 import Modal from '../../components/Modal.vue';
 import axios from '../../assets/js/customAxios.js';
 import { useStore } from 'vuex';
-import { useUserInfoStore } from '../../store/userStore.js';
+// import { useUserInfoStore } from '../../store/userStore.js';
 
-const userInfoStore = useUserInfoStore();
-let loginUser = userInfoStore.user.mberId;
-console.log("로그인 정보 : ", loginUser);
+// const userInfoStore = useUserInfoStore();
+// let loginUser = userInfoStore.user.mberId;
+// console.log("로그인 정보 : ", loginUser);
 
 const props = defineProps({
   isShowJobModal: Boolean,
@@ -141,6 +141,7 @@ let formValues = ref({
 // 첨부파일
 const fileList = ref([]);
 const addFileList = (target) => {
+  fileList.value = [];
   const newFile = Array.from(target.files);
   fileList.value.push(...newFile);
 }
@@ -190,8 +191,32 @@ watch(() => props.selectedRowData, async (newVal) => {
     formValues.value.deptJobCn = result.data.deptJobCn;
     formValues.value.chargerId = result.data.chargerId;
     formValues.value.chargerNm = result.data.chargerNm;
+    formValues.value.atchFileId = result.data.atchFileId;
+
+    files();
   };
 }, { immediate: true });
+
+/////////////////////첨부파일 가져오기/////////////////////
+const files = async () => {
+  if (!formValues.value.atchFileId) return;
+
+  try{
+    const response = await axios.get("/api/cmm/fms/selectFileInfs.do",{
+      params: {
+        param_atchFileId: formValues.value.atchFileId
+      },
+    });
+
+    console.log("파일내용=> ",response.data);
+    fileList.value = response.data; // 결과 저장
+    fileList.value.forEach(i => {
+      i.name = i.orignlFileNm;
+    })
+  } catch (error) {
+    console.error("파일 목록 불러오기 실패:", error);
+  }
+}
 
 const emit = defineEmits(['modalCloseJob', 'modalConfirmJob']);
 const modalCloseJob = () => {
@@ -215,7 +240,7 @@ const jobAdd = async () => {
   addData.append("deptJobNm", formValues.value.deptJobNm);
   addData.append("deptJobCn", formValues.value.deptJobCn);
   addData.append("chargerId", formValues.value.chargerId);
-  addData.append("frstRegisterId", loginUser);
+  // addData.append("frstRegisterId", loginUser);
   fileList.value.forEach((file) => {
     addData.append("files[]", file);
   });
@@ -234,7 +259,7 @@ const jobUpdate = async () => {
   modifyData.append("deptJobNm", formValues.value.deptJobNm);
   modifyData.append("deptJobCn", formValues.value.deptJobCn);
   modifyData.append("chargerId", formValues.value.chargerId);
-  modifyData.append("lastUpdusrId", loginUser);
+  // modifyData.append("lastUpdusrId", loginUser);
   fileList.value.forEach((file) => {
     modifyData.append("files[]", file);
   });
