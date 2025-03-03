@@ -1,6 +1,6 @@
 <template>
 
-  <div class="content">
+  <div class="content" @keydown.esc="modalClose">
     <div class="container-fluid">
       <!-- 페이지 헤더 -->
       <div class="card">
@@ -67,12 +67,16 @@
                     </tr>
                     <tr>
                       <th>결재자</th>
-                      <td colspan="5"><input type="text" class="form-control" v-model="crctData.signId"></td>
+                      <td colspan="5"><input type="text" class="form-control" v-model="crctData.signId" @click="modalOpen"></td>
                     </tr>
                   </tbody>
                 </table>
               </div>
-
+              <SignerModal
+                :isShowModal="isShowModal"
+                @modalClose="modalClose"
+                @modalConfirm="modalConfirm"
+              />
               <div class="row justify-content-center">
                 <div class="col-auto">
                   <button class="btn btn-secondary btn-fill mx-2" @click="btnCrctCancle">취소</button>
@@ -96,6 +100,7 @@ import { useRoute, useRouter } from 'vue-router';
 import axios from '../../assets/js/customAxios.js';
 import { ref , onMounted, watch } from 'vue';
 import { dateTimeFormat } from '../../assets/js/common.js';
+import SignerModal from '../components/Modal/SignerModal.vue';
 
 const route = useRoute();
 let isUpdate = ref(route.query.isUpdate === 'true');;
@@ -220,6 +225,20 @@ const btnCrctManage = async () => {
 const btnCrctCancle = () => { // 뒤로가기
   router.go(-1);
 }
+
+// 결재자 모달
+let isShowModal = ref(false);
+const modalOpen = () => {
+  isShowModal.value = true;
+}
+const modalClose = () => {
+  isShowModal.value = false;
+}
+const modalConfirm = () => {
+  isShowModal.value = false;
+  console.log("결재자 : ");
+}
+
 
 </script>
 
