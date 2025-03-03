@@ -206,9 +206,14 @@ public class DocumentServiceImpl implements DocumentService{
 
 	@Override
 	public boolean approvalRetrieveUpdate(List<String> retrieveArr, String mberId) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		CustomerUser user = (CustomerUser) auth.getPrincipal();
+
+		// 사용자 아이디 가져오기
+		String userId = user.getUserDTO().getMberId();
 		DocumentDTO documentDTO = new DocumentDTO();
 		documentDTO.setRetrieveArr(retrieveArr);
-		documentDTO.setMberId(mberId);
+		documentDTO.setMberId(userId);
 		
 		int updatedRows = documentMapper.approvalRetrieveUpdate(documentDTO); 
 		

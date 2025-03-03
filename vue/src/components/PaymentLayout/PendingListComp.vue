@@ -214,6 +214,8 @@ const btnSelectChange = () => {
     }
   });
 }
+
+
 const TueGrid = () => {
   grid.value = new window.tui.Grid({
     el: document.getElementById("tableGrid"),

@@ -171,7 +171,7 @@ const dataSource = {
   },
 }
 
-//결재 버튼 기능(다중)
+//승인 버튼 기능(다중)
 const btnSelectChange = () => {
   const checkedData = grid.value.getCheckedRows();
 
@@ -218,6 +218,45 @@ const btnSelectChange = () => {
     }
   });
 }
+/////////////////////////다중회수///////////////////////////
+const reteriveBtn = () => {
+  const checkedData = grid.value.getCheckedRows();
+
+  Swal.fire({
+    title: "회수 진행",
+    text: "회수 하시겠습니까?",
+    showDenyButton: false,
+    showCancelButton: true,
+    confirmButtonText: "회수",
+  }).then(async (result) => {
+    let modeText = '';
+    if (result.isConfirmed) {
+      modeText = "회수";
+      try {
+      const response = await axios.put(`/api/document/reteriveState`, {
+        retrieveArr: checkedData.map(row => row.docCd),
+      });
+
+      if (response.statusText == "OK") {
+        Swal.fire({
+          icon: "success",
+          title: modeText + " 완료",
+          text: "선택한 문서를 " + modeText + "하였습니다",
+        });
+      }
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: modeText + " 실패",
+        text: "Error : " + err,
+      });
+    }
+    } else {
+      return; // 취소 시 함수 종료
+    }
+  });
+}
+///////////////////////////////////////////////////////////
 const TueGrid = () => {
   grid.value = new window.tui.Grid({
     el: document.getElementById("tableGrid"),
@@ -305,7 +344,7 @@ watch([docKind, deptNm, formType, startDate, endDate], async ([newDodKind, newDe
     }
 });
 
-defineExpose({btnSelectChange})
+defineExpose({btnSelectChange, reteriveBtn})
 </script>
 
 <style scoped>

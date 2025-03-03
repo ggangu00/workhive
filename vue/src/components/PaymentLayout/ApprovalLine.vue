@@ -189,10 +189,7 @@ const selectDept = (dept) => {
 //수신자추가기능
 const addReceiver = () => {
   //부서추가
-  if (selectedDept.value && !receivers.value.some(receiver => receiver.dept == selectedDept.value)) {
-    if (receivers.value.some(receiver => receiver.deptCd == selectedDept.value.deptCd)) {
-      return; // 중복이면 추가하지 않음
-    }
+  if (selectedDept.value && !receivers.value.some(receiver => receiver.deptCd == selectedDept.value.deptCd)) {
     receivers.value.push({
       deptNm: selectedDept.value.deptNm,
       deptCd: selectedDept.value.deptCd,
@@ -202,7 +199,7 @@ const addReceiver = () => {
   //사원추가
   const selectedData = gridInstance.getCheckedRows();
   selectedData.forEach(emp => {
-    if (!receivers.value.some(receiver => receiver.name == emp.mberNm)) {
+    if (!receivers.value.some(receiver => receiver.mberId == emp.mberId)) {
         receivers.value.push({
           mberNm: emp.mberNm,
           mberId: emp.mberId,
