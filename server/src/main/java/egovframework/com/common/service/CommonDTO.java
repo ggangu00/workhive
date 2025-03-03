@@ -47,6 +47,23 @@ public class CommonDTO {
 	private String gradeNm;		// 직급명
 	private String deptNm;		// 부서명
 	private String lockAt;		// 로그인 잠금여부
+	
+	// 회사정보
+	private String businessNo;	// 사업자등록번호
+	private String compNm;		// 회사명
+	private String ceoNm;		// 대표자
+	private String tel;			// 대표번호
+	private String email;		// 이메일
+	private String telFax;		// 팩스
+	private int post;			// 우편번호
+	private String addr;		// 주소
+	private String addrDtl;		// 상세주소
+	
+	@DateTimeFormat(pattern = "HH:mm:ss")
+	private Date start_time;
+	
+	@DateTimeFormat(pattern = "HH:mm:ss")
+	private Date end_time;
 		
 	// 이력 히스토리
 	private String histCd;		// 이력히스토리 코드
@@ -66,7 +83,5 @@ public class CommonDTO {
 	private Date updateDt;		// 수정일
 	
 	private String updateId;	// 수정자
-	
-	
 		
 }

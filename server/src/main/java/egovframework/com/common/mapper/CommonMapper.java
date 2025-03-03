@@ -36,4 +36,7 @@ public interface CommonMapper {
 	// 이력내역 등록
 	public boolean historyInsert(CommonDTO dto);
 	
+	// 회사 정보 조회
+	public CommonDTO companyInfo();
+	
 }
