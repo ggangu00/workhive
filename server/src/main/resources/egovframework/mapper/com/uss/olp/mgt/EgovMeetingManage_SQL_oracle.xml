@@ -146,7 +146,9 @@
 		MNAER_DEPT_ID=#{mnaerDeptId},
 		MTG_AT=#{mtnAt},
 		NONATDRN_CO=#{nonatdrnCo},
-		ATDRN_CO=#{atdrnCo}
+		ATDRN_CO=#{atdrnCo},
+		UPDATE_DT=sysdate,
+		UPDATE_ID=#{updateId}
 		WHERE MTG_ID=#{mtgId}
  
 	</update>

@@ -1,6 +1,5 @@
 package egovframework.com.uss.olp.mgt.web;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +11,8 @@ import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,13 +24,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springmodules.validation.commons.DefaultBeanValidator;
 
-import com.github.javaparser.utils.Log;
-
 import egovframework.com.cmm.ComDefaultVO;
 import egovframework.com.cmm.EgovMessageSource;
 import egovframework.com.cmm.LoginVO;
 import egovframework.com.cmm.annotation.IncludedInfo;
 import egovframework.com.cmm.util.EgovUserDetailsHelper;
+import egovframework.com.securing.service.CustomerUser;
 import egovframework.com.uss.olp.mgt.service.EgovMeetingManageService;
 import egovframework.com.uss.olp.mgt.service.MeetingManageVO;
 import egovframework.com.utl.fcc.service.EgovStringUtil;
@@ -250,26 +250,22 @@ public class EgovMeetingManageController {
 
 		String sLocationUrl = "egovframework/com/uss/olp/mgt/EgovMeetingManageModify";
 
-		String sCmd = commandMap.get("cmd") == null ? "" : (String)commandMap.get("cmd");
-
-        if(sCmd.equals("save")){
-    		//서버  validate 체크
-            beanValidator.validate(meetingManageVO, bindingResult);
-    		if(bindingResult.hasErrors()){
-    			Map<String, Object> resultList = egovMeetingManageService.selectMeetingManageDetail(meetingManageVO);
-                model.addAttribute("resultList", resultList);
-    			return sLocationUrl;
-    		}
-    		//아이디 설정
-        	meetingManageVO.setCreateId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
-        	meetingManageVO.setUpdateId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
-
-        	egovMeetingManageService.updateMeetingManage(meetingManageVO);
-        	sLocationUrl = "redirect:/uss/olp/mgt/EgovMeetingManageList.do";
-        }else{
-        	Map<String, Object> resultList = egovMeetingManageService.selectMeetingManageDetail(meetingManageVO);
+		//서버  validate 체크
+        beanValidator.validate(meetingManageVO, bindingResult);
+		if(bindingResult.hasErrors()){
+			Map<String, Object> resultList = egovMeetingManageService.selectMeetingManageDetail(meetingManageVO);
             model.addAttribute("resultList", resultList);
-        }
+			return sLocationUrl;
+		}
+		//아이디 설정        	
+    	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUser user = (CustomerUser) auth.getPrincipal();
+        String userId = user.getUserDTO().getMberId();
+        
+        meetingManageVO.setUpdateId(user == null ? "" : EgovStringUtil.isNullToString(userId));
+
+    	egovMeetingManageService.updateMeetingManage(meetingManageVO);
+    	sLocationUrl = "redirect:/uss/olp/mgt/EgovMeetingManageList.do";
 
 		return sLocationUrl;
 	}
@@ -307,7 +303,13 @@ public class EgovMeetingManageController {
 		//아이디 설정
 //    	meetingManageVO.setCreateId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
 //    	meetingManageVO.setUpdateId(loginVO == null ? "" : EgovStringUtil.isNullToString(loginVO.getUniqId()));
-
+		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUser user = (CustomerUser) auth.getPrincipal();
+        String userId = user.getUserDTO().getMberId();
+        
+        meet.setCreateId(user == null ? "" : EgovStringUtil.isNullToString(userId));
+		
     	boolean result = egovMeetingManageService.saveMeeting(meet);
         	
 

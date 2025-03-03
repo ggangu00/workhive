@@ -8,6 +8,8 @@ import javax.annotation.Resource;
 
 import org.egovframe.rte.fdl.property.EgovPropertyService;
 import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,9 +25,13 @@ import egovframework.com.cmm.ComDefaultVO;
 import egovframework.com.project.service.ProjectDTO;
 import egovframework.com.project.service.ProjectService;
 import egovframework.com.project.service.ProjectWorkDTO;
+import egovframework.com.securing.service.CustomerUser;
+import egovframework.com.utl.fcc.service.EgovStringUtil;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController // data 
 @RequestMapping("/project")
+@Slf4j
 public class ProjectController {
 	
 	@Resource
@@ -87,6 +93,13 @@ public class ProjectController {
 	//프로젝트 등록
 	@PostMapping("")
 	public boolean projectAdd(@RequestBody ProjectDTO project) {
+		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUser user = (CustomerUser) auth.getPrincipal();
+        String userId = user.getUserDTO().getMberId();
+        
+		project.setCreateId(user == null ? "" : EgovStringUtil.isNullToString(userId));
+		
 		boolean result = projectService.projectSave(project);
 		return result;
 	}
@@ -94,6 +107,13 @@ public class ProjectController {
 	//프로젝트 수정
 	@PutMapping("")
 	public boolean projectModify(@RequestBody ProjectDTO dto) {
+		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUser user = (CustomerUser) auth.getPrincipal();
+        String userId = user.getUserDTO().getMberId();
+        
+        dto.setUpdateId(user == null ? "" : EgovStringUtil.isNullToString(userId));
+		
 		boolean result = projectService.projectUpdate(dto);		
 		return result;
 	}

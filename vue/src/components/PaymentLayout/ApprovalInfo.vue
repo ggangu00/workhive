@@ -339,25 +339,39 @@ const getApprovalStatusName = (code) => {
 .badge {
   font-weight: 400 !important;
 }
+
 .tooltip-container {
   position: relative;
-  display: flex;
+
 }
 
 .tooltip-text {
-  visibility: hidden;
-  width: 120px;
-  background-color: black;
-  color: #fff;
-  text-align: center;
-  border-radius: 5px;
-  padding: 5px;
+  background-color: #aaaaaa;
+  color: white;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border:2px solid #696969;
+  font-size: 13px;
+  /* font-weight: bold; */
   position: absolute;
-  bottom: 150%;
-  left: 50%;
+  bottom: 140%;
+  left: 18%;
   transform: translateX(-50%);
+  white-space: nowrap;
+  visibility: hidden;
   opacity: 0;
   transition: opacity 0.3s;
+}
+
+.tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 55%;
+    margin-left: -10px;
+    border-width: 7px;
+    border-style: solid;
+    border-color: #696969 transparent transparent transparent;
 }
 
 .tooltip-container:hover .tooltip-text {

@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import egovframework.com.cmm.ComDefaultVO;
+import egovframework.com.common.mapper.CommonMapper;
+import egovframework.com.common.service.CommonDTO;
 import egovframework.com.uss.olp.mgt.service.EgovMeetingManageService;
 import egovframework.com.uss.olp.mgt.service.MeetingManageVO;
 import egovframework.com.uss.olp.mgt.service.MeetingMemberVO;
@@ -42,6 +44,9 @@ public class EgovMeetingManageServiceImpl extends EgovAbstractServiceImpl implem
 
 	@Resource(name="egovMgtIdGnrService")
 	private EgovIdGnrService idgenService;
+	
+	@Resource
+	private CommonMapper commonMapper;
 
     /**
 	 * 부서 목록을 조회한다.
@@ -141,6 +146,15 @@ public class EgovMeetingManageServiceImpl extends EgovAbstractServiceImpl implem
 	                dao.insertMeetingMember(mem);  // 개별 INSERT 실행
 	            }
 	        }
+	        
+	        CommonDTO dto = new CommonDTO();
+
+	        dto.setTypeCd("T01");
+	        dto.setTblNm("COMTNMTGINFO");
+	        dto.setCreateId(meetingManageVO.getCreateId());
+	        
+	        commonMapper.historyInsert(dto);
+	        
 	        return true; 
 	    } catch (Exception e) {
 	        e.printStackTrace();
@@ -156,6 +170,15 @@ public class EgovMeetingManageServiceImpl extends EgovAbstractServiceImpl implem
 	 */
 	@Override
 	public void updateMeetingManage(MeetingManageVO meetingManageVO){
+		
+		CommonDTO dto = new CommonDTO();
+
+        dto.setTypeCd("T02");
+        dto.setTblNm("COMTNMTGINFO");
+        dto.setCreateId(meetingManageVO.getUpdateId());
+        
+        commonMapper.historyInsert(dto);
+        
 		dao.updateMeetingManage(meetingManageVO);
 	}
 

@@ -42,17 +42,13 @@
 		      type_cd,
 		      tbl_nm,
 		      create_dt,
-		      create_id,
-		      update_dt,
-		      update_id)
+		      create_id)
 		VALUES (
 		      seq_hist_cd.NEXTVAL,
 		      #{typeCd},
 		      #{tblNm},
 		      SYSDATE,
-		      #{createId},
-		      #{updateDt},
-		      #{updateId})
+		      #{createId})
 	</insert>
 
 </mapper>

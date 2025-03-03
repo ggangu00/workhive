@@ -4,20 +4,30 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import egovframework.com.cmm.ComDefaultVO;
+import egovframework.com.common.mapper.CommonMapper;
+import egovframework.com.common.service.CommonDTO;
 import egovframework.com.project.mapper.ProjectMapper;
 import egovframework.com.project.service.ProjectDTO;
 import egovframework.com.project.service.ProjectService;
 import egovframework.com.project.service.ProjectWorkDTO;
+import egovframework.com.securing.service.CustomerUser;
+import lombok.extern.slf4j.Slf4j;
 
 @Service("ProjectService")
+@Slf4j
 public class ProjectServiceImpl implements ProjectService{
 	
 	@Resource
 	private ProjectMapper projectMapper;
+	
+	@Resource
+	private CommonMapper commonMapper;
 	
 	//======================프로젝트=====================
 	
@@ -56,6 +66,14 @@ public class ProjectServiceImpl implements ProjectService{
 		                projectMapper.projectWorkInsert(work);  // 개별 INSERT 실행
 		            }
 		        }
+		        
+		        CommonDTO dto = new CommonDTO();
+
+		        dto.setTypeCd("T01");
+		        dto.setTblNm("PROJECT");
+		        dto.setCreateId(project.getCreateId());
+		        
+		        commonMapper.historyInsert(dto);
 		        return true; 
 		    } catch (Exception e) {
 		        e.printStackTrace();
@@ -81,6 +99,15 @@ public class ProjectServiceImpl implements ProjectService{
 		                projectMapper.projectWorkInsert(work);  // 개별 INSERT 실행
 		            }
 		        }
+		        
+		        CommonDTO dto = new CommonDTO();
+
+		        dto.setTypeCd("T02");
+		        dto.setTblNm("project");
+		        dto.setCreateId(project.getUpdateId());
+		        
+		        commonMapper.historyInsert(dto);
+		        
 		        return true; 
 		    } catch (Exception e) {
 		        e.printStackTrace();
@@ -91,6 +118,21 @@ public class ProjectServiceImpl implements ProjectService{
 	//프로젝트 삭제
 	@Override
 	public boolean projectDelete(String prCd) {
+		
+		if(projectMapper.projectDelete(prCd) == 1) {
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	        CustomerUser user = (CustomerUser) auth.getPrincipal();
+	        String userId = user.getUserDTO().getMberId();
+	        
+	        CommonDTO dto = new CommonDTO();
+	
+	        dto.setTypeCd("T03");
+	        dto.setTblNm("project");
+	        dto.setCreateId(userId);
+	        
+	        commonMapper.historyInsert(dto);
+		}
+        
 		return projectMapper.projectDelete(prCd) == 1 ? true : false;
 	}
 	
