@@ -307,17 +307,17 @@ const routes = [
 
    //kjg
       {//외부지출 조회
-      path:'/payment/paymentList',
+      path:'/payment/List',
       name: 'PaymentList',
       component : PaymentList,
    },
    {//외부지출 등록
-      path:'/payment/paymentAdd',
+      path:'/payment/Add',
       name: 'PaymentAdd',
       component : PaymentAdd,
    },
       {//외부지출 승인/반려 관리
-         path:'/payment/paymentManage',
+         path:'/payment/Manage',
          name: 'PaymentManage',
          component : PaymentManage,
       },
