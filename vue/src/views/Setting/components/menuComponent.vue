@@ -13,7 +13,7 @@
                <span class="ms-2 font-14">({{ subMenusSelected(menu) }}/{{ menu.subMenus.length }})</span>
             </div>
          </div>
-
+ 
          <div v-if="menu.subMenus.length > 0" @click="toggleMenu">
             <i class="fa-solid fa-angle-down" :class="{ rotated: menu.open }"></i>
          </div>
