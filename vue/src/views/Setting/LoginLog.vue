@@ -1,14 +1,30 @@
 <template>
    <div class="content">
       <div class="container-fluid">
-         <card>
-            <form @submit.prevent="loginLogGetList">
+         <form @submit.prevent="loginLogGetList">
+            <card>
+               <ul class="nav nav-pills">
+                  <li class="nav-item">
+                     <a class="nav-link" :class="searchData.searchState == '' ? 'active' : ''"
+                        @click="searchData.searchState = ''">전체</a>
+                  </li>
+                  <li class="nav-item">
+                     <a class="nav-link" :class="searchData.searchState == 'A01' ? 'active' : ''"
+                        @click="searchData.searchState ='A01'">성공</a>
+                  </li>
+                  <li class="nav-item">
+                     <a class="nav-link" :class="searchData.searchState == 'A02' ? 'active' : ''"
+                        @click="searchData.searchState = 'A02'">실패</a>
+                  </li>
+               </ul>
+            </card>
+            <card>
                <div class="mb-3 row">
                   <label for="staticEmail" class="col-sm-2 col-form-label">검색</label>
                   <div class="col-auto">
                      <select class="form-select" v-model="searchData.searchCondition">
-                        <option value="1">아이디</option>
-                        <option value="2">아이피</option>
+                        <option value="0">아이디</option>
+                        <option value="1">아이피</option>
                      </select>
                   </div>
                   <div class="col-auto">
@@ -34,8 +50,8 @@
                      검색
                   </button>
                </div>
-            </form>
-         </card>
+            </card>
+         </form>
          <card>
             <div id="logGrid" class="project"></div>
          </card>
@@ -57,9 +73,6 @@ import Card from '../../components/Cards/Card.vue'
 import { dateFormat, dateTimeFormat } from '../../assets/js/common.js'
 
 //========================= 데이터 =========================
-
-const token = localStorage.getItem("token");
-
 const store = useStore();
 const isCmt = computed(() => store.state.isCmt);
 watch(isCmt, () => {
@@ -68,24 +81,29 @@ watch(isCmt, () => {
 
 //========================= Toast grid =========================
 
+//로그인 로그 전체조회
+let gridInstance = ref();
+const loginLogGetList = () => { 
+   gridInstance.value.readData(1, searchData.value);
+}
+
 //검색조건
 const searchData = ref({
-   searchCondition: '1',
+   searchState: '',
+   searchCondition: '0',
    searchKeyword: '',
    searchStartDt: dateFormat(),
    searchEndDt: dateFormat()
 });
 
 //검색조건이 변경되면 리스트가 새로 로드됨
-watch(() => searchData, () => {
+watch(searchData, () => {
    loginLogGetList();
 }, { deep: true });
 
-let gridInstance = ref();
-const loginLogGetList = () => { //로그인 로그 전체조회
-   gridInstance.value.readData(1, searchData);
-}
 
+
+const token = localStorage.getItem("token");
 const dataSource = {
    api: {
       readData: {
@@ -99,6 +117,7 @@ const dataSource = {
 
 // Toast UI Grid 초기화
 onMounted(() => {
+
    if (gridInstance.value) {
       gridInstance.value.destroy(); // 기존 Grid 제거
    }
@@ -111,7 +130,7 @@ onMounted(() => {
       columns: [
          { header: '사용자', name: 'logId', renderer: logMemInfo },
          { header: 'IP 주소', name: 'logIp', align: 'center' },
-         { header: '성공여부', name: 'state', align: 'center', formatter: ({ row }) => `${row.state == 'Y' ? '로그인 성공' : '로그인 실패'}` },
+         { header: '성공여부', name: 'state', align: 'center', formatter: ({ row }) => `${row.state == 'A01' ? '로그인 성공' : '로그인 실패'}` },
          { header: "일정", name: "plan", align: "center", renderer: BtnRenderer },
          { header: '날짜', name: 'createDt', align: 'center', sortable: true, formatter: ({ row }) => dateTimeFormat(row.createDt, 'yyyy-MM-dd hh:mm:ss') }
       ],
@@ -166,14 +185,14 @@ class BtnRenderer {
       const el = document.createElement("div");
       el.className = "mlp10 mrp10";
 
-      if (rowData.lockAt == 'Y') { //미완료 상태일 때 완료처리하기
+      if (rowData.lockAt == 'A01') { //미완료 상태일 때 완료처리하기
          el.innerHTML = ` <button class="btn btn-danger btn-sm">계정잠금</button> `;
       } else { //완료 상태일 때 완료취소 처리하기
          el.innerHTML = ` <button class="btn btn-primary btn-sm">정상</button> `;
       }
 
       el.addEventListener("click", () => {
-         if (rowData.lockAt == 'Y') {
+         if (rowData.lockAt == 'A01') {
             btnLockChg(rowData.logId);
          }
       });

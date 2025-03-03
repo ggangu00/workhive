@@ -48,7 +48,8 @@ public class ProjectController {
 	@GetMapping("/list")
 	public Map<String, Object> projectList(@ModelAttribute ComDefaultVO searchVO, 
 										   @RequestParam(name = "page", required = false, defaultValue = "1") int page,
-										   @RequestParam(name = "perPage", required = false, defaultValue = "5") int perPage) {	  
+										   @RequestParam(name = "perPage", required = false, defaultValue = "5") int perPage) {
+	
 		PaginationInfo paginationInfo = new PaginationInfo();
 		paginationInfo.setCurrentPageNo(page);
 		paginationInfo.setRecordCountPerPage(perPage);
