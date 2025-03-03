@@ -9,21 +9,26 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import egovframework.com.cmm.ComDefaultVO;
 import egovframework.com.common.service.CommonDTO;
 import egovframework.com.common.service.CommonService;
+import egovframework.com.member.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController // data 
 @RequestMapping("/comm")
-@Slf4j
 public class CommonController {
 	
 	@Resource
 	private  CommonService service;
+	
+	@Resource
+	private  MemberService memberService;
 	
 	// 공통코드 디테일 전체조회
 	@GetMapping("/codeList")
@@ -45,11 +50,18 @@ public class CommonController {
 	
 	// 로그인 로그 조회
 	@GetMapping("/loginLog")
-	public List<CommonDTO> loginLogList() {
+	public List<CommonDTO> loginLogList(ComDefaultVO searchVO) {
 	  
-	  List<CommonDTO> result = service.loginLogSelectAll();
+	  List<CommonDTO> result = service.loginLogSelectAll(searchVO);
 	  
 	  return result;
+	}
+	
+	// 로그인 잠금해제
+	@PutMapping("/loginLog/{mberId}")
+	public void memberLockUpdate(@PathVariable("mberId") String mberId) {
+		log.info("받아온 값 ====>" + mberId);
+		memberService.memberLockUpdate(mberId, "A02");
 	}
 	
 	// 홈 대시보드 건수 조회 (진행중인 프로젝트, 금일 예정 일정, 미완료 일지)

@@ -34,6 +34,7 @@ public class CommonDTO {
 	
 	// 홈 대시보드 건수 조회
 	private String mberId;		// 구성원코드
+	private String mberNm;		// 구성원이름
 	private Long projectCnt;	// 진행중인 프로젝트 갯수
 	private Long todoCnt;		// 미완료 일지 갯수
 	private Long schCnt;		// 금일 예정 일정 갯수
@@ -43,6 +44,9 @@ public class CommonDTO {
 	private String logId;		// 로그인아이디
 	private String logIp;		// 로그인ip
 	private String state;		// 성공여부
+	private String gradeNm;		// 직급명
+	private String deptNm;		// 부서명
+	private String lockAt;		// 로그인 잠금여부
 		
 	// 이력 히스토리
 	private String histCd;		// 이력히스토리 코드

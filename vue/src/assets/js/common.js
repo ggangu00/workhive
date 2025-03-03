@@ -1,12 +1,34 @@
 import axios from "../../assets/js/customAxios";
-
+import Swal from 'sweetalert2';
 
 //공통함수
-export async function getComm(cd) { // comm_cd
-   let result = await axios.get(`/api/comm/codeList?cd=${cd}`)
-      .catch(err => console.log(err));
-   return result.data;
+/**
+ * @description 공통코드 상세 목록 조회
+ * @param {string} code 공통코드 구분 값 (ex: 'DK', 'STATUS', 'GRADE' 등)
+ * @returns {Promise<Array<{ commDtlCd: string, commDtlNm: string }>>} 공통코드 목록 배열
+ */
+export const getComm = async (code) => {
+   try {
+      const response = await axios.get('/api/comm/codeList', {
+         params: { cd: code }
+      });
+
+      return response.data;
+   } catch (err) {
+      Swal.fire({
+         icon: "error",
+         title: "공통코드 조회 실패",
+         text: `Error: ${err.response?.data?.error || err.message}`
+      });
+      return [];
+   }
 };
+
+// export async function getComm(cd) { // comm_cd
+//    let result = await axios.get(`/api/comm/codeList?cd=${cd}`)
+//       .catch(err => console.log(err));
+//    return result.data;
+// };
 
 // 날짜포맷 (년-월-일 형식)
 export function dateFormat(value) {
@@ -48,5 +70,3 @@ export function numberFormat(num) {
    if (!num) return '0';
    return Number(num).toLocaleString();
 };
-
-

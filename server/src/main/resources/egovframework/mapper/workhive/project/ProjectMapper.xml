@@ -74,7 +74,7 @@
          </if>
          
          <if test="searchStartDt != null and !searchStartDt.equals('')">AND
-              <![CDATA[CDATAstart_dt >= #{searchStartDt}]]>
+              <![CDATA[ start_dt >= #{searchStartDt}]]>
          </if>
          
          <if test="searchEndDt != null and !searchEndDt.equals('')">AND

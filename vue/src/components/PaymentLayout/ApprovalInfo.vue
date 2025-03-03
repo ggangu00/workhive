@@ -137,7 +137,7 @@ import FileSaver from 'file-saver';
 
 const route = useRoute();
 //데이터받기
-const docCnEditor = ref("");
+const docCnEditor = ref(""); //문서내용
 
 defineProps({
   headButtons: { type: Array, required: true },
@@ -161,7 +161,6 @@ onMounted(() => {
   if (modalElement) {
     modalElement.addEventListener('shown.bs.modal', handleModalOpen);
   }
-
   if(route.query.docCd ){
     approvalList();
     receiverList();
@@ -169,12 +168,10 @@ onMounted(() => {
   if(route.query.atchFileId){
     files();
   }
-
 });
 
 //  컴포넌트 언마운트 시 이벤트 리스너 제거
 onUnmounted(() => {
-
   const modalElement = document.getElementById('approvalRegiModal');
   if (modalElement) {
     modalElement.removeEventListener('shown.bs.modal', handleModalOpen);
@@ -187,12 +184,10 @@ const fileList = ref([]);
 const receivers = ref([]);
 const receiverList = async () => {
   if (!route.query.docCd) return; // docCd가 없으면 실행하지 않음
-
   try {
     const response = await axios.get("/api/document/receiverList", {
       params: { docCd: route.query.docCd }
     });
-
     if (response.data) {
       // 결재자 목록 설정
       receivers.value = response.data.map((approver) => ({
@@ -202,7 +197,6 @@ const receiverList = async () => {
         signName: approver.signName, // 상태 코드 변환
       }));
     }
-
   } catch (error) {
     console.error("결재선 정보 불러오기 실패:", error);
   }
@@ -211,13 +205,10 @@ const receiverList = async () => {
 const approvers = ref([]);
 const approvalList = async () => {
   if (!route.query.docCd) return; // docCd가 없으면 실행하지 않음
-
   try {
     const response = await axios.get("/api/document/approvalList", {
       params: { docCd: route.query.docCd }
     });
-
-
     if (response.data) {
       // 결재자 목록 설정
       approvers.value = response.data.map((approver) => ({
@@ -228,7 +219,6 @@ const approvalList = async () => {
         signStat: approver.signStat
       }));
     }
-
   } catch (error) {
     console.error("결재선 정보 불러오기 실패:", error);
   }
@@ -236,14 +226,12 @@ const approvalList = async () => {
 /////////////////////첨부파일 가져오기/////////////////////
 const files = async () => {
   if (!route.query.atchFileId) return;
-
   try{
     const response = await axios.get("/api/cmm/fms/selectFileInfs.do",{
       params: {
         param_atchFileId: route.query.atchFileId
       },
     });
-
     console.log("파일내용=> ",response.data);
     fileList.value = response.data; // 결과 저장
   } catch (error) {

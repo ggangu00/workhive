@@ -59,7 +59,7 @@ public class AuthorityController {
 	// 권한 등록 처리
 	@PostMapping("")
 	public Map<String, Object> authorityAdd(@RequestBody AuthorityDTO dto) {
-		log.info("response Data", dto.toString());
+		log.info("권한 등록 response Data", dto.toString());
 		
 		boolean result = authService.authorityInsert(dto);
 		

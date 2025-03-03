@@ -243,11 +243,7 @@ const handleRowClick = (e) => {
   let routePath ='';
 
   // 특정 조건일 때 페이지 이동
-
-    routePath = "/approval/ReceivedInfo"
-
-
-
+  routePath = "/approval/ReceivedInfo"
   router.push({
     path: routePath,
     query :{
@@ -271,7 +267,7 @@ onMounted(() => {
 
 //문서 유형 셀렉트박스 변경시 필터 감지하여 재로딩
 watch([docKind, deptNm, formType, startDate, endDate], async ([newDodKind, newDeptNm, newFormType, newStartDate, newEndDate]) => {
-    const response = await axios.get("/api/document/pendingList", { params: {
+    const response = await axios.get("/api/document/receivedList", { params: {
       docKind : newDodKind,
       deptNm : newDeptNm == "전체" ? "" : newDeptNm,
       formCd : newFormType,

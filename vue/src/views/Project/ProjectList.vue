@@ -59,7 +59,7 @@
             </div>
           </div>
           <div class="text-center">
-            <button type="reset" class="btn btn-secondary btn-fill">
+            <button class="btn btn-secondary btn-fill">
               초기화
             </button>
             <button type="submit" class="btn btn-info btn-fill">
@@ -480,7 +480,7 @@ const projectGetList = async () => {
       endDt: dateFormat(item.endDt),
       term: dateTermCalc(dateFormat(item.endDt), dateFormat()) //프로젝트 종료일까지 남은기간
     }));
-console.log(projectList.value);
+    
     grid.value.resetData(projectList.value); //toast grid로 데이터 전달
 
     await nextTick(); //toast grid 로드될때까지 기다림

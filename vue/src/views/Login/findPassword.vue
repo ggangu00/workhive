@@ -10,7 +10,7 @@
          <h5>비밀번호를 찾고자 하는 아이디를 입력하세요</h5>
       </div>
 
-      <div class="mx-auto">
+      <div class="mx-auto" @keydown.enter="keyEventHandler">
          <div class="login_box">
             <div class="input_box">
                <div class="input_item">
@@ -25,10 +25,9 @@
                </div>
             </div>
 
-         </div>
-
-         <div class="btn_login_wrap">
-            <button type="button" class="btn_login">다음</button>
+            <div class="btn_login_wrap">
+               <button type="button" class="btn_login btn_next">다음</button>
+            </div>
          </div>
       </div>
 
@@ -55,6 +54,11 @@
       toggleEveryDisplay();
       toggleHideConfig();
    });
+// ============================================= Btn Event =============================================
+   // 엔터 키 이벤트 핸들러 (로그인 실행)
+   const keyEventHandler = () => {
+      console.log("비밀번호 찾기 버튼 ~~") // 로그인 실행
+   }
 
    const username = ref(""); // 아이디 입력값
 
