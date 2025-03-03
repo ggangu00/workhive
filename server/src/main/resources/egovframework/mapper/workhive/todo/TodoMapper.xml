@@ -53,11 +53,11 @@
 	<!-- 일지 등록 -->
 	<insert id="todoInsert" parameterType="todoDTO">
 		INSERT INTO todo (
-			todo_cd,		--일지 코드
-		    mber_id,		--구성원 코드
+			todo_cd,	--일지 코드
+		    mber_id,	--구성원 코드
 		    type_cd,	--업무구분
 		    title,		--업무명
-		    content,		--업무 상세내용
+		    content,	--업무 상세내용
 		    state,		--완료여부
 		    todo_dt		--업무일자
 		)

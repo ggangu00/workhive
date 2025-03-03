@@ -346,6 +346,7 @@ const getApprovalStatusName = (code) => {
 .badge {
   font-weight: 400 !important;
 }
+
 .tooltip-container {
   position: relative;
 

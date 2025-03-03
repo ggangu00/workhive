@@ -109,7 +109,7 @@
                   </tr>
                   <tr>
                     <th class="table-secondary">진행상태</th>
-                    <td colspan="3" class="text-start">{{projectInfo.state == 'A03' ? '진행중' : '완료'}}</td>
+                    <td colspan="3" class="text-start">{{ projectInfo.state == 'A03' ? '진행중' : '완료' }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -163,9 +163,10 @@
 </template>
 
 <script setup>
+import { useStore } from "vuex";
 import axios from "../../assets/js/customAxios";
 import { useRouter } from "vue-router";
-import { onMounted, ref, watch, nextTick } from 'vue';
+import { onMounted, ref, computed, watch, onBeforeUnmount } from 'vue';
 
 //========================== 컴포넌트 ==========================
 import Grid from 'tui-grid';
@@ -178,6 +179,15 @@ import { dateFormat } from '../../assets/js/common'
 import { dateTermCalc } from '../../assets/js/project'
 
 //========================= 공통함수 =========================
+
+const token = localStorage.getItem("token");
+
+const store = useStore();
+const isCmt = computed(() => store.state.isCmt);
+watch(isCmt, () => {
+  projectGetList();
+})
+
 const progress = ref(0);
 
 // 애니메이션 실행 함수 (requestAnimationFrame 사용)
@@ -217,19 +227,41 @@ watch(() => searchData, () => {
   projectGetList();
 }, { deep: true });
 
+let grid = ref();
+const projectGetList = () => {
+  grid.value.readData(1, searchData);
+}
+
+const dataSource = {
+  api: {
+    readData: {
+      url: '/api/project/list',
+      method: 'GET',
+      initParams: searchData,
+      headers: { 'Authorization': `Bearer ${token}` }
+    }
+  }
+};
+
 //리스트 초기화
-const grid = ref([]);
 onMounted(() => {
-  projectGetList();
+
+  if (grid.value) {
+    grid.value.destroy(); // 기존 Grid 제거
+  }
 
   grid.value = new Grid({
     el: document.getElementById("tableGrid"),
+    data: dataSource,
     scrollX: true,
     scrollY: true,
     columns: [
       { header: "진행상태", name: "state", align: "center", width: 80, formatter: ({ row }) => `${row.state == 'A03' ? '진행중' : '완료'}` },
       { header: "프로젝트명", name: "prNm", align: "center", renderer: subjectRenderer },
-      { header: "프로젝트 기간", name: "startDt", align: "center", width: 200, formatter: ({ row }) => `${row.startDt} ~ ${row.endDt}` },
+      {
+        header: "프로젝트 기간", name: "startDt", align: "center", width: 200,
+        formatter: ({ row }) => dateFormat(row.startDt) + ' ~ ' + dateFormat(row.endDt)
+      },
       { header: "금액", name: "price", align: "center", width: 120, },
       { header: "일정", name: "plan", align: "center", width: 100, renderer: BtnRendererPlan },
       { header: "완료처리", name: "end", align: "center", width: 100, renderer: BtnRendererEnd },
@@ -241,9 +273,16 @@ onMounted(() => {
       perPage: 5,
     },
     rowHeight: 50,
-    data: projectList.value,
     rowHeaders: ["checkbox"]
   });
+});
+
+// 페이지 이동 시 Grid 제거하여 중복 방지
+onBeforeUnmount(() => {
+  if (grid.value) {
+    grid.value.destroy();
+    grid.value = null;
+  }
 });
 
 //리스트 엑셀다운로드
@@ -266,20 +305,22 @@ class subjectRenderer {
     const termClass = ref('');
     const rowKey = props.row?.rowKey ?? props.grid.getRow(props.rowKey)?.rowKey;
     const rowData = props.grid.getRow(rowKey);
-    
+
     const el = document.createElement("div");
     el.className = "mlp10";
 
     //남은 기간이 10일 이하인 경우 경고배지 적용
-    rowData.term > 10 ? termClass.value = 'badge-primary' : termClass.value = 'badge-danger';
+    let term = dateTermCalc(dateFormat(rowData.endDt), dateFormat());
+
+    term > 10 ? termClass.value = 'badge-primary' : termClass.value = 'badge-danger';
 
     el.innerHTML = `
       <div class="category">${rowData.comNm}</div>
       <div class="subject">
         <a href="#" class="mrp5">${rowData.prNm}</a>
         <span class="badge ${termClass.value}">
-          D${rowData.term > 0 ? "+" + rowData.term
-        : rowData.term > 0 ? "-" + rowData.term
+          D${term > 0 ? "+" + term
+        : term < 0 ? term
           : "-day"}</span>
       </div>
     `;
@@ -468,8 +509,10 @@ const btnProjectEnd = (code, mode) => {
 //======================= axios =======================
 
 //프로젝트 전체조회
+/*
 const projectList = ref([]);
 const projectCount = ref(0);
+
 const projectGetList = async () => {
   try {
     const result = await axios.get(`/api/project/list`, { params: searchData.value });
@@ -480,7 +523,7 @@ const projectGetList = async () => {
       endDt: dateFormat(item.endDt),
       term: dateTermCalc(dateFormat(item.endDt), dateFormat()) //프로젝트 종료일까지 남은기간
     }));
-    
+
     grid.value.resetData(projectList.value); //toast grid로 데이터 전달
 
     await nextTick(); //toast grid 로드될때까지 기다림
@@ -501,7 +544,7 @@ const projectGetList = async () => {
       text: "Error : " + err
     });
   }
-}
+}*/
 
 //프로젝트 단건조회
 const projectInfo = ref([]);

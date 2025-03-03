@@ -308,6 +308,7 @@ const btnMonthMove = (mode) => {
       month.value++;
     }
   }
+  nowDateInfo();
 }
 
 //수정버튼 클릭 시 수정모달 표출

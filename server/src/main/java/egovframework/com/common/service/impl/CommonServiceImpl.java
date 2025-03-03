@@ -35,6 +35,12 @@ public class CommonServiceImpl implements CommonService {
 		return commonMapper.loginLogSelectAll(searchVO);
 	}
 	
+	// 로그인 로그 전체 갯수
+	@Override
+	public int loginLogSelectAllCnt(ComDefaultVO searchVO) {
+		return commonMapper.loginLogSelectAllCnt(searchVO);
+	}
+	
 	// 로그인 로그 등록
 	@Override
 	public boolean loginLogInsert(CommonDTO dto) {

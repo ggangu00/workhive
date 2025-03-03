@@ -115,9 +115,9 @@
                   </td>
                 </tr>
               </template>
-              <tr v-else>
+              <tr v-else class="list-nodata">
                 <td colspan="10">
-                  <div class="list-nodata">등록된 거래처가 없습니다.</div>
+                  <div>등록된 거래처가 없습니다.</div>
                 </td>
               </tr>
             </tbody>
@@ -160,7 +160,6 @@ const price = ref('');
 const aheadDt = ref('');
 const entrprsMberId = ref('');
 const cmpnyNm = ref('');
-const createId = ref('admin');
 const isUpdated = ref(false);
 let txt = '';
 
@@ -400,8 +399,7 @@ const projectAdd = async () => {
     endDt: endDt.value,
     price: price.value,
     aheadDt: aheadDt.value,
-    entrprsMberId: entrprsMberId.value,
-    createId: createId.value
+    entrprsMberId: entrprsMberId.value
   };
 
   try {

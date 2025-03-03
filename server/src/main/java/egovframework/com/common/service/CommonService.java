@@ -14,6 +14,9 @@ public interface CommonService {
 	// 로그인 로그 전체조회
 	public List<CommonDTO> loginLogSelectAll(ComDefaultVO searchVO);
 	
+	// 로그인 로그 총 갯수
+	public int loginLogSelectAllCnt(ComDefaultVO searchVO);
+	
 	// 로그인 잠금해제
 	public boolean loginLogUpdate(String mberId);
 	

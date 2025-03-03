@@ -16,7 +16,7 @@ public interface ProjectMapper {
 	public List<ProjectDTO> projectSelectAll(ComDefaultVO searchVO);
 	
 	// 프로젝트 전체건수
-	public int projectSelectAllCnt(ComDefaultVO searchVO);
+	int projectSelectAllCnt(ComDefaultVO searchVO);
 	
 	// 프로젝트 단건조회
 	public ProjectDTO projectSelect(String prCd);
