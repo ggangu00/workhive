@@ -13,6 +13,7 @@
 		<property name="extFileName">
 			<set>
 				<value>classpath:/egovframework/egovProps/key.properties</value>
+				<value>classpath:/egovframework/egovProps/mail.properties</value>
 			</set>
 		</property>
 	</bean>

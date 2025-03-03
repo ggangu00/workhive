@@ -16,6 +16,7 @@ local.properties
 
 globals.properties
 key.properties
+mail.properties
 
 .project
 .classpath

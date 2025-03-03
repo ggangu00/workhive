@@ -5,8 +5,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.XmlWebApplicationContext;
@@ -20,6 +18,7 @@ import egovframework.com.cmm.service.EgovProperties;
 import egovframework.com.sec.security.filter.EgovSpringSecurityLogoutFilter;
 import egovframework.com.uat.uap.filter.EgovLoginPolicyFilter;
 import egovframework.com.utl.wed.filter.CkFilter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * EgovWebApplicationInitializer 클래스
@@ -46,13 +45,12 @@ import egovframework.com.utl.wed.filter.CkFilter;
  * </pre>
  */
 
-
+@Slf4j
 public class EgovWebApplicationInitializer implements WebApplicationInitializer {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(EgovWebApplicationInitializer.class);
 	@Override
 	public void onStartup(ServletContext servletContext) throws ServletException {
-		LOGGER.debug("EgovWebApplicationInitializer START-============================================");
+		log.debug("EgovWebApplicationInitializer START-============================================");
 		
 		//-------------------------------------------------------------
 		// Egov Web ServletContextListener 설정
@@ -175,7 +173,7 @@ public class EgovWebApplicationInitializer implements WebApplicationInitializer 
 		//-------------------------------------------------------------
 		servletContext.addListener(new org.springframework.web.context.request.RequestContextListener());
 		
-		LOGGER.debug("EgovWebApplicationInitializer END-============================================");
+		log.debug("EgovWebApplicationInitializer END-============================================");
 	
 	}
 	

@@ -40,7 +40,9 @@ public interface MemberMapper {
 	 */
 	void memberLockUpdate(@Param("mberId") String mberId, @Param("lockAt") String lockAt);
 
-	
+	// 비밀번호 업데이트 메서드 추가
+	void userPasswordUpdate(@Param("mberId") String mberId, @Param("password") String password);
+
 
 	
 }

@@ -9,9 +9,15 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserDTO {
 	
 	private List<String> roles;
@@ -114,6 +120,11 @@ public class UserDTO {
 
 	public void setLoginFailCount(int loginFailCount) {
 		this.lockCnt = loginFailCount;
+	}
+
+	public Object getEmail() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

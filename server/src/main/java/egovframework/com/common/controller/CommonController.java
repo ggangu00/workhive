@@ -23,6 +23,7 @@ import egovframework.com.common.util.GridUtil;
 import egovframework.com.member.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController // data 
 @RequestMapping("/comm")
 @Slf4j

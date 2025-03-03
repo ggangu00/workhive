@@ -1,6 +1,11 @@
 # Created by https://www.toptal.com/developers/gitignore/api/macos,windows,eclipse,vuejs,visualstudiocode,java
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,windows,eclipse,vuejs,visualstudiocode,java
 
+### Properties ###
+globals.properties
+key.properties
+mail.properties
+
 ### Eclipse ###
 .metadata
 bin/

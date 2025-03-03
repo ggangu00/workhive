@@ -20,7 +20,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import egovframework.com.securing.service.impl.CustomUserDetailService;
-//import egovframework.com.securing.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 
 @Configuration  // Spring Security 설정 클래스
@@ -54,7 +53,7 @@ public class WebSecurityConfig {
 	              .sessionCreationPolicy(SessionCreationPolicy.STATELESS)  // 세션 아예 사용 안 함
 	          )
 	          .authorizeHttpRequests(auth -> auth
-	              .requestMatchers("/loginProc", "/menu/**", "/css/**", "/js/**", "/assets/**").permitAll()  // 로그인 및 정적 리소스는 모두 허용
+	              .requestMatchers("/loginProc", "/passwordProc", "/menu/**", "/css/**", "/js/**", "/assets/**").permitAll()  // 로그인 및 정적 리소스는 모두 허용
 	              .requestMatchers("/access/**").authenticated()  // 권한 체크 API는 인증 필요
 	              .anyRequest().authenticated()  // 그 외 모든 요청은 인증 필요
 	          )

@@ -15,11 +15,11 @@
             <div class="input_box">
                <div class="input_item">
                   <!-- 아이디 입력 필드 -->
-                  <input type="text" class="input_id" v-model="username">
+                  <input type="text" class="input_id" v-model="mberId">
                   <label class="text_label">아이디 또는 전화번호</label>
 
                   <!-- 아이디 입력 초기화 버튼 (한 글자 이상 입력 시 표시) -->
-                  <button v-if="username.length > 0" type="button" class="btn_delete" @click="usernameReset">
+                  <button v-if="mberId.length > 0" type="button" class="btn_delete" @click="userIdReset">
                      <i class="fa-solid fa-xmark"></i>
                   </button>
                </div>
@@ -37,7 +37,8 @@
 <script setup>
    import { onBeforeMount, onBeforeUnmount, ref } from "vue";
    import { useStore } from "vuex";
-   //import { useRouter } from "vue-router";
+   import axios from 'axios';
+   import Swal from 'sweetalert2';
 
 // ================================================== side, header 숨기기 ==================================================
    const store = useStore();
@@ -54,24 +55,33 @@
       toggleEveryDisplay();
       toggleHideConfig();
    });
+
 // ============================================= Btn Event =============================================
    // 엔터 키 이벤트 핸들러 (로그인 실행)
    const keyEventHandler = () => {
+      findPasswordGet();
       console.log("비밀번호 찾기 버튼 ~~") // 로그인 실행
    }
 
-   const username = ref(""); // 아이디 입력값
+   const mberId = ref(""); // 아이디 입력값
 
    // 아이디 입력 초기화
-   const usernameReset = () => {
-      username.value = "";
+   const userIdReset = () => {
+      mberId.value = "";
    };
-
-   // 비밀번호 찾기 페이지로 이동
-   // const router = useRouter();
-   // const goToFindPw = () => {
-   //    router.push({ path : '/findPw' });
-   // }
+// ============================================= Axios Event =============================================
+   const findPasswordGet = async () => {
+      try {
+         const result = await axios.post('/api/passwordProc', { mberId });
+         console.log(result.data)
+      } catch (err) {
+         Swal.fire({
+            icon: "error",
+            title: "API 조회 오류",
+            text:  "Error : " + err.response.data.error
+         });
+      }
+   };
 
 </script>
 
@@ -81,10 +91,6 @@
    width: 15px;
    height: 15px;
 }
-
-
-
-
 
 /* 아이디 / 비밀번호 찾기 */
 .find_wrap {
