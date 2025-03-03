@@ -1,6 +1,6 @@
 <template>
 
-  <div class="content">
+  <div class="content" @keydown.esc="modalClose">
     <div class="container-fluid">
       <!-- 페이지 헤더 -->
       <div class="card">
@@ -67,12 +67,16 @@
                     </tr>
                     <tr>
                       <th>결재자</th>
-                      <td colspan="5"><input type="text" class="form-control" v-model="crctData.signId"></td>
+                      <td colspan="5"><input type="text" class="form-control" v-model="crctData.signNm" @click="modalOpen"></td>
                     </tr>
                   </tbody>
                 </table>
               </div>
-
+              <SignerModal
+                :isShowModal="isShowModal"
+                @modalClose="modalClose"
+                @modalConfirm="modalConfirm"
+              />
               <div class="row justify-content-center">
                 <div class="col-auto">
                   <button class="btn btn-secondary btn-fill mx-2" @click="btnCrctCancle">취소</button>
@@ -96,6 +100,8 @@ import { useRoute, useRouter } from 'vue-router';
 import axios from '../../assets/js/customAxios.js';
 import { ref , onMounted, watch } from 'vue';
 import { dateTimeFormat } from '../../assets/js/common.js';
+import SignerModal from '../components/Modal/SignerModal.vue';
+import Swal from 'sweetalert2';
 
 const route = useRoute();
 let isUpdate = ref(route.query.isUpdate === 'true');;
@@ -123,6 +129,7 @@ let crctData = ref({
   crctReason: '',
   atchFileId: '',
   signId: '',
+  signNm: '',
   preGoTime: '',
   preLeaveTime: '',
 });
@@ -130,8 +137,12 @@ let crctData = ref({
 // 날짜 변경 감지(등록용 데이터 가져오기)
 watch (() => crctData.value.commuteDt, async () => {
   if(cmtCd == null) {
-    let result = await axios.get(`/api/commute/dateCmtInfo`, {params: {commuteDt: crctData.value.commuteDt}});
-
+    let result;
+    try {
+      result = await axios.get(`/api/commute/dateCmtInfo`, {params: {commuteDt: crctData.value.commuteDt}});
+    } catch (err) {
+      Swal.fire({ icon: "error", title: "근무 일자 조회에 실패하였습니다.", text: "Error : " + err });
+    }
     crctData.value.commuteCd = result.data.commuteCd;
     crctData.value.goTime = result.data.goTime;
     crctData.value.leaveTime = result.data.leaveTime;
@@ -141,7 +152,12 @@ watch (() => crctData.value.commuteDt, async () => {
 }, {deep:true});
 // 등록 화면 데이터 가져오기
 const cmtGetInfo = async () => {
-  let result = await axios.get(`/api/commute/cmtInfo?commuteCd=${cmtCd}`);
+  let result;
+  try {
+    result = await axios.get(`/api/commute/cmtInfo?commuteCd=${cmtCd}`);
+  } catch (err) {
+    Swal.fire({ icon: "error", title: "출퇴근 정보를 가져오지 못했습니다.", text: "Error : " + err });
+  }
 
   crctData.value.commuteCd = result.data.commuteCd;
   crctData.value.commuteDt = dateTimeFormat(result.data.commuteDt, 'yyyy-MM-dd');
@@ -152,8 +168,12 @@ const cmtGetInfo = async () => {
 }
 // 수정 화면 데이터 가져오기
 const crctGetInfo = async () => {
-  let result = await axios.get(`/api/commute/crctInfo?crctCd=${crctCd}`);
-
+  let result;
+  try {
+    result = await axios.get(`/api/commute/crctInfo?crctCd=${crctCd}`);
+  } catch (err) {
+    Swal.fire({ icon: "error", title: "출퇴근 정보를 가져오지 못했습니다.", text: "Error : " + err });
+  }
   crctData.value = result.data;
   crctData.value.commuteDt = dateTimeFormat(result.data.commuteDt, 'yyyy-MM-dd');
   files();
@@ -175,8 +195,8 @@ const files = async () => {
     fileList.value.forEach(i => {
       i.name = i.orignlFileNm;
     })
-  } catch (error) {
-    console.error("파일 목록 불러오기 실패:", error);
+  } catch (err) {
+    Swal.fire({ icon: "error", title: "파일 목록을 불러오지 못했습니다.", text: "Error : " + err });
   }
 }
 
@@ -209,16 +229,85 @@ const btnCrctManage = async () => {
   if(!isUpdate.value) {
     formData.append("preGoTime", crctData.value.goTime);
     formData.append("preLeaveTime", crctData.value.leaveTime);
-    await axios.post('/api/commute/crctAdd', formData);
+
+    if(!validCheck()) return;
+
+    try {
+      await axios.post('/api/commute/crctAdd', formData);
+    } catch(err) {
+      Swal.fire({icon:"error", title: "출퇴근 정정 등록에 실패하였습니다.", text: "Error : " + err});
+    }
   }
   else {
-    await axios.post('/api/commute/crctModify', formData);
+    if(!validCheck()) return;
+    
+    try {
+      await axios.post('/api/commute/crctModify', formData);
+    } catch (err) {
+      Swal.fire({ icon: "error", title: "출퇴근 정정 수정에 실패하였습니다.", text: "Error : " + err });
+    }
   }
 
   router.push({ name: 'CrctList' });
 }
 const btnCrctCancle = () => { // 뒤로가기
   router.go(-1);
+}
+
+// 결재자 모달
+let isShowModal = ref(false);
+const modalOpen = () => {
+  isShowModal.value = true;
+}
+const modalClose = () => {
+  isShowModal.value = false;
+}
+const modalConfirm = (row) => {
+  isShowModal.value = false;
+  console.log("결재자 : ", row);
+  crctData.value.signId = row.mberId;
+  crctData.value.signNm = row.mberNm;
+}
+
+// 유효성 체크
+const validCheck = () => {
+  if(!crctData.value.commuteDt?.trim()) {
+    Swal.fire({
+      icon: "info",
+      title: "근무일자를 입력하세요.",
+    });
+    return false;
+  }
+  if(!crctData.value.crctGoTime?.trim()) {
+    Swal.fire({
+      icon: "info",
+      title: "정정 출근 시간을 입력하세요.",
+    });
+    return false;
+  }
+  if(!crctData.value.crctLeaveTime?.trim()) {
+    Swal.fire({
+      icon: "info",
+      title: "정정 퇴근 시간을 입력하세요.",
+    });
+    return false;
+  }
+  if(!crctData.value.crctReason?.trim()) {
+    Swal.fire({
+      icon: "info",
+      title: "정정 사유를 입력하세요.",
+    });
+    return false;
+  }
+  if(!crctData.value.signId?.trim()) {
+    Swal.fire({
+      icon: "info",
+      title: "결재자를 선택하세요.",
+    });
+    return false;
+  }
+
+  return true;
 }
 
 </script>

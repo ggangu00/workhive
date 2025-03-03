@@ -26,5 +26,11 @@ public class DepartmentServiceImpl implements DepartmantService {
 	public DepartmentDTO departmentSelect(int deptCd) {
 		return dMapper.departmentSelect(deptCd);
 	}
+
+	// 부서 트리 조회
+	@Override
+	public List<DepartmentDTO> deptTreeSelectAll(String deptCd) {
+		return dMapper.deptTreeSelectAll(deptCd);
+	}
 	
 }

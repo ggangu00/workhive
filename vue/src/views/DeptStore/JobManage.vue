@@ -71,7 +71,13 @@
 
               <div class="mb-3">
                 <label>업무담당자<em class="point-red">*</em></label>
-                <input type="text" class="form-control" placeholder="담당자명을 입력해주세요" v-model="formValues.chargerId">
+                <input type="text" class="form-control" placeholder="담당자명을 입력해주세요" v-model="formValues.chargerNm" @click="modalOpen" readonly>
+                
+                <SignerModal
+                  :isShowModal="isShowModal"
+                  @modalClose="modalClose"
+                  @modalConfirm="modalConfirm"
+                />
               </div>
 
               <div class="mb-3">
@@ -110,6 +116,7 @@ import { computed, ref, watch } from 'vue';
 import Modal from '../../components/Modal.vue';
 import axios from '../../assets/js/customAxios.js';
 import { useStore } from 'vuex';
+import SignerModal from '../components/Modal/SignerModal.vue';
 
 const props = defineProps({
   isShowJobModal: Boolean,
@@ -132,6 +139,7 @@ let formValues = ref({
   deptJobNm: '',
   deptJobCn: '',
   chargerId: '',
+  chargerNm: '',
 });
 // 첨부파일
 const fileList = ref([]);
@@ -258,6 +266,21 @@ const jobUpdate = async () => {
   });
 
   await axios.post('/api/deptstore/jobModify', modifyData);
+}
+
+// 결재자 모달
+let isShowModal = ref(false);
+const modalOpen = () => {
+  isShowModal.value = true;
+}
+const modalClose = () => {
+  isShowModal.value = false;
+}
+const modalConfirm = (row) => {
+  isShowModal.value = false;
+  console.log("결재자 : ", row);
+  formValues.value.chargerId = row.mberId;
+  formValues.value.chargerNm = row.mberNm;
 }
 
 </script>

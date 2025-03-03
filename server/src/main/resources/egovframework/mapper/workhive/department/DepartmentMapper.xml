@@ -75,4 +75,48 @@
 		   dept_cd = #{deptCd}
    	</select>
 	
+	
+	<!-- 부서 트리 조회 : 사용자의 부서 기준 관련 부서 검색 -->
+	<select id="deptTreeSelectAll" parameterType="String" resultType="departmentDTO">
+	    SELECT
+	       LEVEL,  <!-- 트리내에서 어떤 단계에 있는지 나타내는 값 -->
+	       dept_cd,
+	       dept_nm,
+	       description,
+	       manager,
+	       depth,
+	       parent_cd,
+	       seq,
+	       create_id,
+	       create_dt,
+	       update_id,
+	       update_dt,
+	       del_yn
+	    FROM
+	       department
+	    WHERE 
+	       UPPER(del_yn) = UPPER('n')
+	       AND dept_cd IN (
+	           SELECT dept_cd
+	           FROM department
+	           START WITH dept_cd = (
+	               SELECT parent_cd
+	               FROM department
+	               WHERE dept_cd = #{mberDeptCd} AND UPPER(del_yn) = UPPER('n')
+	           )  <!-- 사용자의 부서에서 상위 부서를 찾기 위해 부모 부서 찾기 -->
+	           CONNECT BY PRIOR TO_NUMBER(dept_cd) = TO_NUMBER(parent_cd)
+	       )
+	    START WITH dept_cd = (
+	        SELECT parent_cd
+	        FROM department
+	        WHERE dept_cd = #{mberDeptCd} AND UPPER(del_yn) = UPPER('n')
+	    )  <!-- 최상위 부서부터 시작 -->
+	    CONNECT BY PRIOR TO_NUMBER(dept_cd) = TO_NUMBER(parent_cd)
+	    ORDER SIBLINGS BY 
+	       seq ASC  <!-- 정렬 기준 -->
+	</select>
+
+
+
+	
 </mapper>
