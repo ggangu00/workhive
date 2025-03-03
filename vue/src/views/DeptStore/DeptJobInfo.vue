@@ -83,6 +83,7 @@
                   <JobManage
                     :isShowJobModal="isShowJobModal"
                     :isUpdate="isUpdate"
+                    :isDetail="isDetail"
                     @modalCloseJob="modalCloseJob"
                     @modalConfirmJob="modalConfirmJob"
                     :jobBxSelected="jobBxSelected"
@@ -166,7 +167,7 @@ const deptGetList = async () => {
     departments.value = result.data;
 
   } catch (err) {
-    Swal.fire({ icon: "error", title: "부서 조회 실패", text: "Error : " + err });
+    Swal.fire({ icon: "error", title: "부서 조회에 실패하였습니다.", text: "Error : " + err });
   }
 };
 
@@ -177,7 +178,7 @@ const jobBxGetList  = async () => {
     jobBoxes.value = result.data;
 
   } catch (err) {
-    Swal.fire({ icon: "error", title: "업무함 조회 실패", text: "Error : " + err });
+    Swal.fire({ icon: "error", title: "업무함 조회에 실패하였습니다.", text: "Error : " + err });
   }
 };
 
@@ -219,7 +220,11 @@ const jobBxCheck = async (type, data) => {
       modalOpen();
       break;
     case 'remove':
-      await axios.delete('/api/deptstore/jobBxRemove', { params: { deptJobBxId: data.deptJobBxId } });
+      try {
+        await axios.delete('/api/deptstore/jobBxRemove', { params: { deptJobBxId: data.deptJobBxId } });
+      } catch (err) {
+        Swal.fire({ icon: "error", title: "업무함 삭제에 실패하였습니다.", text: "Error : " + err });
+      }
       deptGetList();
       jobBxGetList();
       break;
@@ -242,19 +247,39 @@ const modalConfirm = async () => {
   formData.append("deptJobBxNm", jobBxData.value.deptJobBxNm);
   formData.append("indictOrdr", jobBxData.value.indictOrdr);
 
+  if(!jobBxValidCheck()) return;
+
   if(jobBxModalType == 'add') {
-    await axios.post('/api/deptstore/jobBxAdd', formData);
+    try {
+      await axios.post('/api/deptstore/jobBxAdd', formData);
+    } catch (err) {
+      Swal.fire({ icon: "error", title: "업무함 등록에 실패하였습니다.", text: "Error : " + err });
+    }
 
   } else if(jobBxModalType == 'modify') {
     formData.append("deptJobBxId", jobBxData.value.deptJobBxId);
-    await axios.post('/api/deptstore/jobBxModify', formData);
-
+    try {
+      await axios.post('/api/deptstore/jobBxModify', formData);
+    } catch (err) {
+      Swal.fire({ icon: "error", title: "업무함 수정에 실패하였습니다.", text: "Error : " + err });
+    }
   }
   deptGetList();
   jobBxGetList();
   modalClose();
 }
 
+// 업무함 유효성 체크
+const jobBxValidCheck = () => {
+  if(!jobBxData.value.deptJobBxNm?.trim()) {
+    Swal.fire({
+      icon: "info",
+      title: "업무함명을 입력하세요.",
+    });
+    return false;
+  }
+  return true;
+}
 
 // 부서 및 업무함 종료
 // Toast UI Grid 초기화
@@ -284,8 +309,17 @@ onMounted(() => {
     ]
   })
 
-  // jobGetList();
+  gridInstance.value.on("click", handleRowClick);
 })
+
+// 행클릭
+let isDetail = ref(false);
+const handleRowClick = (rowKey) => {
+  isDetail.value = true;
+  isUpdate.value = false;
+  selectedRowData = gridInstance.value.getRow(rowKey);
+  isShowJobModal.value = true;
+}
 
 const dataSource = {
   api: {
@@ -309,6 +343,8 @@ class BtnRenderer {
     `;
 
     el.addEventListener("click", (event) => {
+      event.stopPropagation(); // 부모 요소(행 클릭) 이벤트 전파 방지
+      
       const type = event.target.dataset.type;
 
       // props.row가 없을 경우 grid에서 데이터 가져오기
@@ -320,7 +356,7 @@ class BtnRenderer {
       }
 
       if (type === "edit") {
-        udtEvent(rowKey);
+        modalUpdateJob(rowKey);
       } else if (type === "delete") {
         delEvent(rowKey);
       }
@@ -334,16 +370,15 @@ class BtnRenderer {
   }
 }
 
-const udtEvent = (rowKey) => {
-  selectedRowData = gridInstance.value.getRow(rowKey);
-  modalUpdateJob(); // 모달 열기
-};
-
 // 업무 삭제
 const delEvent = async (rowKey) => {
   selectedRowData = gridInstance.value.getRow(rowKey);
-
-  await axios.delete('/api/deptstore/jobRemove', { params: { deptJobId: selectedRowData.deptJobId } });
+  
+  try {
+    await axios.delete('/api/deptstore/jobRemove', { params: { deptJobId: selectedRowData.deptJobId } });
+  } catch (err) {
+    Swal.fire({ icon: "error", title: "업무 삭제에 실패하였습니다.", text: "Error : " + err });
+  }
 
   jobGetList();
 };
@@ -357,57 +392,14 @@ const btnJobListRemove = async () => {
     atchFileId: row.atchFileId,
   }));
 
-  await axios.post('/api/deptstore/jobListRemove', jobList);
+  try {
+    await axios.post('/api/deptstore/jobListRemove', jobList);
+  } catch (err) {
+    Swal.fire({ icon: "error", title: "업무 목록 삭제에 실패하였습니다.", text: "Error : " + err });
+  }
 
   jobGetList();
 };
-
-// const jobGetList = async (page = 1) => {
-
-//   // console.log(jobBxSelected);
-
-//   // 그리드 페이지 정보 입력
-//   // let gridPage = gridInstance.value.paginationManager.getPagination();
-//   // console.log("grid page : ", gridPage);
-//   // let newPagination = {
-//   //   pageIndex: gridPage._currentPage,
-//   //   pageUnit: gridPage._options.perPage,
-//   //   pageSize: 5, // 페이지 표시 갯수
-//   // };
-//   // jobSearch.value = {...jobSearch.value, ...newPagination};
-
-//   jobSearch.value.page = page;
-
-//   let jobList = await axios.get('/api/deptstore/jobList', {
-//     params: jobSearch.value
-//   })
-//   .catch(error => console.error("에러 :", error));
-
-//   rowData.value = [...jobList.data.resultList];
-
-//   rowData.value = rowData.value.map((item, index) => ({
-//     rowNum: index + 1, // 1부터 시작하는 행번호
-//     ...item
-//   }));
-
-//   let paginationInfo = jobList.data.paginationInfo;
-//   console.log(jobList.data);
-//   /*
-//   {
-//     "result": true,
-//     "data": {
-//       "contents": [],
-//       "pagination": {
-//         "page": 1,
-//         "totalCount": 100
-//       }
-//     }
-//   }
-//   */
-
-//   gridInstance.value.resetData(rowData.value);
-//   gridInstance.value.setPaginationTotalCount(paginationInfo.totalRecordCount);
-// };
 
 // 모달
 let isShowJobModal = ref(false);
@@ -416,6 +408,7 @@ let isUpdate = ref(false);
 // 업무 등록
 const modalAddJob = () => {
   isUpdate.value = false;
+  isDetail.value = false;
   isShowJobModal.value = true;
 }
 const modalCloseJob = () => {
@@ -423,14 +416,17 @@ const modalCloseJob = () => {
 }
 const modalConfirmJob = () => {
   isShowJobModal.value = false;
-  isUpdate.value = '';
+  isUpdate.value = false;
+  isDetail.value = false;
   jobGetList();
 }
 
 // 업무 수정
 let selectedRowData = {};
-const modalUpdateJob = () => {
+const modalUpdateJob = (rowKey) => {
   isUpdate.value = true;
+  isDetail.value = false;
+  selectedRowData = gridInstance.value.getRow(rowKey);
   isShowJobModal.value = true;
 }
 

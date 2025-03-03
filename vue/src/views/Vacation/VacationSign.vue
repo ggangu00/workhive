@@ -81,6 +81,7 @@
   import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
   import { dateTimeFormat } from '../../assets/js/common';
   import * as vcFormat from '../../assets/js/formatter.js';
+  import Swal from 'sweetalert2';
   
   const token = localStorage.getItem("token");
 
@@ -237,9 +238,18 @@
   
     // 해당 데이터들을 서버에 보내도록 수정
     if (signDataArray.length) {
-      if(e.target.value == 'D01' || e.target.value == 'D02')
-        await axios.post('/api/yearVc/yearVcModify', signDataArray.map(data => data.yearVcData)); 
-      await axios.post('/api/vacation/signModify', signDataArray.map(data => data.signData)); 
+      if(e.target.value == 'D01' || e.target.value == 'D02') {
+        try {
+          await axios.post('/api/yearVc/yearVcModify', signDataArray.map(data => data.yearVcData)); 
+        } catch (err) {
+          Swal.fire({ icon: "error", title: "연차 정보 수정에 실패하였습니다.", text: "Error : " + err });
+        }
+      }
+      try {
+        await axios.post('/api/vacation/signModify', signDataArray.map(data => data.signData)); 
+      } catch (err) {
+        Swal.fire({ icon: "error", title: "휴가 신청 결재에 실패하였습니다.", text: "Error : " + err });
+      }
     }
   
     // 리스트 새로 고침

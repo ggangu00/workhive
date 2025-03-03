@@ -1,7 +1,7 @@
 <template>
   <Modal
     :isShowModal="props.isShowJobModal"
-    :modalTitle="'업무 관리'"
+    :modalTitle="modalTitle"
     @click.self="modalCloseJob"
   >
     <template v-slot:body>
@@ -30,7 +30,7 @@
                 </div>
                 <div class="row align-items-center">
                   <div class="col-6">
-                    <select class="form-select" v-model="formValues.deptJobBxId">
+                    <select class="form-select" v-model="formValues.deptJobBxId" :disabled="isDetail">
                       <option disabled value="">업무함을 선택하세요</option>
                       <option v-for="job in localJobBxList" :key="job.deptJobBxId" :value="job.deptJobBxId">
                         {{ job.deptJobBxNm }}
@@ -40,19 +40,17 @@
                   <div class="col-6">
                     <div class="form-check form-check-inline d-flex align-items-center">
                       <input class="form-check-input my-0" type="radio" name="inlineRadioOptions" id="inlineRadio1"
-                        value="1" v-model="formValues.priort">
-                      <!-- <input class="form-check-input my-0" type="radio" name="inlineRadioOptions" id="inlineRadio1"
-                        value="option1"> -->
+                        value="1" v-model="formValues.priort" :disabled="isDetail">
                       <label class="form-check-label my-0" for="inlineRadio1">높음</label>
                     </div>
                     <div class="form-check form-check-inline d-flex align-items-center">
                       <input class="form-check-input my-0" type="radio" name="inlineRadioOptions" id="inlineRadio2"
-                        value="2" v-model="formValues.priort">
+                        value="2" v-model="formValues.priort" :disabled="isDetail">
                       <label class="form-check-label my-0" for="inlineRadio2">보통</label>
                     </div>
                     <div class="form-check form-check-inline d-flex align-items-center">
                       <input class="form-check-input my-0" type="radio" name="inlineRadioOptions" id="inlineRadio3"
-                        value="3" v-model="formValues.priort">
+                        value="3" v-model="formValues.priort" :disabled="isDetail">
                       <label class="form-check-label my-0" for="inlineRadio3">낮음</label>
                     </div>
                   </div>
@@ -61,12 +59,12 @@
 
               <div class="mb-3">
                 <label>업무명<em class="point-red">*</em></label>
-                <input type="text" class="form-control" placeholder="업무명을 입력해주세요" v-model="formValues.deptJobNm">
+                <input type="text" class="form-control" placeholder="업무명을 입력해주세요" v-model="formValues.deptJobNm" :readonly="isDetail">
               </div>
 
               <div class="mb-3">
                 <label>업무내용<em class="point-red">*</em></label>
-                <textarea class="form-control" placeholder="업무내용을 입력해주세요" style="height: 86px;" v-model="formValues.deptJobCn"></textarea>
+                <textarea class="form-control" placeholder="업무내용을 입력해주세요" style="height: 86px;" v-model="formValues.deptJobCn" :readonly="isDetail"></textarea>
               </div>
 
               <div class="mb-3">
@@ -117,10 +115,12 @@ import Modal from '../../components/Modal.vue';
 import axios from '../../assets/js/customAxios.js';
 import { useStore } from 'vuex';
 import SignerModal from '../components/Modal/SignerModal.vue';
+import Swal from 'sweetalert2';
 
 const props = defineProps({
   isShowJobModal: Boolean,
   isUpdate: Boolean,
+  isDetail: Boolean,
   jobBxSelected: Object,
   selectedRowData: Object,
 });
@@ -128,6 +128,10 @@ const props = defineProps({
 const store = useStore();
 // let localJobBxSelected = ref(props.jobBxSelected);
 let localJobBxList = computed(() => store.state.jobBxList);
+
+let modalTitle = computed(() => {
+  return props.isDetail ? '업무 상세 조회' : props.isUpdate ? '업무 수정' : '업무 등록';
+});
 
 // 입력값 저장
 let formValues = ref({
@@ -181,10 +185,16 @@ watch(() => props.isUpdate, async () => {
 });
 
 watch(() => props.selectedRowData, async (newVal) => {
-  // 업무 수정으로 열린 경우
-  if(props.isUpdate) {
+  // 업무 수정 또는 상세로 열린 경우
+  if(props.isUpdate || props.isDetail) {
     // 업무 상세 정보 가져오기
-    const result = await axios.get('/api/deptstore/jobInfo', { params: {deptJobId: newVal.deptJobId} });
+    let result;
+    try {
+      result = await axios.get('/api/deptstore/jobInfo', { params: {deptJobId: newVal.deptJobId} });
+    } catch (err) {
+      Swal.fire({ icon: "error", title: "업무 상세 정보 조회에 실패하였습니다.", text: "Error : " + err });
+    }
+
     formValues.value.deptCd = result.data.deptCd;
     formValues.value.deptNm = result.data.deptNm;
     formValues.value.deptJobBxId = result.data.deptJobBxId;
@@ -211,7 +221,6 @@ const files = async () => {
       },
     });
 
-    console.log("파일내용=> ",response.data);
     fileList.value = response.data; // 결과 저장
     fileList.value.forEach(i => {
       i.name = i.orignlFileNm;
@@ -226,12 +235,14 @@ const modalCloseJob = () => {
   emit('modalCloseJob');
 }
 const modalConfirmJob = async () => {
-   if(!props.isUpdate) {
-      await jobAdd();
-   } else {
-      await jobUpdate();
-   }
-   emit('modalConfirmJob');
+  if(!validCheck()) return;
+
+  if(!props.isUpdate) {
+    await jobAdd();
+  } else {
+    await jobUpdate();
+  }
+  emit('modalConfirmJob');
 }
 
 // 등록
@@ -247,8 +258,11 @@ const jobAdd = async () => {
     addData.append("files[]", file);
   });
 
-  let result = await axios.post('/api/deptstore/jobAdd', addData);
-  console.log(result);
+  try {
+    await axios.post('/api/deptstore/jobAdd', addData);
+  } catch (err) {
+    Swal.fire({ icon: "error", title: "업무 등록에 실패하였습니다.", text: "Error : " + err });
+  }
 }
 
 // 수정
@@ -265,13 +279,52 @@ const jobUpdate = async () => {
     modifyData.append("files[]", file);
   });
 
-  await axios.post('/api/deptstore/jobModify', modifyData);
+  try {
+    await axios.post('/api/deptstore/jobModify', modifyData);
+  } catch (err) {
+    Swal.fire({ icon: "error", title: "업무 수정에 실패하였습니다.", text: "Error : " + err });
+  }
+}
+
+
+// 유효성 체크
+const validCheck = () => {
+  if(!formValues.value.priort?.trim()) {
+    Swal.fire({
+      icon: "info",
+      title: "우선순위를 선택하세요.",
+    });
+    return false;
+  }
+  if(!formValues.value.deptJobNm?.trim()) {
+    Swal.fire({
+      icon: "info",
+      title: "업무명을 입력하세요.",
+    });
+    return false;
+  }
+  if(!formValues.value.deptJobCn?.trim()) {
+    Swal.fire({
+      icon: "info",
+      title: "업무 내용을 입력하세요.",
+    });
+    return false;
+  }
+  if(!formValues.value.chargerNm?.trim()) {
+    Swal.fire({
+      icon: "info",
+      title: "업무 담당자를 선택하세요.",
+    });
+    return false;
+  }
+
+  return true;
 }
 
 // 결재자 모달
 let isShowModal = ref(false);
 const modalOpen = () => {
-  isShowModal.value = true;
+  if(!props.isDetail) isShowModal.value = true;
 }
 const modalClose = () => {
   isShowModal.value = false;

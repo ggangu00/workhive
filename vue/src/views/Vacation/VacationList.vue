@@ -58,6 +58,7 @@ import Grid from 'tui-grid';
 import axios from '../../assets/js/customAxios.js';
 import { useRouter } from 'vue-router';
 import * as vcFormat from '../../assets/js/formatter.js';
+import Swal from 'sweetalert2';
 
 let gridInstance = ref();
 
@@ -84,22 +85,6 @@ const dataSource = {
     }
   }
 };
-
-//커밋 테스트
-
-// 휴가 신청 목록 조회
-// const vcGetList = async () => {
-//   const result = await axios.get('/api/vacation/vcList', { params : searchData.value });
-//   rowData.value = result.data;
-
-//   rowData.value.forEach((i) => {
-//     i.vcStartDt = dateTimeFormat(i.vcStartDt, 'yyyy-MM-dd');
-//     i.vcEndDt = dateTimeFormat(i.vcEndDt, 'yyyy-MM-dd');
-//     i.createDt = dateTimeFormat(i.createDt, 'yyyy-MM-dd');
-//   })
-
-//   gridInstance.value.resetData(rowData.value);
-// }
 
 // 조회 조건 변경 감지
 watch(() => searchData, () => {
@@ -198,7 +183,12 @@ const btnVcUpdate = (rowKey) => {
 const btnVcDelete = async (rowKey) => {
   let vcCd = gridInstance.value.getRow(rowKey).vcCd;
 
-  await axios.post(`/api/vacation/vcRemove?vcCd=${vcCd}`);
+  try {
+    await axios.post(`/api/vacation/vcRemove?vcCd=${vcCd}`);
+  } catch (err) {
+    Swal.fire({ icon: "error", title: "휴가 신청 삭제에 실패하였습니다.", text: "Error : " + err });
+  }
+
   vcGetList();
   emit('manageClick'); // 저장 동작 확인
 };
