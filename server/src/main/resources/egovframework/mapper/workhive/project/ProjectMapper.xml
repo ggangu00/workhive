@@ -5,90 +5,73 @@
 	<!-- ======================프로젝트=====================  -->
 	
 	<!-- 프로젝트 전체조회 -->
-	<select id="projectSelectAll" parameterType="int" resultType="projectDTO">
+	<select id="projectSelectAll" parameterType="projectDTO" resultType="projectDTO">
 	SELECT *
-	FROM (
-	SELECT T0.*, ROWNUM RNUM
-		FROM (
+			FROM (
+				SELECT T0.*, ROWNUM RNUM
+				FROM (
 		
-		select pr_cd,		--프로젝트 코드
-			   type_cd,		--프로젝트 구분코드
-			   pr_nm,		--프로젝트명
-			   ahead_dt,	--내부완료일
-			   start_dt,	--시작일
-			   end_dt,		--종료일
-			   price,		--금액
-			   create_id,	
-			   create_dt,
-			   entrprs_mber_id,	--거래처id
-			   state, 		--진행상태
-               fn_get_comnm(entrprs_mber_id) as com_nm	--거래처명
-		from project
-		where 
-			UPPER(del_yn) = UPPER('N')
-			
-			<if test="searchCondition == 0">AND
-                 PR_NM LIKE '%' || #{searchKeyword} || '%'
-            </if>
-            <if test="searchCondition == 1">AND
-                 com_nm LIKE '%' ||#{searchKeyword} || '%'
-            </if>
-            
-            <if test="searchStartDt != null and searchStartDt != ''">
-		        <![CDATA[ AND start_dt >= TO_DATE(#{searchStartDt}, 'YYYY-MM-DD') ]]>
-		    </if>
-		
-		    <if test="searchEndDt != null and searchEndDt != ''">
-		        <![CDATA[ AND start_dt <= TO_DATE(#{searchEndDt}, 'YYYY-MM-DD') ]]>
-		    </if>
-            
-            <if test="searchStartPrice > 0">AND
-                 <![CDATA[price >= #{searchStartPrice}]]>
-            </if>
-            
-            <if test="searchEndPrice > 0">AND
-               	 <![CDATA[price <= #{searchEndPrice}]]>
-            </if>
-            
-		order by 
-			create_dt desc
-			
+					select pr_cd,		--프로젝트 코드
+						   type_cd,		--프로젝트 구분코드
+						   pr_nm,		--프로젝트명
+						   ahead_dt,	--내부완료일
+						   start_dt,	--시작일
+						   end_dt,		--종료일
+						   price,		--금액
+						   create_id,	
+						   create_dt,
+						   entrprs_mber_id,	--거래처id
+						   state, 		--진행상태
+			               fn_get_comnm(entrprs_mber_id) as com_nm	--거래처명
+					from project
+					where 
+						UPPER(del_yn) = UPPER('N')
+						
+					 <include refid="searchCriteria"/>
+			            
+					order by 
+						create_dt desc
+						
 			) T0
-	)
-	WHERE RNUM BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}
+		)
+		WHERE RNUM BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}
 	
 	</select>
-	
+			            
 	<!-- 프로젝트 전체건수 -->
-	<select id="projectSelectAllCnt" parameterType="comDefaultVO" resultType="int">
-		SELECT
-		COUNT(*) totcnt
-		FROM project
+	<select id="projectSelectAllCnt"  parameterType="projectDTO" resultType="Integer">
+		select COUNT(pr_cd) as cnt
+		from project
 		WHERE UPPER(del_yn) = UPPER('N')
 	 	
-		 <if test="searchCondition == 0">AND
-              PR_NM LIKE '%' || #{searchKeyword} || '%'
-         </if>
-         <if test="searchCondition == 1">AND
-              com_nm LIKE '%' ||#{searchKeyword} || '%'
-         </if>
-         
-         <if test="searchStartDt != null and !searchStartDt.equals('')">AND
-              <![CDATA[ start_dt >= #{searchStartDt}]]>
-         </if>
-         
-         <if test="searchEndDt != null and !searchEndDt.equals('')">AND
-            	 <![CDATA[start_dt <= #{searchEndDt}]]>
-         </if>
-         
-         <if test="searchStartPrice != null and !searchStartPrice.equals('')">AND
-              <![CDATA[price >= #{searchStartPrice}]]>
-         </if>
-         
-         <if test="searchEndPrice != null and !searchEndPrice.equals('')">AND
-            	 <![CDATA[price <= #{searchEndPrice}]]>
-         </if>
+		 <include refid="searchCriteria"/>
 	</select>
+	
+	<sql id="searchCriteria">
+	
+		<if test="searchCondition == 0">AND
+	         PR_NM LIKE '%' || #{searchKeyword} || '%'
+	    </if>
+	    <if test="searchCondition == 1">AND
+	         com_nm LIKE '%' ||#{searchKeyword} || '%'
+	    </if>
+	    
+	    <if test="searchStartDt != null and searchStartDt != ''">
+		  <![CDATA[ AND start_dt >= TO_DATE(#{searchStartDt}, 'YYYY-MM-DD') ]]>
+		</if>
+	
+		<if test="searchEndDt != null and searchEndDt != ''">
+		    <![CDATA[ AND start_dt <= TO_DATE(#{searchEndDt}, 'YYYY-MM-DD') ]]>
+		</if>
+	      
+	      <if test="searchStartPrice > 0">AND
+	           <![CDATA[price >= #{searchStartPrice}]]>
+	    </if>
+	    
+	    <if test="searchEndPrice > 0">AND
+	       	 <![CDATA[price <= #{searchEndPrice}]]>
+	    </if>
+    </sql>
 	
 	<!-- 프로젝트 단건조회 -->
 	<select id="projectSelect" parameterType="String">

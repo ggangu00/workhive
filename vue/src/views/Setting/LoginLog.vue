@@ -44,27 +44,36 @@
 </template>
 
 <script setup>
+import { useStore } from "vuex";
 import axios from "../../assets/js/customAxios.js";
-import Swal from 'sweetalert2';
-import { ref, onMounted, onBeforeMount, watch } from 'vue';
-import Card from '../../components/Cards/Card.vue'
+import { ref, onMounted, computed, watch, onBeforeUnmount } from 'vue';
+
+//========================== 컴포넌트 ==========================
 import Grid from 'tui-grid';
+import Swal from 'sweetalert2';
+import Card from '../../components/Cards/Card.vue'
+
+//============================= js =============================
 import { dateFormat, dateTimeFormat } from '../../assets/js/common.js'
 
-//---------------데이터--------------
+//========================= 데이터 =========================
 
-let rowData = ref([]);
+const token = localStorage.getItem("token");
 
-onBeforeMount(() => {
+const store = useStore();
+const isCmt = computed(() => store.state.isCmt);
+watch(isCmt, () => {
    loginLogGetList();
-});
+})
+
+//========================= Toast grid =========================
 
 //검색조건
 const searchData = ref({
    searchCondition: '1',
    searchKeyword: '',
    searchStartDt: dateFormat(),
-   searchEndDt: dateFormat(),
+   searchEndDt: dateFormat()
 });
 
 //검색조건이 변경되면 리스트가 새로 로드됨
@@ -72,21 +81,39 @@ watch(() => searchData, () => {
    loginLogGetList();
 }, { deep: true });
 
-// Toast UI Grid 초기화
 let gridInstance = ref();
+const loginLogGetList = () => { //로그인 로그 전체조회
+   gridInstance.value.readData(1, searchData);
+}
+
+const dataSource = {
+   api: {
+      readData: {
+         url: '/api/comm/loginLog',
+         method: 'GET',
+         initParams: searchData,
+         headers: { 'Authorization': `Bearer ${token}` }
+      }
+   }
+};
+
+// Toast UI Grid 초기화
 onMounted(() => {
+   if (gridInstance.value) {
+      gridInstance.value.destroy(); // 기존 Grid 제거
+   }
+
    gridInstance.value = new Grid({
       el: document.getElementById('logGrid'),
-      data: rowData.value,
+      data: dataSource,
       scrollX: false,
       scrollY: true,
       columns: [
-         { header: '번호', name: 'rowNum', align: 'center', width: 80 },
          { header: '사용자', name: 'logId', renderer: logMemInfo },
          { header: 'IP 주소', name: 'logIp', align: 'center' },
-         { header: '성공여부', name: 'state', align: 'center', formatter: ({ row }) => `${row.state == 'A01' ? '로그인 성공' : '로그인 실패'}` },
+         { header: '성공여부', name: 'state', align: 'center', formatter: ({ row }) => `${row.state == 'Y' ? '로그인 성공' : '로그인 실패'}` },
          { header: "일정", name: "plan", align: "center", renderer: BtnRenderer },
-         { header: '날짜', name: 'createDt', align: 'center', sortable: true }
+         { header: '날짜', name: 'createDt', align: 'center', sortable: true, formatter: ({ row }) => dateTimeFormat(row.createDt, 'yyyy-MM-dd hh:mm:ss') }
       ],
       pageOptions: {
          useClient: false,
@@ -94,7 +121,15 @@ onMounted(() => {
       },
       rowHeight: 50
    })
-})
+});
+
+// 페이지 이동 시 Grid 제거하여 중복 방지
+onBeforeUnmount(() => {
+   if (gridInstance.value) {
+      gridInstance.value.destroy();
+      gridInstance.value = null;
+   }
+});
 
 //===================== Toast Grid Rendere =====================
 
@@ -131,14 +166,16 @@ class BtnRenderer {
       const el = document.createElement("div");
       el.className = "mlp10 mrp10";
 
-      if (rowData.lockAt == 'A01') { //미완료 상태일 때 완료처리하기
+      if (rowData.lockAt == 'Y') { //미완료 상태일 때 완료처리하기
          el.innerHTML = ` <button class="btn btn-danger btn-sm">계정잠금</button> `;
       } else { //완료 상태일 때 완료취소 처리하기
          el.innerHTML = ` <button class="btn btn-primary btn-sm">정상</button> `;
       }
 
       el.addEventListener("click", () => {
-         btnLockChg(rowData.logId);
+         if (rowData.lockAt == 'Y') {
+            btnLockChg(rowData.logId);
+         }
       });
 
       this.el = el;
@@ -170,8 +207,7 @@ const btnLockChg = (logId) => {
 
 //---------------axios--------------
 
-const logList = ref([]);
-const loginLogGetList = async () => { //로그인 로그 전체조회
+/*
    try {
       const result = await axios.get('/api/comm/loginLog', { params: searchData.value });
       logList.value = result.data;
@@ -196,7 +232,7 @@ const loginLogGetList = async () => { //로그인 로그 전체조회
          text: "Error : " + err
       });
    }
-}
+*/
 
 //계정 잠금해제
 const lockChg = async (logId) => {

@@ -10,18 +10,20 @@ import org.egovframe.rte.fdl.property.EgovPropertyService;
 import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import egovframework.com.cmm.ComDefaultVO;
+import egovframework.com.common.util.GridUtil;
 import egovframework.com.project.service.ProjectDTO;
 import egovframework.com.project.service.ProjectService;
 import egovframework.com.project.service.ProjectWorkDTO;
@@ -44,30 +46,22 @@ public class ProjectController {
 	
 	//프로젝트 전체조회
 	@GetMapping("/list")
-	public List<ProjectDTO> projectList(ComDefaultVO searchVO, ModelMap model) {	  
-		/** EgovPropertyService.sample */
-    	searchVO.setPageUnit(propertiesService.getInt("pageUnit"));
-    	searchVO.setPageSize(propertiesService.getInt("pageSize"));
-  	  
-	  	//목록 조회
-    	PaginationInfo paginationInfo = new PaginationInfo();
-		paginationInfo.setCurrentPageNo(searchVO.getPageIndex());
-		paginationInfo.setRecordCountPerPage(searchVO.getPageUnit());
-		paginationInfo.setPageSize(searchVO.getPageSize());
-		
+	public Map<String, Object> projectList(@ModelAttribute ComDefaultVO searchVO, 
+										   @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+										   @RequestParam(name = "perPage", required = false, defaultValue = "5") int perPage) {	  
+		PaginationInfo paginationInfo = new PaginationInfo();
+		paginationInfo.setCurrentPageNo(page);
+		paginationInfo.setRecordCountPerPage(perPage);
+
 		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
 		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
-	  	searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
 	  	
-		List<ProjectDTO> projectList = projectService.projectSelectAll(searchVO);
+		List<ProjectDTO> result = projectService.projectSelectAll(searchVO);
 				
-		int totCnt = projectService.projectSelectAllCnt(searchVO);
-		paginationInfo.setTotalRecordCount(totCnt);
+		int totalCnt = projectService.projectSelectAllCnt(searchVO);
 		
-		model.addAttribute("paginationInfo", paginationInfo);
-		model.addAttribute("list", projectList); 
-		
-		return projectList;
+		return GridUtil.responseData(page, totalCnt, result);
 	}	
 	
 	//프로젝트 단건조회

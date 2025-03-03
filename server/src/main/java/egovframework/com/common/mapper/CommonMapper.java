@@ -18,6 +18,9 @@ public interface CommonMapper {
 	// 로그인 로그 전체조회
 	public List<CommonDTO> loginLogSelectAll(ComDefaultVO searchVO);
 	
+	// 로그인 로그 총갯수
+	int loginLogSelectAllCnt(ComDefaultVO searchVO);
+	
 	// 로그인 로그 등록
 	public int loginLogInsert(CommonDTO dto);
 	

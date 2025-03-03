@@ -7,7 +7,9 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import egovframework.com.cmm.ComDefaultVO;
 import egovframework.com.common.service.CommonDTO;
 import egovframework.com.common.service.CommonService;
+import egovframework.com.common.util.GridUtil;
 import egovframework.com.member.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,11 +54,22 @@ public class CommonController {
 	
 	// 로그인 로그 조회
 	@GetMapping("/loginLog")
-	public List<CommonDTO> loginLogList(ComDefaultVO searchVO) {	 
-		log.info("12313213231323==========>"+searchVO.toString());
-	  List<CommonDTO> result = service.loginLogSelectAll(searchVO);
-	  
-	  return result;
+	public Map<String, Object> loginLogList( @ModelAttribute ComDefaultVO searchVO, 
+											 @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+											 @RequestParam(name = "perPage", required = false, defaultValue = "5") int perPage ) {	
+		
+		PaginationInfo paginationInfo = new PaginationInfo();
+		paginationInfo.setCurrentPageNo(page);
+		paginationInfo.setRecordCountPerPage(perPage);
+
+		searchVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+		searchVO.setLastIndex(paginationInfo.getLastRecordIndex());
+		searchVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+		
+		List<CommonDTO> result = service.loginLogSelectAll(searchVO);
+		int totalCnt = service.loginLogSelectAllCnt(searchVO);
+
+		return GridUtil.responseData(page, totalCnt, result);
 	}
 	
 	// 로그인 잠금해제

@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import egovframework.com.common.util.CommonPaging;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor //Builder, All, No 세투세투
-public class CommonDTO {
+public class CommonDTO extends CommonPaging {
 	
 	// 공통함수
 	private String commCd;		// 공통코드
