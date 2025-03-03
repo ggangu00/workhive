@@ -1,5 +1,7 @@
 package egovframework.com.approval.service;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,4 +27,6 @@ public class DocumentDTO {
     private String deptNm;
     private String delYn;
     private String formType;
+    
+    private List<String> retrieveArr;
 }

@@ -6,6 +6,8 @@ import javax.annotation.Resource;
 
 import org.egovframe.rte.fdl.property.EgovPropertyService;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +24,7 @@ import egovframework.com.approval.service.SearchDTO;
 import egovframework.com.cmm.service.EgovFileMngService;
 import egovframework.com.cmm.service.EgovFileMngUtil;
 import egovframework.com.cmm.service.FileVO;
+import egovframework.com.securing.service.CustomerUser;
 
 @Configuration
 @Service
@@ -180,6 +183,36 @@ public class DocumentServiceImpl implements DocumentService{
 	@Override
 	public int receivedDocCount(SearchDTO searchDTO) {
 		return documentMapper.receivedDocCount(searchDTO);
+	}
+
+	@Override
+	public boolean approvalReceivedUpdate(List<String> receptlArr, String receptYn, String mberId) {
+		// 로그인한 사용자 정보 가져오기
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		CustomerUser user = (CustomerUser) auth.getPrincipal();
+
+		// 사용자 아이디 가져오기
+		String userId = user.getUserDTO().getMberId();
+		
+		Reception reception = new Reception();
+		reception.setReceptlArr(receptlArr);
+		reception.setReceptYn(receptYn);
+		reception.setMberId(userId);
+		
+		int updatedRows = documentMapper.approvalReceivedUpdate(reception); 
+		
+		return updatedRows >0;
+	}
+
+	@Override
+	public boolean approvalRetrieveUpdate(List<String> retrieveArr, String mberId) {
+		DocumentDTO documentDTO = new DocumentDTO();
+		documentDTO.setRetrieveArr(retrieveArr);
+		documentDTO.setMberId(mberId);
+		
+		int updatedRows = documentMapper.approvalRetrieveUpdate(documentDTO); 
+		
+		return updatedRows >0;
 	}
 	
 	

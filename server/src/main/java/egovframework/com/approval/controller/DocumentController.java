@@ -106,6 +106,7 @@ public class DocumentController {
 	//리스트조회(조건별)
 	@GetMapping("/list")
 	public Map<String, Object> getCompletedDocuments(@RequestParam(required = false) String status,
+													@RequestParam(required = false) String status1,
 												     @RequestParam(required = false) int page,
 												     @RequestParam(required = false) int perPage,
 												     @ModelAttribute SearchDTO searchDTO) throws JsonMappingException, JsonProcessingException {
@@ -116,6 +117,7 @@ public class DocumentController {
 		searchDTO.setStartPage(searchDTO.getFirst());
 		searchDTO.setEndPage(searchDTO.getLast());
 		searchDTO.setStatus(status);
+		searchDTO.setStatus1(status1);
 		
 		// 페이징처리
 		searchDTO.setTotalRecord(documentService.getCount(searchDTO));
@@ -166,7 +168,7 @@ public class DocumentController {
 		searchDTO.setStatus(status);
 		
 		// 페이징처리
-		searchDTO.setTotalRecord(documentService.getCount(searchDTO));
+		searchDTO.setTotalRecord(documentService.pendingDocCount(searchDTO));
 		
 		System.out.println("request DATA => " +  status + " page => " +  page);
 		
@@ -217,7 +219,7 @@ public class DocumentController {
 
 		
 		// 페이징처리
-		searchDTO.setTotalRecord(documentService.getCount(searchDTO));
+		searchDTO.setTotalRecord(documentService.receivedDocCount(searchDTO));
 		
 	    
 	    String str = """
@@ -301,4 +303,23 @@ public class DocumentController {
 
 	    return documentService.approvalCnUpdate(approvalLine);
 	}
+	
+	//수신 상태변경
+		@PutMapping("/receivedState")
+		public boolean receptionModify(@RequestBody Reception reception) {		
+			List<String> receptlArr = reception.getReceptlArr();
+		    String receptYn = reception.getReceptYn();
+		    String mberId = reception.getMberId();
+		    
+		    return documentService.approvalReceivedUpdate(receptlArr,receptYn, mberId);
+		}
+		
+		//회수 상태변경
+		@PutMapping("/reteriveState")
+		public boolean receptionModify(@RequestBody DocumentDTO documentDTO) {		
+			List<String> retrieveArr = documentDTO.getRetrieveArr();
+		    String mberId = documentDTO.getMberId();
+		    
+		    return documentService.approvalRetrieveUpdate(retrieveArr, mberId);
+		}
 }

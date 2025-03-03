@@ -57,7 +57,8 @@
 			sign_stat,
 			sign_opn,
 			sign_dt,
-			sign_name
+			sign_name,
+			fn_get_grademberid(mber_id) as grade_nm
 		FROM approval_line
 		WHERE 1=1
 		 <if test="docCd != null and docCd != ''">
@@ -91,6 +92,21 @@
     	set	crnt_sign_stat='H05'
     	where doc_cd = #{docCd}
     </update>
+    	<!--문서회수(상태 회수로변경) 다중 -->
+	<update id="approvalRetrieveUpdate" parameterType="egovframework.com.approval.service.DocumentDTO">
+	    UPDATE 
+	    	document 
+	    SET crnt_sign_stat = 'H05'
+	    WHERE 
+	    	doc_cd 
+	    IN
+	    <foreach collection="retrieveArr" item="docCd" open="(" separator="," close=")">
+	        #{docCd}
+	    </foreach>    
+	    AND mber_id = #{mberId}
+	</update>
+    
+    
     
     <!-- 문서삭제 -->
      <update id="documentDelete">
@@ -116,6 +132,9 @@
 	  where 1=1
 	  AND mber_id = #{mberId} 
 	  <include refid="searchCriteria" />
+      <if test="status1 != null and status1 != ''">
+        OR crnt_sign_stat = #{status1}
+      </if>
 	</select>
 	
 	<!-- 결재선 수정 -->
@@ -127,6 +146,20 @@
 	    	doc_cd 
 	    IN
 	    <foreach collection="approvalArr" item="docCd" open="(" separator="," close=")">
+	        #{docCd}
+	    </foreach>    
+	    AND mber_id = #{mberId}
+	</update>
+	
+	<!-- 수신확인 수정 -->
+	<update id="approvalReceivedUpdate" parameterType="egovframework.com.approval.service.Reception">
+	    UPDATE 
+	    	reception 
+	    SET recept_yn = #{receptYn}
+	    WHERE 
+	    	doc_cd 
+	    IN
+	    <foreach collection="receptlArr" item="docCd" open="(" separator="," close=")">
 	        #{docCd}
 	    </foreach>    
 	    AND mber_id = #{mberId}
@@ -162,7 +195,7 @@
 		                WHERE 1=1
 		                AND del_yn = UPPER('N')
 		              	AND mber_id = #{mberId} 
-		                <include refid="searchCriteria"/>
+		              	<include refid="searchCriteria"/>        
 		            <![CDATA[AND ROWNUM <= #{end}]]>
 		        ) 
 		        WHERE rn >= #{start}
@@ -307,9 +340,18 @@
     </select>
 	<!-- 검색조건함수 -->
     <sql id="searchCriteria">
-        <if test="status != null and status != ''">
-            AND crnt_sign_stat = #{status}
-        </if>
+		 <choose>
+		        <!-- 두 상태 값이 모두 존재할 때 -->
+		        <when test="status != null and status != '' and status1 != null and status1 != ''">
+		            AND (crnt_sign_stat = #{status} OR crnt_sign_stat = #{status1})
+		        </when>
+		        <!-- 하나의 상태 값만 존재할 때 -->
+		        <otherwise>
+		            <if test="status != null and status != ''">
+		                AND crnt_sign_stat = #{status}
+		            </if>
+		        </otherwise>
+		    </choose>
         <if test="delYn != null and delYn != ''">
             AND del_yn = #{delYn}
         </if>

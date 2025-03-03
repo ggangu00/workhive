@@ -33,12 +33,16 @@ public interface DocumentService {
 	//결재선 상태 변경
 	public boolean approvalStateUpdate(List<String> approvalArr, String signStat, String mberId);
 	
+	//수신확인 상태 변경
+	public boolean approvalReceivedUpdate(List<String> receptlArr, String receptYn, String mberId);
+	
 	//수신자조회(문서번호로)
 	public List<Reception> receiverSelecteAll(String docCd);
 	
 	//문서조회(미결함)
 	public List<DocumentDTO> pendingDocumentSelectAll(SearchDTO searchDTO);
 	
+	//결재내용(업데이트)
 	public boolean approvalCnUpdate(ApprovalLine approvalLine);
 	
 	//수신목록 불러오기
@@ -46,4 +50,7 @@ public interface DocumentService {
 	
 	//문서 개수
 	int receivedDocCount(SearchDTO searchDTO);
+	
+	//회수로(업데이트)
+	public boolean approvalRetrieveUpdate(List<String> retrieveArr, String mberId);
 }

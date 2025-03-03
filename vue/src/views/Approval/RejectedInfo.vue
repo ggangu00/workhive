@@ -16,7 +16,7 @@
   import axios from '../../assets/js/customAxios';
   import { useRoute } from 'vue-router';
   import { useRouter } from 'vue-router';
-  //import Modal from '../../components/Modal.vue';
+  import Swal from 'sweetalert2';
 
   const route = useRoute();
   const docCd = ref('');
@@ -74,7 +74,10 @@
       }
         const response = await axios.put(`/api/document/retrieve/${docCd.value}`, {});
         if (response.status == 200) {
-          alert("회수 성공");
+          Swal.fire({
+               icon: "success",
+               title: "회수 성공",
+            })
         } else {
           alert("회수 실패");
         }

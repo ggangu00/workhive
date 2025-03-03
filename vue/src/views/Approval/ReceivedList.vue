@@ -26,11 +26,17 @@ const buttonClick = async (buttonName)=>{
     router.push('/approval/registerTest'); 
     break;
 
-    // case '인쇄/다운로드' :
-    //   await approvalBtn();
-    //   break;
+    case '수신접수' :
+      await receptBtn();
+      break;
   }
 }  
+
+  const receptBtn = () =>{
+    if(approvalRegisterRef.value){
+      approvalRegisterRef.value.btnSelectChange();
+    }
+  }
 const columnDefs = ref([
   { header: '문서번호', name: 'docCd',sortable: true },
   { header: '현재결재상태', name: 'crntSignStat',sortable: true },

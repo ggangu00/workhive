@@ -146,7 +146,7 @@
 
     SELECT 
         B.MTG_ID AS SCHDUL_ID,            
-        'L07' AS SCHDUL_SE,               
+        'L01 ' AS SCHDUL_SE,               
         C.DEPT_CD,                        
         fn_get_deptnmDeptCd(C.DEPT_CD) AS DEPT_NM,
         NULL AS SCHDUL_KND_CODE,          
@@ -324,6 +324,7 @@
 			SCHDUL_CN=#{schdulCn},
 			SCHDUL_IPCR_CODE=#{schdulIpcrCode},
 			SCHDUL_CHARGER_ID=#{schdulChargerId},
+			SCHDUL_PLACE=#{schdulPlace},
 			ATCH_FILE_ID=#{atchFileId},
 			REPTIT_SE_CODE=#{reptitSeCode},
 			UPDATE_DT = sysdate,

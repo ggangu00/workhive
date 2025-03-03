@@ -109,7 +109,9 @@
                   <span v-if="approver.signStat == 'D02'" class="text-success ms-2">✔️</span>
                   <span v-if="approver.signStat == 'D04'" class="text-danger ms-2">❌</span>
                     <span class='badge bg-info text-dark'>
-                        <span class="tooltip-text">신강현 바보</span>
+                      <div v-if="approver.signOpn">
+                        <span class="tooltip-text">{{ approver.signOpn }}</span>
+                      </div>
                       {{ getApprovalStatusName(approver.signName) }}</span>
                     [{{ approver.deptNm }}] {{ approver.mberNm }} {{ approver.gradeNm }}
                 </div>
@@ -117,6 +119,7 @@
               <span class="mt-3 mb-1">수신</span>
               <div class="approval-box">
                   <div v-for="(receiver, index) in receivers" :key="index" class="approval-item">
+                    <span v-if="receiver.receptYn == 'A01'" class="text-success ms-2">✔️</span>
                     <span class="badge bg-warning text-dark">수신</span>
                     <span v-if="receiver.mberNm">[{{ receiver.gradeNm }}] {{ receiver.mberNm }}</span> <!-- 사원 -->
                     <span v-else>[{{ receiver.deptNm }}]</span> <!-- 부서 -->
@@ -195,6 +198,8 @@ const receiverList = async () => {
         mberNm: approver.mberNm,
         deptNm: approver.deptNm,
         signName: approver.signName, // 상태 코드 변환
+        gradeNm: approver.gradeNm,
+        receptYn:approver.receptYn
       }));
     }
   } catch (error) {
@@ -216,7 +221,9 @@ const approvalList = async () => {
         mberNm: approver.mberNm,
         deptNm: approver.deptNm,
         signName: approver.signName, // 상태 코드 변환
-        signStat: approver.signStat
+        signStat: approver.signStat,
+        gradeNm: approver.gradeNm,
+        signOpn:approver.signOpn
       }));
     }
   } catch (error) {
@@ -341,23 +348,36 @@ const getApprovalStatusName = (code) => {
 }
 .tooltip-container {
   position: relative;
-  display: flex;
+
 }
 
 .tooltip-text {
-  visibility: hidden;
-  width: 120px;
-  background-color: black;
-  color: #fff;
-  text-align: center;
-  border-radius: 5px;
-  padding: 5px;
+  background-color: #aaaaaa;
+  color: white;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border:2px solid #696969;
+  font-size: 13px;
+  /* font-weight: bold; */
   position: absolute;
-  bottom: 150%;
-  left: 50%;
+  bottom: 140%;
+  left: 18%;
   transform: translateX(-50%);
+  white-space: nowrap;
+  visibility: hidden;
   opacity: 0;
   transition: opacity 0.3s;
+}
+
+.tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 55%;
+    margin-left: -10px;
+    border-width: 7px;
+    border-style: solid;
+    border-color: #696969 transparent transparent transparent;
 }
 
 .tooltip-container:hover .tooltip-text {

@@ -398,7 +398,8 @@ const conditionReset = () => { // 정보 리셋
   formType.value = "";
   docTitle.value = "";
   docCnEditor.value = "";
-
+  approvers.value = "";
+  receivers.value = "";
 }
 
 //문서제목 검사
@@ -492,13 +493,14 @@ const approvalInfo = async() => {
             icon: "success",
             title: "등록 성공",
           });
-
+          return true;
       }else if(formCd.value == ''){
         Swal.fire({
           icon: "error",
           title: "등록 실패",
           text:  "Error : "
       });
+      return false;
       }
     } catch (err) {
       Swal.fire({
@@ -506,6 +508,7 @@ const approvalInfo = async() => {
           title: "등록 실패",
           text:  "Error : " + err.response.data.error
       });
+      return false;
     }
   }
 defineExpose({  // modalOpen expose
@@ -527,6 +530,7 @@ watch(()=> docCnEditor.value, async()=>{
   }
   .modal-content {
     max-height: 80vh; /* 모달 세로 크기 제한 */
+    
     overflow-y: auto; /* 내부 스크롤 적용 */
   }
   .button-collection button{

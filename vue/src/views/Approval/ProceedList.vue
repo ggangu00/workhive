@@ -3,6 +3,7 @@
     :buttons="buttons" 
     :columnDefs="columnDefs" 
     :status="status"
+    :status1="status1"
     @button-click="buttonClick"
     ref="approvalRegisterRef"
   />
@@ -43,4 +44,5 @@ const buttonClick = async (buttonName) => {
   { header: '기안일시', name: 'draftDt', sortable: true },
 ]);
 const status = "H02";
+const status1 = "H01";
 </script>
