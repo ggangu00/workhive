@@ -1,7 +1,6 @@
 package egovframework.com.cmm;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -59,8 +58,8 @@ public class ComDefaultVO implements Serializable {
     /** 출력 갯수 지정 rowCnt(limit) */
     private int rowCnt = 0;
     
-    private Date searchStartDt;
-    private Date searchEndDt;
+    private String searchStartDt;
+    private String searchEndDt;
     
     private String mberId;
     private String deptCd;
@@ -81,19 +80,19 @@ public class ComDefaultVO implements Serializable {
 		this.mberId = mberId;
 	}
 
-	public Date getSearchStartDt() {
+	public String getSearchStartDt() {
 		return searchStartDt;
 	}
 
-	public void setSearchStartDt(Date searchStartDt) {
+	public void setSearchStartDt(String searchStartDt) {
 		this.searchStartDt = searchStartDt;
 	}
 
-	public Date getSearchEndDt() {
+	public String getSearchEndDt() {
 		return searchEndDt;
 	}
 
-	public void setSearchEndDt(Date searchEndDt) {
+	public void setSearchEndDt(String searchEndDt) {
 		this.searchEndDt = searchEndDt;
 	}
 

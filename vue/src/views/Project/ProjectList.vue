@@ -41,21 +41,21 @@
           <div class="mb-3 row">
             <label for="inputPassword" class="col-sm-2 col-form-label">프로젝트 기간</label>
             <div class="col-auto">
-              <input type="date" class="form-control" v-model="searchData.startDt">
+              <input type="date" class="form-control" v-model="searchData.searchStartDt">
             </div>
             <div class="col-auto">~</div>
             <div class="col-auto">
-              <input type="date" class="form-control" v-model="searchData.endDt">
+              <input type="date" class="form-control" v-model="searchData.searchEndDt">
             </div>
           </div>
           <div class="mb-3 row">
             <label for="inputPassword" class="col-sm-2 col-form-label">프로젝트 금액</label>
             <div class="col-auto">
-              <input type="number" class="form-control" v-model="searchData.priceSt">
+              <input type="number" class="form-control" v-model="searchData.searchStartPrice">
             </div>
             <div class="col-auto">~</div>
             <div class="col-auto">
-              <input type="number" class="form-control" v-model="searchDatapriceEnd">
+              <input type="number" class="form-control" v-model="searchData.searchEndPrice">
             </div>
           </div>
           <div class="text-center">
@@ -204,12 +204,12 @@ const animateProgress = (endValue) => {
 
 //검색조건
 const searchData = ref({
-  searchCondition: "",
+  searchCondition: "0",
   searchKeyword: '',
-  startDt: '',
-  endDt: '',
-  priceSt: '',
-  priceEnd: ''
+  searchStartDt: '',
+  searchEndDt: '',
+  searchStartPrice: '',
+  searchEndPrice: ''
 });
 
 //검색조건이 변경되면 리스트가 새로 로드됨

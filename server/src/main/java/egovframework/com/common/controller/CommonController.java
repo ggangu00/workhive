@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @RestController // data 
 @RequestMapping("/comm")
+@Slf4j
 public class CommonController {
 	
 	@Resource
@@ -50,8 +51,8 @@ public class CommonController {
 	
 	// 로그인 로그 조회
 	@GetMapping("/loginLog")
-	public List<CommonDTO> loginLogList(ComDefaultVO searchVO) {
-	  
+	public List<CommonDTO> loginLogList(ComDefaultVO searchVO) {	 
+		log.info("12313213231323==========>"+searchVO.toString());
 	  List<CommonDTO> result = service.loginLogSelectAll(searchVO);
 	  
 	  return result;
@@ -60,7 +61,6 @@ public class CommonController {
 	// 로그인 잠금해제
 	@PutMapping("/loginLog/{mberId}")
 	public void memberLockUpdate(@PathVariable("mberId") String mberId) {
-		log.info("받아온 값 ====>" + mberId);
 		memberService.memberLockUpdate(mberId, "A02");
 	}
 	

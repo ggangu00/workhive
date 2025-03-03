@@ -2,36 +2,39 @@
    <div class="content">
       <div class="container-fluid">
          <card>
-            <div class="mb-3 row">
-               <label for="staticEmail" class="col-sm-2 col-form-label">검색</label>
-               <div class="col-auto">
-                  <select class="form-select" v-model="searchData.searchCondition">
-                     <option value="1">아이디</option>
-                     <option value="2">아이피</option>
-                  </select>
+            <form @submit.prevent="loginLogGetList">
+               <div class="mb-3 row">
+                  <label for="staticEmail" class="col-sm-2 col-form-label">검색</label>
+                  <div class="col-auto">
+                     <select class="form-select" v-model="searchData.searchCondition">
+                        <option value="1">아이디</option>
+                        <option value="2">아이피</option>
+                     </select>
+                  </div>
+                  <div class="col-auto">
+                     <input type="text" class="form-control" placeholder="검색어를 입력해주세요"
+                        v-model="searchData.searchKeyword">
+                  </div>
                </div>
-               <div class="col-auto">
-                  <input type="text" class="form-control" placeholder="검색어를 입력해주세요" v-model="searchData.searchKeyword">
+               <div class="mb-3 row">
+                  <label for="inputPassword" class="col-sm-2 col-form-label">조회 기간</label>
+                  <div class="col-auto">
+                     <input type="date" class="form-control" v-model="searchData.searchStartDt">
+                  </div>
+                  <div class="col-auto">~</div>
+                  <div class="col-auto">
+                     <input type="date" class="form-control" v-model="searchData.searchEndDt">
+                  </div>
                </div>
-            </div>
-            <div class="mb-3 row">
-               <label for="inputPassword" class="col-sm-2 col-form-label">조회 기간</label>
-               <div class="col-auto">
-                  <input type="date" class="form-control" v-model="searchData.startDt">
+               <div class="text-center">
+                  <button type="reset" class="btn btn-secondary btn-fill">
+                     초기화
+                  </button>
+                  <button type="submit" class="btn btn-info btn-fill">
+                     검색
+                  </button>
                </div>
-               <div class="col-auto">~</div>
-               <div class="col-auto">
-                  <input type="date" class="form-control" v-model="searchData.endDt">
-               </div>
-            </div>
-            <div class="text-center">
-               <button type="reset" class="btn btn-secondary btn-fill">
-                  초기화
-               </button>
-               <button type="submit" class="btn btn-info btn-fill">
-                  검색
-               </button>
-            </div>
+            </form>
          </card>
          <card>
             <div id="logGrid" class="project"></div>
@@ -46,7 +49,7 @@ import Swal from 'sweetalert2';
 import { ref, onMounted, onBeforeMount, watch } from 'vue';
 import Card from '../../components/Cards/Card.vue'
 import Grid from 'tui-grid';
-import { dateTimeFormat } from '../../assets/js/common.js'
+import { dateFormat, dateTimeFormat } from '../../assets/js/common.js'
 
 //---------------데이터--------------
 
@@ -58,10 +61,10 @@ onBeforeMount(() => {
 
 //검색조건
 const searchData = ref({
-  searchCondition: "",
-  searchKeyword: '',
-  startDt: '',
-  endDt: '',
+   searchCondition: '1',
+   searchKeyword: '',
+   searchStartDt: dateFormat(),
+   searchEndDt: dateFormat(),
 });
 
 //검색조건이 변경되면 리스트가 새로 로드됨
@@ -170,7 +173,7 @@ const btnLockChg = (logId) => {
 const logList = ref([]);
 const loginLogGetList = async () => { //로그인 로그 전체조회
    try {
-      const result = await axios.get('/api/comm/loginLog');
+      const result = await axios.get('/api/comm/loginLog', { params: searchData.value });
       logList.value = result.data;
 
       rowData.value = [...logList.value];

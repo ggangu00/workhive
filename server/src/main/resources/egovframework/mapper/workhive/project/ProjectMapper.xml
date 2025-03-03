@@ -34,19 +34,19 @@
                  com_nm LIKE '%' ||#{searchKeyword} || '%'
             </if>
             
-            <if test="searchStartDt != null and !searchStartDt.equals('')">AND
-                 <![CDATA[CDATAstart_dt >= #{searchStartDt}]]>
-            </if>
+            <if test="searchStartDt != null and searchStartDt != ''">
+		        <![CDATA[ AND start_dt >= TO_DATE(#{searchStartDt}, 'YYYY-MM-DD') ]]>
+		    </if>
+		
+		    <if test="searchEndDt != null and searchEndDt != ''">
+		        <![CDATA[ AND start_dt <= TO_DATE(#{searchEndDt}, 'YYYY-MM-DD') ]]>
+		    </if>
             
-            <if test="searchEndDt != null and !searchEndDt.equals('')">AND
-               	 <![CDATA[start_dt <= #{searchEndDt}]]>
-            </if>
-            
-            <if test="searchStartPrice != null and !searchStartPrice.equals('')">AND
+            <if test="searchStartPrice > 0">AND
                  <![CDATA[price >= #{searchStartPrice}]]>
             </if>
             
-            <if test="searchEndPrice != null and !searchEndPrice.equals('')">AND
+            <if test="searchEndPrice > 0">AND
                	 <![CDATA[price <= #{searchEndPrice}]]>
             </if>
             
