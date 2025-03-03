@@ -162,7 +162,7 @@ const jobBoxes = ref([]);
 // 부서 정보 조회
 const deptGetList = async () => {
   try {
-    const result = await axios.get('/api/department');
+    const result = await axios.get('/api/department/treeList');
     departments.value = result.data;
 
   } catch (err) {

@@ -72,7 +72,13 @@
             </tr>
             <tr>
               <th>결재자</th>
-              <td colspan="5"><input type="text" class="form-control" v-model="vcData.signId"></td>
+              <td colspan="5"><input type="text" class="form-control" v-model="vcData.signNm" @click="modalOpen" readonly></td>
+
+              <SignerModal
+                :isShowModal="isShowModal"
+                @modalClose="modalClose"
+                @modalConfirm="modalConfirm"
+              />
             </tr>
 
           </tbody>
@@ -94,6 +100,7 @@ import { useRoute, useRouter } from 'vue-router';
 import axios from '../../assets/js/customAxios';
 import { dateTimeFormat } from '../../assets/js/common';
 import * as vacation from '../../assets/js/vacation';
+import SignerModal from '../components/Modal/SignerModal.vue';
 
 // query에서 isUpdate 받아오기
 const route = useRoute();
@@ -164,6 +171,7 @@ let vcData = ref({
   vcReason: '',
   atchFileId: '',
   signId: '',
+  signNm: '',
   remainDays: '',
 })
 
@@ -281,6 +289,20 @@ const btnVcManageCancle = () => {
 
 }
 
+// 결재자 모달
+let isShowModal = ref(false);
+const modalOpen = () => {
+  isShowModal.value = true;
+}
+const modalClose = () => {
+  isShowModal.value = false;
+}
+const modalConfirm = (row) => {
+  isShowModal.value = false;
+  console.log("결재자 : ", row);
+  vcData.value.signId = row.mberId;
+  vcData.value.signNm = row.mberNm;
+}
 </script>
 
 

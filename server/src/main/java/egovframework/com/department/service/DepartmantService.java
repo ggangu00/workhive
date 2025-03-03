@@ -9,4 +9,8 @@ public interface DepartmantService {
 	
 	// 부서 단건조회
 	public DepartmentDTO departmentSelect(int deptCd);
+	
+
+	// 부서 트리 조회
+	public List<DepartmentDTO> deptTreeSelectAll(String deptCd);
 }

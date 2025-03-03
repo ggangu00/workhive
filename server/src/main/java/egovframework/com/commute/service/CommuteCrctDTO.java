@@ -1,5 +1,8 @@
 package egovframework.com.commute.service;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import egovframework.com.common.util.CommonPaging;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

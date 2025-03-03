@@ -4,32 +4,49 @@
     
     <!-- 결재자 목록 조회 -->
     <select id="signerSelectAll" parameterType="signDTO" resultType="signDTO">
-		SELECT *
-		FROM (
-		SELECT T0.*, ROWNUM RNUM
-		FROM (
-		    
-		select mber_id,			--회원코드
-			   mber_nm,			--회원명
-			   mbtlnum,			--전화번호
-			   dept_cd, 		--부서코드
-			   resp_cd,			--직책코드
-			   grade_cd,			--직급코드
-			   fn_get_deptnm(mber_id) as dept_nm,
-               FN_GET_GRADENM(grade_cd) as gradeNm
-		from COMTNGNRLMBER
-		where dept_cd = #{deptCd}
-		
-		) T0
-		)
-		WHERE RNUM BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}
+        SELECT *
+        FROM (
+            SELECT T0.*, ROWNUM RNUM
+            FROM (
+                -- 부서 트리에서 최상위 부서와 그 하위 부서를 찾는 서브쿼리
+                SELECT mber_id,			-- 회원코드
+                       mber_nm,			-- 회원명
+                       mbtlnum,			-- 전화번호
+                       dept_cd, 			-- 부서코드
+                       resp_cd,			-- 직책코드
+                       grade_cd,			-- 직급코드
+                       fn_get_deptnm(mber_id) AS dept_nm,
+                       FN_GET_GRADENM(grade_cd) AS gradeNm
+                FROM COMTNGNRLMBER
+                WHERE dept_cd IN (
+                    -- 사용자의 최상위 부서와 그 하위 부서들을 가져오는 쿼리
+                    SELECT dept_cd
+                    FROM department
+                    START WITH dept_cd = #{deptCd} AND parent_cd IS NULL
+                    CONNECT BY PRIOR dept_cd = parent_cd
+                    UNION
+                    -- 자기 자신이 포함되도록 조건 추가
+                    SELECT #{deptCd} AS dept_cd FROM DUAL
+                )
+            ) T0
+        )
+        WHERE RNUM BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}
     </select>
+
     <!-- 결재자 목록 카운트 -->
     <select id="signerSelectCnt" parameterType="signDTO" resultType="Integer">
-		select count(mber_id) as cnt
-		from COMTNGNRLMBER
-		where dept_cd = #{deptCd}
+        SELECT COUNT(mber_id) AS cnt
+        FROM COMTNGNRLMBER
+        WHERE dept_cd IN (
+            -- 사용자의 최상위 부서와 그 하위 부서들을 가져오는 쿼리
+            SELECT dept_cd
+            FROM department
+            START WITH dept_cd = #{deptCd} AND parent_cd IS NULL
+            CONNECT BY PRIOR dept_cd = parent_cd
+            UNION
+            -- 자기 자신이 포함되도록 조건 추가
+            SELECT #{deptCd} AS dept_cd FROM DUAL
+        )
     </select>
-    
-    
+
 </mapper>

@@ -14,4 +14,7 @@ public interface DepartmentMapper {
 	// 부서 단건조회
 	DepartmentDTO departmentSelect(int deptCd);
 
+	
+	// 부서 트리 조회
+	List<DepartmentDTO> deptTreeSelectAll(String deptCd);
 }
