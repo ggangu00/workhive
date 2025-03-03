@@ -14,7 +14,7 @@ import {ref} from'vue';
 import { useRouter } from 'vue-router'; 
 
 const router = useRouter(); 
-
+const approvalRegisterRef = ref(null);
 const buttons = ref([
         { label: '기안', class: 'btn-warning btn-fill'},
         { label: '결재', class: 'btn-primary btn-fill' },
@@ -35,7 +35,7 @@ const buttonClick = async (buttonName)=>{
       //   break;
     }
   }  
-  const approvalRegisterRef = ref(null);
+
   const approvalBtn = () =>{
     if(approvalRegisterRef.value){
       approvalRegisterRef.value.btnSelectChange();

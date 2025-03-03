@@ -16,7 +16,7 @@ import ApprovalInfo from '@/components/PaymentLayout/ApprovalInfo.vue';
 import axios from '../../assets/js/customAxios';
 import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
-//import Modal from '../../components/Modal.vue';
+import Swal from 'sweetalert2';
 
 const route = useRoute();
 const docCd = ref('');
@@ -52,30 +52,56 @@ const headButtons = ref([
 const buttonClick = async (buttonName)=>{
   switch(buttonName){
     case '수신확인' :
-      await retrieveBtn();
+      await btnSelectChange();
       break;
 
     case '수신기안':
       await restartDraft();
       break;
-
   }
 }
 
 //회수코드
-const retrieveBtn = async () => {
-    if (!docCd.value) {
-      alert("문서 코드 x");
-      return;
+//수신확인 버튼 기능(다중)
+const btnSelectChange = () => {
+  Swal.fire({
+    title: "수신 진행",
+    text: "수신접수 하시겠습니까?",
+    showDenyButton: false,
+    showCancelButton: true,
+    confirmButtonText: "수신접수",
+  }).then(async (result) => {
+    let modeText = '';
+    let newReceptYn = '';
+    if (result.isConfirmed) {
+      modeText = "수신접수";
+      newReceptYn = "A01";
+    } else {
+      return; // 취소 시 함수 종료
     }
-      const response = await axios.put(`/api/document/retrieve/${docCd.value}`, {});
-      if (response.status == 200) {
-        alert("회수 성공");
-      } else {
-        alert("회수 실패");
-      }
 
-  };
+    try {
+      const response = await axios.put(`/api/document/receivedState`, {
+        receptlArr: [docCd.value],
+        receptYn: newReceptYn
+      });
+
+      if (response.statusText == "OK") {
+        Swal.fire({
+          icon: "success",
+          title: modeText + " 완료",
+          text: "선택한 문서를 " + modeText + "하였습니다",
+        });
+      }
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: modeText + " 실패",
+        text: "Error : " + err,
+      });
+    }
+  });
+}
 
 //재기안코드
 const router = useRouter();

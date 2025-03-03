@@ -6,7 +6,7 @@
         <!-- 부서 트리 구조 -->
         <div class="col-5">
           <div class="box">
-            <h5>부서 선택</h5>
+            <h6>부서 선택</h6>
             <div class="tree-container">
               <ul>
                 <li v-for="dept in departmentTree" :key="dept.deptCd">
@@ -41,16 +41,15 @@
         </div>
 
         <!-- 화살표 버튼 -->
-        <div class="col-1 d-flex align-items-center justify-content-center">
-          <button class="btn btn-warning mt-2 w-100" @click="addReceiver">수신 추가 ➡</button>
+        <div class="col-2 d-flex align-items-center justify-content-center">
+          <button class="btn btn-warning mt-2 w-60" @click="addReceiver">수신 추가 ➡</button>
         </div>
 
         <!-- 수신 목록 -->
         <div class="col-5">
           <div class="box">
-            <h5>수신 목록</h5>
-            <span>수신</span>
-            <div class="approval-box">
+            <h6>수신 목록</h6>
+            <div class="recept-box">
               <div v-for="(receiver, index) in receivers" :key="index" class="approval-item">
                 <span class="badge bg-warning text-dark">수신</span>
                 <span v-if="receiver.mberNm">[{{ receiver.gradeNm }}] {{ receiver.mberNm }}<button @click="removeReceiver(index)" class="btn btn-sm btn-danger">삭제</button></span> <!-- [직책]사원 -->
@@ -66,20 +65,20 @@
         <!-- 직원 목록 -->
         <div class="col-5">
           <div class="box">
-            <h5>직원 목록</h5>
+            <h6>직원 목록</h6>
             <div id="employeeGrid"></div>
           </div>
         </div>
 
         <!-- 결재 버튼 -->
-        <div class="col-1 d-flex align-items-center justify-content-center">
+        <div class="col-2 d-flex align-items-center justify-content-center">
           <button class="btn btn-primary" @click="addApproval">결재 ➡</button>
         </div>
 
         <!-- 결재 목록 -->
         <div class="col-5">
           <div class="box">
-            <h5>결재 목록</h5>
+            <h6>결재 목록</h6>
             <div class="approval-box">
               <div
                 v-for="(approver, index) in approvers"
@@ -88,7 +87,8 @@
                 draggable="true"
                 @dragstart="startDrag(index, $event)"
                 @dragover.prevent
-                @drop="onDrop(index)">
+                @drop="onDrop(index)" style="height: 30%">
+                <i class="fa-solid fa-grip-vertical"></i>
                 <select v-model="approver.signName" @change='signNameChange(index)' class="form-select form-select-sm mx-2" style='width: 100px;'>
                   <option v-for="(data, idx) in selectedData" :key="idx" :value="data.commDtlCd" >
                     {{ data.commDtlNm }}
@@ -190,6 +190,9 @@ const selectDept = (dept) => {
 const addReceiver = () => {
   //부서추가
   if (selectedDept.value && !receivers.value.some(receiver => receiver.dept == selectedDept.value)) {
+    if (receivers.value.some(receiver => receiver.deptCd == selectedDept.value.deptCd)) {
+      return; // 중복이면 추가하지 않음
+    }
     receivers.value.push({
       deptNm: selectedDept.value.deptNm,
       deptCd: selectedDept.value.deptCd,
@@ -198,7 +201,6 @@ const addReceiver = () => {
   }
   //사원추가
   const selectedData = gridInstance.getCheckedRows();
-
   selectedData.forEach(emp => {
     if (!receivers.value.some(receiver => receiver.name == emp.mberNm)) {
         receivers.value.push({
@@ -402,11 +404,18 @@ defineExpose({onModalOpen,addApproval,removeApproval,addReceiver,removeReceiver,
   border: 1px solid #ddd;
   padding: 15px;
   border-radius: 5px;
-  height: 400px;
+  height: 250px;
   background-color: #f8f9fa;
 }
 
 /* 결재 및 수신 박스 */
+.recept-box {
+  height: 80%;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  padding: 5px;
+}
+
 .approval-box {
   height: 80%;
   overflow-y: auto;
@@ -418,6 +427,7 @@ defineExpose({onModalOpen,addApproval,removeApproval,addReceiver,removeReceiver,
 .tree-container {
   border: 1px solid #ddd;
   padding: 10px;
+  height: 80%;
   max-height: 200px;
   overflow-y: auto;
 }

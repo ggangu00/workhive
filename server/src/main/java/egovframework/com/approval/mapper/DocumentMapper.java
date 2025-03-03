@@ -57,6 +57,9 @@ public interface DocumentMapper {
 	//결재선 상태수정
 	public int approvalStateUpdate(ApprovalLine approvalLine);
 	
+	//수신확인수정
+	public int approvalReceivedUpdate(Reception reception);
+	
 	//수신자 조회
 	List<Reception> receiverSelecteAll(String docCd);
 	
@@ -71,4 +74,6 @@ public interface DocumentMapper {
 	
 	//문서개수(수신함)
 	int receivedDocCount(SearchDTO searchDTO);
+	
+	public int approvalRetrieveUpdate(DocumentDTO documentDTO);
 }

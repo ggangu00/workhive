@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class SearchDTO {
 	String keyword;
 	String status; // 현재결재상태
+	String status1; // 현재결재상태
 	String delYn;
 	String formCd;
 	String docKind;
@@ -23,7 +24,7 @@ public class SearchDTO {
 	String myDocYn;
 	String mberId;
 	
-	int pageUnit = 10; // 한페이지 출력할 레코드 건수
+	int pageUnit = 5; // 한페이지 출력할 레코드 건수
 	int pageSize = 10; // 페이지번호 수 (5) 1~ 5까지
 	int lastPage; // 마지막 페이지번호
 	int totalRecord; // 전체 레코드건수

@@ -85,6 +85,7 @@ const props = defineProps({
   buttons: { type: Array, required: true },
   columnDefs: { type: Array, required: true }, // Column 정의
   status: { type: String, required: true }, // 현재 진행 상태
+  status1: { type: String, required: true }, // 현재 진행 상태
 });
 
 // Vue Router 사용
@@ -146,13 +147,14 @@ const resetBtn = () =>{
 // API 요청 파라미터
 const getParams = ({
   status: props.status,
+  status1: props.status1,
   deptNm: '',
   docKind: '',
   formCd: '',
   startDate: '',
   endDate: '',
   mberId:loginUser,
-
+  perPage:5
 });
 
 const token = localStorage.getItem("token");
@@ -292,6 +294,7 @@ watch([docKind, deptNm, formType, startDate, endDate], async ([newDodKind, newDe
       perPage: 5,
       page: page.value,
       status : props.status,
+      status1 : props.status1,
       mberId : loginUser
     }
   });

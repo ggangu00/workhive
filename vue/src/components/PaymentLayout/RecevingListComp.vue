@@ -167,35 +167,31 @@ const dataSource = {
   },
 }
 
-//결재 버튼 기능(다중)
+//수신확인 버튼 기능(다중)
 const btnSelectChange = () => {
   const checkedData = grid.value.getCheckedRows();
 
   Swal.fire({
-    title: "결재 진행",
-    text: "승인하시겠습니까? 아니면 반려하시겠습니까?",
-    showDenyButton: true,
+    title: "수신 진행",
+    text: "수신접수 하시겠습니까?",
+    showDenyButton: false,
     showCancelButton: true,
-    confirmButtonText: "승인",
-    denyButtonText: "반려"
+    confirmButtonText: "수신접수",
   }).then(async (result) => {
     let modeText = '';
-    let newSignStat = '';
+    let newReceptYn = '';
     if (result.isConfirmed) {
-      modeText = "승인";
-      newSignStat = "D02";
-    } else if (result.isDenied) {
-      modeText = "반려";
-      newSignStat = "D04";
+      modeText = "수신접수";
+      newReceptYn = "A01";
     } else {
       return; // 취소 시 함수 종료
     }
 
     try {
-      const response = await axios.put(`/api/document/state`, {
-        approvalArr: checkedData.map(row => row.docCd),
+      const response = await axios.put(`/api/document/receivedState`, {
+        receptlArr: checkedData.map(row => row.docCd),
         mberId: loginUser , // 실제 로그인 아이디로 변경
-        signStat: newSignStat
+        receptYn: newReceptYn
       });
 
       if (response.statusText == "OK") {
@@ -214,6 +210,7 @@ const btnSelectChange = () => {
     }
   });
 }
+
 const TueGrid = () => {
   grid.value = new window.tui.Grid({
     el: document.getElementById("tableGrid"),
