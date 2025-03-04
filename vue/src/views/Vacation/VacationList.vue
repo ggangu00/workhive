@@ -118,8 +118,17 @@ onMounted(() => {
     ]
   })
   
-  // vcGetList();
+  // 행 클릭 이벤트 추가
+  gridInstance.value.on("click", handleRowClick);
 })
+
+// 행클릭
+const handleRowClick = (e) => {
+  if (!gridInstance.value || e.rowKey == null || e.rowKey == undefined ) return;
+
+  let selectedRowData = gridInstance.value.getRow(e.rowKey);
+  router.push({ name: 'VcManage', query: { vcCd: selectedRowData.vcCd, isDetail: 'true' } });
+}
 
 // 그리드 버튼
 class BtnRenderer {
@@ -146,6 +155,8 @@ class BtnRenderer {
     }
 
     el.addEventListener("click", (event) => {
+      event.stopPropagation(); // 부모 요소(행 클릭) 이벤트 전파 방지
+
       const type = event.target.dataset.type;
 
       // props.row가 없을 경우 grid에서 데이터 가져오기
@@ -178,7 +189,7 @@ const router = useRouter();
 const btnVcUpdate = (rowKey) => {
   let selectedRowData = gridInstance.value.getRow(rowKey);
 
-  router.push({ name: 'VcManage', query: { vcCd: selectedRowData.vcCd, isUpdate: true } });
+  router.push({ name: 'VcManage', query: { vcCd: selectedRowData.vcCd, isUpdate: 'true' } });
 };
 const btnVcDelete = async (rowKey) => {
   let vcCd = gridInstance.value.getRow(rowKey).vcCd;
