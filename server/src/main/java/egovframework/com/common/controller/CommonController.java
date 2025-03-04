@@ -28,11 +28,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/comm")
 public class CommonController {
 	
-	@Resource
-	private  CommonService service;
-	
-	@Resource
-	private  MemberService memberService;
+	@Resource private CommonService service;	// 공통	
+	@Resource private MemberService memberService;	// 회원
 	
 	// 공통코드 디테일 전체조회
 	@GetMapping("/codeList")
@@ -105,5 +102,13 @@ public class CommonController {
         
         return ipAddress;
     }
+	
+	// 회사 정보 조회
+	@GetMapping("/company")
+	public CommonDTO companyInfo() {
+		CommonDTO dto = service.companyInfo();
+		
+		return dto;
+	}
 	
 }

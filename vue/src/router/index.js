@@ -10,11 +10,11 @@ import Layout from '../views/Layout.vue';
 import Login from "../views/Login/Login.vue";
 import FindPw from '../views/Login/FindPassword.vue';
 import PersonalManage from '../views/personal/PersonalManage.vue';
-import MemberManage from '../views/Setting/MemberManage.vue'
-import DepartmentManage from "../views/Setting/DepartmentManage.vue";
+import MemberManage from '../views/Setting/organization/MemberManage.vue'
+import DepartmentManage from "../views/Setting/organization/DepartmentManage.vue";
 import AuthorityManage from "../views/Setting/AuthorityManage.vue";
-import CompanyManage from "../views/Setting/CompanyManage.vue";
-
+import CompanyManage from "../views/Setting/basic/CompanyManage.vue";
+import PositionsManage from '../views/Setting/organization/PositionsManage.vue';
 
 
 
@@ -130,11 +130,11 @@ const routes = [
       name: 'DepartmentManage',
       component: DepartmentManage
    },
-   // { // 직책&직급 관리
-   //    path: '/setting/organization/positions',
-   //    name: 'PositionsManage',
-   //    component: PositionsManage
-   // },
+   { // 직책&직급 관리
+      path: '/setting/organization/positions',
+      name: 'PositionsManage',
+      component: PositionsManage
+   },
    { // 권한 관리
       path: '/setting/organization/authority',
       name: 'AuthorityManage',

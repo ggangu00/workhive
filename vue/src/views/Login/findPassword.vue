@@ -26,7 +26,7 @@
             </div>
 
             <div class="btn_login_wrap">
-               <button type="button" class="btn_login btn_next">다음</button>
+               <button type="button" class="btn_login btn_next" @click="btnFindPw">다음</button>
             </div>
          </div>
       </div>
@@ -69,10 +69,14 @@
    const userIdReset = () => {
       mberId.value = "";
    };
+
+   const btnFindPw = () => {
+      findPasswordGet();
+   }
 // ============================================= Axios Event =============================================
    const findPasswordGet = async () => {
       try {
-         const result = await axios.post('/api/passwordProc', { mberId });
+         const result = await axios.post('/api/passwordProc', { mberId : mberId.value });
          console.log(result.data)
       } catch (err) {
          Swal.fire({

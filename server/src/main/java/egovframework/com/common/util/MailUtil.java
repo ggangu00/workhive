@@ -3,14 +3,14 @@ package egovframework.com.common.util;
 import java.util.Properties;
 
 import javax.annotation.Resource;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 
 import org.egovframe.rte.fdl.property.EgovPropertyService;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,7 +47,7 @@ public class MailUtil {
             Properties props = mailSender.getJavaMailProperties();
             props.put("mail.smtp.auth", propService.getBoolean("mail.smtp.auth"));                      // 인증 사용 여부
             props.put("mail.smtp.starttls.enable", propService.getBoolean("mail.smtp.starttls.enable")); // TLS 사용 여부
-            props.put("mail.smtp.ssl.trust", propService.getString("mail.smtp.ssl.trust"));              // 신뢰할 수 있는 서버 주소
+            //props.put("mail.smtp.ssl.trust", propService.getString("mail.smtp.ssl.trust"));              // 신뢰할 수 있는 서버 주소
 
             // 3. 메일 내용 구성
             MimeMessage message = mailSender.createMimeMessage();
