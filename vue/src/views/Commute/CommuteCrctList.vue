@@ -111,8 +111,20 @@ onMounted(() => {
     ]
   })
 
-  // crctGetList();
+  // 행 클릭 이벤트 추가
+  gridInstance.value.on("click", handleRowClick);
 })
+
+// 행클릭
+let isDetail = ref(false);
+const handleRowClick = (e) => {
+  if (!gridInstance.value || e.rowKey == null || e.rowKey == undefined ) return;
+
+  isDetail.value = true;
+  let selectedRowData = gridInstance.value.getRow(e.rowKey);
+
+  router.push({ name: 'CrctManage', query: { crctCd: selectedRowData.crctCd, isDetail: 'true' } });
+}
 
 // 그리드 버튼
 class BtnRenderer {
@@ -139,6 +151,8 @@ class BtnRenderer {
     }
 
     el.addEventListener("click", (event) => {
+      event.stopPropagation(); // 부모 요소(행 클릭) 이벤트 전파 방지
+
       const type = event.target.dataset.type;
 
       // props.row가 없을 경우 grid에서 데이터 가져오기

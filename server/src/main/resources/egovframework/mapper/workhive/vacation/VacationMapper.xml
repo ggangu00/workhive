@@ -65,6 +65,7 @@
 			 , create_id
 			 , create_dt
 			 , sign_id
+     		 , fn_get_memnm(sign_id) as sign_nm
 			 , sign_dt
 			 , sign_state
 		from vacation

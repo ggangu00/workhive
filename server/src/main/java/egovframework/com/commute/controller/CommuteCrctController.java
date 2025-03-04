@@ -51,7 +51,7 @@ public class CommuteCrctController {
 	@GetMapping("/crctAdd")
 	public void crctAdd(CommuteCrctDTO crctDTO) {};
 	@PostMapping("/crctAdd")
-	public String crctAdd(@Validated CommuteCrctDTO crctDTO, BindingResult bindingResult, RedirectAttributes rttr,
+	public String crctAdd(CommuteCrctDTO crctDTO, BindingResult bindingResult, RedirectAttributes rttr,
 	        @RequestPart(value = "files[]", required = false) List<MultipartFile> files) throws Exception {
 
 		if(bindingResult.hasErrors()) {
@@ -67,7 +67,7 @@ public class CommuteCrctController {
 		List<FileVO> _result = null;
 		String _atchFileId = "";
 		
-		if (!files.isEmpty()) {
+		if(files != null && !files.isEmpty()) {
 			_result = fileUtil.parseFileInf(files, "DSCH_", 0, "", "");
 			_atchFileId = fileMngService.insertFileInfs(_result); // 파일이 생성되고나면 생성된 첨부파일 ID를 리턴한다.
 		}
@@ -83,12 +83,24 @@ public class CommuteCrctController {
 	
 	// 출퇴근 정정 수정
 	@PostMapping("/crctModify")
-	public boolean crctModify(@Validated CommuteCrctDTO crctDTO, RedirectAttributes rttr) {
+	public boolean crctModify(@Validated CommuteCrctDTO crctDTO, RedirectAttributes rttr,
+	        @RequestPart(value = "files[]", required = false) List<MultipartFile> files) throws Exception {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomerUser user = (CustomerUser) auth.getPrincipal();
         String userId = user.getUserDTO().getMberId();
 		crctDTO.setUpdateId(userId);
+
+		// 첨부파일 관련 첨부파일ID 생성
+		List<FileVO> _result = null;
+		String _atchFileId = "";
+		
+		if(files != null && !files.isEmpty()) {
+			_result = fileUtil.parseFileInf(files, "DSCH_", 0, "", "");
+			_atchFileId = fileMngService.insertFileInfs(_result); // 파일이 생성되고나면 생성된 첨부파일 ID를 리턴한다.
+		}
+		// 리턴받은 첨부파일ID를 셋팅한다..
+		crctDTO.setAtchFileId(_atchFileId); // 첨부파일 ID
 		
 		return service.crctUpdate(crctDTO);
 	}
