@@ -16,19 +16,19 @@
                <div class="card">
                   <div class="card-body">
                      <div class="section">
-                        <div class="section-header">[ 소속정보 ]</div>
+                        <div class="section-header">[ 회사정보 ]</div>
                         <div class="row p-1">
                            <div class="col-md-3">
-                              <label>소속부서 <i class="fa-solid fa-asterisk"></i></label>
-                              <input type="text" v-model="viewData.deptNm" class="form-control readonly" />
+                              <label>회사명 <i class="fa-solid fa-asterisk"></i></label>
+                              <input type="text" v-model="viewData.compNm" class="form-control readonly" />
                            </div>
                            <div class="col-md-3">
-                              <label>직급 <i class="fa-solid fa-asterisk"></i></label>
-                              <input type="text" v-model="viewData.gradeNm" class="form-control readonly" />
+                              <label>사업자등록번호 <i class="fa-solid fa-asterisk"></i></label>
+                              <input type="text" v-model="viewData.businessNo" class="form-control readonly" />
                            </div>
                            <div class="col-md-3">
-                              <label>직책</label>
-                              <input type="text" v-model="viewData.respNm" class="form-control readonly" />
+                              <label>대표자</label>
+                              <input type="text" v-model="viewData.ceoNm" class="form-control readonly" />
                            </div>
                         </div>
                      </div>
@@ -37,55 +37,54 @@
                         <div class="section-header">[ 기본정보 ]</div>
                         <div class="row p-1">
                            <div class="col-md-3">
-                              <label>아이디 <i class="fa-solid fa-asterisk"></i></label>
+                              <label>대표전화 <i class="fa-solid fa-asterisk"></i></label>
                               <input type="text" v-model="viewData.mberId" class="form-control readonly" />
                            </div>
                            <div class="col-md-3">
-                              <label>사번 <i class="fa-solid fa-asterisk"></i></label>
+                              <label>이메일 <i class="fa-solid fa-asterisk"></i></label>
                               <input type="text" v-model="viewData.esntlId" class="form-control readonly" />
                            </div>
                            <div class="col-md-3">
-                              <label>성명 <i class="fa-solid fa-asterisk"></i></label>
+                              <label>팩스 <i class="fa-solid fa-asterisk"></i></label>
                               <input type="text" v-model="formData.mberNm" class="form-control editable" />
                            </div>
                         </div>
+
                      </div>
 
                      <div class="section">
-                        <div class="section-header">[ 연락처 ]</div>
+                        <div class="section-header">[ 설정 ]</div>
                         <div class="row p-1">
-                           <div class="col-md-3">
-                              <label class="align-items-center">이메일 <i class="fa-solid fa-asterisk"></i></label>
+                           <div class="col-md-1">
+                              <label>우편번호 <i class="fa-solid fa-asterisk"></i></label>
+                              <input type="text" v-model="viewData.mberId" class="form-control editable" />
+                           </div>
+                           <div class="col-md-5">
+                              <label>주소 <i class="fa-solid fa-asterisk"></i></label>
+                              <input type="text" v-model="viewData.esntlId" class="form-control editable" />
+                           </div>
+                           <div class="col-md-5">
+                              <label>상세주소 <i class="fa-solid fa-asterisk"></i></label>
+                              <input type="text" v-model="formData.mberNm" class="form-control editable" />
+                           </div>
+                        </div>
+
+                     </div>
+
+                     <div class="section">
+                        <div class="section-header">[ 설정 ]</div>
+                        <div class="row p-1">
+                           <div class="col-md-6">
+                              <label class="align-items-center">메뉴사용 <i class="fa-solid fa-asterisk"></i></label>
                               <input type="email" v-model="formData.mberEmailAdres" class="editable" />
                            </div>
                            <div class="col-md-3">
-                              <label>전화번호</label>
-                              <div class="phone-group">
-                                 <select v-model="formData.areaNo" class="form-control editable">
-                                    <option value="" selected>선택</option>
-                                    <option v-for="(comm, i) in commCodeList" :key="i" :value="comm.commDtlCd">
-                                       {{ comm.commDtlNm }}
-                                    </option>
-                                 </select>
-                                 <span>-</span>
-                                 <input
-                                    type="number"
-                                    v-model="formData.middleTelno"
-                                    maxlength="4"
-                                    class="form-control editable"/>
-                                 <span>-</span>
-                                 <input
-                                    type="number"
-                                    v-model="formData.endTelno"
-                                    maxlength="4"
-                                    class="form-control editable"
-                                 />
-                              </div>
+                              <label class="align-items-center">근무 시작시간 <i class="fa-solid fa-asterisk"></i></label>
+                              <input type="email" v-model="formData.mberEmailAdres" class="editable" />
                            </div>
-
                            <div class="col-md-3">
-                              <label>휴대폰</label>
-                              <input type="text" v-model="formData.mbtlnum" class="form-control editable" />
+                              <label class="align-items-center">근무 종료시간 <i class="fa-solid fa-asterisk"></i></label>
+                              <input type="email" v-model="formData.mberEmailAdres" class="editable" />
                            </div>
                         </div>
                      </div>
@@ -101,11 +100,11 @@
 
 <script setup>
    import { onBeforeMount, ref } from 'vue';
-   import axios from '../../assets/js/customAxios';
+   import axios from '../../../assets/js/customAxios';
    import Swal from 'sweetalert2';
 
    //============================= 공통코드 함수 =============================
-   import { getComm } from '../../assets/js/common'
+   import { getComm } from '../../../assets/js/common'
 
    // 📌 데이터 저장용
    const formData = ref({
@@ -195,7 +194,7 @@
       try {
          const result = await axios.get('/api/member/info');
          const data = result.data;
-         
+
          // 읽기전용 데이터
          viewData.value = {
             deptNm: data.deptNm || "",

@@ -133,9 +133,9 @@
 
 <script setup>
    import { ref } from "vue";
-   import TreeNode from "../../components/TreeView/TreeNode.vue";
-   import Modal from '../../components/Modal.vue';
-   import Card from '../../components/Cards/Card.vue'
+   import TreeNode from "../../../components/TreeView/TreeNode.vue";
+   import Modal from '../../../components/Modal.vue';
+   import Card from '../../../components/Cards/Card.vue'
 
    const isShowModal = ref(false);
 

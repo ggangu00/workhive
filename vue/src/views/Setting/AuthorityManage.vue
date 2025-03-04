@@ -42,17 +42,24 @@
                   <div class="col-9 treeview">
                      <div class="d-flex justify-content-between align-items-center bottom-line p-2">
                         <span>{{ selectedRole ? selectedRole.authorityNm : '' }}</span>
-                        <div class="button-group">
-                           <button class="btn btn-success btn-sm btn-fill">수정</button>
+
+                        <!-- 수정 버튼 (수정 모드 진입용) -->
+                        <div v-if="!isMenuEditing" class="button-group">
+                           <button class="btn btn-success btn-fill" @click="btnMenuModifyMode">수정</button>
                         </div>
-                        <div class="button-group">
-                           <button class="btn btn-secondary btn-sm btn-fill">취소</button>
-                           <button class="btn btn-success btn-sm btn-fill">저장</button>
+
+                        <!-- 취소/저장 버튼 (수정 모드일 때) -->
+                        <div v-else class="button-group">
+                           <button class="btn btn-secondary btn-fill" @click="btnMenuCancel">취소</button>
+                           <button class="btn btn-success btn-fill" @click="btnMenuSave">저장</button>
                         </div>
                      </div>
-                     <div>
+
+                     <div v-if="isMenuEditing">
                         <menuTree v-for="(item, idx) in menuData" :key="idx" :item="item" ></menuTree>
-                        <!-- <menuListView></menuListView> -->
+                     </div>
+                     <div v-else>
+                        <menuListView v-for="(item, idx) in menuData" :key="idx" :item="item"></menuListView>
                      </div>
                   </div>
 
@@ -102,8 +109,8 @@
    import Card from '../../components/Cards/Card.vue'
    import Modal from '../../components/Modal.vue';
    import menuTree from './components/MenuComponent.vue';
-   // import menuListView from './components/MenuListViewComponent.vue'
-   import  axios from "../../assets/js/customAxios.js";  // 공통함수 위치 맞게 변경
+   import menuListView from './components/MenuListViewComponent.vue'
+   import axios from "../../assets/js/customAxios.js";  // 공통함수 위치 맞게 변경
 
 
    onBeforeMount(() => {
@@ -128,6 +135,7 @@
 
    // 모달 열기
    const modalOpen = (mode, title) => {
+      modalReset();
       isEditMode.value = mode;
       modalTitle.value = title;
 
@@ -202,11 +210,21 @@
       });
    };
 
-   /**
-    * @description 모달 닫기
-    */
+   // 모달 닫기
    const btnModalClose = () => {
       modalClose("remove")
+   }
+
+   // 메뉴 수정 모드로 변환
+   const isMenuEditing = ref(false)
+   // 메뉴 수정 모드 진입
+   const btnMenuModifyMode = () => {
+      isMenuEditing.value = true
+   }
+
+   // 메뉴 수정 모드 취소
+   const btnMenuCancel = () => {
+      isMenuEditing.value = false
    }
 
 // ======================================== 권한 관리 Axios 통신 ========================================
@@ -354,7 +372,7 @@
    const menuGetList = async () => {
       try {
          const response = await axios.get('/api/menu');
-
+         console.log("menuData => ", response.data);
          menuData.value = menuGetListCallbackTreeBuild(response.data);
       } catch (err) {
          Swal.fire({
@@ -447,9 +465,8 @@
    }
 
    .selected-role {
-      background-color: #fdf8e2;
-      font-weight: 600;
-      border: 2px solid #bcc1cb;
+      background-color: #ffecd5;
+      font-weight: 500;
       border-radius: 3px;
    }
 </style>

@@ -58,5 +58,10 @@ public class CommonServiceImpl implements CommonService {
 		return commonMapper.homeInfo(memCd);
 	}
 
+	@Override
+	public CommonDTO companyInfo() {
+		return commonMapper.companyInfo();
+	}
+
 	
 }

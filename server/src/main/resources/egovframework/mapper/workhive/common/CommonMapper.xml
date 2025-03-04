@@ -144,4 +144,21 @@
 	]]>
 	
 	</select>
+	
+	<select id="companyInfo" resultType="CommonDTO">
+		SELECT 
+		   business_no,
+		   comp_nm,
+		   ceo_nm,
+		   tel,
+		   email,
+		   tel_fax,
+		   post,
+		   addr,
+		   addr_dtl,
+		   TO_CHAR(start_time, 'yyyy-MM-dd') AS start_time,
+		   TO_CHAR(end_time, 'yyyy-MM-dd') AS end_time
+		FROM
+		   company
+	</select>
 </mapper>
