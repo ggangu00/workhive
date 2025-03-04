@@ -139,7 +139,7 @@
 
     try {
       const result = await axios.post('/api/board/boardModify', addData);
-      responseMessage.value = result.data.message || "게시판이 성공적으로 등록되었습니다!";
+      responseMessage.value = result.data.message || "게시판 수정완료";
       isSuccess.value = true;
 
       setTimeout(() => {

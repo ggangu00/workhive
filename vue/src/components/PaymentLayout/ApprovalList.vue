@@ -57,12 +57,14 @@
         </div>
 
         <!-- Toast UI Grid 영역 -->
-
-          <div class="col-12">
-            <div id="tableGrid" class="toastui"></div>
-            <div id="pagination" class="tui-pagination"></div>
+        <div class="card">
+          <div class="card-body">
+            <div class="col-12">
+              <div id="tableGrid" class="toastui"></div>
+              <!-- <div id="pagination" class="tui-pagination"></div> -->
+            </div>
           </div>
-
+        </div>
       </div>
     </div>
   </div>
@@ -154,7 +156,6 @@ const getParams = ({
   startDate: '',
   endDate: '',
   mberId:loginUser,
-  perPage:5
 });
 
 const token = localStorage.getItem("token");
@@ -266,7 +267,7 @@ const TueGrid = () => {
     rowHeaders: ["checkbox"],
     pageOptions: {
       useClient: false, // 서버 사이드 페이지네이션 사용
-      perPage: 5,
+      perPage: 10,
     },
     data: dataSource,
   });
@@ -330,7 +331,7 @@ watch([docKind, deptNm, formType, startDate, endDate], async ([newDodKind, newDe
       formCd : newFormType,
       startDate : newStartDate,
       endDate : newEndDate,
-      perPage: 5,
+      perPage: 15,
       page: page.value,
       status : props.status,
       status1 : props.status1,
@@ -356,6 +357,6 @@ defineExpose({btnSelectChange, reteriveBtn})
 }
 .toastui {
   width: 100%;
-  height: 500px;
+  height: 95%;
 }
 </style>

@@ -5,8 +5,9 @@
 
       <div class="row">
         <div class="col header">
-          <h4 v-if="!isUpdate">  [ 휴가 신청 등록 ]</h4>
-          <h4 v-else>  [ 휴가 신청 수정 ]</h4>
+          <h4 v-if="!isUpdate && !isDetail">  [ 휴가 신청 등록 ]</h4>
+          <h4 v-if="isUpdate">  [ 휴가 신청 수정 ]</h4>
+          <h4 v-if="isDetail">  [ 휴가 신청 상세 조회 ]</h4>
           <hr>
         </div>
       </div>
@@ -25,17 +26,17 @@
           <tbody>
             <tr>
               <th>휴가 시작일</th>
-              <td colspan="2"><input type="date" id="startDate" class="form-control" v-model="vcData.vcStartDt"></td>
+              <td colspan="2"><input type="date" id="startDate" class="form-control" v-model="vcData.vcStartDt" :readonly="isDetail"></td>
               <th>휴가 종료일</th>
               <td colspan="2">
                 <input type="date" id="startDate" class="form-control"
-                       v-model="vcData.vcEndDt" :readonly="vcData.vcType === 'E02' || vcData.vcType === 'E03'">
+                       v-model="vcData.vcEndDt" :readonly="vcData.vcType === 'E02' || vcData.vcType === 'E03' || isDetail">
               </td>
             </tr>
             <tr>
               <th>휴가 종류</th>
               <td>
-                <select class="form-select" aria-label="Default select example" v-model="vcData.vcType">
+                <select class="form-select" aria-label="Default select example" v-model="vcData.vcType" :disabled="isDetail">
                   <option value="E01" selected>연차</option>
                   <option value="E02">오전반차</option>
                   <option value="E03">오후반차</option>
@@ -43,13 +44,13 @@
                 </select>
               </td>
               <th>사용 일수</th>
-              <td><input type="text" class="form-control" v-model="vcData.useDays"></td>
+              <td><input type="text" class="form-control" v-model="vcData.useDays" readonly></td>
               <th>예상 잔여 일수</th>
               <td><input type="text" class="form-control" v-model="vcData.remainDays" readonly></td>
             </tr>
             <tr>
               <th>휴가 사유</th>
-              <td colspan="5"><textarea class="form-control" v-model="vcData.vcReason"></textarea></td>
+              <td colspan="5"><textarea class="form-control" v-model="vcData.vcReason" :readonly="isDetail"></textarea></td>
             </tr>
             <tr>
               <th>파일 첨부</th>
@@ -87,7 +88,7 @@
 
       <div class="row justify-content-center">
         <button class="btn btn-secondary btn-fill" @click="btnVcManageCancle">취소</button>
-        <button class="btn btn-success btn-fill" @click="btnVcManage">저장</button>
+        <button class="btn btn-success btn-fill" @click="btnVcManage" v-if="!isDetail">저장</button>
       </div>
     </div>
   </div>
@@ -107,6 +108,7 @@ import Swal from 'sweetalert2';
 const route = useRoute();
 const router = useRouter();
 const isUpdate = ref(route.query.isUpdate === 'true');
+const isDetail = ref(route.query.isDetail === 'true');
 const vcCd = ref(route.query.vcCd);
 
 // 라우터 파라미터가 변경 감지
@@ -340,7 +342,7 @@ const validCheck = () => {
 // 결재자 모달
 let isShowModal = ref(false);
 const modalOpen = () => {
-  isShowModal.value = true;
+  if(!isDetail.value) isShowModal.value = true;
 }
 const modalClose = () => {
   isShowModal.value = false;

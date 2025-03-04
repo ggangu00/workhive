@@ -113,11 +113,10 @@ const initGrid = () => {
     el: document.getElementById('commuteGrid'),
     data: dataSource,
     scrollX: false,
-    scrollY: true,
-    bodyHeight: 500,
+    scrollY: false,
     pageOptions: {
       useClient: false,
-      perPage: 5,
+      perPage: 13,
     },
     columns: [
       { header: '근무일자', name: 'commuteDt', align: 'center', formatter: cmtFormat.dateFormatter },

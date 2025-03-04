@@ -97,7 +97,7 @@ onMounted(() => {
     scrollY: true,
     pageOptions: {
       useClient: false,
-      perPage: 5,
+      perPage: 13,
     },
     columns: [ //근무일자 / 출근시간 / 퇴근시간 / 정정출근시간 / 정정퇴근시간 / 신청일 / 결재자
       { header: '근무일자', name: 'commuteDt', align: 'center', formatter: dateFormatter },

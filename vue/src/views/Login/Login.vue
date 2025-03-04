@@ -48,10 +48,8 @@
             </div>
          </div>
 
-         <ul class="find_wrap">
+         <ul class="find_wrap ps-0">
             <li><a href="/findPw" class="find_text" @click="goToFindPw">비밀번호 찾기</a></li>
-            <li>|</li>
-            <li><a href="#" class="find_text">아이디 찾기</a></li>
          </ul>
       </div>
 
@@ -141,6 +139,9 @@
    // id, pass값 서버로 보내기
    const loginSelect = async () => {
 
+      const isValid = await validateLoginInput();
+      if (!isValid) return; // 유효성 실패 시 종료
+
       userInfoStore.saveUserId(userId.value, rememberMe.value); // 아이디 저장하기 체크 시 로그인 시도한 아이디 저장
 
       try {
@@ -201,5 +202,34 @@
          });
       }
    }
+
+   // 유효성 체크 함수
+   const validateLoginInput = async () => {
+      if (!userId.value.trim()) {
+         await Swal.fire({
+            icon: 'warning',
+            title: '아이디를 입력하세요',
+         });
+
+         const userIdInput = document.querySelector('.input_id');
+         if (userIdInput) userIdInput.focus();
+
+         return false; // 유효성 실패
+      }
+
+      if (!password.value.trim()) {
+         await Swal.fire({
+            icon: 'warning',
+            title: '비밀번호를 입력하세요',
+         });
+
+         const passwordInput = document.querySelector('.input_pw');
+         if (passwordInput) passwordInput.focus();
+
+         return false; // 유효성 실패
+      }
+
+      return true; // 유효성 통과
+   };
 
 </script>
