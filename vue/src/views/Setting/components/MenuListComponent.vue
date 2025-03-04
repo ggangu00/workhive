@@ -4,6 +4,7 @@
          <div>
             <div class="form-check form-check-inline">
                <input
+                  v-if="isMenuEditing"
                   class="form-check-input"
                   type="checkbox"
                   v-model="menu.selected"
@@ -40,6 +41,7 @@
    // 부모에서 전달한 prop 이름을 item으로 변경합니다.
    const props = defineProps({
       item: { type: Object, required: true },
+      isMenuEditing: Boolean
    });
 
    const menu = props.item;

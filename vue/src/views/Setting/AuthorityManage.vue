@@ -56,7 +56,12 @@
                      </div>
 
                      <div>
-                        <MenuListListComponent v-for="(item, idx) in menuData" :key="idx" :item="item" ></MenuListListComponent>
+                        <MenuListListComponent
+                           v-for="(item, idx) in menuData"
+                           :key="idx"
+                           :item="item"
+                           :isMenuEditing="isMenuEditing"
+                        />
                      </div>
                   </div>
 
@@ -409,7 +414,7 @@
          const response = await axios.get(`/api/menu/${code}`);
          console.log("권한에 대한 메뉴 목록 조회 => ", response.data)
          // 메뉴 데이터 업데이트
-         menuData.value = menuGetListCallbackTreeBuild(response.data);
+         //menuData.value = menuGetListCallbackTreeBuild(response.data);
 
       } catch (err) {
          Swal.fire({
