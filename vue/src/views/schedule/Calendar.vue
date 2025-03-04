@@ -54,7 +54,7 @@
               <div class="form-group has-label">
                 <label>일정내용 <em class="point-red">*</em></label>
               </div>
-              <input type="text" name="project_nm" class="form-control" v-model="schedule.content">
+              <input type="textarea" name="project_nm" class="form-control" v-model="schedule.content">
             </div>
             <div class="mb-3">
               <div class="form-group has-label">
@@ -80,7 +80,7 @@
               </div>
             </div>
             <div class="mb-3" v-if="!isAllDay">
-                <label class="form-label">시간</label>
+                <label class="form-label">시간<em class="point-red">*</em></label>
                 <div class="d-flex align-items-center">
                   <input type="time" class="form-control w-auto" v-model="schedule.bgntm">
                   <span class="mx-3">~</span>
@@ -420,6 +420,10 @@ async scheduleRemove(){
     if (!date) return null;
     return `${date.substring(0, 4)}-${date.substring(4, 6)}-${date.substring(6, 8)}T${date.substring(8, 10)}:${date.substring(10, 12)}:00`;
   }
+},
+
+watch(){
+  
 }
 }
 </script>

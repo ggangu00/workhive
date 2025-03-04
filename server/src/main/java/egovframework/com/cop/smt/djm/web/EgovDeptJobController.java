@@ -694,7 +694,7 @@ public class EgovDeptJobController {
 		List<FileVO> _result = null;
 		String _atchFileId = "";
 		
-		if (!files.isEmpty()) {
+		if (files != null && !files.isEmpty()) {
 			_result = fileUtil.parseFileInf(files, "DSCH_", 0, "", "");
 			_atchFileId = fileMngService.insertFileInfs(_result); // 파일이 생성되고나면 생성된 첨부파일 ID를 리턴한다.
 		}
@@ -785,7 +785,7 @@ public class EgovDeptJobController {
 		// final Map<String, MultipartFile> files = multiRequest.getFileMap();
 //		final List<MultipartFile> files = multiRequest.getFiles("file_1");
 		
-		if (!files.isEmpty()) {
+		if (files != null && !files.isEmpty()) {
 			_result = fileUtil.parseFileInf(files, "DSCH_", 0, "", "");
 			_atchFileId = fileMngService.insertFileInfs(_result); // 파일이 생성되고나면 생성된 첨부파일 ID를 리턴한다.
 		}

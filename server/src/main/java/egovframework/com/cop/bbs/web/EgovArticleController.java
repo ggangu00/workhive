@@ -13,19 +13,20 @@ import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springmodules.validation.commons.DefaultBeanValidator;
+import egovframework.com.securing.service.CustomerUser;
 
 import egovframework.com.cmm.EgovMessageSource;
 import egovframework.com.cmm.EgovWebUtil;
@@ -47,6 +48,7 @@ import egovframework.com.cop.cmt.service.CommentVO;
 import egovframework.com.cop.cmt.service.EgovArticleCommentService;
 import egovframework.com.cop.tpl.service.EgovTemplateManageService;
 import egovframework.com.cop.tpl.service.TemplateInfVO;
+import egovframework.com.securing.service.CustomerUser;
 import egovframework.com.utl.fcc.service.EgovStringUtil;
 
 /**
@@ -154,69 +156,59 @@ public class EgovArticleController {
      */
     //@RequestMapping("/cop/bbs/selectArticleList.do")
     @GetMapping("/bulletinList")
-    public Map<String, Object> selectArticleList(@ModelAttribute("searchVO") BoardVO boardVO, ModelMap model) throws Exception {
-		LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-		
-		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();	//KISA 보안취약점 조치 (2018-12-10, 이정은)
+    public Map<String, Object> selectArticleList(
+            @ModelAttribute("searchVO") BoardVO boardVO,
+            @AuthenticationPrincipal CustomerUser user,  // 로그인 사용자 자동 주입
+            ModelMap model) throws Exception {
 
-//        if(!isAuthenticated) {
-//            return "redirect:/uat/uia/egovLoginUsr.do";
-//        }
-//	
-		BoardMasterVO vo = new BoardMasterVO();
-		
-		vo.setBbsId(boardVO.getBbsId());
-		vo.setUniqId((user == null || user.getUniqId() == null) ? "" : user.getUniqId());
-		BoardMasterVO master = egovBBSMasterService.selectBBSMasterInf(vo);
-		
-//		//방명록은 방명록 게시판으로 이동
-//		if(master.getBbsTyCode().equals("BBST03")){
-//			return "forward:/cop/bbs/selectGuestArticleList.do";
-//		}
-		
-		
-		boardVO.setPageUnit(propertyService.getInt("pageUnit"));
-		boardVO.setPageSize(propertyService.getInt("pageSize"));
-	
-		PaginationInfo paginationInfo = new PaginationInfo();
-		
-		paginationInfo.setCurrentPageNo(boardVO.getPageIndex());
-		paginationInfo.setRecordCountPerPage(boardVO.getPageUnit());
-		paginationInfo.setPageSize(boardVO.getPageSize());
-	
-		boardVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
-		boardVO.setLastIndex(paginationInfo.getLastRecordIndex());
-		boardVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
-	
-		Map<String, Object> map = egovArticleService.selectArticleList(boardVO);
-		int totCnt = Integer.parseInt((String)map.get("resultCnt"));
-		
-		//공지사항 추출
-		List<BoardVO> noticeList = egovArticleService.selectNoticeArticleList(boardVO);
-		
-		paginationInfo.setTotalRecordCount(totCnt);
-	
-		//-------------------------------
-		// 기본 BBS template 지정 
-		//-------------------------------
-		if (master.getTmplatCours() == null || master.getTmplatCours().equals("")) {
-		    master.setTmplatCours("/css/egovframework/com/cop/tpl/egovBaseTemplate.css");
-		}
-		////-----------------------------
-	
-		if(user != null) {
-	    	model.addAttribute("sessionUniqId", user.getUniqId());
-	    }
-		
-		model.addAttribute("resultList", map.get("resultList"));
-		model.addAttribute("resultCnt", map.get("resultCnt"));
-		model.addAttribute("articleVO", boardVO);
-		model.addAttribute("boardMasterVO", master);
-		model.addAttribute("paginationInfo", paginationInfo);
-		model.addAttribute("noticeList", noticeList);
-		//return "egovframework/com/cop/bbs/EgovArticleList";
-		return map;
+        Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();  // KISA 보안취약점 조치
+
+        BoardMasterVO vo = new BoardMasterVO();
+        vo.setBbsId(boardVO.getBbsId());
+
+        String sessionUniqId = "";
+        if (user != null && user.getUserDTO() != null) {
+            sessionUniqId = user.getUserDTO().getMberId();
+        }
+
+        vo.setUniqId(sessionUniqId);
+        BoardMasterVO master = egovBBSMasterService.selectBBSMasterInf(vo);
+
+        boardVO.setPageUnit(propertyService.getInt("pageUnit"));
+        boardVO.setPageSize(propertyService.getInt("pageSize"));
+
+        PaginationInfo paginationInfo = new PaginationInfo();
+        paginationInfo.setCurrentPageNo(boardVO.getPageIndex());
+        paginationInfo.setRecordCountPerPage(boardVO.getPageUnit());
+        paginationInfo.setPageSize(boardVO.getPageSize());
+
+        boardVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+        boardVO.setLastIndex(paginationInfo.getLastRecordIndex());
+        boardVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+
+        Map<String, Object> map = egovArticleService.selectArticleList(boardVO);
+        int totCnt = Integer.parseInt((String) map.get("resultCnt"));
+
+        // 공지사항 추출
+        List<BoardVO> noticeList = egovArticleService.selectNoticeArticleList(boardVO);
+        paginationInfo.setTotalRecordCount(totCnt);
+
+        // 기본 BBS template 지정
+        if (master.getTmplatCours() == null || master.getTmplatCours().equals("")) {
+            master.setTmplatCours("/css/egovframework/com/cop/tpl/egovBaseTemplate.css");
+        }
+
+        model.addAttribute("sessionUniqId", sessionUniqId);
+        model.addAttribute("resultList", map.get("resultList"));
+        model.addAttribute("resultCnt", map.get("resultCnt"));
+        model.addAttribute("articleVO", boardVO);
+        model.addAttribute("boardMasterVO", master);
+        model.addAttribute("paginationInfo", paginationInfo);
+        model.addAttribute("noticeList", noticeList);
+
+        return map;
     }
+
     
     
     
@@ -232,32 +224,40 @@ public class EgovArticleController {
     //@RequestMapping("/cop/bbs/selectArticleDetail.do")
     @GetMapping("bulletinInfo")
     public Map<String, Object> selectArticleDetail(@ModelAttribute("searchVO") BoardVO boardVO) throws Exception {
-    	System.out.println("찾기:"+boardVO);
+        
         Map<String, Object> resultMap = new HashMap<>();
 
-//        // 현재 로그인된 사용자 정보 가져오기
-//        LoginVO user = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
-//        String sessionUniqId = (user == null || user.getUniqId() == null) ? "" : user.getUniqId();
+        // 현재 로그인된 사용자 정보 가져오기 (EgovFramework 방식)
+        Object principal = EgovUserDetailsHelper.getAuthenticatedUser();
+        String sessionUniqId = "";
+
+        if (principal instanceof LoginVO) {
+            sessionUniqId = ((LoginVO) principal).getUniqId();
+        } else if (principal instanceof CustomerUser) {
+            sessionUniqId = ((CustomerUser) principal).getUserDTO().getMberId();
+        } else {
+            System.out.println("알 수 없는 사용자 타입: " + (principal != null ? principal.getClass().getName() : "NULL"));
+        }
 
         // 게시글 상세 정보 조회
-//        boardVO.setLastUpdusrId(sessionUniqId);
+        boardVO.setLastUpdusrId(sessionUniqId);
         BoardVO vo = egovArticleService.selectArticleDetail(boardVO);
 
         // 결과 데이터 맵에 저장
         resultMap.put("result", vo);
-//        resultMap.put("sessionUniqId", sessionUniqId);
-//        
+        resultMap.put("sessionUniqId", sessionUniqId);
 
         // 게시판 마스터 정보 조회
         BoardMasterVO master = new BoardMasterVO();
         master.setBbsId(boardVO.getBbsId());
-//        master.setUniqId(sessionUniqId);
+        master.setUniqId(sessionUniqId); // 추가
 
         BoardMasterVO masterVo = egovBBSMasterService.selectBBSMasterInf(master);
         resultMap.put("boardMasterVO", masterVo);
 
         return resultMap;
     }
+
 
     /**
      * 게시물 등록을 위한 등록페이지로 이동한다.

@@ -36,5 +36,6 @@ public class VacationDTO extends CommonPaging {
 	private String signWaitDays;
 	private String signSup;
 	private String signSupDays;
-	
+
+	private String signNm;
 }
