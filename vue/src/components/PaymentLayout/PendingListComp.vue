@@ -57,12 +57,13 @@
         </div>
 
         <!-- Toast UI Grid 영역 -->
-
-          <div class="col-12">
-            <div id="tableGrid" class="toastui"></div>
-            <div id="pagination" class="tui-pagination"></div>
+        <div class="card">
+          <div class="card-body">
+            <div class="col-12">
+              <div id="tableGrid" class="toastui"></div>
+            </div>
           </div>
-
+        </div>
       </div>
     </div>
   </div>
@@ -225,7 +226,7 @@ const TueGrid = () => {
     rowHeaders: ["checkbox"],
     pageOptions: {
       useClient: false, // 서버 사이드 페이지네이션 사용
-      perPage: 5,
+      perPage: 15,
     },
     data: dataSource,
   });
@@ -279,7 +280,7 @@ watch([docKind, deptNm, formType, startDate, endDate], async ([newDodKind, newDe
       formCd : newFormType,
       startDate : newStartDate,
       endDate : newEndDate,
-      perPage: 5,
+      perPage: 15,
       page: page.value,
       status : props.status,
       mberId : loginUser
@@ -304,6 +305,6 @@ defineExpose({btnSelectChange})
 }
 .toastui {
   width: 100%;
-  height: 500px;
+  height: 95%;
 }
 </style>
