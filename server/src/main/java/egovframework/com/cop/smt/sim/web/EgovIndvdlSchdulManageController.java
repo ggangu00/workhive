@@ -354,12 +354,14 @@ public class EgovIndvdlSchdulManageController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomerUser user = (CustomerUser) auth.getPrincipal();
         String userId = user.getUserDTO().getMberId();
+        String deptCd = user.getUserDTO().getDeptCd();
 		System.out.println("adsfdasf=>" + user);
 		 if (user.getUserDTO() != null) {
 		        searchVO.setMberId(userId);
+		        searchVO.setDeptCd(deptCd);
 		        
 		        commandMap.put("mberId", userId);
-		        
+		        commandMap.put("deptCd", deptCd);
 		    }
 		
 		//일정구분 검색 유지

@@ -152,10 +152,10 @@
 <!-- 모달 끝 -->
 
     <!--양식 상세보기 모달[s]-->
-    <Modal :isShowModal="isShowModal" :modalTitle="'거래처 선택'" @click.self="modalClose">
+    <Modal :isShowModal="isShowModal" :modalTitle="'양식 선택'" @click.self="modalClose">
     <template v-slot:body>
       <card>
-        <p class="card-title mb-2">거래처 목록</p>
+        <p class="card-title mb-2">양식 목록</p>
         <div class="table-responsive">
           <table class="table table-hover project">
             <thead class="table-light">
@@ -177,7 +177,7 @@
               </template>
               <tr v-else>
                 <td colspan="10">
-                  <div class="list-nodata">등록된 거래처가 없습니다.</div>
+                  <div class="list-nodata">등록된 양식이 없습니다.</div>
                 </td>
               </tr>
             </tbody>
@@ -204,6 +204,9 @@ import Swal from 'sweetalert2';
 import Modal from '../../components/Modal.vue';
 import axios from '../../assets/js/customAxios.js';
 import { useUserInfoStore } from '../../store/userStore.js';
+import { useRouter } from 'vue-router'; 
+
+const router = useRouter();
 
 const userInfoStore = useUserInfoStore();
 let loginUser = userInfoStore.user ? userInfoStore.user.mberId : ""; // 로그인한 사용자 정보 가져오기
@@ -243,7 +246,7 @@ onMounted(() => {
   }
   // 앞전 페이지에서 정보 받아옴
   docCd.value = route.query.docCd || "";
-  docKind.value = route.query.docKind || "";
+  docKind.value = route.query.docKind || "일반결재";
   formType.value = route.query.formType || "";
   deptNm.value = userInfoStore.user.deptNm;
   docTitle.value = route.query.docTitle || "";
@@ -255,7 +258,7 @@ onMounted(() => {
   if(docCd.value){
     approvalList();
     receiverList();
-  }
+  } 
   //param값 제거
   window.history.replaceState({}, '', route.path);
 });
@@ -269,7 +272,8 @@ const initEditor = () => {
     initialEditType: 'wysiwyg',
     previewStyle: 'vertical',
     usageStatistics: false,
-    plugins: [tableMergedCell]
+    plugins: [tableMergedCell],
+    initialValue :'양식을 선택후 작성해주세요'
   });
 };
 
@@ -398,8 +402,8 @@ const conditionReset = () => { // 정보 리셋
   formType.value = "";
   docTitle.value = "";
   docCnEditor.value = "";
-  approvers.value = "";
-  receivers.value = "";
+  approvers.value = [];
+  receivers.value = [];
 }
 
 //문서제목 검사
@@ -420,7 +424,7 @@ const inputCheckForm = () => {
     Swal.fire({
       icon: 'warning',
       title: '필수 항목 누락',
-      text: '양식 코드가 비어있습니다.'
+      text: '양식 선택 후 작성해주세요'
     });
     return false;
   }
@@ -464,6 +468,7 @@ const approvalInfo = async() => {
     });
     return;
   }
+
   //데이터담기
   const formData = new FormData();
   formData.append(
@@ -510,6 +515,7 @@ const approvalInfo = async() => {
       });
       return false;
     }
+    router.push('/approval/pendingList'); 
   }
 defineExpose({  // modalOpen expose
   modalOpen,
