@@ -4,13 +4,15 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.persistence.PostUpdate;
 
+import org.egovframe.rte.fdl.idgnr.EgovIdGnrService;
+import org.egovframe.rte.fdl.property.EgovPropertyService;
+import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,12 +36,8 @@ import egovframework.com.cop.bbs.service.BlogVO;
 import egovframework.com.cop.bbs.service.BoardMaster;
 import egovframework.com.cop.bbs.service.BoardMasterVO;
 import egovframework.com.cop.bbs.service.EgovBBSMasterService;
+import egovframework.com.securing.service.CustomerUser;
 import egovframework.com.utl.fcc.service.EgovStringUtil;
-import oracle.jdbc.proxy.annotation.Post;
-
-import org.egovframe.rte.fdl.idgnr.EgovIdGnrService;
-import org.egovframe.rte.fdl.property.EgovPropertyService;
-import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 
 
 /**
@@ -143,8 +141,8 @@ public class EgovBBSMasterController {
     public void insertBBSMaster(@ModelAttribute("searchVO") BoardMasterVO boardMasterVO, @ModelAttribute("boardMaster") BoardMaster boardMaster,
 	    BindingResult bindingResult, ModelMap model) throws Exception {
     	
-		LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+		//LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+		//Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
 		System.out.println("체크1");
 		beanValidator.validate(boardMaster, bindingResult);
 		if (bindingResult.hasErrors()) {
@@ -161,6 +159,7 @@ public class EgovBBSMasterController {
 		System.out.println(boardMaster.getBbsNm());
 		egovBBSMasterService.insertBBSMasterInf(boardMaster);
 		System.out.println("체크2");
+		
 //		if (isAuthenticated) {
 //		    boardMaster.setFrstRegisterId(user == null ? "" : EgovStringUtil.isNullToString(user.getUniqId()));
 //		    if((boardMasterVO == null ? "" : EgovStringUtil.isNullToString(boardMasterVO.getBlogAt())).equals("Y")){
@@ -451,8 +450,12 @@ public class EgovBBSMasterController {
     public String updateBBSMaster(@ModelAttribute("searchVO") BoardMasterVO boardMasterVO, @ModelAttribute("boardMaster") BoardMaster boardMaster,
 	    BindingResult bindingResult, ModelMap model) throws Exception {
 
-		LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+    	 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+         CustomerUser user = (CustomerUser) auth.getPrincipal();
+         String userId = user.getUserDTO().getMberId();    	
+    	
+		//LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+		//Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
 	
 		beanValidator.validate(boardMaster, bindingResult);
 		if (bindingResult.hasErrors()) {
@@ -468,10 +471,10 @@ public class EgovBBSMasterController {
 		    return "egovframework/com/cop/bbs/EgovBBSMasterUpdt";
 		}
 	
-		if (isAuthenticated) {
-		    boardMaster.setLastUpdusrId(user == null ? "" : EgovStringUtil.isNullToString(user.getUniqId()));
+		boardMaster.setLastUpdusrId(userId);
+		
 		    egovBBSMasterService.updateBBSMasterInf(boardMaster);
-		}
+		
 	
 		return "forward:/cop/bbs/selectBBSMasterInfs.do";
     }

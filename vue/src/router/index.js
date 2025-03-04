@@ -323,17 +323,17 @@ const routes = [
       },
 
    {//게시판 목록
-      path:'/setting/board/boardList',
+      path:'/board/boardList',
       name: 'BoardList',
       component : BoardList,
    },
    {//게시판 등록
-      path:'/setting/board/boardAdd',
+      path:'/board/boardAdd',
       name: 'BoardAdd',
       component : BoardAdd,
    },
    {//게시판 수정
-      path:'/setting/board/boardModify',
+      path:'/board/boardModify',
       name: 'BoardModify',
       component : BoardModify,
    },

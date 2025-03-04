@@ -79,37 +79,13 @@
                
             </sidenav-collapse>
          </li>
-         <!--게시판 목록 작업하는 곳[E]-->
-         
+         <!--게시판 목록 작업하는 곳[E]-->         
 
       </ul>
 </div>
 
-<template>
-  <li class="nav-item">
-    <sidenav-collapse
-      url="#"
-      :aria-controls="''"
-      v-bind:collapse="false"
-      collapseRef="/bulletin"
-      navText="게시글 관리"
-    >
-      <template v-slot:icon>
-        <i class="fa-solid fa-pen-to-square"></i>
-      </template>
 
-      <!-- 서브 메뉴 (Depth 2) -->
-      <template v-slot:list>
-        <div class="sub-item">
-          <!-- v-for로 게시글 목록을 반복하여 li 생성 -->
-          <li v-for="(board, index) in boardList" :key="index" class="sub-li" @click="movePage('board.bbsPath')">
-            {{ board.bbsNm }} <!-- 게시글 제목을 bbsNm으로 출력 -->
-          </li>
-        </div>
-      </template>
-    </sidenav-collapse>
-  </li>
-</template>
+
 
 </template>
 
@@ -134,7 +110,7 @@ const BoardGetList = async () => {
   }
 };
 
-  
+
 
 
 
@@ -250,6 +226,7 @@ const BoardGetList = async () => {
    onMounted(() => {
       menuGetList(); // 메뉴 목록 가져오기
       BoardGetList();
+      
    });
 
 </script>
