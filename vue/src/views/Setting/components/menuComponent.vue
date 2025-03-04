@@ -13,14 +13,14 @@
                <span class="ms-2 font-14">({{ subMenusSelected(menu) }}/{{ menu.subMenus.length }})</span>
             </div>
          </div>
- 
+
          <div v-if="menu.subMenus.length > 0">
             <i class="fa-solid fa-angle-down" :class="{ rotated: menu.open }"></i>
          </div>
       </div>
 
       <div v-if="menu.open && menu.subMenus.length > 0" class="submenu px-4" >
-         <menuTree v-for="(subItem, idx) in menu.subMenus" :key="idx" :item="subItem" />
+         <MenuComponent v-for="(subItem, idx) in menu.subMenus" :key="idx" :item="subItem" />
          <!-- <div v-for="(sub, i) in menu.subMenus" :key="i" class="px-4 py-2">
             <div class="form-check form-check-inline">
                <input
@@ -36,7 +36,7 @@
 </template>
 
 <script setup>
-   import menuTree from './MenuComponent.vue'
+   import MenuComponent from './MenuComponent.vue'
    // 부모에서 전달한 prop 이름을 item으로 변경합니다.
    const props = defineProps({
       item: { type: Object, required: true },

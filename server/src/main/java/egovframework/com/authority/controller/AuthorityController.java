@@ -37,7 +37,7 @@ public class AuthorityController {
 	}
 	
 	@GetMapping("/{authorityCd}")
-	public Map<String, Object> boardInfo(@PathVariable String authorityCd) {
+	public Map<String, Object> authorityInfo(@PathVariable String authorityCd) {
 		log.info(authorityCd.toString());
 		
 		Map<String, Object> map = new HashMap<>();

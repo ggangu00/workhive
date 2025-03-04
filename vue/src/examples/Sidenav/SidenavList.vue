@@ -70,7 +70,7 @@
                <!-- 서브 메뉴 (Depth 2) -->
                <template v-slot:list>
                   <div class="sub-item">
-                     <li v-for="(board, index) in boardList" :key="index" class="sub-li" @click="movePage('board.bbsPath')">
+                     <li v-for="(board, idx) in boardList" :key="idx" class="sub-li" @click="bulletinListMove(board.bbsTyCode)">
                         {{ board.bbsNm }} <!-- 게시글 제목을 bbsNm으로 출력 -->
                      </li>
                      <!-- <li class="sub-li" @click="movePage('/bulletin/bulletinList/BBS001')">공지사항</li>
@@ -83,32 +83,11 @@
             </sidenav-collapse>
          </li>
          <!--게시판 목록 작업하는 곳[E]-->
+
+
+         
       </ul>
    </div>
-
-   <template>
-     <li class="nav-item">
-        <sidenav-collapse
-           url="#"
-           :aria-controls="''"
-           v-bind:collapse="false"
-           collapseRef="/bulletin"
-           navText="게시글 관리"
-        >
-           <template v-slot:icon>
-           <i class="fa-solid fa-pen-to-square"></i>
-           </template>
-
-           <!-- 서브 메뉴 (Depth 2) -->
-           <template v-slot:list>
-           <div class="sub-item">
-              <!-- v-for로 게시글 목록을 반복하여 li 생성 -->
-
-           </div>
-           </template>
-        </sidenav-collapse>
-     </li>
-  </template>
 
 </template>
 
@@ -125,12 +104,22 @@
 //================================= 조회 ===========================
    const BoardGetList = async () => {
       try {
-         const { data } = await axios.get('/api/board/boardList');
-         boardList.value = data; // 받은 데이터를 boardList에 저장
-         console.log("받은 데이터:", data);
+         const response = await axios.get('/api/board/boardList');
+
+         boardList.value = response.data.resultList; // 받은 데이터를 boardList에 저장
+         console.log("게시판 url 어쩔껀데 없노 url에 대한 게시판 코드도 있어야겠구만 없노 ㅋ => ", response.data.resultList);
       } catch (error) {
-         console.error('게시글 목록 불러오는 중 오류 발생:', error);
+         Swal.fire({
+            icon: "error",
+            title: "API 조회 오류",
+            text: "Error : " + error.response.data.error
+         });
       }
+   };
+
+   const bulletinListMove = (bbsTyCode) => {
+      const targetUrl = `/bulletin/bulletinInfo/${bbsTyCode}`;
+      window.location.href = targetUrl; // 페이지 이동
    };
 
 // ============================================= Axios Event =============================================
