@@ -309,15 +309,22 @@ onMounted(() => {
     ]
   })
 
+  // 행 클릭 이벤트 추가
   gridInstance.value.on("click", handleRowClick);
 })
 
 // 행클릭
 let isDetail = ref(false);
-const handleRowClick = (rowKey) => {
+const handleRowClick = (e) => {
+  if (!gridInstance.value || e.rowKey == null || e.rowKey == undefined ) return;
+  if (e.nativeEvent.target.type == "checkbox") {
+    console.log("체크박스 클릭 감지, 행 클릭 이벤트 무시");
+    return;
+  }
+
   isDetail.value = true;
   isUpdate.value = false;
-  selectedRowData = gridInstance.value.getRow(rowKey);
+  selectedRowData = gridInstance.value.getRow(e.rowKey);
   isShowJobModal.value = true;
 }
 

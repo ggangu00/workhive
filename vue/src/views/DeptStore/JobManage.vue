@@ -194,6 +194,7 @@ watch(() => props.selectedRowData, async (newVal) => {
     } catch (err) {
       Swal.fire({ icon: "error", title: "업무 상세 정보 조회에 실패하였습니다.", text: "Error : " + err });
     }
+    console.log("업무 상세 정보 : ", result.data);
 
     formValues.value.deptCd = result.data.deptCd;
     formValues.value.deptNm = result.data.deptNm;
