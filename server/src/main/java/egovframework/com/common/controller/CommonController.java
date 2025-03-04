@@ -8,6 +8,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +23,7 @@ import egovframework.com.common.service.CommonDTO;
 import egovframework.com.common.service.CommonService;
 import egovframework.com.common.util.GridUtil;
 import egovframework.com.member.service.MemberService;
+import egovframework.com.securing.service.CustomerUser;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -76,8 +79,12 @@ public class CommonController {
 	}
 	
 	// 홈 대시보드 건수 조회 (진행중인 프로젝트, 금일 예정 일정, 미완료 일지)
-	@GetMapping("/homeInfo/{mberId}")
-	public Map<String, Object> homeInfo(@PathVariable("mberId") String mberId) {
+	@GetMapping("/homeInfo")
+	public Map<String, Object> homeInfo() {
+		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUser user = (CustomerUser) auth.getPrincipal();
+        String mberId = user.getUserDTO().getMberId();
 		
 		Map<String, Object> map = new HashMap<>();
 		

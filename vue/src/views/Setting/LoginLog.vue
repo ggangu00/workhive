@@ -1,6 +1,9 @@
 <template>
    <div class="content">
       <div class="container-fluid">
+         <card>
+            <h4 class="card-title float-left">접속기록 조회</h4>
+         </card>
          <form @submit.prevent="loginLogGetList">
             <card>
                <ul class="nav nav-pills">
@@ -10,7 +13,7 @@
                   </li>
                   <li class="nav-item">
                      <a class="nav-link" :class="searchData.searchState == 'A01' ? 'active' : ''"
-                        @click="searchData.searchState ='A01'">성공</a>
+                        @click="searchData.searchState = 'A01'">성공</a>
                   </li>
                   <li class="nav-item">
                      <a class="nav-link" :class="searchData.searchState == 'A02' ? 'active' : ''"
@@ -83,7 +86,7 @@ watch(isCmt, () => {
 
 //로그인 로그 전체조회
 let gridInstance = ref();
-const loginLogGetList = () => { 
+const loginLogGetList = () => {
    gridInstance.value.readData(1, searchData.value);
 }
 
@@ -131,7 +134,7 @@ onMounted(() => {
          { header: '사용자', name: 'logId', renderer: logMemInfo },
          { header: 'IP 주소', name: 'logIp', align: 'center' },
          { header: '성공여부', name: 'state', align: 'center', formatter: ({ row }) => `${row.state == 'A01' ? '로그인 성공' : '로그인 실패'}` },
-         { header: "일정", name: "plan", align: "center", renderer: BtnRenderer },
+         { header: "잠금상태", name: "plan", align: "center", renderer: BtnRenderer },
          { header: '날짜', name: 'createDt', align: 'center', sortable: true, formatter: ({ row }) => dateTimeFormat(row.createDt, 'yyyy-MM-dd hh:mm:ss') }
       ],
       pageOptions: {
@@ -165,7 +168,9 @@ class logMemInfo {
          ${rowData.logId}
       </div>
       <div>
-      [${rowData.deptNm}] ${rowData.mberNm} ${rowData.gradeNm != null ? rowData.gradeNm : ''}
+      ${rowData.deptNm != null ? '['+rowData.deptNm+']' : ''} 
+      ${rowData.mberNm != null ? rowData.mberNm : ''} 
+      ${rowData.gradeNm != null ? rowData.gradeNm : ''}
       </div>
     `;
 
@@ -188,7 +193,7 @@ class BtnRenderer {
       if (rowData.lockAt == 'A01') { //미완료 상태일 때 완료처리하기
          el.innerHTML = ` <button class="btn btn-danger btn-sm">계정잠금</button> `;
       } else { //완료 상태일 때 완료취소 처리하기
-         el.innerHTML = ` <button class="btn btn-primary btn-sm">정상</button> `;
+         el.innerHTML = ` 정상 `;
       }
 
       el.addEventListener("click", () => {

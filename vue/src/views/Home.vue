@@ -6,8 +6,8 @@
           <div class="profile-info">
             <div class="profile-icon"><i class="bi bi-person-fill"></i></div>
             <div>
-              <small>{{ userInfoStore.user.deptNm }}</small>
-              <h4>{{ userInfoStore.user.mberNm }} {{ userInfoStore.user.gradeNm }}</h4>
+              <small>{{ userData.deptNm || '' }}</small>
+              <h4>{{ userData.mberNm || '' }} {{ userData.gradeNm || '' }}</h4>
             </div>
           </div>
           <div class="status-boxes">
@@ -42,12 +42,13 @@
           <div class="card">
             <div class="home-container">
               <div class="home-container-header">참여예정 회의</div>
-                <div class="meeting-item" :key="i" v-for="(meet, i) in meetList">
-                  <div class="meeting-category">{{ meet.typeCd }}</div>
-                  <div class="meeting-title">{{ meet.mtgNm }} <span class="badge badge-warning">D{{ dateTermCalc(dateFormat(meet.mtgDe), dateFormat()) }}</span></div>
-                  <div class="meeting-date">{{ dateFormat(meet.mtgDe) }}({{ dateGetDay(meet.mtgDe) }}) {{
-                    meet.mtgBeginTm }} ~ {{ meet.mtgEndTm }}</div>
-                </div>
+              <div class="meeting-item" :key="i" v-for="(meet, i) in meetList">
+                <div class="meeting-category">{{ meet.typeCd }}</div>
+                <div class="meeting-title">{{ meet.mtgNm }} <span class="badge badge-warning">D{{
+                  dateTermCalc(dateFormat(meet.mtgDe), dateFormat()) }}</span></div>
+                <div class="meeting-date">{{ dateFormat(meet.mtgDe) }}({{ dateGetDay(meet.mtgDe) }}) {{
+                  meet.mtgBeginTm }} ~ {{ meet.mtgEndTm }}</div>
+              </div>
               <div class="meeting-none">
                 <div class="meeting-item" :key="i" v-for="i in 3">
                   <div class="meeting-category">-</div>
@@ -178,56 +179,58 @@
 </template>
 
 <script setup>
-   import axios from "../assets/js/customAxios.js";
-   import Swal from 'sweetalert2';
-   import { onBeforeMount, ref } from 'vue';
-   import { numberFormat, dateFormat } from '../assets/js/common.js'
-   import { dateGetDay, dateTermCalc } from '../assets/js/project.js'
-   import { useUserInfoStore } from '../store/userStore';
+import axios from "../assets/js/customAxios.js";
+import Swal from 'sweetalert2';
+import { onBeforeMount, ref, computed } from 'vue';
+import { numberFormat, dateFormat } from '../assets/js/common.js'
+import { dateGetDay, dateTermCalc } from '../assets/js/project.js'
+import { useUserInfoStore } from '../store/userStore';
 
-   const userInfoStore = useUserInfoStore();
-   let loginUser = userInfoStore.user ? userInfoStore.user.mberId : ""; // 로그인한 사용자 정보 사용
 
-   //---------------데이터--------------
+const userInfoStore = useUserInfoStore();
 
-      onBeforeMount(() => {
-         homeGetInfo();
-         meetGetList();
-      });
+const userData = computed(() => userInfoStore?.user  || {});
 
-   //---------------axios--------------
-   const homeInfo = ref([]);
-   const homeGetInfo = async () => { // 대시보드 건수 조회
-      try {
-         const result = await axios.get(`/api/comm/homeInfo/${loginUser}`);
-         homeInfo.value = result.data.info;
-      } catch (err) {
-         homeInfo.value = [];
+//---------------데이터--------------
 
-         Swal.fire({
-            icon: "error",
-            title: "API 조회 오류",
-            text: "Error : " + err
-         });
-      }
-   }
+onBeforeMount(() => {
+  homeGetInfo();
+  meetGetList();
+});
 
-   const meetList = ref([]);
-   const meetCount = ref(0);
-   const meetGetList = async () => { //회의 최신 3건 조회
-      try {
-         const result = await axios.get('/api/meet/list?rowCtn=3&state=ing');
+//---------------axios--------------
+const homeInfo = ref([]);
+const homeGetInfo = async () => { // 대시보드 건수 조회
+  try {
+    const result = await axios.get(`/api/comm/homeInfo`);
+    homeInfo.value = result.data.info;
+  } catch (err) {
+    homeInfo.value = [];
 
-         meetList.value = result.data;
-         meetCount.value = result.data.length;
-      } catch (err) {
-         meetList.value = [];
+    Swal.fire({
+      icon: "error",
+      title: "API 조회 오류",
+      text: "Error : " + err
+    });
+  }
+}
 
-         Swal.fire({
-            icon: "error",
-            title: "API 조회 오류",
-            text: "Error : " + err
-         });
-      }
-   }
+const meetList = ref([]);
+const meetCount = ref(0);
+const meetGetList = async () => { //회의 최신 3건 조회
+  try {
+    const result = await axios.get('/api/meet/list?rowCtn=3&state=ing');
+
+    meetList.value = result.data;
+    meetCount.value = result.data.length;
+  } catch (err) {
+    meetList.value = [];
+
+    Swal.fire({
+      icon: "error",
+      title: "API 조회 오류",
+      text: "Error : " + err
+    });
+  }
+}
 </script>
