@@ -32,7 +32,7 @@
                   <tbody>
                     <tr>
                       <th>근무 일자</th>
-                      <td><input type="date" id="wordDate" class="form-control" v-model="crctData.commuteDt" :readonly="isUpdate"></td>
+                      <td><input type="date" id="wordDate" class="form-control" v-model="crctData.commuteDt" :readonly="isUpdate || isDetail"></td>
                       <th>출근 시간</th>
                       <td><input type="datetime-local" class="form-control" v-model="crctData.goTime" readonly></td>
                       <th>퇴근 시간</th>
@@ -40,13 +40,19 @@
                     </tr>
                     <tr>
                       <th>정정 출근 시간</th>
-                      <td colspan="2"><input type="datetime-local" class="form-control" style="width: 47.5%;" v-model="crctData.crctGoTime"></td>
+                      <td colspan="2">
+                        <input type="datetime-local" class="form-control" style="width: 47.5%;" 
+                               v-model="crctData.crctGoTime" :readonly="isDetail">
+                      </td>
                       <th>정정 퇴근 시간</th>
-                      <td colspan="2"><input type="datetime-local" class="form-control" style="width: 47.5%;" v-model="crctData.crctLeaveTime"></td>
+                      <td colspan="2">
+                        <input type="datetime-local" class="form-control" style="width: 47.5%;" 
+                               v-model="crctData.crctLeaveTime" :readonly="isDetail">
+                      </td>
                     </tr>
                     <tr>
                       <th>정정 사유</th>
-                      <td colspan="5"><textarea class="form-control" v-model="crctData.crctReason"></textarea></td>
+                      <td colspan="5"><textarea class="form-control" v-model="crctData.crctReason" :readonly="isDetail"></textarea></td>
                     </tr>
                     <tr>
                       <th>파일 첨부</th>
@@ -82,7 +88,7 @@
               <div class="row justify-content-center">
                 <div class="col-auto">
                   <button class="btn btn-secondary btn-fill mx-2" @click="btnCrctCancle">취소</button>
-                  <button class="btn btn-success btn-fill" @click="btnCrctManage">저장</button>
+                  <button class="btn btn-success btn-fill" @click="btnCrctManage" v-if="!isDetail">저장</button>
                 </div>
               </div>
             </div>
@@ -270,7 +276,7 @@ const btnCrctCancle = () => { // 뒤로가기
 // 결재자 모달
 let isShowModal = ref(false);
 const modalOpen = () => {
-  isShowModal.value = true;
+  if(!isDetail.value) isShowModal.value = true;
 }
 const modalClose = () => {
   isShowModal.value = false;

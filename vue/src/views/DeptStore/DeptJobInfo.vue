@@ -296,7 +296,7 @@ onMounted(() => {
     rowHeaders: ['checkbox', 'rowNum'],
     pageOptions: {
       useClient: false,
-      perPage: 5,
+      perPage: 13,
     },
     columns: [ // 체크박스 / 번호 / 제목 / 담당자 / 작성일 / 버튼
       { header: '제목', name: 'deptJobNm', sortable: true},
@@ -463,7 +463,7 @@ onBeforeUnmount(() => {
   background-color: gray;
   border-radius: 5px;
   color: white;
-  height: 600px;
+  height: 660px;
   margin: 5px 0;
   /* padding: 5px; */
 }

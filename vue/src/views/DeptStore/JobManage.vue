@@ -104,7 +104,7 @@
     </template>
     <template v-slot:footer>
       <button class="btn btn-secondary btn-fill mx-2" @click="modalCloseJob">닫기</button>
-      <button class="btn btn-success btn-fill mx-2" @click="modalConfirmJob">저장</button>
+      <button class="btn btn-success btn-fill mx-2" @click="modalConfirmJob" v-if="!props.isDetail">저장</button>
     </template>
   </Modal>
 </template>
