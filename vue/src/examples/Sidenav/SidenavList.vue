@@ -85,7 +85,7 @@
          <!--게시판 목록 작업하는 곳[E]-->
 
 
-         
+
       </ul>
    </div>
 
@@ -126,7 +126,7 @@
    const menus = ref([]);
    const menuGetList = async () => {
       try {
-         const response = await axios.get('/api/menu');
+         const response = await axios.get('/api/menu/authList');
 
          menuBuildTree(response.data);
       } catch (err) {

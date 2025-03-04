@@ -37,11 +37,13 @@
 <script setup>
    import { onBeforeMount, onBeforeUnmount, ref } from "vue";
    import { useStore } from "vuex";
+   import { useRouter } from "vue-router";
    import axios from 'axios';
    import Swal from 'sweetalert2';
 
 // ================================================== side, header 숨기기 ==================================================
-   const store = useStore();
+   const store = useStore(); // pinia 선언
+   const router = useRouter();   // router 선언
 
    const toggleEveryDisplay = () => store.commit("toggleEveryDisplay");
    const toggleHideConfig = () => store.commit("toggleHideConfig");
@@ -59,8 +61,18 @@
 // ============================================= Btn Event =============================================
    // 엔터 키 이벤트 핸들러 (로그인 실행)
    const keyEventHandler = () => {
+      if (!mberId.value.trim()) {
+         Swal.fire({
+            icon: 'warning',
+            title: '아이디를 입력하세요',
+         });
+
+         const userIdInput = document.querySelector('.input_id');
+         if (userIdInput) userIdInput.focus();
+
+         return false; // 유효성 실패
+      }
       findPasswordGet();
-      console.log("비밀번호 찾기 버튼 ~~") // 로그인 실행
    }
 
    const mberId = ref(""); // 아이디 입력값
@@ -70,6 +82,7 @@
       mberId.value = "";
    };
 
+   // 다음으로 넘어가기 버튼
    const btnFindPw = () => {
       if (!mberId.value.trim()) {
          Swal.fire({
@@ -89,7 +102,17 @@
    const findPasswordGet = async () => {
       try {
          const result = await axios.post('/api/passwordProc', { mberId : mberId.value });
-         console.log(result.data)
+
+         if(result.data.code === 200) {
+            Swal.fire({
+               icon: "success",
+               title: "등록된 메일함을 확인하세요.",
+               text:  result.data.message
+            }).then(() => {
+               router.push('/login');
+            });
+         }
+
       } catch (err) {
          Swal.fire({
             icon: "error",

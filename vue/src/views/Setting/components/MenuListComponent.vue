@@ -20,7 +20,7 @@
       </div>
 
       <div v-if="menu.open && menu.subMenus.length > 0" class="submenu px-4" >
-         <MenuComponent v-for="(subItem, idx) in menu.subMenus" :key="idx" :item="subItem" />
+         <MenuListComponent v-for="(subItem, idx) in menu.subMenus" :key="idx" :item="subItem" />
          <!-- <div v-for="(sub, i) in menu.subMenus" :key="i" class="px-4 py-2">
             <div class="form-check form-check-inline">
                <input
@@ -36,7 +36,7 @@
 </template>
 
 <script setup>
-   import MenuComponent from './MenuComponent.vue'
+   import MenuListComponent from './MenuListComponent.vue'
    // 부모에서 전달한 prop 이름을 item으로 변경합니다.
    const props = defineProps({
       item: { type: Object, required: true },

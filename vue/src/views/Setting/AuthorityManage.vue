@@ -56,7 +56,7 @@
                      </div>
 
                      <div>
-                        <MenuComponent v-for="(item, idx) in menuData" :key="idx" :item="item" ></MenuComponent>
+                        <MenuListListComponent v-for="(item, idx) in menuData" :key="idx" :item="item" ></MenuListListComponent>
                      </div>
                   </div>
 
@@ -105,7 +105,7 @@
    import Swal from 'sweetalert2';
    import Card from '../../components/Cards/Card.vue'
    import Modal from '../../components/Modal.vue';
-   import MenuComponent from './components/MenuComponent.vue';
+   import MenuListListComponent from './components/MenuListComponent.vue';
    //import menuListView from './components/MenuListViewComponent.vue'
    import axios from "../../assets/js/customAxios.js";  // 공통함수 위치 맞게 변경
 

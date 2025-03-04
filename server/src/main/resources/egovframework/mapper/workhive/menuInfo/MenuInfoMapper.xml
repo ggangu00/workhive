@@ -33,6 +33,32 @@
 		   seq ASC
 	</select>
 	
+	<select id="memberAuthorityMenuSelect" resultType="egovframework.com.menu.service.MenuInfoDTO">
+		SELECT 
+		    m.menu_cd,
+		    m.menu_nm,
+		    m.depth,
+		    m.parent_menu_cd,
+		    m.url,
+		    m.router_nm,
+		    m.icon_class,
+		    m.seq,
+		    m.use_yn,
+		    m.del_yn
+		FROM
+		    menuinfo m
+		JOIN
+		    VW_MEMBER_MENU vmm ON m.menu_cd = vmm.menu_cd
+		WHERE
+		    vmm.mber_id = #{mberId}
+		AND
+		    UPPER(m.use_yn) = 'A01'
+		AND
+		    UPPER(m.del_yn) = 'N'
+		ORDER BY
+		    seq ASC
+	</select>
+	
 	<!-- 권한에 대한 메뉴 목록 조회 -->
 	<select id="authorityMenuSelectAll" parameterType="String" resultType="egovframework.com.menu.service.MenuInfoDTO">
 		SELECT 

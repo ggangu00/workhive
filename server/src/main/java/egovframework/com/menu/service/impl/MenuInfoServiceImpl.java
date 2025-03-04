@@ -28,4 +28,11 @@ public class MenuInfoServiceImpl implements MenuInfoService {
 		
 		return menuMapper.authorityMenuSelectAll(authorityCd);
 	}
+
+	// 로그인한 사용자의 접근 권한에 따른 메뉴 목록
+	@Override
+	public List<MenuInfoDTO> memberAuthorityMenuSelect(String mberId) {
+
+		return menuMapper.memberAuthorityMenuSelect(mberId);
+	}
 }
