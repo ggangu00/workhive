@@ -1,6 +1,6 @@
 <template>
-   <div class="bottom-line">
-      <div class="menu-title">
+   <div :class="menu.parentMenuCd == null ? 'bottom-line' : ''">
+      <div class="menu-title"  @click="toggleMenu">
          <div>
             <div class="form-check form-check-inline">
                <input
@@ -14,12 +14,12 @@
             </div>
          </div>
  
-         <div v-if="menu.subMenus.length > 0" @click="toggleMenu">
+         <div v-if="menu.subMenus.length > 0">
             <i class="fa-solid fa-angle-down" :class="{ rotated: menu.open }"></i>
          </div>
       </div>
 
-      <div v-if="menu.open && menu.subMenus.length > 0" class="submenu px-4 py-2" >
+      <div v-if="menu.open && menu.subMenus.length > 0" class="submenu px-4" >
          <menuTree v-for="(subItem, idx) in menu.subMenus" :key="idx" :item="subItem" />
          <!-- <div v-for="(sub, i) in menu.subMenus" :key="i" class="px-4 py-2">
             <div class="form-check form-check-inline">
