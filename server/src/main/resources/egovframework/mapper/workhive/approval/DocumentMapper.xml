@@ -194,7 +194,14 @@
 		            FROM DOCUMENT
 		                WHERE 1=1
 		                AND del_yn = UPPER('N')
-		              	AND mber_id = #{mberId} 
+		              	AND (mber_id = #{mberId} or(#{status} = 'H04' AND EXISTS (
+						            SELECT 1 
+						            FROM approval_line al
+						            WHERE al.doc_cd = D.doc_cd
+						            AND al.mber_id = #{mberId}
+						        	)
+					        	)
+					        )
 		              	<include refid="searchCriteria"/>        
 		            <![CDATA[AND ROWNUM <= #{end}]]>
 		        ) 
