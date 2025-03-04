@@ -169,7 +169,7 @@ onBeforeUnmount(() => {
   destroyGrid(); // 중복 방지 및 메모리 해제
 });
 
-// 버튼 렌더러 클래스 (삭제 기능 제거)
+// 버튼 렌더러 클래스
 class BtnRenderer {
   constructor(props) {
     const el = document.createElement('div');
