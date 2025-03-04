@@ -25,6 +25,9 @@ public class ComDefaultVO implements Serializable {
 	/** 검색조건 */
     private String searchCondition = "";
     
+    /** 상태검색 */
+    private String searchState = "";
+    
     /** 검색Keyword */
     private String searchKeyword = "";
     
@@ -148,6 +151,14 @@ public class ComDefaultVO implements Serializable {
 
     public void setSearchCondition(String searchCondition) {
         this.searchCondition = searchCondition;
+    }
+    
+    public String getSearchState() {
+        return searchState;
+    }
+
+    public void setSearchState(String searchState) {
+        this.searchState = searchState;
     }
 
     public String getSearchKeyword() {

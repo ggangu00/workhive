@@ -10,16 +10,16 @@
         <card>
           <ul class="nav nav-pills">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page">전체(100)</a>
+              <a class="nav-link" :class="searchData.searchState == '' ? 'active' : ''" @click="searchData.searchState = ''">전체</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link">진행전(30)</a>
+              <a class="nav-link" :class="searchData.searchState == '1' ? 'active' : ''" @click="searchData.searchState = '1'">진행전</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link">진행중(20)</a>
+              <a class="nav-link" :class="searchData.searchState == '2' ? 'active' : ''" @click="searchData.searchState = '2'">진행중</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link">진행완료(50)</a>
+              <a class="nav-link" :class="searchData.searchState == '3' ? 'active' : ''" @click="searchData.searchState = '3'">진행완료</a>
             </li>
           </ul>
         </card>
@@ -180,17 +180,14 @@ import { dateTermCalc } from '../../assets/js/project'
 
 //========================= 공통함수 =========================
 
-const token = localStorage.getItem("token");
-
 const store = useStore();
 const isCmt = computed(() => store.state.isCmt);
 watch(isCmt, () => {
   projectGetList();
 })
 
+// 진행률 애니메이션 실행 함수 (requestAnimationFrame 사용)
 const progress = ref(0);
-
-// 애니메이션 실행 함수 (requestAnimationFrame 사용)
 const animateProgress = (endValue) => {
   let startTime = null;
   const duration = 2000; // 애니메이션 지속 시간 (1초)
@@ -212,9 +209,16 @@ const animateProgress = (endValue) => {
 
 //========================= Toast grid =========================
 
+//프로젝트 전체조회
+let grid = ref();
+const projectGetList = () => {
+  grid.value.readData(1, searchData.value);
+}
+
 //검색조건
 const searchData = ref({
-  searchCondition: "0",
+  searchState: '',
+  searchCondition: '0',
   searchKeyword: '',
   searchStartDt: '',
   searchEndDt: '',
@@ -223,15 +227,11 @@ const searchData = ref({
 });
 
 //검색조건이 변경되면 리스트가 새로 로드됨
-watch(() => searchData, () => {
+watch(searchData, () => {
   projectGetList();
 }, { deep: true });
 
-let grid = ref();
-const projectGetList = () => {
-  grid.value.readData(1, searchData);
-}
-
+const token = localStorage.getItem("token");
 const dataSource = {
   api: {
     readData: {

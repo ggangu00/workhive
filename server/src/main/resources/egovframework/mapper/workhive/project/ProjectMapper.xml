@@ -48,7 +48,19 @@
 	</select>
 	
 	<sql id="searchCriteria">
-	
+		
+		<!-- 프로젝트 진행상태 -->
+		<if test="searchState == 1">
+			<![CDATA[ AND start_dt > sysdate ]]>
+	    </if>
+	    <if test="searchState == 2">
+	         <![CDATA[ AND start_dt <= sysdate and state='A03' ]]>
+	    </if>
+	    <if test="searchState == 3">
+	         AND state='A04'
+	    </if>
+	    
+	    <!-- 프로젝트 검색조건 -->
 		<if test="searchCondition == 0">AND
 	         PR_NM LIKE '%' || #{searchKeyword} || '%'
 	    </if>
@@ -56,6 +68,7 @@
 	         com_nm LIKE '%' ||#{searchKeyword} || '%'
 	    </if>
 	    
+	    <!-- 프로젝트 진행기간 검색 -->
 	    <if test="searchStartDt != null and searchStartDt != ''">
 		  <![CDATA[ AND start_dt >= TO_DATE(#{searchStartDt}, 'YYYY-MM-DD') ]]>
 		</if>
@@ -63,13 +76,14 @@
 		<if test="searchEndDt != null and searchEndDt != ''">
 		    <![CDATA[ AND start_dt <= TO_DATE(#{searchEndDt}, 'YYYY-MM-DD') ]]>
 		</if>
-	      
-	      <if test="searchStartPrice > 0">AND
-	           <![CDATA[price >= #{searchStartPrice}]]>
+	    
+	    <!-- 프로젝트 금액범위 검색 -->  
+	    <if test="searchStartPrice > 0">AND
+	        <![CDATA[price >= #{searchStartPrice}]]>
 	    </if>
 	    
 	    <if test="searchEndPrice > 0">AND
-	       	 <![CDATA[price <= #{searchEndPrice}]]>
+	       	<![CDATA[price <= #{searchEndPrice}]]>
 	    </if>
     </sql>
 	
