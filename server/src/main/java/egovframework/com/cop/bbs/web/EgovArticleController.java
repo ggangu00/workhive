@@ -13,7 +13,9 @@ import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,7 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springmodules.validation.commons.DefaultBeanValidator;
-import egovframework.com.securing.service.CustomerUser;
 
 import egovframework.com.cmm.EgovMessageSource;
 import egovframework.com.cmm.EgovWebUtil;
@@ -158,20 +159,23 @@ public class EgovArticleController {
     @GetMapping("/bulletinList")
     public Map<String, Object> selectArticleList(
             @ModelAttribute("searchVO") BoardVO boardVO,
-            @AuthenticationPrincipal CustomerUser user,  // 로그인 사용자 자동 주입
+           
             ModelMap model) throws Exception {
-
-        Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();  // KISA 보안취약점 조치
+    	  
+    	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+           CustomerUser user = (CustomerUser) auth.getPrincipal();
+           String userId = user.getUserDTO().getMberId();
+        //Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();  // KISA 보안취약점 조치
 
         BoardMasterVO vo = new BoardMasterVO();
         vo.setBbsId(boardVO.getBbsId());
 
-        String sessionUniqId = "";
-        if (user != null && user.getUserDTO() != null) {
-            sessionUniqId = user.getUserDTO().getMberId();
-        }
+//        String sessionUniqId = "";
+//        if (user != null && user.getUserDTO() != null) {
+//            sessionUniqId = user.getUserDTO().getMberId();
+//        }
 
-        vo.setUniqId(sessionUniqId);
+       // vo.setUniqId(sessionUniqId);
         BoardMasterVO master = egovBBSMasterService.selectBBSMasterInf(vo);
 
         boardVO.setPageUnit(propertyService.getInt("pageUnit"));
@@ -198,7 +202,7 @@ public class EgovArticleController {
             master.setTmplatCours("/css/egovframework/com/cop/tpl/egovBaseTemplate.css");
         }
 
-        model.addAttribute("sessionUniqId", sessionUniqId);
+        //model.addAttribute("sessionUniqId", sessionUniqId);
         model.addAttribute("resultList", map.get("resultList"));
         model.addAttribute("resultCnt", map.get("resultCnt"));
         model.addAttribute("articleVO", boardVO);

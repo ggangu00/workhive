@@ -178,8 +178,8 @@ class BtnRenderer {
       <button class="btn btn-success btn-fill me-2" data-type="edit">수정</button>
     `;
 
-    // 버튼 클릭 시 오직 수정 이벤트만 호출
-    el.addEventListener('click', () => {
+    // 버튼 클릭 시 오직 수정 이벤트만 호출    
+    el.addEventListener('click', () => {     
       const rowKey = props.rowKey;
 
       if (rowKey === undefined) {
@@ -208,7 +208,8 @@ const udtEvent = (rowKey) => {
   }
   console.log(`수정 버튼 클릭됨:`, selectedRow);
 
-  router.push({
+
+  router.push({  
     path: '/board/boardModify',
     query: {
       bbsId: selectedRow.bbsId,
@@ -217,8 +218,9 @@ const udtEvent = (rowKey) => {
       fileAtchPosblAt: selectedRow.fileAtchPosblAt,
       answerAt: selectedRow.answerAt,
       useAt: selectedRow.useAt
-    }
+    }    
   });
+  console.log()
 };
 </script>
 
