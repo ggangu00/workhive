@@ -217,6 +217,7 @@ const btnCrctManage = async () => {
 
   formData.append("crctCd", crctData.value.crctCd);
   formData.append("commuteCd", crctData.value.commuteCd);
+  formData.append("commuteDt", dateTimeFormat(crctData.value.commuteDt, 'yyyy-MM-dd'));
   formData.append("crctGoTime", dateTimeFormat(crctData.value.crctGoTime, 'yyyy-MM-dd hh:mm:ss'));
   formData.append("crctLeaveTime", dateTimeFormat(crctData.value.crctLeaveTime, 'yyyy-MM-dd hh:mm:ss'));
   formData.append("crctReason", crctData.value.crctReason);
@@ -226,11 +227,11 @@ const btnCrctManage = async () => {
     formData.append("files[]", file);
   });
 
+  if(!validCheck()) return;
+
   if(!isUpdate.value) {
     formData.append("preGoTime", crctData.value.goTime);
     formData.append("preLeaveTime", crctData.value.leaveTime);
-
-    if(!validCheck()) return;
 
     try {
       await axios.post('/api/commute/crctAdd', formData);
@@ -239,8 +240,6 @@ const btnCrctManage = async () => {
     }
   }
   else {
-    if(!validCheck()) return;
-    
     try {
       await axios.post('/api/commute/crctModify', formData);
     } catch (err) {

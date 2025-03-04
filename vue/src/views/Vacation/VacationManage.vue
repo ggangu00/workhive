@@ -49,7 +49,7 @@
             </tr>
             <tr>
               <th>휴가 사유</th>
-              <td colspan="5"><textarea name="" id=""  class="form-control" v-model="vcData.vcReason"></textarea></td>
+              <td colspan="5"><textarea class="form-control" v-model="vcData.vcReason"></textarea></td>
             </tr>
             <tr>
               <th>파일 첨부</th>
@@ -101,6 +101,7 @@ import axios from '../../assets/js/customAxios';
 import { dateTimeFormat } from '../../assets/js/common';
 import * as vacation from '../../assets/js/vacation';
 import SignerModal from '../components/Modal/SignerModal.vue';
+import Swal from 'sweetalert2';
 
 // query에서 isUpdate 받아오기
 const route = useRoute();
@@ -125,7 +126,12 @@ onMounted(() => {
 });
 
 const vcGetInfo = async () => {
-  let result = await axios.get(`/api/vacation/vcInfo?vcCd=${vcCd.value}`);
+  let result;
+  try {
+    result = await axios.get(`/api/vacation/vcInfo?vcCd=${vcCd.value}`);
+  } catch (err) {
+    Swal.fire({ icon: "error", title: "휴가 신청 정보 조회에 실패하였습니다.", text: "Error : " + err });
+  }
   vcData.value = result.data;
 
   vcData.value.vcStartDt = dateTimeFormat(vcData.value.vcStartDt, 'yyyy-MM-dd');
@@ -271,13 +277,21 @@ const btnVcManage = async () => {
     formData.append("files[]", file);
   });
 
+  if(!validCheck()) return;
+  
   if(!isUpdate.value) {
-    await axios.post('/api/vacation/vcAdd', formData);
-
+    try {
+      await axios.post('/api/vacation/vcAdd', formData);
+    } catch (err) {
+      Swal.fire({ icon: "error", title: "휴가 신청 등록에 실패하였습니다.", text: "Error : " + err });
+    }
   } else {
     formData.append("vcCd", vcCd.value);
-    await axios.post('/api/vacation/vcModify', formData);
-
+    try {
+      await axios.post('/api/vacation/vcModify', formData);
+    } catch (err) {
+      Swal.fire({ icon: "error", title: "휴가 신청 수정에 실패하였습니다.", text: "Error : " + err });
+    }
   }
 
   emit('manageClick'); // 저장 동작 확인
@@ -287,6 +301,40 @@ const btnVcManage = async () => {
 const btnVcManageCancle = () => {
   router.push({name:"VcList"});
 
+}
+
+// 유효성 체크
+const validCheck = () => {
+  if(!vcData.value.vcStartDt?.trim()) {
+    Swal.fire({
+      icon: "info",
+      title: "휴가 시작일을 입력하세요.",
+    });
+    return false;
+  }
+  if(!vcData.value.vcEndDt?.trim()) {
+    Swal.fire({
+      icon: "info",
+      title: "휴가 종료일을 입력하세요.",
+    });
+    return false;
+  }
+  if(!vcData.value.vcReason?.trim()) {
+    Swal.fire({
+      icon: "info",
+      title: "휴가 사유를 입력하세요.",
+    });
+    return false;
+  }
+  if(!vcData.value.signNm?.trim()) {
+    Swal.fire({
+      icon: "info",
+      title: "결재자를 선택하세요.",
+    });
+    return false;
+  }
+
+  return true;
 }
 
 // 결재자 모달
