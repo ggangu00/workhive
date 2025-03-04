@@ -54,11 +54,11 @@
               <div class="form-group has-label">
                 <label>일정내용 <em class="point-red">*</em></label>
               </div>
-              <input type="text" name="project_nm" class="form-control" v-model="schedule.content">
+              <input type="textarea" name="project_nm" class="form-control" v-model="schedule.content">
             </div>
             <div class="mb-3">
               <div class="form-group has-label">
-                <label>장소 <em class="point-red">*</em></label>
+                <label>장소</label>
               </div>
               <input type="text" name="project_nm" class="form-control" v-model="schedule.place">
             </div>
@@ -67,11 +67,11 @@
               <label class="form-label">날짜 <em class="point-red">*</em></label>
               <div class="row">
                 <div class="col-auto">
-                  <input type="date" name="start_dt" class="form-control" v-model="schedule.start">
+                  <input type="date" name="start_dt" class="form-control" :max="schedule.end" v-model="schedule.start">
                 </div>
                 <div class="col-auto">~</div>
                 <div class="col-auto">
-                  <input type="date" name="end_dt" class="form-control" v-model="schedule.end">
+                  <input type="date" name="end_dt" class="form-control" :min="schedule.start" v-model="schedule.end">
                 </div>
                 <div class="col-auto">
                   <input type="checkbox" id="allDayCheck" class="ms-3" v-model="isAllDay" @change="toggle">
@@ -80,14 +80,14 @@
               </div>
             </div>
             <div class="mb-3" v-if="!isAllDay">
-                <label class="form-label">시간</label>
+                <label class="form-label">시간<em class="point-red">*</em></label>
                 <div class="d-flex align-items-center">
                   <input type="time" class="form-control w-auto" v-model="schedule.bgntm">
                   <span class="mx-3">~</span>
                   <input type="time" class="form-control w-auto" v-model="schedule.endtm">
                 </div>
               </div>
-            <div class="mb-3">
+            <div class="mb-3" v-if="this.schedule.type !== 'L07 '">
               <label class="form-label">부서</label>
               <div class="row">
                 <div class="col-auto">
@@ -116,7 +116,7 @@
         <button v-if="isNewSchedule" type="button" class="btn btn-primary btn-fill" data-bs-dismiss="modal" @click="scheduleAdd">저장</button>
         <template v-else>
           <button v-if="isScheduleName" type="button" class="btn btn-primary btn-fill" data-bs-dismiss="modal" @click="scheduleAdd">수정</button>
-          <button v-if="isScheduleName && this.schedule.type!='I01'" type="button" class="btn btn-danger btn-fill" data-bs-dismiss="modal" @click="scheduleRemove">삭제</button>
+          <button v-if="isScheduleName && this.schedule.type !=='L01 '" type="button" class="btn btn-danger btn-fill" data-bs-dismiss="modal" @click="scheduleRemove">삭제</button>
         </template>
       </div>
     </div>
@@ -305,29 +305,10 @@ getEventColor(asdf) {
     this.schedule.deptCd = e.event.extendedProps.deptCd;  // 부서 코드 추가
     
     this.selectedEventId = e.event.id;//수정용 스케쥴아이디
-    console.log(e.event.extendedProps)
+    console.log( this.schedule.type)
   },
 
 
-
-  // //일정 정보 호출 메소드
-  // async scheduleGetList() {
-  //     const response = await axios.get('/api/schedule/month');
-  //     this.calendarOptions.events = response.data.map(event => ({
-  //       id: event.schdulId,
-  //       title: event.schdulNm,
-  //       start: this.formatDate(event.schdulBgnde),  // 받은 날짜형식변환
-  //       end: this.formatDate(event.schdulEndde),
-  //       schdulCn: event.schdulCn,
-  //       place: event.schdulPlace,
-  //       charger: event.schdulChargerId,
-  //       register: event.mberId,
-  //       kind: event.schdulKndCode,
-  //       name: event.mberId,
-  //       type: event.schdulSe,
-  //       dept: event.deptNm
-  //     }));
-  // },
 
   //등록 메소드
   async scheduleAdd(){
@@ -420,6 +401,10 @@ async scheduleRemove(){
     if (!date) return null;
     return `${date.substring(0, 4)}-${date.substring(4, 6)}-${date.substring(6, 8)}T${date.substring(8, 10)}:${date.substring(10, 12)}:00`;
   }
+},
+
+watch(){
+  
 }
 }
 </script>

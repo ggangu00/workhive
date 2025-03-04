@@ -70,6 +70,7 @@
 			 , update_id
 			 , update_dt
 			 , sign_id
+     		 , fn_get_memnm(sign_id) as sign_nm
 			 , sign_dt
 			 , sign_state
 			 , pre_go_time

@@ -5,7 +5,9 @@
       <!-- 페이지 헤더 -->
       <div class="card">
         <div class="card-body">
-          <h4 class="card-title float-left">출퇴근 정정 요청 관리</h4>
+          <h4 class="card-title float-left" v-if="isUpdate">출퇴근 정정 요청 수정</h4>
+          <h4 class="card-title float-left" v-if="isDetail">출퇴근 정정 요청 상세 조회</h4>
+          <h4 class="card-title float-left" v-if="!isUpdate && !isDetail">출퇴근 정정 요청 등록</h4>
         </div>
       </div>
 
@@ -30,7 +32,7 @@
                   <tbody>
                     <tr>
                       <th>근무 일자</th>
-                      <td><input type="date" id="wordDate" class="form-control" v-model="crctData.commuteDt" :readonly="isUpdate"></td>
+                      <td><input type="date" id="wordDate" class="form-control" v-model="crctData.commuteDt" :readonly="isUpdate || isDetail"></td>
                       <th>출근 시간</th>
                       <td><input type="datetime-local" class="form-control" v-model="crctData.goTime" readonly></td>
                       <th>퇴근 시간</th>
@@ -38,13 +40,19 @@
                     </tr>
                     <tr>
                       <th>정정 출근 시간</th>
-                      <td colspan="2"><input type="datetime-local" class="form-control" style="width: 47.5%;" v-model="crctData.crctGoTime"></td>
+                      <td colspan="2">
+                        <input type="datetime-local" class="form-control" style="width: 47.5%;" 
+                               v-model="crctData.crctGoTime" :readonly="isDetail">
+                      </td>
                       <th>정정 퇴근 시간</th>
-                      <td colspan="2"><input type="datetime-local" class="form-control" style="width: 47.5%;" v-model="crctData.crctLeaveTime"></td>
+                      <td colspan="2">
+                        <input type="datetime-local" class="form-control" style="width: 47.5%;" 
+                               v-model="crctData.crctLeaveTime" :readonly="isDetail">
+                      </td>
                     </tr>
                     <tr>
                       <th>정정 사유</th>
-                      <td colspan="5"><textarea class="form-control" v-model="crctData.crctReason"></textarea></td>
+                      <td colspan="5"><textarea class="form-control" v-model="crctData.crctReason" :readonly="isDetail"></textarea></td>
                     </tr>
                     <tr>
                       <th>파일 첨부</th>
@@ -67,7 +75,7 @@
                     </tr>
                     <tr>
                       <th>결재자</th>
-                      <td colspan="5"><input type="text" class="form-control" v-model="crctData.signNm" @click="modalOpen"></td>
+                      <td colspan="5"><input type="text" class="form-control" v-model="crctData.signNm" @click="modalOpen" readonly></td>
                     </tr>
                   </tbody>
                 </table>
@@ -80,7 +88,7 @@
               <div class="row justify-content-center">
                 <div class="col-auto">
                   <button class="btn btn-secondary btn-fill mx-2" @click="btnCrctCancle">취소</button>
-                  <button class="btn btn-success btn-fill" @click="btnCrctManage">저장</button>
+                  <button class="btn btn-success btn-fill" @click="btnCrctManage" v-if="!isDetail">저장</button>
                 </div>
               </div>
             </div>
@@ -104,9 +112,21 @@ import SignerModal from '../components/Modal/SignerModal.vue';
 import Swal from 'sweetalert2';
 
 const route = useRoute();
-let isUpdate = ref(route.query.isUpdate === 'true');;
+let isUpdate = ref(route.query.isUpdate === 'true');
+let isDetail = ref(route.query.isDetail === 'true');
 let cmtCd;
 let crctCd;
+
+// 같은 페이지로 push될 때 감지하고 새로고침
+watch(
+   () => route.fullPath,
+   (newPath, oldPath) => {
+      if (newPath === oldPath) {
+        console.log("reloaded");
+         window.location.reload(); // 강제 새로고침
+      }
+   }
+);
 
 // 첨부파일
 const fileList = ref([]);
@@ -256,7 +276,7 @@ const btnCrctCancle = () => { // 뒤로가기
 // 결재자 모달
 let isShowModal = ref(false);
 const modalOpen = () => {
-  isShowModal.value = true;
+  if(!isDetail.value) isShowModal.value = true;
 }
 const modalClose = () => {
   isShowModal.value = false;

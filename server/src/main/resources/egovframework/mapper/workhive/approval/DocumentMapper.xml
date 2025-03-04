@@ -173,115 +173,129 @@
 	    AND mber_id = #{mberId}
 	</update>
     <!-- 문서조회(완료, 진행, 반려) -->
-    <select id="documentSelectAll" resultType="egovframework.com.approval.service.DocumentDTO" parameterType="egovframework.com.approval.service.SearchDTO">
-		 SELECT * FROM (
-		            SELECT 
-		                ROWNUM AS rn,
-		                doc_cd,
-		                doc_title,
-		                doc_cn_editor,
-		                mber_id,
-		                fn_get_memnm(mber_id) as mber_nm,
-		                fn_get_deptNm(mber_id) as dept_nm,
-		                fn_get_codename(CRNT_SIGN_STAT) as crnt_sign_stat,
-		                draft_dt,
-		                complete_dt,
-		                fn_get_codename(DOC_KIND) as doc_kind,
-		                atch_file_id,
-		                form_cd,
-		                fn_get_formnm(form_cd) as form_type,
-		                del_yn
-		            FROM DOCUMENT
-		                WHERE 1=1
-		                AND del_yn = UPPER('N')
-		              	AND mber_id = #{mberId} 
-		              	<include refid="searchCriteria"/>        
-		            <![CDATA[AND ROWNUM <= #{end}]]>
-		        ) 
-		        WHERE rn >= #{start}
-		        ORDER BY draft_dt DESC
-    </select>
+   <select id="documentSelectAll" resultType="egovframework.com.approval.service.DocumentDTO" parameterType="egovframework.com.approval.service.SearchDTO">
+  SELECT * FROM (
+    SELECT 
+      ROWNUM AS rn,
+      sub.*
+    FROM (
+      SELECT 
+        doc_cd,
+        doc_title,
+        doc_cn_editor,
+        mber_id,
+        fn_get_memnm(mber_id) as mber_nm,
+        fn_get_deptNm(mber_id) as dept_nm,
+        fn_get_codename(CRNT_SIGN_STAT) as crnt_sign_stat,
+        draft_dt,
+        complete_dt,
+        fn_get_codename(DOC_KIND) as doc_kind,
+        atch_file_id,
+        form_cd,
+        fn_get_formnm(form_cd) as form_type,
+        del_yn
+      FROM DOCUMENT D
+      WHERE 1=1
+      AND del_yn = UPPER('N')
+      AND (
+        mber_id = #{mberId} 
+        OR (#{status} = 'H04' AND EXISTS (
+            SELECT 1 
+            FROM approval_line al
+            WHERE al.doc_cd = D.doc_cd
+            AND al.mber_id = #{mberId}
+        ))
+      )
+      <include refid="searchCriteria"/>  
+      ORDER BY draft_dt DESC
+    ) sub
+  ) 
+  WHERE rn BETWEEN #{start} AND #{end}
+</select>
+
 		<select id="pendingDocumentSelectAll" 
 		        resultType="egovframework.com.approval.service.DocumentDTO"
 		        parameterType="egovframework.com.approval.service.SearchDTO">
 		    SELECT *
-		      FROM (
-		            SELECT ROWNUM AS rn,
-		                   d.doc_cd,
-		                   d.doc_title,
-		                   d.doc_cn_editor,
-		                   d.mber_id,
-		                   fn_get_memnm(a.mber_id)     AS mber_nm,
-		                   fn_get_deptNm(a.mber_id)    AS dept_nm,
-		                   fn_get_codename(d.CRNT_SIGN_STAT) AS crnt_sign_stat,
-		                   d.draft_dt,
-		                   d.complete_dt,
-		                   fn_get_codename(d.DOC_KIND) AS doc_kind,
-		                   d.atch_file_id,
-		                   d.form_cd,
-		                   fn_get_formnm(d.form_cd)    AS form_type,
-		                   d.del_yn
-		              FROM DOCUMENT d
-		                   JOIN approval_line a
-		                     ON d.doc_cd = a.doc_cd
-		             WHERE 1=1
-		               AND d.del_yn = 'N'
-		               AND a.mber_id = #{mberId}
-		               AND a.sign_stat = 'D01'
-		               AND ( a.sign_seq = 1
-						     OR EXISTS (
-						         SELECT 1
-						           FROM approval_line a2
-						          WHERE a2.doc_cd = a.doc_cd
-						            AND a2.sign_seq = a.sign_seq - 1
-						            AND a2.sign_stat = 'D02'
-						     )
-		               )
-		    <include refid="searchCriteria"/>
-		    <![CDATA[
-		               AND ROWNUM <= #{end}
-		           )
-		     WHERE rn >= #{start}
-		     ORDER BY draft_dt DESC
-		    ]]>
+			    FROM (
+			        SELECT ROWNUM AS rn, sub.*
+			        FROM (
+			            SELECT 
+			                d.doc_cd,
+			                d.doc_title,
+			                d.doc_cn_editor,
+			                d.mber_id,
+			                fn_get_memnm(a.mber_id) AS mber_nm,
+			                fn_get_deptNm(a.mber_id) AS dept_nm,
+			                fn_get_codename(d.CRNT_SIGN_STAT) AS crnt_sign_stat,
+			                d.draft_dt,
+			                d.complete_dt,
+			                fn_get_codename(d.DOC_KIND) AS doc_kind,
+			                d.atch_file_id,
+			                d.form_cd,
+			                fn_get_formnm(d.form_cd) AS form_type,
+			                d.del_yn
+			            FROM DOCUMENT d
+			            JOIN approval_line a ON d.doc_cd = a.doc_cd
+			            WHERE 1=1
+			                AND d.del_yn = 'N'
+			                AND a.mber_id = #{mberId}
+			                AND a.sign_stat = 'D01'
+			                AND (
+			                    a.sign_seq = 1
+			                    OR EXISTS (
+			                        SELECT 1
+			                        FROM approval_line a2
+			                        WHERE a2.doc_cd = a.doc_cd
+			                            AND a2.sign_seq = a.sign_seq - 1
+			                            AND a2.sign_stat = 'D02'
+			                    )
+			                )
+			            <include refid="searchCriteria"/>
+			            ORDER BY d.draft_dt DESC 
+			        ) sub
+			    ) 
+			    WHERE rn BETWEEN #{start} AND #{end} 
 		</select>
 		
 		<!-- 문서조회(수신함) -->
 		<select id="receivedSelectAll" resultType="egovframework.com.approval.service.DocumentDTO" parameterType="egovframework.com.approval.service.SearchDTO">
-		    SELECT * FROM (
-		        SELECT 
-		            ROWNUM AS rn,
-		            D.doc_cd,
-		            D.doc_title,
-		            D.doc_cn_editor,
-		            D.mber_id,
-		            fn_get_memnm(D.mber_id) AS mber_nm,
-		            fn_get_deptNm(D.mber_id) AS dept_nm,
-		            fn_get_codename(D.CRNT_SIGN_STAT) AS crnt_sign_stat,
-		            D.draft_dt,
-		            D.complete_dt,
-		            fn_get_codename(D.DOC_KIND) AS doc_kind,
-		            D.atch_file_id,
-		            D.form_cd,
-		            fn_get_formnm(D.form_cd) AS form_type,
-		            D.del_yn
-		        FROM DOCUMENT D
-		        WHERE 1=1
-		            AND D.del_yn = UPPER('N')
-		            AND EXISTS (
-		                SELECT 1 
-		                FROM RECEPTION R 
-		                WHERE R.doc_cd = D.doc_cd 
-		                AND (
-		                    R.MBER_ID = #{mberId}
-		                    OR R.DEPT_CD = (SELECT DEPT_CD FROM comtngnrlmber WHERE MBER_ID = #{mberId})
-		                )
-		            )
-		        <include refid="searchCriteria" />
-		        <![CDATA[AND ROWNUM <= #{end}]]>
-		    ) 
-		    WHERE rn >= #{start}
-		    ORDER BY draft_dt DESC
+			SELECT *
+			FROM (
+			    SELECT ROWNUM AS rn, sub.*
+			    FROM (
+			        SELECT 
+			            D.doc_cd,
+			            D.doc_title,
+			            D.doc_cn_editor,
+			            D.mber_id,
+			            fn_get_memnm(D.mber_id) AS mber_nm,
+			            fn_get_deptNm(D.mber_id) AS dept_nm,
+			            fn_get_codename(D.CRNT_SIGN_STAT) AS crnt_sign_stat,
+			            D.draft_dt,
+			            D.complete_dt,
+			            fn_get_codename(D.DOC_KIND) AS doc_kind,
+			            D.atch_file_id,
+			            D.form_cd,
+			            fn_get_formnm(D.form_cd) AS form_type,
+			            D.del_yn
+			        FROM DOCUMENT D
+			        WHERE 1=1
+			            AND D.del_yn = UPPER('N')
+			            AND EXISTS (
+			                SELECT 1 
+			                FROM RECEPTION R 
+			                WHERE R.doc_cd = D.doc_cd 
+			                AND (
+			                    R.MBER_ID = #{mberId}
+			                    OR R.DEPT_CD = (SELECT DEPT_CD FROM comtngnrlmber WHERE MBER_ID = #{mberId})
+			                )
+			            )
+			        <include refid="searchCriteria" />
+			        ORDER BY D.draft_dt DESC 
+			    ) sub
+			) 
+			WHERE rn BETWEEN #{start} AND #{end} 
 		</select>
 		
 				<!-- 수신문서카운트 -->

@@ -71,15 +71,13 @@
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title float-left mt-1">2. 프로젝트 과업</h5>
-          <button class="btn btn-danger btn-sm btn-fill float-right" @click="btnWorkRemove">선택삭제</button>
-          <button class="btn btn-primary btn-sm btn-fill float-right" @click="btnWorkAdd">과업추가</button>
+      <card>
+        <h5 class="card-title float-left mt-1">2. 프로젝트 과업</h5>
+        <button class="btn btn-danger btn-sm btn-fill float-right" @click="btnWorkRemove">선택삭제</button>
+        <button class="btn btn-primary btn-sm btn-fill float-right" @click="btnWorkAdd">과업추가</button>
 
-          <div id="jobGrid"></div>
-        </div>
-      </div>
+        <div id="jobGrid"></div>
+      </card>
     </div>
   </div>
 

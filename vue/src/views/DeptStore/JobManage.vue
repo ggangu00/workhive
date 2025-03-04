@@ -104,7 +104,7 @@
     </template>
     <template v-slot:footer>
       <button class="btn btn-secondary btn-fill mx-2" @click="modalCloseJob">닫기</button>
-      <button class="btn btn-success btn-fill mx-2" @click="modalConfirmJob">저장</button>
+      <button class="btn btn-success btn-fill mx-2" @click="modalConfirmJob" v-if="!props.isDetail">저장</button>
     </template>
   </Modal>
 </template>
@@ -194,6 +194,7 @@ watch(() => props.selectedRowData, async (newVal) => {
     } catch (err) {
       Swal.fire({ icon: "error", title: "업무 상세 정보 조회에 실패하였습니다.", text: "Error : " + err });
     }
+    console.log("업무 상세 정보 : ", result.data);
 
     formValues.value.deptCd = result.data.deptCd;
     formValues.value.deptNm = result.data.deptNm;

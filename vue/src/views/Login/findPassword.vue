@@ -71,6 +71,18 @@
    };
 
    const btnFindPw = () => {
+      if (!mberId.value.trim()) {
+         Swal.fire({
+            icon: 'warning',
+            title: '아이디를 입력하세요',
+         });
+
+         const userIdInput = document.querySelector('.input_id');
+         if (userIdInput) userIdInput.focus();
+
+         return false; // 유효성 실패
+      }
+
       findPasswordGet();
    }
 // ============================================= Axios Event =============================================

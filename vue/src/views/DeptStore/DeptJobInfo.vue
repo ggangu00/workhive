@@ -296,7 +296,7 @@ onMounted(() => {
     rowHeaders: ['checkbox', 'rowNum'],
     pageOptions: {
       useClient: false,
-      perPage: 5,
+      perPage: 13,
     },
     columns: [ // 체크박스 / 번호 / 제목 / 담당자 / 작성일 / 버튼
       { header: '제목', name: 'deptJobNm', sortable: true},
@@ -309,15 +309,22 @@ onMounted(() => {
     ]
   })
 
+  // 행 클릭 이벤트 추가
   gridInstance.value.on("click", handleRowClick);
 })
 
 // 행클릭
 let isDetail = ref(false);
-const handleRowClick = (rowKey) => {
+const handleRowClick = (e) => {
+  if (!gridInstance.value || e.rowKey == null || e.rowKey == undefined ) return;
+  if (e.nativeEvent.target.type == "checkbox") {
+    console.log("체크박스 클릭 감지, 행 클릭 이벤트 무시");
+    return;
+  }
+
   isDetail.value = true;
   isUpdate.value = false;
-  selectedRowData = gridInstance.value.getRow(rowKey);
+  selectedRowData = gridInstance.value.getRow(e.rowKey);
   isShowJobModal.value = true;
 }
 
@@ -456,7 +463,7 @@ onBeforeUnmount(() => {
   background-color: gray;
   border-radius: 5px;
   color: white;
-  height: 600px;
+  height: 660px;
   margin: 5px 0;
   /* padding: 5px; */
 }

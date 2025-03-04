@@ -3,7 +3,7 @@
 <mapper namespace="egovframework.com.menu.mapper.MenuInfoMapper">
 
 	<!-- 계층형 메뉴 조회 -->
-	<select id="menuSelectAll" resultType="menuInfoDTO">
+	<select id="menuSelectAll" resultType="egovframework.com.menu.service.MenuInfoDTO">
 		SELECT
 		   menu_cd,       <!-- 메뉴코드 -->
 		   menu_nm,       <!-- 메뉴명 -->
@@ -21,6 +21,10 @@
 		   update_id      <!-- 수정자 -->
 		FROM
 		   menuinfo
+		WHERE
+		   UPPER(use_yn) = UPPER('A01')
+		AND
+		   UPPER(del_yn) = UPPER('N')
 		START WITH 
 		   parent_menu_cd IS NULL  
 		CONNECT BY PRIOR 
@@ -30,7 +34,7 @@
 	</select>
 	
 	<!-- 권한에 대한 메뉴 목록 조회 -->
-	<select id="authorityMenuSelectAll" parameterType="String" resultType="menuInfoDTO">
+	<select id="authorityMenuSelectAll" parameterType="String" resultType="egovframework.com.menu.service.MenuInfoDTO">
 		SELECT 
 		   a.menu_cd,		<!-- 메뉴코드 -->
 		   b.menu_nm,		<!-- 메뉴명 -->
