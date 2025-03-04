@@ -1,0 +1,584 @@
+//프로젝트 일정관리
+.schedule-container {
+
+   table {
+      width: 100%;
+   }
+
+   th {
+      background-color: #eee;
+      height: 40px;
+   }
+
+   td {
+      height: 46px;
+   }
+
+   th,
+   td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+      min-width: 90px;
+      position: relative;
+      font-size: 14px;
+      color: #777777;
+   }
+
+   .task {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: left;
+      padding: 5px 11px;
+      border-radius: 18px;
+      color: white;
+      font-size: 12px;
+      white-space: nowrap;
+      text-align: left;
+      box-sizing: border-box;
+      margin-left: 5%;
+      bottom: 17%;
+   }
+
+   .task .close {
+      position: absolute;
+      right: 10px;
+      top: 7px;
+      cursor: pointer;
+      font-size: 9px;
+      background: rgba(255, 255, 255, 0.5);
+      padding: 1px 4px;
+      border-radius: 50%;
+      z-index: 99;
+      border: none;
+      color: #fff;
+   }
+
+   .task.red {
+      background: #f28b82;
+   }
+
+   .task.orange {
+      background: #fbbc04;
+   }
+
+   .task.yellow {
+      background: #fef4c5;
+      color: black;
+   }
+
+   .task.blue {
+      background: #aecbfa;
+   }
+
+   @media screen and (max-width: 768px) {
+      table {
+         min-width: 100%;
+      }
+
+      th,
+      td {
+         font-size: 14px;
+         padding: 8px;
+      }
+
+      .task {
+         font-size: 12px;
+         padding: 6px 10px;
+      }
+   }
+
+   .card.border-primary {
+      border: 1px solid $primary;
+   }
+
+   .card-sub {
+      font-size: 15px;
+      color: #8d8d8d;
+      margin-top: 0;
+      margin-bottom: 0;
+   }
+
+   .card-sub:first-child {
+      font-weight: 600;
+      color: $primary;
+   }
+}
+
+//홈
+.profile-section {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   padding: 20px;
+   border-radius: 10px;
+
+   .profile-info {
+      display: flex;
+      align-items: center;
+   }
+
+   .profile-icon {
+      width: 80px;
+      height: 80px;
+      background: #2f4858;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 40px;
+      margin-right: 15px;
+   }
+
+   .status-boxes {
+      display: flex;
+      gap: 10px;
+   }
+
+   .status-box {
+      width: 180px;
+      border-radius: 8px;
+      box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.1), -4px -4px 10px rgba(0, 0, 0, 0.1);
+      text-align: left;
+      font-weight: bold;
+      background-color: #ffffff;
+   }
+
+   .status-title {
+      font-size: 14px;
+      padding: 8px;
+      color: #ffffff;
+      text-align: center;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+   }
+
+   .status-content {
+      padding: 15px;
+      font-size: 16px;
+      color: #333;
+   }
+
+   .projects .status-content {
+      font-size: 24px;
+      text-align: center;
+   }
+
+   @media (max-width: 800px) {
+      .status-box {
+         width: 40vw;
+      }
+   }
+
+   @media (max-width: 600px) {
+      .status-box {
+         width: 60vw;
+      }
+   }
+
+   @media (max-width: 400px) {
+      .status-box {
+         width: 90%;
+         text-align: center;
+      }
+   }
+}
+
+.status-red {
+   background-color: $danger;
+}
+
+.status-orange {
+   background-color: $warning;
+}
+
+.status-green {
+   background-color: $success;
+}
+
+.status-blue {
+   background-color: $primary;
+}
+
+
+.home-container {
+   color: $gray-800;
+   border-radius: 8px;
+   min-height: 300px;
+}
+
+.home-container-header {
+   font-weight: bold;
+   padding: 10px;
+   border-bottom: 1px solid #b5b5b5;
+}
+
+.board-item {
+   display: flex;
+   align-items: center;
+   padding: 12px;
+   border-bottom: 1px solid #ddd;
+}
+
+.board-item:last-child {
+   border-bottom: none;
+}
+
+.board-title {
+   flex-grow: 1;
+}
+
+.board-meta {
+   text-align: right;
+   min-width: 150px;
+}
+
+.meeting-item {
+   display: flex;
+   flex-direction: column;
+   padding: 15px;
+   border-bottom: 1px solid #ddd;
+   position: relative;
+}
+
+.meeting-item:last-child {
+   border-bottom: none;
+}
+
+.meeting-category {
+   font-size: 14px;
+   color: $gray-800;
+}
+
+.meeting-title {
+   font-weight: bold;
+   font-size: 18px;
+   display: flex;
+   align-items: center;
+   gap: 8px;
+}
+
+.meeting-date {
+   color: $gray-800;
+   font-size: 14px;
+   text-align: right;
+   position: absolute;
+   right: 15px;
+   top: 50%;
+   transform: translateY(-50%);
+}
+
+.calendar-container {
+   color: $gray-800;
+   border-radius: 8px;
+   display: flex;
+   flex-wrap: wrap;
+
+   .cal {
+      max-width: 40%;
+   }
+
+   .list {
+      width: 60%;
+   }
+}
+
+.calendar-header {
+   font-weight: bold;
+   background-color: #eeeeee;
+   padding: 10px;
+   border-radius: 5px;
+}
+
+.calendar-table {
+   width: 100%;
+   border-collapse: collapse;
+   text-align: center;
+   position: relative;
+}
+
+.calendar-table th,
+.calendar-table td {
+   padding: 8px;
+   width: 14.28%;
+   position: relative;
+}
+
+.calendar-table .highlight,
+.calendar-table .today {
+   position: relative;
+}
+
+.calendar-table .highlight::before,
+.calendar-table .today::before {
+   content: '';
+   position: absolute;
+   width: 30px;
+   height: 30px;
+   border-radius: 50%;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   z-index: 1;
+}
+
+.calendar-table .highlight::before {
+   border: 2px solid $primary;
+   background-color: transparent;
+}
+
+.calendar-table .today::before {
+   border: 2px solid $danger;
+   background-color: transparent;
+}
+
+
+//업무일지
+.todo-container {
+   padding: 10px;
+   text-align: center;
+
+   $day-per : 3.22%;
+
+   .day28 {
+
+      .day,
+      i {
+         width: 3.57% !important;
+      }
+   }
+
+   .day29 {
+
+      .day,
+      i {
+         width: 3.44% !important;
+      }
+   }
+
+   .day30 {
+
+      .day,
+      i {
+         width: 3.33% !important;
+      }
+   }
+
+   .day31 {
+
+      .day,
+      i {
+         width: 3.22% !important;
+      }
+   }
+
+   .month {
+      font-size: 20px;
+      font-weight: bold;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      color: #606266;
+   }
+
+   .days {
+      display: flex;
+      justify-content: center;
+      gap: 1px;
+   }
+
+   .day,
+   i {
+      text-align: center;
+      color: #606266;
+   }
+
+   .todo-header {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      font-size: 14px;
+      color: #606266;
+   }
+
+   .highlight,
+   .today {
+      position: relative;
+   }
+
+   .highlight::before,
+   .today::before {
+      content: '';
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+      background-color: transparent;
+   }
+
+   .highlight::before {
+      border: 2px solid $primary;
+      background-color: transparent;
+   }
+
+   .today::before {
+      border: 2px solid $danger;
+   }
+
+   button {
+      border: none;
+      background: none;
+      font-size: inherit;
+      cursor: pointer;
+   }
+
+}
+
+.bg-gradient-main {
+   background: $main;
+}
+
+
+.login-container-fluid {
+   position: relative;
+   width: 100%;
+   height: 100vh;
+   background: url('/src/assets/img/background.jpg') no-repeat center center/cover;
+   background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
+      url('/src/assets/img/background.jpg') no-repeat center center/cover;
+   background-blend-mode: lighten;
+   /* 배경과 섞이도록 설정 */
+}
+
+
+.tooltip {
+   display: block !important;
+   z-index: 10000;
+
+   .tooltip-inner {
+      background: black;
+      color: white;
+      border-radius: 16px;
+      padding: 5px 10px 4px;
+   }
+
+   .tooltip-arrow {
+      width: 0;
+      height: 0;
+      border-style: solid;
+      position: absolute;
+      margin: 5px;
+      border-color: black;
+   }
+
+   &[x-placement^="top"] {
+      margin-bottom: 5px;
+
+      .tooltip-arrow {
+         border-width: 5px 5px 0 5px;
+         border-left-color: transparent !important;
+         border-right-color: transparent !important;
+         border-bottom-color: transparent !important;
+         bottom: -5px;
+         left: calc(50% - 5px);
+         margin-top: 0;
+         margin-bottom: 0;
+      }
+   }
+
+   &[x-placement^="bottom"] {
+      margin-top: 5px;
+
+      .tooltip-arrow {
+         border-width: 0 5px 5px 5px;
+         border-left-color: transparent !important;
+         border-right-color: transparent !important;
+         border-top-color: transparent !important;
+         top: -5px;
+         left: calc(50% - 5px);
+         margin-top: 0;
+         margin-bottom: 0;
+      }
+   }
+
+   &[x-placement^="right"] {
+      margin-left: 5px;
+
+      .tooltip-arrow {
+         border-width: 5px 5px 5px 0;
+         border-left-color: transparent !important;
+         border-top-color: transparent !important;
+         border-bottom-color: transparent !important;
+         left: -5px;
+         top: calc(50% - 5px);
+         margin-left: 0;
+         margin-right: 0;
+      }
+   }
+
+   &[x-placement^="left"] {
+      margin-right: 5px;
+
+      .tooltip-arrow {
+         border-width: 5px 0 5px 5px;
+         border-top-color: transparent !important;
+         border-right-color: transparent !important;
+         border-bottom-color: transparent !important;
+         right: -5px;
+         top: calc(50% - 5px);
+         margin-left: 0;
+         margin-right: 0;
+      }
+   }
+
+   &[aria-hidden='true'] {
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity .15s, visibility .15s;
+   }
+
+   &[aria-hidden='false'] {
+      visibility: visible;
+      opacity: 1;
+      transition: opacity .15s;
+   }
+}
+
+.table-white {
+   background-color: white !important;
+}
+
+.table-end {
+   background-color: #e7e7e7 !important;
+   color: #969696 !important;
+}
+
+.progress-bar {
+   background-color: #d7d7d7;
+   width: 100%;
+   height: 18px;
+   border-top-left-radius: 9px;
+   border-top-right-radius: 9px;
+   border-bottom-left-radius: 0px;
+   border-bottom-right-radius: 0px;
+   overflow: hidden;
+}
+
+.progress-bar-fill {
+   height: 100%;
+   background-color: #8b8dff;
+   transition: width 0.2s ease-in-out;
+   border-top-right-radius: 9px;
+   border-bottom-right-radius: 0px;
+   font-size: 11px;
+   padding-left: 10px;
+}

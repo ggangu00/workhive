@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.commute.mapper.CommuteMapper">
+
+<!-- 출퇴근 commute -->
+	<!-- 출퇴근 등록 : 출근 -->
+	<insert id="cmtInsert" parameterType="commuteDTO">
+		insert into commute (
+			   commute_cd
+			 , mber_id
+			 , commute_dt
+			 , go_time
+			 , go_state
+		)
+		values (
+			   seq_commute_cd.nextval
+			 , #{mberId}
+			 , sysdate
+			 , to_date(#{goTime}, 'YYYY-MM-DD HH24:MI:SS')
+			 , #{goState}
+		)
+	</insert>
+	
+	<!-- 출퇴근 수정 : 퇴근 -->
+	<update id="cmtUpdate" parameterType="commuteDTO">
+		update commute
+		set leave_time = to_date(#{leaveTime}, 'YYYY-MM-DD HH24:MI:SS')
+		  , leave_state = #{leaveState}
+		  , work_time = #{workTime}
+		  , over_work_time = #{overWorkTime}
+		where commute_cd = #{commuteCd}
+	</update>
+	
+	<!-- 출퇴근 수정 : 결재 -->
+	<update id="crctSignUpdate" parameterType="commuteDTO">
+		update commute
+		set commute_dt = to_date(#{goTime}, 'YYYY-MM-DD HH24:MI:SS')
+		  , go_time = to_date(#{goTime}, 'YYYY-MM-DD HH24:MI:SS')
+		  , go_state = #{goState}
+		  , leave_time = to_date(#{leaveTime}, 'YYYY-MM-DD HH24:MI:SS')
+		  , leave_state = #{leaveState}
+		  , work_time = #{workTime}
+		  , over_work_time = #{overWorkTime}
+		where commute_cd = #{commuteCd}
+	</update>
+	
+	<!-- 출퇴근 삭제 -->
+	<delete id="cmtDelete" parameterType="String">
+	
+	</delete>
+	
+	<!-- 출퇴근 단건 조회 -->
+	<select id="cmtSelect" parameterType="String">
+		select commute_cd
+			 , mber_id
+			 , commute_dt
+			 , go_time
+			 , go_state
+			 , leave_time
+			 , leave_state
+			 , work_time
+			 , over_work_time
+		from commute
+		where commute_cd = #{commuteCd}
+	</select>
+	
+	<!-- 출퇴근 전체 조회 : 사용자별 -->
+	<select id="cmtSelectAll" parameterType="commuteDTO" resultType="commuteDTO">
+	
+		SELECT *
+		FROM (
+		SELECT T0.*, ROWNUM RNUM
+		FROM (
+		
+		select commute_cd
+			 , mber_id
+			 , commute_dt
+			 , TO_CHAR(go_time, 'YYYY-MM-DD HH24:MI:SS') go_time
+			 , go_state
+			 , TO_CHAR(leave_time, 'YYYY-MM-DD HH24:MI:SS') leave_time
+			 , leave_state
+			 , work_time
+			 , over_work_time
+		from commute
+		where mber_id = #{mberId}
+		<if test='!startDate.isEmpty()'>
+			<![CDATA[
+			and commute_dt >= to_date(#{startDate}, 'yyyy-mm-dd')
+			]]>
+		</if>
+		<if test='!endDate.isEmpty()'>
+			<![CDATA[
+			and commute_dt < to_date(#{endDate}, 'yyyy-mm-dd') + 1
+			]]>
+		</if>
+		order by go_time desc
+		
+		) T0
+		)
+		WHERE RNUM BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}
+	</select>
+	<!-- 출퇴근 전체 조회 카운트 -->
+	<select id="cmtSelectAllCnt" parameterType="commuteDTO" resultType="Integer">
+		select COUNT(commute_cd) as cnt
+		from commute
+		where mber_id = #{mberId}
+		<if test='!startDate.isEmpty()'>
+			<![CDATA[
+			and commute_dt >= to_date(#{startDate}, 'yyyy-mm-dd')
+			]]>
+		</if>
+		<if test='!endDate.isEmpty()'>
+			<![CDATA[
+			and commute_dt < to_date(#{endDate}, 'yyyy-mm-dd') + 1
+			]]>
+		</if>
+		order by go_time desc
+	</select>
+	
+	<!-- 마지막 출퇴근 기록 체크 -->
+	<select id="lastCmtSelect" parameterType="String">
+		select *
+		from (
+			select commute_cd
+				 , mber_id
+				 , commute_dt
+				 , TO_CHAR(go_time, 'YYYY-MM-DD HH24:MI:SS') go_time
+				 , go_state
+				 , TO_CHAR(leave_time, 'YYYY-MM-DD HH24:MI:SS') leave_time
+				 , leave_state
+				 , work_time
+				 , over_work_time
+			from commute
+			where mber_id = #{mberId}
+			and leave_time is null
+			order by go_time desc
+		)
+		where rownum = 1
+	</select>
+	
+	<!-- 날짜 기준 단건 조회 -->
+	<select id="dateCmtSelect" parameterType="String">
+		select *
+		from (
+			select commute_cd
+				 , mber_id
+				 , commute_dt
+				 , go_time
+				 , go_state
+				 , leave_time
+				 , leave_state
+				 , work_time
+				 , over_work_time
+			from commute
+			where TO_CHAR(commute_dt, 'YYYY-MM-DD') = #{commuteDt}
+		) where rownum = 1
+	</select>
+	
+	<!-- 지정된 출퇴근 시간 -->
+	<select id="cmtTimeSelect" parameterType="commuteDTO">
+		select start_time
+		     , end_time
+		from company
+		where business_no = '000-00-00000'
+	</select>
+	
+</mapper>

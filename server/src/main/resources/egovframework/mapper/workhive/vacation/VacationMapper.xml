@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.vacation.mapper.VacationMapper">
+
+<!-- 휴가 -->
+	<!-- 휴가 등록 -->
+	<insert id="vcInsert" parameterType="vacationDTO">
+		insert into vacation (
+			   vc_cd
+			 , vc_start_dt
+			 , vc_end_dt
+			 , vc_type
+			 , use_days
+			 , vc_reason
+			 , atch_file_id
+			 , create_id
+			 , create_dt
+			 , sign_id
+		)
+		values (
+			   seq_vc_cd.nextval
+			 , #{vcStartDt}
+			 , #{vcEndDt}
+			 , #{vcType}
+			 , #{useDays}
+			 , #{vcReason}
+			 , #{atchFileId}
+			 , #{createId}
+			 , sysdate
+			 , #{signId}
+		)
+	</insert>
+	
+	<!-- 휴가 수정 -->
+	<update id="vcUpdate" parameterType="vacationDTO">
+		update vacation
+		set vc_start_dt = #{vcStartDt}
+		  , vc_end_dt = #{vcEndDt}
+		  , vc_type = #{vcType}
+		  , use_days = #{useDays}
+		  , vc_reason = #{vcReason}
+		  , atch_file_id = #{atchFileId}
+		  , update_id = #{updateId}
+		  , update_dt = sysdate
+		  , sign_id = #{signId}
+		where vc_cd = #{vcCd}
+	</update>
+	
+	<!-- 휴가 삭제 -->
+	<update id="vcDelete" parameterType="String">
+		update vacation
+		set del_yn = 'Y'
+		where vc_cd = #{vcCd}
+	</update>
+	
+	<!-- 휴가 단건 조회 -->
+	<select id="vcSelect" parameterType="String">
+		select vc_cd
+			 , vc_start_dt
+			 , vc_end_dt
+			 , vc_type
+			 , use_days
+			 , vc_reason
+			 , atch_file_id
+			 , create_id
+			 , create_dt
+			 , sign_id
+			 , sign_dt
+			 , sign_state
+		from vacation
+		where vc_cd = #{vcCd}
+		and del_yn = 'N'
+	</select>
+	
+	<!-- 휴가 목록 조회 -->
+	<select id="vcSelectAll" parameterType="vacationDTO" resultType="vacationDTO">
+		SELECT *
+		FROM (
+		SELECT T0.*, ROWNUM RNUM
+		FROM (
+			
+		select vc_cd
+			 , vc_start_dt
+			 , vc_end_dt
+			 , vc_type
+			 , use_days
+			 , vc_reason
+			 , atch_file_id
+			 , create_id
+			 , create_dt
+			 , sign_id
+			 , sign_dt
+			 , sign_state
+		from vacation
+		where create_id = #{createId}
+		and del_yn = 'N'
+		<if test='!vcType.isEmpty()'>
+			and vc_type = #{vcType}
+		</if>
+		<if test='!signState.isEmpty()'>
+			and sign_state = #{signState}
+		</if>
+		<if test='!startDate.isEmpty()'>
+			<![CDATA[
+			and create_dt >= to_date(#{startDate}, 'yyyy-mm-dd')
+			]]>
+		</if>
+		<if test='!endDate.isEmpty()'>
+			<![CDATA[
+			and create_dt < to_date(#{endDate}, 'yyyy-mm-dd') + 1
+			]]>
+		</if>
+		order by create_dt desc
+		
+		) T0
+		)
+		WHERE RNUM BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}
+	</select>
+	<!-- 휴가 목록 카운트 -->
+	<select id="vcSelectAllCnt" parameterType="vacationDTO" resultType="Integer">
+		select count(vc_cd) as cnt
+		from vacation
+		where create_id = #{createId}
+		and del_yn = 'N'
+		<if test='!vcType.isEmpty()'>
+			and vc_type = #{vcType}
+		</if>
+		<if test='!signState.isEmpty()'>
+			and sign_state = #{signState}
+		</if>
+		<if test='!startDate.isEmpty()'>
+			<![CDATA[
+			and create_dt >= to_date(#{startDate}, 'yyyy-mm-dd')
+			]]>
+		</if>
+		<if test='!endDate.isEmpty()'>
+			<![CDATA[
+			and create_dt < to_date(#{endDate}, 'yyyy-mm-dd') + 1
+			]]>
+		</if>
+		order by create_dt desc
+	</select>
+
+	<!-- 사용 예정일 조회 -->
+	<select id="expectSelect" parameterType="vacationDTO">
+		select count(case when sign_state = 'D01' then 1 end) as signWait,
+			   sum(case when sign_state = 'D01' then use_days else 0 end) as signWaitDays,
+			   count(case when sign_state = 'D03' then 1 end) as signSup,
+			   sum(case when sign_state = 'D03' then use_days else 0 end) as signSupDays
+		from vacation
+		where create_id = #{createId}
+		<![CDATA[
+		and create_dt >= to_date(#{createDt} || '-01-01', 'yyyy-mm-dd')
+		and create_dt < to_date((TO_NUMBER(#{createDt}) + 1) || '-01-01', 'yyyy-mm-dd')
+		]]>
+		and del_yn = 'N'
+	</select>
+	
+	<!-- 휴가 신청 결재 요청 조회 -->
+	<select id="vcSelectSigner" parameterType="vacationDTO" resultType="vacationDTO">
+		SELECT *
+		FROM (
+		SELECT T0.*, ROWNUM RNUM
+		FROM (
+			
+		select vc_cd
+			 , vc_start_dt
+			 , vc_end_dt
+			 , vc_type
+			 , use_days
+			 , vc_reason
+			 , atch_file_id
+			 , create_id
+			 , create_dt
+			 , sign_id
+			 , sign_dt
+			 , sign_state
+		from vacation
+		where sign_id = #{signId}
+		and sign_state in ('D01', 'D03')
+		and del_yn = 'N'
+		<if test='!startDate.isEmpty()'>
+			<![CDATA[
+			and create_dt >= to_date(#{startDate}, 'yyyy-mm-dd')
+			]]>
+		</if>
+		<if test='!endDate.isEmpty()'>
+			<![CDATA[
+			and create_dt < to_date(#{endDate}, 'yyyy-mm-dd') + 1
+			]]>
+		</if>
+		order by create_dt
+		
+		) T0
+		)
+		WHERE RNUM BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}
+	</select>
+	<!-- 휴가 신청 결재 요청 카운트 -->
+	<select id="vcSelectSignerCnt" parameterType="vacationDTO" resultType="Integer">
+		select count(vc_cd) as cnt
+		from vacation
+		where sign_id = #{signId}
+		and sign_state in ('D01', 'D03')
+		and del_yn = 'N'
+		<if test='!startDate.isEmpty()'>
+			<![CDATA[
+			and create_dt >= to_date(#{startDate}, 'yyyy-mm-dd')
+			]]>
+		</if>
+		<if test='!endDate.isEmpty()'>
+			<![CDATA[
+			and create_dt < to_date(#{endDate}, 'yyyy-mm-dd') + 1
+			]]>
+		</if>
+		order by create_dt
+	</select>
+	
+	<!-- 휴가 신청 결재 내역 조회 -->
+	<select id="vcSelectSigned" parameterType="vacationDTO" resultType="vacationDTO">
+		SELECT *
+		FROM (
+		SELECT T0.*, ROWNUM RNUM
+		FROM (
+			
+		select vc_cd
+			 , vc_start_dt
+			 , vc_end_dt
+			 , vc_type
+			 , use_days
+			 , vc_reason
+			 , atch_file_id
+			 , create_id
+			 , create_dt
+			 , sign_id
+			 , sign_dt
+			 , sign_state
+		from vacation
+		where sign_id = #{signId}
+		and sign_state not in ('D01', 'D03')
+		and del_yn = 'N'
+		<if test='!startDate.isEmpty()'>
+			<![CDATA[
+			and create_dt >= to_date(#{startDate}, 'yyyy-mm-dd')
+			]]>
+		</if>
+		<if test='!endDate.isEmpty()'>
+			<![CDATA[
+			and create_dt < to_date(#{endDate}, 'yyyy-mm-dd') + 1
+			]]>
+		</if>
+		order by create_dt desc
+		
+		) T0
+		)
+		WHERE RNUM BETWEEN #{firstIndex} + 1 AND #{firstIndex} + #{recordCountPerPage}
+	</select>
+	<!-- 휴가 신청 결재 내역 카운트 -->
+	<select id="vcSelectSignedCnt" parameterType="vacationDTO" resultType="Integer">
+		select count(vc_cd) as cnt
+		from vacation
+		where sign_id = #{signId}
+		and sign_state not in ('D01', 'D03')
+		and del_yn = 'N'
+		<if test='!startDate.isEmpty()'>
+			<![CDATA[
+			and create_dt >= to_date(#{startDate}, 'yyyy-mm-dd')
+			]]>
+		</if>
+		<if test='!endDate.isEmpty()'>
+			<![CDATA[
+			and create_dt < to_date(#{endDate}, 'yyyy-mm-dd') + 1
+			]]>
+		</if>
+		order by create_dt desc
+	</select>
+	
+	<!-- 결재 처리 -->
+	<update id="signUpdate" parameterType="vacationDTO">
+		update vacation
+		set sign_state = #{signState}
+		  , sign_dt = sysdate
+		where vc_cd = #{vcCd}
+	</update>
+	
+	
+</mapper>

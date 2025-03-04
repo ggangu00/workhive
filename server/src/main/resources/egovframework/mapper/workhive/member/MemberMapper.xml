@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.member.mapper.MemberMapper">	
+	
+	<!-- ======================프로젝트=====================  -->
+	
+	<!-- 프로젝트 전체조회 -->
+	<select id="memberSelectAll" resultType="userDTO">
+		
+		select mber_id,			--회원코드
+			   mber_nm,			--회원명
+			   zip,				--우편번호
+			   adres,			--주소
+			   area_no,			--지역번호
+			   middle_telno,	--중간 전화번호
+			   end_telno,		--끝 전화번호
+			   detail_adres,	--상세주소
+			   dept_cd, 		--부서코드
+			   resp_cd,			--직책코드
+			   grade_cd,			--직급코드
+			   fn_get_deptnm(mber_id) as dept_nm,
+               FN_GET_GRADENM(grade_cd) as gradeNm
+		from COMTNGNRLMBER
+	</select>
+	
+	<!-- 회원 정보 조회 -->
+	<select id="memberSelect" resultType="userDTO">
+		SELECT 
+	         mber_id,
+	         password,
+		     password_hint,
+		     password_cnsr,
+		     ihidnum,
+		     mber_nm,
+		     zip,
+		     adres,
+		     area_no,
+		     mber_sttus,
+		     detail_adres,
+		     end_telno,
+		     mbtlnum,
+		     group_id,
+		     mber_fxnum,
+		     mber_email_adres,
+		     middle_telno,
+		     sbscrb_de,
+		     quit_dt,
+		     sexdstn_code,
+		     esntl_id,
+		     lock_at,
+		     lock_cnt,
+		     lock_last_pnttm,
+		     create_dt,
+		     create_id,
+		     update_dt,
+		     update_id,
+		     del_yn,
+		     resp_cd,
+		     fn_get_respnm(resp_cd) AS resp_nm,
+		     grade_cd,
+		     FN_GET_GRADENM(grade_cd) AS grade_nm,
+			 fn_get_deptNm(mber_id) AS dept_nm,
+		     dept_cd
+      	FROM   
+	         comtngnrlmber
+      	WHERE
+	         mber_id = #{mberId}
+	</select>
+	
+	<!-- 회원 등록 -->
+	<insert id="memberInsert" parameterType="userDTO">
+	
+	</insert>
+	
+	<!-- 회원정보 수정 -->
+	<update id="memberUpdate" parameterType="userDTO">
+		UPDATE 
+			comtngnrlmber
+		SET
+			mber_nm = #{mberNm},
+	        mber_email_adres = #{mberEmailAdres},
+	        area_no = #{areaNo},
+	        middle_telno = #{middleTelno},
+	        end_telno = #{endTelno},
+	        mbtlnum = #{mbtlnum},
+	        update_dt = SYSDATE,
+	        update_id = #{mberId}
+		WHERE 
+			mber_id = #{mberId}
+	</update>
+	
+	<!-- 회원 삭제 -->
+	<delete id="memberDelete">
+		UPDATE 
+			comtngnrlmber
+		SET 
+			del_yn = 'A01', 
+			update_dt = SYSDATE, 
+			update_id = #{updateId}
+		WHERE 
+			mber_id = #{mberId}
+	</delete>
+	
+    <!-- 로그인 실패 횟수 업데이트 -->
+    <update id="memberLoginFailCountUpdate">
+        UPDATE 
+        	comtngnrlmber
+        SET 
+            lock_cnt = #{failCount}
+        WHERE 
+            mber_id = #{mberId}
+    </update>
+
+    <!-- 계정 잠금 상태 업데이트 -->
+    <update id="memberLockUpdate">
+        UPDATE 
+        	comtngnrlmber
+        SET 
+            lock_at = #{lockAt},
+            lock_last_pnttm = SYSDATE
+        WHERE 
+            mber_id = #{mberId}
+    </update>
+    
+    <update id="userPasswordUpdate">
+    	UPDATE 
+    		comtngnrlmber
+	    SET 
+	    	password = #{password}
+	    WHERE 
+	    	mber_id = #{mberId}
+    </update>
+    
+</mapper>
+

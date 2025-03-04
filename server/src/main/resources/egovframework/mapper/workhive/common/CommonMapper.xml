@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.common.mapper.CommonMapper">
+	
+	<!-- 공통코드 디테일 전체조회 -->
+	<select id="commonSelectAll" parameterType="String" resultType="commonDTO">
+		SELECT
+		    comm_dtl_nm, 
+		    comm_dtl_cd,
+		    comm_note
+		  FROM
+		    common_detail
+		    <![CDATA[
+		    
+		  WHERE
+		    UPPER(comm_cd) =  UPPER(#{commCd}) 
+		    
+		    ]]>
+		  ORDER BY
+		    comm_dtl_cd
+	</select>
+	
+	<!-- 거래처 전체조회 -->
+	<select id="comSelectAll" parameterType="String" resultType="commonDTO">
+		SELECT
+		    entrprs_mber_id,		 --거래처 id
+		    cmpny_nm,				 --거래처명
+		    bizrno,			 		 --사업자등록번호
+		    cxfc,				  	 --대표자
+		    zip,					 --우편번호
+		    area_no,				 --지역번호
+		    entrprs_middle_telno,	 --중간번호
+		    entrprs_end_telno,		 --끝번호
+		    fxnum,					 --팩스
+		    update_id,	
+		    update_dt,
+		    create_id,
+		    create_dt,
+		    del_yn
+		  FROM 
+		  	comtnentrprsmber
+		  ORDER BY 
+		  	create_dt desc
+	</select>
+	
+	<!-- 로그인 로그 전체조회 -->
+	<select id="loginLogSelectAll" parameterType="String" resultType="commonDTO">
+		SELECT
+			*
+		FROM 
+		    (select 
+		        log_cd, 	--로그 코드
+		        log_id,	 	--로그인 아이디
+		        log_ip, 	--로그인 ip
+		        fn_get_codename(state) AS state,		--성공여부
+		        TO_CHAR(create_dt, 'YYYY-MM-DD HH24:MI:SS') as create_dt
+		    from login_log) log 
+		join 
+		    (select
+		        mber_id,
+		        fn_get_memnm(mber_id) as mber_nm,
+		        fn_get_deptnm(mber_id) as dept_nm,
+		        fn_get_grademberid(mber_id) as grade_nm,
+		        lock_at
+		    from comtngnrlmber) mem
+		on log.log_id = mem.mber_id
+		WHERE 1=1
+		  
+		  <if test="searchCondition == 0">AND
+               log_id LIKE '%' || #{searchKeyword} || '%'
+          </if>
+          <if test="searchCondition == 1">AND
+               log_ip LIKE '%' ||#{searchKeyword} || '%'
+          </if>
+            
+		  <if test="searchStartDt != null and !searchStartDt.equals('')">AND
+             <![CDATA[ create_dt <= #{searchStartDt} ]]>
+          </if>
+         
+          <if test="searchEndDt != null and !searchEndDt.equals('')">AND
+           	 <![CDATA[ create_dt <= #{searchEndDt} ]]>
+          </if>
+         
+		  ORDER BY create_dt desc
+	</select>
+	
+	<!-- 로그인 로그 등록 -->
+	<insert id="loginLogInsert" parameterType="commonDTO">
+		INSERT INTO 
+		   login_log (
+		      log_cd,
+		      log_id,
+		      log_ip,
+		      state,
+		      create_dt
+		   )
+		VALUES (
+		   seq_log_cd.NEXTVAL,
+		   #{logId},
+		   #{logIp},
+		   #{state},
+		   SYSDATE
+		)
+	</insert>
+	
+	<!-- 홈 대시보드 건수 조회 (진행중인 프로젝트, 금일 예정 일정, 미완료 일지) -->
+	<select id="homeInfo" parameterType="String">
+	<![CDATA[
+	select
+	    NVL((select count(*) from project project join project_mem pm on project.pr_cd=pm.pr_cd where project.state='A02' and pm.mber_id=m.mber_id),0) as project_cnt, --참여자로 등록된 프로젝트 갯수
+	    NVL((select count(*) from todo todo where todo.state='A02' and mber_id=m.mber_id),0) as todo_cnt,	--금일 예정 일지 갯수
+	    NVL((select count(*) from COMTNSCHDULINFO sch WHERE TRUNC(TO_DATE(SCHDUL_BGNDE, 'YYYYMMDDHH24MI')) <= TRUNC(SYSDATE) and TRUNC(TO_DATE(SCHDUL_ENDDE, 'YYYYMMDDHH24MI')) >= TRUNC(SYSDATE)),0) as sch_cnt --금일 일정 갯수
+	from COMTNGNRLMBER m 
+	where mber_id=#{mberId}
+	]]>
+	
+	</select>
+</mapper>

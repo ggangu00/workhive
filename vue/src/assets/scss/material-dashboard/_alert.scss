@@ -1,0 +1,96 @@
+.alert{
+  border: 0;
+  border-radius: calc(0.25rem - 1px);
+  color: $default-states-color;
+  padding: 10px 15px;
+  font-size: 14px;
+
+  .container &{
+      border-radius: 4px;
+
+  }
+  .navbar &{
+      border-radius: 0;
+      left: 0;
+      position: absolute;
+      right: 0;
+      top: 85px;
+      width: 100%;
+      z-index: 3;
+  }
+  .navbar:not(.navbar-transparent) &{
+      top: 70px;
+  }
+
+  span[data-notify="icon"]{
+      font-size: 30px;
+      display: block;
+      left: 15px;
+      position: absolute;
+      top: 50%;
+      margin-top: -15px;
+  }
+
+  i.nc-simple-remove{
+      font-size: 12px !important;
+      font: bold normal normal 14px/1 'nucleo-icons';
+  }
+
+  button.close{
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      margin-top: -13px;
+      z-index: 1033;
+      background-color: #FFFFFF;
+      display: block;
+      border-radius: 50%;
+      opacity: .4;
+      line-height: 9px;
+      width: 25px;
+      height: 25px;
+      outline: 0 !important;
+      text-align: center;
+      padding: 3px;
+      font-weight: 300;
+
+      &:hover{
+          opacity: .55;
+      }
+  }
+
+  .close ~ span{
+      display: block;
+      max-width: 89%;
+  }
+
+  &[data-notify="container"]{
+      padding: 10px 10px 10px 20px;
+      border-radius: $border-radius-base;
+  }
+
+  &.alert-with-icon{
+      padding-left: 65px;
+  }
+}
+
+.alert-info{
+  background-color: #fdf8e2;
+  border: 2px solid #bcc1cb;
+  color: #91a1c7;
+  button.close{
+      background-color: #dddddd;
+  }
+}
+.alert-primary{
+  background-color: lighten($primary, 15%);
+}
+.alert-success {
+  background-color: lighten($success, 15%);
+}
+.alert-warning {
+   background-color: lighten($warning, 15%);
+}
+.alert-danger {
+   background-color: lighten($danger, 15%);
+}

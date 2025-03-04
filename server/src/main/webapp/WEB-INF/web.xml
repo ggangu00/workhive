@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" 
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+			xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee; http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+<!--
+    수정 이력 (Modification Information)
+   ===========================================================================
+   수정일          수정자                          수정내용
+   ==========      ========      =================================================
+   2011.9.19        이기하         filter 정리
+   2013.5.31        이기하         미사용 filter 정리 (.mdo, .action)
+   2016.6.34        장동한         WebApplicationInitializer 방식으로 변경
+-->
+
+	<!-- 웹 애플리케이션이 처음 실행될 때 자동으로 호출되는 초기 페이지 설정 (웹 루트에 접근하면 자동으로 불러올 파일 지정) -->
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file> <!-- 기본적으로 index.jsp 페이지 로드 -->
+		<welcome-file>egovDevIndex.jsp</welcome-file> <!-- index.jsp가 없으면 egovDevIndex.jsp 로드 -->
+	</welcome-file-list>
+
+	<!-- 필터 설정: 요청 및 응답의 문자 인코딩을 UTF-8로 설정하는 필터 Spring의 CharacterEncodingFilter를 
+		사용하여 모든 요청의 인코딩을 UTF-8로 강제 적용 -->
+	<filter>
+		<filter-name>encoding-filter</filter-name> <!-- 필터의 이름 지정 -->
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class> <!-- 필터 클래스 지정 -->
+		
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value> <!-- 문자 인코딩을 UTF-8로 설정 -->
+		</init-param>
+		
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value> <!-- 요청과 응답 모두 UTF-8 인코딩 강제 적용 -->
+		</init-param>
+	</filter>
+
+	<!-- 필터 매핑: 위에서 정의한 encoding-filter를 모든 요청에 적용 url-pattern을 `/*`로 설정하여 웹 
+		애플리케이션 내 모든 URL 요청에 대해 필터 실행 -->
+	<filter-mapping>
+		<filter-name>encoding-filter</filter-name>
+		<url-pattern>/*</url-pattern> <!-- 모든 요청에 대해 적용 -->
+	</filter-mapping>
+
+	<!-- 로그인 인증 방식 설정 (HTTP 기본 인증 사용) `BASIC` 인증 방식을 사용하여 브라우저의 기본 로그인 창을 활용한 
+		사용자 인증 수행 (보안 강화를 위해 보통 HTTPS와 함께 사용해야 함) -->
+	<login-config>
+		<auth-method>BASIC</auth-method>
+	</login-config>
+
+	<!-- 세션 설정: 세션 타임아웃을 60분으로 설정 세션이 60분 동안 유지되며, 이후 자동 로그아웃 처리됨 -->
+	<session-config>
+		<session-timeout>540</session-timeout> <!-- 세션 유지 시간: 60분 -->
+		<!-- 세션 추적 방식 설정 기본적으로 세션은 쿠키를 사용하여 유지됨 필요 시 <tracking-mode>COOKIE</tracking-mode>를 
+			활성화하여 쿠키 기반 세션 추적 가능 -->
+		<!-- <tracking-mode>COOKIE</tracking-mode> -->
+	</session-config>
+
+	<!-- 오류 페이지 설정: 404 에러 발생 시 지정된 페이지로 이동 사용자가 존재하지 않는 URL을 요청하면 /code404.jsp 페이지가 표시됨 -->
+	<error-page>
+		<error-code>404</error-code>
+		<location>/code404.jsp</location> <!-- 404 에러 발생 시 이동할 페이지 -->
+	</error-page>
+
+	<!-- 500 내부 서버 오류 발생 시 /code500.jsp 페이지로 이동 -->
+	<!-- <error-page> 
+			<error-code>500</error-code>
+			<location>/code500.jsp</location> 
+		</error-page> -->
+
+</web-app>

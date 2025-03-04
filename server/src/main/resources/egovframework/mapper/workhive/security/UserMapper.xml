@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.securing.mapper.UserMapper">
+
+	<!-- 단건조회 -->
+	<select id="getUser" resultType="UserDTO">
+		SELECT 
+	         mber_id,
+	         password,
+		     password_hint,
+		     password_cnsr,
+		     ihidnum,
+		     mber_nm,
+		     zip,
+		     adres,
+		     area_no,
+		     mber_sttus,
+		     detail_adres,
+		     end_telno,
+		     mbtlnum,
+		     group_id,
+		     mber_fxnum,
+		     mber_email_adres,
+		     middle_telno,
+		     sbscrb_de,
+		     quit_dt,
+		     sexdstn_code,
+		     esntl_id,
+		     lock_at,
+		     lock_cnt,
+		     lock_last_pnttm,
+		     create_dt,
+		     create_id,
+		     update_dt,
+		     update_id,
+		     del_yn,
+		     resp_cd,
+		     grade_cd,
+		     FN_GET_GRADENM(grade_cd) AS grade_nm,
+			 fn_get_deptNm(mber_id) AS dept_nm,
+		     dept_cd
+      	FROM   
+	         comtngnrlmber
+      	WHERE
+	         mber_id = #{mberId}
+	</select>
+	
+	<!-- 권한조회 -->
+	<!-- <select id="getRole" resultType="RoleDTO">
+		SELECT 
+			role_name
+		FROM   
+			t_user_role u
+		JOIN
+			t_role r ON (u.ROLE_ID = r.id)
+		WHERE
+			id = #{id}
+	</select> -->
+</mapper>

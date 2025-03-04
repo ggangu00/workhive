@@ -1,0 +1,126 @@
+.btn {
+  border-width: $border-thick;
+  background-color: $white;
+  font-weight: $font-weight-normal;
+  margin: .25rem .125rem;
+
+  padding: 5px 10px;
+
+  @include btn-styles($default-color, $default-states-color);
+
+  &:hover,
+  &:focus {
+    @include opacity(1);
+    outline: 0 !important;
+    box-shadow: none;
+  }
+
+  &:active,
+  &.active,
+  .open>&.dropdown-toggle {
+    @include box-shadow(none);
+    outline: 0 !important;
+  }
+
+  &.btn-icon {
+    padding: $padding-base-vertical;
+  }
+
+}
+
+.btn {
+
+  &:disabled,
+  &[disabled],
+  &.disabled {
+    @include opacity(.5);
+  }
+}
+
+.col-auto .btn {
+  margin: 0;
+}
+
+.btn-round {
+  border-width: $border-thin;
+  border-radius: $btn-round-radius !important;
+  padding: $padding-round-vertical $padding-round-horizontal;
+
+  &.btn-icon {
+    padding: $padding-round-vertical;
+  }
+}
+
+.btn-simple {
+  border: $none;
+  font-size: $font-size-medium;
+  padding: $padding-base-vertical $padding-base-horizontal;
+
+  &.btn-icon {
+    padding: $padding-base-vertical;
+  }
+}
+
+.btn-lg {
+  @include btn-size($padding-large-vertical, $padding-large-horizontal, $font-size-large, $border-radius-large);
+  font-weight: $font-weight-normal;
+}
+
+.btn-sm {
+  @include btn-size($padding-small-vertical, $padding-small-horizontal, $font-size-small, $border-radius-small);
+}
+
+.btn-xs {
+  @include btn-size($padding-xs-vertical, $padding-xs-horizontal, $font-size-small, $border-radius-small);
+}
+
+.btn-wd {
+  min-width: 140px;
+}
+
+.btn-group.select {
+  width: 100%;
+}
+
+.btn-group.select .btn {
+  text-align: left;
+}
+
+.btn-group.select .caret {
+  position: absolute;
+  top: 50%;
+  margin-top: -1px;
+  right: 8px;
+}
+
+.btn-social {
+  opacity: 0.85;
+}
+
+.btn-primary {
+  @include btn-styles($primary, $primary-gradient-state);
+}
+
+.btn-success {
+  @include btn-styles($success, $success-gradient-state);
+}
+
+.btn-info {
+  @include btn-styles($info, $info-gradient-state);
+}
+
+.btn-warning {
+  @include btn-styles($warning, $warning-gradient-state);
+}
+
+.btn-danger {
+  @include btn-styles($danger, $danger-gradient-state);
+}
+
+.btn-secondary {
+  @include btn-styles($secondary, $secondary-gradient-state);
+}
+
+.btn-excel {
+  @include btn-styles($excel, $excel-gradient-state);
+}

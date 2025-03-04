@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>WorkHive 로그인</title>
+   <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="">
+   <div class="login_wrap">
+      <ul class="panel_wrap">
+         <li class="panel_item" style="display: block;">
+            <div class="panel_inner" role="tabpanel" aria-controls="loinid">
+               <div class="login_form">
+                  <div class="login_box">
+                     <div class="input_item id on" id="input_item_id">
+                        <input type="text" id="id" name="id" accesskey="L" maxlength="41" autocapitalize="none" value="" title="아이디" class="input_id" aria-label="아이디 또는 전화번호">
+                        <label for="id" class="text_label" id="id_label" aria-hidden="true">아이디 또는 전화번호</label>
+                        <button type="button" class="btn_delete" id="id_clear" style="display: block;">
+                           <span class="icon_delete"><span class="blind">삭제</span></span>
+                        </button>
+                     </div>
+                     <div class="input_item pw on" id="input_item_pw">
+                        <input type="password" id="pw" name="pw" title="비밀번호" class="input_pw" maxlength="16" aria-label="비밀번호">
+                        <label for="pw" class="text_label" id="pw_label" aria-hidden="true">비밀번호</label>
+                        <button type="button" class="btn_view hide" id="pw_hide" aria-pressed="false" style="display: block;">
+                           <span class="icon_view"><span class="blind" id="icon_view">선택 안 됨,비밀번호 표시</span></span>
+                        </button>
+                        <button type="button" class="btn_delete" id="pw_clear" style="display: block;">
+                           <span class="icon_delete"><span class="blind">삭제</span></span>
+                        </button>
+                     </div>
+                  </div>
+               </div>
+               <div class="login_keep_wrap" id="login_keep_wrap">
+                  <div class="keep_check">
+                     <input type="checkbox" id="keep" name="nvlong" class="input_keep" value="off">
+                     <label for="keep" class="keep_text">로그인 상태 유지</label>
+                  </div>
+                  <div class="ip_check">
+                     <a href="/login/ext/help_ip3.html" target="_blank" id="ipguide" title="IP보안"><span class="ip_text">IP보안</span></a>
+                     <span class="switch">
+                        <input type="checkbox" id="switch" class="switch_checkbox" value="off">
+                        <label for="switch" class="switch_btn">
+                           <span class="switch_on" role="checkbox" aria-checked="true">ON</span>
+                           <span class="switch_off" role="checkbox" aria-checked="false">OFF</span>
+                        </label>
+                     </span>
+                  </div>
+               </div>=
+
+               <div class="login_error_wrap" id="err_empty_id" style="display: none;">
+                  <div class="error_message">
+                     <strong>아이디 또는 전화번호</strong>를 입력해 주세요.
+                  </div>
+               </div>
+
+               <div class="login_error_wrap" id="err_empty_pw" style="display: none;">
+                  <div class="error_message">
+                        <strong>비밀번호</strong>를 입력해 주세요.
+                  </div>
+               </div>
+            </div>
+         </li>
+      </ul>
+   </div>
+</body>
+</html>

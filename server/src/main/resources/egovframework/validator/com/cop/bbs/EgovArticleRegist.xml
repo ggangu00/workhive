@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE form-validation PUBLIC 
+    "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1//EN" 
+    "http://jakarta.apache.org/commons/dtds/validator_1_1.dtd">
+
+<form-validation>
+
+    <formset>
+        <!-- articleVO 폼에 대한 유효성 검사 규칙 -->
+        <form name="articleVO">
+            <field property="nttSj" depends="required, maxlength">
+                <arg0 key="comCopBbs.articleVO.regist.nttSj" />
+                <arg1 key="1200" resource="true"/>
+                <var>
+                    <var-name>maxlength</var-name>
+                    <var-value>1200</var-value>
+                </var>
+            </field>
+            <field property="nttCn" depends="required">
+                <arg0 key="comCopBbs.articleVO.regist.nttCn" />
+            </field>
+        </form>
+
+        <!-- comment 폼 객체에 대한 유효성 검사 규칙 추가 -->
+        <form name="comment">
+            <field property="commentCn" depends="required">
+                <arg0 key="comCopBbs.commentVO.regist.commentCn" />
+            </field>
+            <field property="wrterNm" depends="required">
+                <arg0 key="comCopBbs.commentVO.regist.wrterNm" />
+            </field>
+        </form>
+
+    </formset>
+
+</form-validation>

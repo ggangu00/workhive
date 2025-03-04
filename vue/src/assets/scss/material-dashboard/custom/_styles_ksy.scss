@@ -1,0 +1,34 @@
+// 그리드 내부 버튼
+.cell-btn-custom {
+  padding: 1px 2px;
+  border-radius: 3px !important;
+}
+
+// 휴가 정보
+.header > hr {
+  height: 2px;
+  background-color: black;
+  border: none;
+}
+.vc-card hr {
+  border: 1px dashed gray;
+  margin: 3px 0;
+}
+.vc-header {
+  font-weight: bolder;
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+.input-custom {
+  border: 1px solid #d2d6da;
+  border-radius: 5px;
+  font-size: 13px;
+  line-height: 30px;
+  height: 30px;
+  width: 100px;
+}
+
+.custom-file-div{
+  text-align: left;
+}

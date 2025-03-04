@@ -1,0 +1,399 @@
+
+
+// 180도 뒤집기
+.rotated {
+   transform: rotate(180deg);
+}
+
+// MemberManage
+.bottom-line {
+   border-bottom: 1px solid #dee2e6;
+}
+
+.top-line {
+   border-top: 1px solid #dee2e6;
+}
+
+.treeview ul {
+   list-style: none;
+   padding-left: 0;
+}
+
+.treeview .nested {
+   display: none;
+   padding-left: 20px;
+}
+
+.treeview .nested.expanded {
+   display: block;
+}
+
+.treeview, .m-group {
+   border: 1px solid #dee2e6;
+   min-height: 700px;
+   padding: 0%;
+   border-radius: 3px;
+}
+
+.m-table {
+   border: none;
+
+   tbody > tr > td {
+      border: none;
+      vertical-align: middle;
+      text-align: center;
+      justify-content: center;
+      select {
+         display: block;
+         margin: auto;
+      }
+   }
+}
+
+.profile-cell {
+   display: flex;
+   align-items: center;
+}
+
+.profile-img {
+   width: 35px;
+   height: 35px;
+   border-radius: 50%;
+   margin-right: 8px;
+}
+
+.profile-text {
+   display: flex;
+   flex-direction: column;
+}
+
+.team-label {
+   font-size: 12px;
+   color: #999;
+   text-align: left;
+}
+
+.user-name {
+   font-size: 14px;
+   font-weight: bold;
+   color: #333;
+}
+
+/* 헤더 스타일 */
+.list_head {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 10px 15px;
+   background: white;
+   border-bottom: 1px solid #ddd;
+}
+
+/* 버튼 */
+.btn_search {
+   background: none;
+   border: none;
+   cursor: pointer;
+}
+
+/* 테이블 스타일 */
+.lw_table {
+   width: 100%;
+}
+
+.lw_tr {
+   display: flex;
+   padding: 10px 0;
+   border-bottom: 1px solid #ddd;
+}
+
+.lw_th {
+   flex: 1;
+   text-align: left;
+   font-weight: bold;
+}
+
+.leader, .storage {
+   text-align: center;
+}
+
+/* 트리 스타일 */
+.org_tree {
+   list-style: none;
+   padding: 0;
+}
+
+.tree_item {
+   display: flex;
+   align-items: center;
+   padding: 8px;
+   border-bottom: 1px solid #eee;
+}
+
+/* 체크박스 스타일 */
+.lw_checkbox {
+   cursor: pointer;
+}
+
+/* 조직명 */
+.group_name {
+   display: flex;
+   align-items: center;
+   font-size: 16px;
+   font-weight: 500;
+   text-decoration: none;
+   color: #333;
+}
+
+/* 트리 토글 버튼 */
+.btn_toggle_tree {
+   background: none;
+   border: none;
+   cursor: pointer;
+   font-size: 16px;
+   margin-right: 10px;
+}
+
+/* 계층 들여쓰기 */
+.depth_1 {
+   padding-left: 10px;
+}
+.depth_2 {
+   padding-left: 30px;
+}
+.depth_3 {
+   padding-left: 50px;
+}
+.depth_4 {
+   padding-left: 70px;
+}
+.depth_5 {
+   padding-left: 90px;
+}
+.cst_tooltip {
+   display: none;
+   position: absolute;
+   border-radius: 3px;
+   background-color: rgba(0, 0, 0, .6);
+   color: #fff;
+   font-size: 14px;
+   line-height: 20px;
+   padding: 2px 8px;
+   white-space: nowrap;
+}
+
+// AuthorityManage
+.options {
+   cursor: pointer;
+   position: relative;
+
+   i {
+      color: #919191;
+      font-weight: 600;
+   }
+}
+
+/* 드롭다운 스타일 */
+.editing-dropdown-menu {
+   position: absolute;
+   background: white;
+   box-shadow: 0 0 2px #626267;
+   border-radius: 3px;
+   padding: 10px;
+   min-width: 100px;
+   min-height: 50px;
+   top: 100;
+   left: 20%;
+   z-index: 10;
+
+   div {
+      cursor: pointer;
+   }
+}
+
+.editing-dropdown-menu div:hover {
+   background: #f0f0f0;
+   border-radius: 3px;
+}
+
+.role-item {
+   display: flex;
+   justify-content: space-between;
+   padding: 8px;
+   cursor: pointer;
+}
+
+.menu-title {
+   cursor: pointer;
+   display: flex;
+   justify-content: space-between;
+   padding: 13px 15px;
+}
+
+.submenu {
+   background: #f4f4f4;
+}
+
+.menu-item {
+   border-bottom: 1px solid #ccc;
+   padding: 10px;
+}
+
+/* Login Page 로그인 페이지 */
+/* 전체 화면 배경 및 정렬 */
+.login-container-fluid {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   height: 100vh;
+   background-color: #fff;
+}
+
+/* 로그인 박스 */
+.login_box {
+   border: 1px solid #e1e3e5;
+   border-radius: 3px;
+   background-color: #fff;
+   padding: 35px ;
+   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+   width: 500px;
+   height: auto;
+   text-align: center;
+}
+
+.input_box {
+   border: 1px solid #cfcfcf;
+   border-radius: 3px;
+}
+
+/* 입력 필드 */
+.input_item {
+   position: relative;
+   display: flex;
+   align-items: center;
+   padding: 20px;
+   background: #fff;
+   padding: 27px 15px 8px;
+   border-radius: 3px;
+   z-index: 1;
+}
+
+.input_item:first-child {
+   border-bottom: 1px solid #cfcfcf;
+   border-radius: 3px 3px 0px 0px;
+}
+
+.input_item:last-child {
+   border-radius: 0px 0px 3px 3px;
+}
+
+/* 입력창 */
+.input_item input {
+   position: relative;
+   display: block;
+   width: 100%;
+   height: 25px;
+   font-size: 15px;
+   font-weight: 400;
+   line-height: 22px;
+   letter-spacing: -.2px;
+   color: #32323a;
+   z-index: 5;
+   outline: 0;
+   border: none;
+   border-radius: 0;
+   -webkit-appearance: none;
+   -moz-appearance: none;
+   appearance: none;
+   outline: 0;
+   text-decoration: none;
+   cursor: pointer;
+   -webkit-text-size-adjust: none;
+}
+
+.input_item label {
+   margin: 0;
+   position: absolute;
+   font-size: 12px;
+   color: #aaa;
+   pointer-events: none;
+   transition: 0.3s ease;
+   left: 7px;
+   top: 8px;
+   padding: 0 8px;
+   letter-spacing: -.8px;
+   white-space: nowrap;
+   height: 30px;
+}
+
+/* 입력 필드에 값이 입력되면 label 숨김 */
+.input_item input:focus + label,
+.input_item input:not(:placeholder-shown) + label {
+   left: 7px;
+   bottom: 30px;
+   font-size: 12px;
+   padding: 0 8px;
+   letter-spacing: -.8px;
+   white-space: nowrap;
+   width: auto;
+}
+
+/* 삭제 버튼 */
+.btn_delete, .btn_view {
+   all: unset;
+}
+
+.btn_delete:hover {
+   color: #666;
+}
+
+/* 로그인 유지 체크박스 */
+.login_keep_wrap {
+   font-size: 15px;
+   color: #666;
+}
+
+/* 로그인 버튼 */
+.btn_login_wrap {
+   margin-top: 30px;
+}
+
+.btn_login {
+   width: 100%;
+   background-color: #facc15;
+   color: #fff;
+   font-size: 18px;
+   font-weight: 500;
+   padding: 15px;
+   border: none;
+   border-radius: 3px;
+   cursor: pointer;
+   transition: background 0.3s;
+}
+
+.btn_login:hover {
+   background-color: #eab308;
+}
+
+/* 아이디 / 비밀번호 찾기 */
+.find_wrap {
+   display: flex;
+   justify-content: center;
+   margin-top: 15px;
+   font-size: 14px;
+}
+
+.find_wrap li {
+   list-style: none;
+   margin: 0 10px;
+}
+
+.find_wrap a {
+   text-decoration: none;
+   color: #666;
+}
+
+.find_wrap a:hover {
+   text-decoration: underline;
+}

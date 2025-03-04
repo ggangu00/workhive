@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.com.todo.mapper.TodoMapper">	
+	
+	<!-- 일지 전체조회 -->
+	<select id="todoSelectAll" parameterType="String" resultType="todoDTO">
+		select todo_cd,		
+			   mber_id,		
+			   type_cd,		--업무구분
+			   fn_get_codename(type_cd) as type_nm,	--업무구분명
+			   title,		
+			   content,		
+			   state,		
+			   todo_dt,		
+			   create_dt,
+			   TO_DATE(#{todoDt}, 'YYYYMMDD') - todo_dt as date_term
+		from todo
+		where 
+			todo_dt = TO_DATE(#{todoDt}, 'YYYY-MM-DD') or <![CDATA[ (todo_dt < TO_DATE(#{todoDt}, 'YYYY-MM-DD') and state='A02') ]]>
+		order by 
+			todo_dt asc, DECODE(state, 'A02', 1, 'A01', 2)
+	</select>
+	
+	<!-- 일지 단건조회 -->
+	<select id="todoSelect" parameterType="String">
+		select todo_cd,		--일지 코드
+			   mber_id,		--구성원 코드
+			   type_cd,		--업무구분
+			   fn_get_codename(type_cd) as type_nm,	--업무구분명
+			   title,		--업무명
+			   content,		--업무 상세내용
+			   state,		--완료여부
+			   todo_dt,		--업무일자
+			   create_dt
+		from todo
+		where 
+			todo_cd = #{todoCd} 
+	</select>
+	
+	<!-- 일지 월별 건수 조회 -->
+	<select id="todoSelectCnt" parameterType="HashMap" resultType="todoDTO">
+		select todo_dt, 
+			   count(*) as dateCnt
+		from todo
+		where 
+			extract (year from todo_dt) = #{year}
+		and extract (month from todo_dt) = #{month}
+			
+		group by 
+			todo_dt
+	</select>
+	
+	<!-- 일지 등록 -->
+	<insert id="todoInsert" parameterType="todoDTO">
+		INSERT INTO todo (
+			todo_cd,		--일지 코드
+		    mber_id,		--구성원 코드
+		    type_cd,	--업무구분
+		    title,		--업무명
+		    content,		--업무 상세내용
+		    state,		--완료여부
+		    todo_dt		--업무일자
+		)
+		VALUES (
+			seq_todo_cd.nextval,
+			#{mberId},
+			#{typeCd},
+			#{title},
+			#{content},
+			#{state},
+			#{todoDt}
+		)
+		
+	</insert>
+	
+	<!-- 일지 수정 -->
+	<update id="todoUpdate" parameterType="todoDTO">
+		update todo
+		set	
+			<if test="category != null and !category.equals('')">
+			type_cd = #{typeCd}, 
+			</if>
+			<if test="title != null and !title.equals('')">
+			title = #{title},
+			</if>
+			<if test="state != null and !state.equals('')">
+			state = #{state},
+			</if>
+			<if test="todoDt != null and !todoDt.equals('')">
+			todo_dt = #{todoDt},
+			</if>
+			<if test="content != null and !content.equals('')">
+			content = #{content},
+			</if>
+			mber_id = #{mberId}
+		where 
+			todo_cd = ${todoCd}				
+	</update>
+	
+	<!-- 일지 상태 수정 -->
+	<update id="todoStateUpdate" parameterType="todoDTO">
+	    UPDATE 
+	    	todo 
+	    SET STATE = #{state}
+	    WHERE 
+	    	todo_cd 
+	    IN
+	    <foreach collection="todoArr" item="todoCd" open="(" separator="," close=")">
+	        #{todoCd}
+	    </foreach>    
+	</update>
+	
+	<!-- 일지 삭제 -->
+	<delete id="todoDelete" parameterType="java.util.List">
+	    DELETE FROM todo 
+	    WHERE todo_cd IN
+	    <foreach collection="list" item="todoCd" separator="," open="(" close=")">
+	        #{todoCd}
+	    </foreach>
+	</delete>
+
+</mapper>
