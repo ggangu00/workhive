@@ -3,7 +3,7 @@
     <div class="container-fluid">
       <card>
         <h4 class="card-title float-left">프로젝트 조회</h4>
-        <button class="btn btn-primary btn-sm btn-fill float-right" onclick="location.href ='/project/add'">프로젝트
+        <button class="btn btn-primary btn-sm btn-fill float-right" onclick="location.href ='/project/add?menuCd=15'">프로젝트
           등록</button>
       </card>
       <form @submit.prevent="projectGetList">
@@ -478,10 +478,10 @@ const btnProjectEnd = (code, mode) => {
       showCancelButton: true,
       customClass: {
         confirmButton: "btn btn-secondary btn-fill",
-        cancelButton: "btn btn-danger btn-fill"
+        cancelButton: "btn btn-primary btn-fill"
       },
       confirmButtonText: "아니오",
-      cancelButtonText: "예",
+      cancelButtonText: "확인",
     }).then((result) => {
       if (result.dismiss == Swal.DismissReason.cancel) {
         projectEnd(code, mode); //완료처리 함수
@@ -494,10 +494,10 @@ const btnProjectEnd = (code, mode) => {
       showCancelButton: true,
       customClass: {
         confirmButton: "btn btn-secondary btn-fill",
-        cancelButton: "btn btn-danger btn-fill"
+        cancelButton: "btn btn-primary btn-fill"
       },
       confirmButtonText: "아니오",
-      cancelButtonText: "예",
+      cancelButtonText: "확인",
     }).then((result) => {
       if (result.dismiss == Swal.DismissReason.cancel) {
         projectEnd(code, mode); //완료처리 함수

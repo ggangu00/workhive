@@ -13,15 +13,13 @@
                 <div id="nowGrid" class="toastui project"></div>
             </card>
             <card>
-                <div class="d-flex">
-                    <div class="w80">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-auto">
                         <h5>전체 회의 ({{ numberFormat(meetCount) }}건)</h5>
                     </div>
-                    <div class="col-auto">
-                        <input type="text" class="form-control form-control-sm" placeholder="제목을 입력해주세요">
-                    </div>
-                    <div class="col-auto mlp10">
-                        <button class="btn btn-info btn-fill btn-sm">검색</button>
+                    <div class="col d-flex justify-content-end align-items-center">
+                        <input type="text" class="form-control w-auto me-2" placeholder="제목을 입력해주세요">
+                        <button class="btn btn-info btn-fill">검색</button>
                     </div>
                 </div>
 
@@ -238,11 +236,11 @@ const btnMeetRemove = () => {
         icon: "question",
         showCancelButton: true,
         customClass: {
-            confirmButton: "btn btn-danger btn-fill",
-            cancelButton: "btn btn-secondary btn-fill"
+            cancelButton: "btn btn-danger btn-fill",
+            confirmButton: "btn btn-secondary btn-fill"
         },
-        cancelButtonText: "닫기",
-        confirmButtonText: "삭제",
+        confirmButtonText: "닫기",
+        cancelButtonText: "삭제",
     }).then((result) => {
         if (result.isConfirmed) {
             // 프로젝트 삭제
