@@ -70,16 +70,19 @@
                <!-- 서브 메뉴 (Depth 2) -->
                <template v-slot:list>
                   <div class="sub-item">
-                     <li class="sub-li" @click="movePage('/bulletin/bulletinList/BBS001')">공지사항</li>
+                     <li v-for="(board, index) in boardList" :key="index" class="sub-li" @click="movePage('board.bbsPath')">
+                        {{ board.bbsNm }} <!-- 게시글 제목을 bbsNm으로 출력 -->
+                     </li>
+                     <!-- <li class="sub-li" @click="movePage('/bulletin/bulletinList/BBS001')">공지사항</li>
                      <li class="sub-li" @click="movePage('/bulletin/bulletinList/BBS001')">사내게시판</li>
-                     <li class="sub-li" @click="movePage('/bulletin/secretAt')">비밀글</li>
+                     <li class="sub-li" @click="movePage('/bulletin/secretAt')">비밀글</li> -->
 
                   </div>
                </template>
 
             </sidenav-collapse>
          </li>
-         <!--게시판 목록 작업하는 곳[E]-->    
+         <!--게시판 목록 작업하는 곳[E]-->
       </ul>
    </div>
 
@@ -100,9 +103,7 @@
            <template v-slot:list>
            <div class="sub-item">
               <!-- v-for로 게시글 목록을 반복하여 li 생성 -->
-              <li v-for="(board, index) in boardList" :key="index" class="sub-li" @click="movePage('board.bbsPath')">
-                 {{ board.bbsNm }} <!-- 게시글 제목을 bbsNm으로 출력 -->
-              </li>
+
            </div>
            </template>
         </sidenav-collapse>
@@ -116,7 +117,7 @@
    import { ref, onMounted } from "vue";
    import { useRouter } from "vue-router";
    import SidenavCollapse from "./SidenavCollapse.vue";
-   import axios from "axios";
+   import axios from "../../assets/js/customAxios";
    import Swal from 'sweetalert2';
    const boardList = ref([]);
 
@@ -243,7 +244,7 @@
    onMounted(() => {
       menuGetList(); // 메뉴 목록 가져오기
       BoardGetList();
-      
+
    });
 
 </script>
