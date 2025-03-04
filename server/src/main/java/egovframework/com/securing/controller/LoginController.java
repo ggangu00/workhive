@@ -11,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -71,31 +72,34 @@ public class LoginController {
         //CustomerUser user = (CustomerUser) userService.loadUserByUsername(loginRequest.getUsername());
         
         // 1. 회원 정보 조회 (Security 인증과 동일한 방식으로 조회)
-        CustomerUser requestUser = (CustomerUser) userService.loadUserByUsername(loginRequest.getUsername());
-        UserDTO user = requestUser.getUserDTO(); // 실제 사용자 정보 추출
-        
         Map<String, Object> response = new HashMap<>();
         
-        if (user == null) {
-            loginLogInsert(loginRequest.getUsername(), getClientIp(), "A02");
+        CustomerUser requestUser = null;
+        
+        try {
+            requestUser = (CustomerUser) userService.loadUserByUsername(loginRequest.getUsername());
+		} catch (UsernameNotFoundException e) {
+			loginLogInsert(loginRequest.getUsername(), getClientIp(), "A02");
             log.warn("❌ 로그인 실패 - 존재하지 않는 아이디");
 
             response.put("code", HttpStatus.UNAUTHORIZED.value());
             response.put("message", "아이디 또는 비밀번호를 확인하세요.");
             
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        }
+		}
+        
+        UserDTO user = requestUser.getUserDTO(); // 실제 사용자 정보 추출
         
         // 3. 계정잠금 확인
-        if ("A01".equals(user.getLockAt())) {
-            loginLogInsert(user.getMberId(), getClientIp(), "A02");
-            log.warn("❌ 로그인 실패 - 계정 잠금");
-            
-            response.put("code", HttpStatus.LOCKED.value());
-            response.put("message", "계정이 잠겼습니다. 관리자에게 문의하세요.");
-
-            return ResponseEntity.status(HttpStatus.LOCKED).body(response);
-        }
+//        if ("A01".equals(user.getLockAt())) {
+//            loginLogInsert(user.getMberId(), getClientIp(), "A02");
+//            log.warn("❌ 로그인 실패 - 계정 잠금");
+//            
+//            response.put("code", HttpStatus.LOCKED.value());
+//            response.put("message", "계정이 잠겼습니다. 관리자에게 문의하세요.");
+//
+//            return ResponseEntity.status(HttpStatus.LOCKED).body(response);
+//        }
 
         try {
         	// 4. 인증 시도 (Spring Security 인증 매니저)
