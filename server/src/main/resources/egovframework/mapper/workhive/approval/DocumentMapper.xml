@@ -126,15 +126,20 @@
     
     <!-- 문서카운트 -->
     <select id="getCount" resultType="int">
-	  SELECT 
-	  COUNT(*) 
-	  FROM document
-	  where 1=1
-	  AND mber_id = #{mberId} 
-	  <include refid="searchCriteria" />
-      <if test="status1 != null and status1 != ''">
-        OR crnt_sign_stat = #{status1}
-      </if>
+		SELECT COUNT(*) 
+		FROM DOCUMENT D
+		WHERE 1=1
+		AND del_yn = UPPER('N')
+		AND (
+		    mber_id = #{mberId} 
+		    OR (#{status} = 'H04' AND EXISTS (
+		        SELECT 1 
+		        FROM approval_line al
+		        WHERE al.doc_cd = D.doc_cd
+		        AND al.mber_id = #{mberId}
+		    ))
+		)
+		<include refid="searchCriteria"/> 
 	</select>
 	
 	<!-- 결재선 수정 -->
@@ -225,8 +230,8 @@
 			                d.doc_title,
 			                d.doc_cn_editor,
 			                d.mber_id,
-			                fn_get_memnm(a.mber_id) AS mber_nm,
-			                fn_get_deptNm(a.mber_id) AS dept_nm,
+			                fn_get_memnm(d.mber_id) AS mber_nm,
+			                fn_get_deptNm(d.mber_id) AS dept_nm,
 			                fn_get_codename(d.CRNT_SIGN_STAT) AS crnt_sign_stat,
 			                d.draft_dt,
 			                d.complete_dt,
@@ -251,7 +256,43 @@
 			                            AND a2.sign_stat = 'D02'
 			                    )
 			                )
-			            <include refid="searchCriteria"/>
+			            				              				        <if test="delYn != null and delYn != ''">
+				            AND del_yn = #{delYn}
+				        </if>
+				        <if test="formCd != null and formCd != ''">
+				            AND form_cd = #{formCd}
+				        </if>
+						<if test="docKind != null and docKind != ''">
+				            AND doc_kind = #{docKind}
+				        </if>
+				        <if test="docCd != null and docCd != ''">
+				            AND doc_cd = #{docCd}
+				        </if>
+				        <if test="deptNm != null and deptNm != ''">
+				            AND fn_get_deptNm(a.mber_id) = #{deptNm}
+				        </if>
+						<if test='!startDate.isEmpty()'>
+							<![CDATA[
+							and to_char(draft_dt, 'yyyy-mm-dd') >= #{startDate}
+							]]>
+						</if>
+						<if test='!endDate.isEmpty()'>
+							<![CDATA[
+							and to_char(draft_dt, 'yyyy-mm-dd') <= #{endDate}
+							]]>
+						</if>
+						<choose>
+					        <!-- 두 상태 값이 모두 존재할 때 -->
+					        <when test="status != null and status != '' and status1 != null and status1 != ''">
+					            AND (crnt_sign_stat = #{status} OR crnt_sign_stat = #{status1})
+					        </when>
+					        <!-- 하나의 상태 값만 존재할 때 -->
+					        <otherwise>
+					            <if test="status != null and status != ''">
+					                AND crnt_sign_stat = #{status}
+					            </if>
+					        </otherwise>
+					    </choose>
 			            ORDER BY d.draft_dt DESC 
 			        ) sub
 			    ) 
@@ -337,7 +378,43 @@
 				                           AND a2.sign_stat = 'D02'
 				                    )
 				              )
-				              <include refid="searchCriteria" />
+				              				        <if test="delYn != null and delYn != ''">
+				            AND del_yn = #{delYn}
+				        </if>
+				        <if test="formCd != null and formCd != ''">
+				            AND form_cd = #{formCd}
+				        </if>
+						<if test="docKind != null and docKind != ''">
+				            AND doc_kind = #{docKind}
+				        </if>
+				        <if test="docCd != null and docCd != ''">
+				            AND doc_cd = #{docCd}
+				        </if>
+				        <if test="deptNm != null and deptNm != ''">
+				            AND fn_get_deptNm(a.mber_id) = #{deptNm}
+				        </if>
+						<if test='!startDate.isEmpty()'>
+							<![CDATA[
+							and to_char(draft_dt, 'yyyy-mm-dd') >= #{startDate}
+							]]>
+						</if>
+						<if test='!endDate.isEmpty()'>
+							<![CDATA[
+							and to_char(draft_dt, 'yyyy-mm-dd') <= #{endDate}
+							]]>
+						</if>
+						<choose>
+					        <!-- 두 상태 값이 모두 존재할 때 -->
+					        <when test="status != null and status != '' and status1 != null and status1 != ''">
+					            AND (crnt_sign_stat = #{status} OR crnt_sign_stat = #{status1})
+					        </when>
+					        <!-- 하나의 상태 값만 존재할 때 -->
+					        <otherwise>
+					            <if test="status != null and status != ''">
+					                AND crnt_sign_stat = #{status}
+					            </if>
+					        </otherwise>
+					    </choose>
 				      )
 		</select>
 	<!-- 부서코드로 사원조회 -->
@@ -354,18 +431,7 @@
     </select>
 	<!-- 검색조건함수 -->
     <sql id="searchCriteria">
-		 <choose>
-		        <!-- 두 상태 값이 모두 존재할 때 -->
-		        <when test="status != null and status != '' and status1 != null and status1 != ''">
-		            AND (crnt_sign_stat = #{status} OR crnt_sign_stat = #{status1})
-		        </when>
-		        <!-- 하나의 상태 값만 존재할 때 -->
-		        <otherwise>
-		            <if test="status != null and status != ''">
-		                AND crnt_sign_stat = #{status}
-		            </if>
-		        </otherwise>
-		    </choose>
+		 
         <if test="delYn != null and delYn != ''">
             AND del_yn = #{delYn}
         </if>
@@ -391,5 +457,17 @@
 			and to_char(draft_dt, 'yyyy-mm-dd') <= #{endDate}
 			]]>
 		</if>
+		<choose>
+		        <!-- 두 상태 값이 모두 존재할 때 -->
+		        <when test="status != null and status != '' and status1 != null and status1 != ''">
+		            AND (crnt_sign_stat = #{status} OR crnt_sign_stat = #{status1})
+		        </when>
+		        <!-- 하나의 상태 값만 존재할 때 -->
+		        <otherwise>
+		            <if test="status != null and status != ''">
+		                AND crnt_sign_stat = #{status}
+		            </if>
+		        </otherwise>
+		    </choose>
     </sql>
 </mapper>

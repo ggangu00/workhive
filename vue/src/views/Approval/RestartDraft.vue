@@ -71,15 +71,16 @@ const approvalBtn = async() =>{
     if(!approvalResult){
       return;
     }
+    router.push({path:'/approval/proceedList'}); 
   }
 
   //삭제코드
   const response = await axios.put(`/api/document/delete/${docCd.value}`,{})
   if (response.status == 200) {
-    router.push({path: '/approval/rejectedList'})
+    router.push({path: '/approval/proceedList'})
   } else {
     alert("삭제 실패");
-    router.push({path: '/approval/rejectedList'})
+    router.push({path: '/approval/proceedList'})
   }
 }
   </script>
