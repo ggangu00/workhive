@@ -419,15 +419,21 @@
 		</select>
 	<!-- 부서코드로 사원조회 -->
 	  <select id="memberSelectAll" resultType="egovframework.com.approval.service.MemberDTO" parameterType="egovframework.com.approval.service.SearchDTO">
-    	SELECT
-    		mber_id,
-    		mber_nm,
-    		grade_cd,
-    		fn_get_gradenm(grade_cd) as grade_nm,
-    		dept_cd,
-    		(select dept_nm from department where dept_cd = #{deptCd}) as dept_nm
-    	FROM COMTNGNRLMBER
-    	WHERE dept_cd = #{deptCd}
+		SELECT 
+		    m.mber_id,
+		    m.mber_nm,
+		    m.grade_cd,
+		    fn_get_gradenm(m.grade_cd) as grade_nm,  
+		    m.dept_cd,
+		    d.dept_nm  
+		FROM COMTNGNRLMBER m
+		JOIN department d ON m.dept_cd = d.dept_cd
+		WHERE d.dept_cd IN (
+		    SELECT dept_cd
+		    FROM department
+		    START WITH dept_cd = #{deptCd}
+		    CONNECT BY PRIOR dept_cd = parent_cd
+		)
     </select>
 	<!-- 검색조건함수 -->
     <sql id="searchCriteria">
