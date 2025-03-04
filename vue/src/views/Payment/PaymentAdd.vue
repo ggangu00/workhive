@@ -16,7 +16,7 @@
           <div class="card-body">
             <form action="BoardAdd" method="post">
               <div class="mb-3">
-                <label>제목 <em class="point-red">*</em></label>
+                <label>작성자 <em class="point-red">*</em></label>
                 <input type="text" class="form-control w50" placeholder="제목을 입력해주세요">
               </div>
 
@@ -39,6 +39,12 @@
                 <input type="text" class="form-control w50" placeholder="금액을 입력해주세요">
               </div>
 
+              <div class="mb-3">
+              <label>파일첨부  <em class="point-red">*</em></label>
+              <div class="input-group w30" style="border: 1px solid #ccc; border-radius: 3px; background-color: #fff;">
+                <input type="file" class="form-control" ref="fileInput" />
+              </div>
+            </div>
             </form>
           </div>
         </div>
