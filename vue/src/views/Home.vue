@@ -6,8 +6,8 @@
           <div class="profile-info">
             <div class="profile-icon"><i class="bi bi-person-fill"></i></div>
             <div>
-              <small>개발팀</small>
-              <h4>박주현 주임</h4>
+              <small>{{ userInfoStore.user.deptNm }}</small>
+              <h4>{{ userInfoStore.user.mberNm }} {{ userInfoStore.user.gradeNm }}</h4>
             </div>
           </div>
           <div class="status-boxes">

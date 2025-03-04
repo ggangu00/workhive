@@ -14,8 +14,8 @@
                   <!-- 왼쪽 레이아웃 : 권한 목록 -->
                   <div class="col-3 treeview">
                      <div class="bottom-line p-2">
-                        <button class="btn btn-primary btn-sm" @click="btnAuthorityAdd">
-                           <i class="fa-solid fa-plus"></i> 권한 추가
+                        <button class="btn btn-primary btn-fill" @click="btnAuthorityAdd">
+                           권한 <i class="fa-solid fa-plus"></i> 
                         </button>
                      </div>
 

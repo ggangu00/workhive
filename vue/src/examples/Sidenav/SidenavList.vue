@@ -79,8 +79,6 @@
             </sidenav-collapse>
          </li>
          <!--게시판 목록 작업하는 곳[E]-->
-
-
       </ul>
    </div>
 </template>
