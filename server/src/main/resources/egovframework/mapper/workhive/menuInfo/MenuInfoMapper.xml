@@ -22,9 +22,9 @@
 		FROM
 		   menuinfo
 		WHERE
-		   use_yn = 'A01'
+		   UPPER(use_yn) = UPPER('A01')
 		AND
-		   del_yn = 'A01'
+		   UPPER(del_yn) = UPPER('N')
 		START WITH 
 		   parent_menu_cd IS NULL  
 		CONNECT BY PRIOR 
