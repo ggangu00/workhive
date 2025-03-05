@@ -23,7 +23,7 @@ public interface AuthorityMapper {
 	public int authorityUpdate(AuthorityDTO dto);
 
 	// 권한 삭제
-	public int authorityDelete(String authorityCd);
+	public int authorityDelete(@Param("authorityCd") String authorityCd, @Param("mberId") String mberId);
 
 	// 메뉴 접근 권한 조회
 	public int isMenuAccessible(@Param("menuCd") String menuCd, @Param("userId") String userId);

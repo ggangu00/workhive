@@ -19,7 +19,7 @@ public interface AuthorityService {
 	public boolean authorityUpdate(AuthorityDTO dto);
 	
 	// 권한 삭제
-	public boolean authorityDelete(String authorityCd);
+	public boolean authorityDelete(@Param("authorityCd") String authorityCd, @Param("mberId") String mberId);
 	
 	// 메뉴 접근 권한 조회
 	public boolean isMenuAccessible(@Param("menuCd") String menuCd, @Param("userId") String userId);
