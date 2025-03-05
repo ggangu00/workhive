@@ -3,23 +3,28 @@
     <div class="container-fluid">
       <card>
         <h4 class="card-title float-left">프로젝트 조회</h4>
-        <button class="btn btn-primary btn-sm btn-fill float-right" onclick="location.href ='/project/add?menuCd=15'">프로젝트
+        <button class="btn btn-primary btn-sm btn-fill float-right"
+          onclick="location.href ='/project/add?menuCd=15'">프로젝트
           등록</button>
       </card>
       <form @submit.prevent="projectGetList">
         <card>
           <ul class="nav nav-pills">
             <li class="nav-item">
-              <a class="nav-link" :class="searchData.searchState == '' ? 'active' : ''" @click="searchData.searchState = ''">전체</a>
+              <a class="nav-link" :class="searchData.searchState == '' ? 'active' : ''"
+                @click="searchData.searchState = ''">전체</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" :class="searchData.searchState == '1' ? 'active' : ''" @click="searchData.searchState = '1'">진행전</a>
+              <a class="nav-link" :class="searchData.searchState == '1' ? 'active' : ''"
+                @click="searchData.searchState = '1'">진행전</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" :class="searchData.searchState == '2' ? 'active' : ''" @click="searchData.searchState = '2'">진행중</a>
+              <a class="nav-link" :class="searchData.searchState == '2' ? 'active' : ''"
+                @click="searchData.searchState = '2'">진행중</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" :class="searchData.searchState == '3' ? 'active' : ''" @click="searchData.searchState = '3'">진행완료</a>
+              <a class="nav-link" :class="searchData.searchState == '3' ? 'active' : ''"
+                @click="searchData.searchState = '3'">진행완료</a>
             </li>
           </ul>
         </card>
@@ -121,7 +126,7 @@
             <div class="progress-bar ">
               <div class="progress-bar-fill " :style="'width:' + progress + '%'">{{ workProgress }}%</div>
             </div>
-            <div class="table-responsive">
+            <div class="table-responsive" :style="workCount > 0 ? 'max-height: 200px; overflow-y: auto;' : ''">
               <table class="table table-hover project">
                 <thead class="table-secondary">
                   <tr>
@@ -270,7 +275,7 @@ onMounted(() => {
     ],
     pageOptions: {
       useClient: false,
-      perPage: 5,
+      perPage: 15,
     },
     rowHeight: 50,
     rowHeaders: ["checkbox"]
@@ -354,7 +359,15 @@ class BtnRendererSetting {
       const type = event.target.dataset.type;
 
       if (type === "edit") { //수정버튼 클릭 시 수정페이지로 이동
-        btnPageMove("add", rowData.prCd);
+        if (rowData.state == 'A03') {
+          btnPageMove("add", rowData.prCd);
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "수정불가",
+            text: "완료된 프로젝트는 수정할 수 없습니다."
+          });
+        }
       } else if (type === "del") { //삭제버튼 클릭 시 삭제처리
         btnProjectRemove(rowData.prCd);
       }
@@ -576,7 +589,7 @@ const projectRemove = async (prCd) => {
         title: "삭제완료",
         text: "선택한 프로젝트를 삭제하였습니다",
       })
-      projectGetList(); //삭제완료 후 리스트 리로드
+      projectGetList(); //삭제완료 후 리스트 리로드*-+-
     }
   } catch (err) {
     Swal.fire({

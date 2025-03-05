@@ -25,7 +25,7 @@
             'point-red': i.dateDay === '일',
             'point-blue': i.dateDay === '토',
             'highlight': todoListCnt.includes(dateFormat(i.thisDate)),
-            'today': dateFormat(i.thisDate) == todoDt
+            'today': dateFormat(i.thisDate) == nowDt
           }" @click=" todoGetDate(i.thisDate)">{{ i.date }}</button>
         </div>
       </div>
@@ -80,13 +80,13 @@
         </div>
         <div class="mb-3">
           <div class="form-group has-label">
-            <label>일지제목 <em class="point-red">*</em></label>
+            <label>업무내용 <em class="point-red">*</em></label>
           </div>
           <input type="text" class="form-control" placeholder="일지제목을 입력해주세요" :name="title" v-model="title">
         </div>
         <div class="mb-3">
           <div class="form-group has-label">
-            <label>업무내용 <em class="point-red">*</em></label>
+            <label>업무상세</label>
           </div>
           <textarea type="text" class="form-control" placeholder="업무내용을 입력해주세요" style="min-height: 150px;"
             :name="content" v-model="content"></textarea>
@@ -108,7 +108,7 @@
     <!-- 모달 푸터 -->
     <template v-slot:footer>
       <button type="button" class="btn btn-secondary btn-fill" @click="closeModal">닫기</button>
-      <button type="button" class="btn btn-primary btn-fill" @click="todoAdd; closeModal">등록</button>
+      <button type="button" class="btn btn-fill" :class="isUpdated ? 'btn-success' : 'btn-primary'" @click="todoAdd; closeModal">{{isUpdated ? '저장' : '등록'}}</button>
     </template>
   </Modal>
   <!--업무등록 모달[e]-->
@@ -133,6 +133,7 @@ import { getComm, dateFormat } from '../../assets/js/common'
 
 const year = ref(new Date().getFullYear()); // 현재 연도 기본값
 const month = ref(new Date().getMonth() + 1); // 현재 월 기본값 (1~12 범위)
+const isUpdated = ref(false);
 
 const typeCd = ref('B01');        //등록 시 업무구분
 const typeCdArr = ref([]);        //업무구분 공통코드 목록
@@ -141,6 +142,7 @@ const content = ref('');          //업무내용
 const state = ref('A02');         //업무 완료여부
 const mberId = ref('admin');      //등록자 아이디
 const todoDt = ref(dateFormat()); // 현재 선택된 날짜 (디폴트 : 오늘)
+const nowDt = ref(dateFormat()); // 현재 캘린더 뿌리는 날짜 (디폴트 : 오늘)
 
 onBeforeMount(() => {
   getStatus();      //업무구분
@@ -166,7 +168,7 @@ onMounted(() => {
     ],
     pageOptions: {
       useClient: false,
-      perPage: 5,
+      perPage: 15,
     },
     rowHeight: 50,
     data: todoList.value,
@@ -247,6 +249,7 @@ const openModal = () => {
 const closeModal = () => {
   formReset();
   isShowModal.value = false;
+  isUpdated.value = false;
 }
 
 //======================== 공통함수 ========================
@@ -268,6 +271,7 @@ const nowDateInfo = () => {
 
 // todoDt가 변경되면 watchEffect가 자동 실행됨
 const todoGetDate = (date) => {
+  nowDt.value = date;
   todoDt.value = date;
 };
 
@@ -313,6 +317,7 @@ const btnMonthMove = (mode) => {
 
 //수정버튼 클릭 시 수정모달 표출
 const btnSelectUpdate = (code) => {
+  isUpdated.value = true;
   openModal();
   todoGetList(code);
 }
@@ -329,11 +334,30 @@ const btnTodoRemove = (code) => {
     },
     confirmButtonText: "아니요",
     cancelButtonText: "네",
-  }).then((result) => {
+  }).then(async(result) => {
     if (result.dismiss == Swal.DismissReason.cancel) {
-      todoListUpdate(code);
+      try {
+        const response = await axios.delete(`/api/todo/delete/${code}`);
+
+        if (response.data === true) {
+          Swal.fire({
+            icon: "success",
+            title: "삭제완료",
+            text: "선택한 일지를 삭제하였습니다",
+          })
+          todoGetListAll();
+        }
+      } catch (err) {
+        Swal.fire({
+          icon: "error",
+          title: "삭제 실패",
+          text: "Error : " + err
+        });
+      }
     }
   });
+
+  
 };
 
 //업무일지 다중 상태변경/삭제 처리 (버튼)
@@ -354,7 +378,7 @@ const btnTodoListChange = (mode) => {
       showCancelButton: true,
       customClass: {
         confirmButton: "btn btn-secondary btn-fill",
-        cancelButton: "btn btn-danger btn-fill"
+        cancelButton: "btn btn-fill" + mode == 'del' ? "btn-danger" : "btn-primary"
       },
       confirmButtonText: "아니요",
       cancelButtonText: "네",
@@ -382,7 +406,7 @@ const todoList = ref([]);
 const todoCount = ref(0);
 const todoGetListAll = async () => {
 
-  const date = dateFormat(todoDt.value).replaceAll("-", ""); //선택된 날짜 없을 때 디폴트 금일
+  const date = dateFormat(nowDt.value).replaceAll("-", ""); //선택된 날짜 없을 때 디폴트 금일
 
   try {
     const result = await axios.get(`/api/todo/list/${date}`);
@@ -423,7 +447,7 @@ const todoGetList = async (todoCd) => {
     const result = await axios.get(`/api/todo/info/${todoCd}`);
 
     todoInfo.value = result.data.info;
-    todoDt.value = todoInfo.value.todoDt;
+    todoDt.value = dateFormat(todoInfo.value.todoDt);
     typeCd.value = todoInfo.value.typeCd;
     title.value = todoInfo.value.title;
     content.value = todoInfo.value.content;

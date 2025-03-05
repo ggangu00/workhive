@@ -111,12 +111,9 @@
 	</update>
 	
 	<!-- 일지 삭제 -->
-	<delete id="todoDelete" parameterType="java.util.List">
+	<delete id="todoDelete" parameterType="String">
 	    DELETE FROM todo 
-	    WHERE todo_cd IN
-	    <foreach collection="list" item="todoCd" separator="," open="(" close=")">
-	        #{todoCd}
-	    </foreach>
+	    WHERE todo_cd = #{todoCd}
 	</delete>
 
 </mapper>

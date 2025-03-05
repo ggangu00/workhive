@@ -62,8 +62,8 @@ public class TodoServiceImpl implements TodoService{
 	}
 
 	//일지 삭제
-	public boolean todoDelete(List<String> todoArr) {
+	public boolean todoDelete(String todoCd) {
 
-        return todoMapper.todoDelete(todoArr) == 1 ? true : false;
+        return todoMapper.todoDelete(todoCd) == 1 ? true : false;
     }
 }
