@@ -121,7 +121,7 @@
    // 게시글 목록으로 이동
    /**
     *
-    
+
    @param { String } bbsTyCode : 게시판코드*/
    const bulletinListMove = (bbsId) => {// window.location.href = targetUrl; // 페이지 이동
       router.push({

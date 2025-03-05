@@ -40,5 +40,5 @@ public class MenuInfoDTO {
 	private String updateId;	// 수정자
 	
 	private AuthorityDTO authorityCd;
-		
+	private int authYn;
 }

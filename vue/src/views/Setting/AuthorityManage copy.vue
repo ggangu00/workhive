@@ -201,36 +201,12 @@
    const isMenuEditing = ref(false);
    const btnMenuModifyMode = () => {
       isMenuEditing.value = true;
-      updateMenuDataByMode();
-      console.log('수정모드 진입', isMenuEditing.value, menuData.value);
    };
-
-   // 메뉴 수정모드 취소
-   // const btnMenuCancel = () => {
-   //    isMenuEditing.value = false;   // 수정모드 종료
-   // };
 
    // 메뉴 수정모드 취소
    const btnMenuCancel = () => {
-      Swal.fire({
-         icon: "question",
-         //title: "수정 모드를 종료하시겠습니까?",
-         text: "변경사항이 반영되지 않습니다. 그대로 진행하시겠습니까 ? ",
-         showCancelButton: true,
-         customClass: {
-            confirmButton: "btn btn-secondary btn-fill",
-            cancelButton: "btn btn-primary btn-fill"
-         },
-         confirmButtonText: "아니오", // "삭제" → "닫기"
-         cancelButtonText: "예", // "닫기" → "삭제"
-      }).then(result => {
-         if (result.dismiss == Swal.DismissReason.cancel) {
-            isMenuEditing.value = false;   // 수정모드 종료
-            updateMenuDataByMode();        // 조회 모드로 데이터 다시 구성
-         };
-      });
+      isMenuEditing.value = false;
    };
-
 
    // ==================================== 권한 관리 API ====================================
    const roles = ref([]);  // 권한 목록
@@ -240,12 +216,6 @@
       try {
          const result = await axios.get('/api/authority');
          roles.value = result.data;
-
-         if (roles.value.length > 0) {
-            // ✅ 첫 번째 권한 자동 선택
-            authorityGet(roles.value[0], 0);
-         }
-
       } catch (err) {
          roles.value = [];
          Swal.fire({
@@ -375,89 +345,53 @@
          });
       }
    };
-   // 전체 메뉴 데이터 + 권한 체크 정보
-   const fullMenuList = ref([]);
-
-   // 권한별 메뉴 (authYn=1인 것만)
-   const authorizedMenuList = ref([]);
 
    // 권한별 메뉴 조회
    const authorityMenuGetList = async (code) => {
       try {
-         const response = await axios.get(`/api/menu/info/${code}`);
-
-         fullMenuList.value = menuGetListCallbackTreeBuild(response.data);  // 이미 selected 세팅 포함
-
-         // 조회모드 기준 메뉴 구성 (authYn=1인 것만 필터링)
-         authorizedMenuList.value = fullMenuList.value.filter(menu => menu.selected || menu.subMenus.some(sub => sub.selected));
-
-         // 화면 표시용 menuData 구성
-         updateMenuDataByMode();
+         const response = await axios.get(`/api/menu/${code}`);
+         console.log("authorityMenuGetList => ", response.data);
+         menuData.value = menuGetListCallbackTreeBuild(response.data);
       } catch (err) {
-         Swal.fire({ icon: "error", title: "메뉴 조회 실패", text: err.response?.data || err.message });
+         Swal.fire({
+            icon: "error",
+            title: "메뉴 조회 실패",
+            text: err.response?.data || err.message
+         });
       }
    };
 
-
-   // function updateMenuDataByMode() {
-   //    if (isMenuEditing.value) {
-   //       // 수정 모드 = 전체 메뉴 표시 + 권한 있는 메뉴 체크
-   //       menuData.value = JSON.parse(JSON.stringify(fullMenuList.value));
-   //       applyCheckedState();
-   //    } else {
-   //       // 조회 모드 = 권한 있는 메뉴만 표시
-   //       menuData.value = menuGetListCallbackTreeBuild(authorizedMenuList.value);
-   //    }
-   // };
-
-   const updateMenuDataByMode = () => {
-      if (isMenuEditing.value) {
-         menuData.value = JSON.parse(JSON.stringify(fullMenuList.value));
-      } else {
-         menuData.value = fullMenuList.value.filter(menu => menu.selected || menu.subMenus.some(sub => sub.selected));
-      }
-   }
-
-   // const applyCheckedState = () => {
-   //    const authMenuSet = new Set(authorizedMenuList.value.map(menu => menu.menuCd));
-
-   //    const recursiveCheck = (menuList) => {
-   //       menuList.forEach(menu => {
-   //             menu.checked = authMenuSet.has(menu.menuCd);
-   //             recursiveCheck(menu.subMenus);
-   //       });
-   //    };
-
-   //    recursiveCheck(menuData.value);
-   // };
-
    // 메뉴 트리 구조 변환 함수
    function menuGetListCallbackTreeBuild(menuArray) {
-      const map = new Map();
-      const tree = [];
+      const map = new Map();    // 메뉴코드 기준으로 빠르게 조회하기 위한 Map
+      const tree = [];          // 최종 트리 구조를 담을 배열
 
+      // 1. 모든 메뉴를 map에 먼저 등록 (기본 구조 준비)
       menuArray.forEach(item => {
-         map.set(item.menuCd, {
-            ...item,
-            subMenus: [],
-            selected: item.authYn === 1  // ⭐️ 여기서 체크여부 바로 반영
-         });
+         map.set(item.menuCd, { ...item, subMenus: [] }); // subMenus 배열 추가
       });
 
+      // 2. 부모-자식 관계 설정
       menuArray.forEach(item => {
-         if (!item.parentMenuCd) {
+         if (item.parentMenuCd === null || item.parentMenuCd === "") {
+            // 부모가 없는 최상위 메뉴
             tree.push(map.get(item.menuCd));
          } else {
+            // 부모가 있는 메뉴
             if (map.has(item.parentMenuCd)) {
                map.get(item.parentMenuCd).subMenus.push(map.get(item.menuCd));
+            } else {
+               // 부모 메뉴가 누락된 데이터일 경우 경고 로그 출력
+               console.warn(`부모 메뉴(${item.parentMenuCd})를 찾을 수 없습니다. 메뉴코드: ${item.menuCd}`);
             }
          }
       });
 
-      return tree;
+      return tree;  // 최종 트리 반환
    }
 
-// ================================================== 드롭다운 토글 ==================================================
+
+   // ==================================== 드롭다운 토글 ====================================
    const optionsToggle = (idx) => {
       isEditMenu.value = (selectedRoleIdx.value === idx) ? !isEditMenu.value : true; selectedRoleIdx.value = idx;
    };
