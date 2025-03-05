@@ -24,6 +24,14 @@ public class MenuInfoController {
 	@Resource
 	private MenuInfoService menuService;
 	
+	// 권한에 대한 메뉴 목록 조회
+	@GetMapping("/info/{authorityCd}")
+	public List<MenuInfoDTO> authorityMenuList(@PathVariable String authorityCd) {
+		log.info("권한에 대한 메뉴 목록 조회" + menuService.authorityMenuSelectAll(authorityCd).toString());
+		
+		return menuService.authorityMenuSelectAll(authorityCd);
+	}
+	
 	// 메뉴정보
 	@GetMapping("")
 	public List<MenuInfoDTO> menuList() {
@@ -42,12 +50,6 @@ public class MenuInfoController {
 		return  menuService.memberAuthorityMenuSelect(mberId);
 	}
 	
-	// 권한에 대한 메뉴 목록 조회
-	@GetMapping("/{authorityCd}")
-	public List<MenuInfoDTO> authorityMenuList(@PathVariable String authorityCd) {
-		log.info("권한에 대한 메뉴 목록 조회" + menuService.authorityMenuSelectAll(authorityCd).toString());
-		
-		return menuService.authorityMenuSelectAll(authorityCd);
-	}
+	
 	
 }	

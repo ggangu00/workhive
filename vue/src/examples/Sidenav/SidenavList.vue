@@ -108,7 +108,6 @@
          const response = await axios.get('/api/board/boardList');
 
          boardList.value = response.data.resultList; // 받은 데이터를 boardList에 저장
-         console.log("bbs 정보 : ", response.data.resultList);
 
       } catch (error) {
          Swal.fire({
@@ -122,7 +121,7 @@
    // 게시글 목록으로 이동
    /**
     *
-    
+
    @param { String } bbsTyCode : 게시판코드*/
    const bulletinListMove = (bbsId) => {// window.location.href = targetUrl; // 페이지 이동
       router.push({

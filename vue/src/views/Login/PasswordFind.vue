@@ -76,7 +76,6 @@
    }
 
    const mberId = ref(""); // 아이디 입력값
-
    // 아이디 입력 초기화
    const userIdReset = () => {
       mberId.value = "";
