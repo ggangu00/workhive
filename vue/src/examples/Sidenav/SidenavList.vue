@@ -70,7 +70,7 @@
                <!-- 서브 메뉴 (Depth 2) -->
                <template v-slot:list>
                   <div class="sub-item">
-                     <li v-for="(board, idx) in boardList" :key="idx" class="sub-li" @click="bulletinListMove(board.bbsTyCode)">
+                     <li v-for="(board, idx) in boardList" :key="idx" class="sub-li" @click="bulletinListMove(board.bbsId)">
                         {{ board.bbsNm }} <!-- 게시글 제목을 bbsNm으로 출력 -->
                      </li>
                      <!-- <li class="sub-li" @click="movePage('/bulletin/bulletinList/BBS001')">공지사항</li>
@@ -98,16 +98,18 @@
    import SidenavCollapse from "./SidenavCollapse.vue";
    import axios from "../../assets/js/customAxios";
    import Swal from 'sweetalert2';
-   const boardList = ref([]);
 
    const router = useRouter();
 //================================= 조회 ===========================
+   // 게시판 목록 조회
+   const boardList = ref([]);
    const BoardGetList = async () => {
       try {
          const response = await axios.get('/api/board/boardList');
 
          boardList.value = response.data.resultList; // 받은 데이터를 boardList에 저장
-         console.log("게시판 url 어쩔껀데 없노 url에 대한 게시판 코드도 있어야겠구만 없노 ㅋ => ", response.data.resultList);
+         console.log("bbs 정보 : ", response.data.resultList);
+
       } catch (error) {
          Swal.fire({
             icon: "error",
@@ -117,9 +119,16 @@
       }
    };
 
-   const bulletinListMove = (bbsTyCode) => {
-      const targetUrl = `/bulletin/bulletinInfo/${bbsTyCode}`;
-      window.location.href = targetUrl; // 페이지 이동
+   // 게시글 목록으로 이동
+   /**
+    *
+    
+   @param { String } bbsTyCode : 게시판코드*/
+   const bulletinListMove = (bbsId) => {// window.location.href = targetUrl; // 페이지 이동
+      router.push({
+         name: 'BulletinList',
+         params: { bbsId : bbsId }
+      });
    };
 
 // ============================================= Axios Event =============================================
