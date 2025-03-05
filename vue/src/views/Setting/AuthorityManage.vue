@@ -15,7 +15,7 @@
                   <div class="col-3 treeview">
                      <div class="bottom-line p-2">
                         <button class="btn btn-primary btn-fill" @click="btnAuthorityAdd">
-                           권한 <i class="fa-solid fa-plus"></i> 
+                           권한 <i class="fa-solid fa-plus"></i>
                         </button>
                      </div>
 
@@ -55,11 +55,13 @@
                         </div>
                      </div>
 
-                     <div v-if="isMenuEditing">
-                        <menuTree v-for="(item, idx) in menuData" :key="idx" :item="item" ></menuTree>
-                     </div>
-                     <div v-else>
-                        <menuListView v-for="(item, idx) in menuData" :key="idx" :item="item"></menuListView>
+                     <div>
+                        <MenuListListComponent
+                           v-for="(item, idx) in menuData"
+                           :key="idx"
+                           :item="item"
+                           :isMenuEditing="isMenuEditing"
+                        />
                      </div>
                   </div>
 
@@ -108,8 +110,8 @@
    import Swal from 'sweetalert2';
    import Card from '../../components/Cards/Card.vue'
    import Modal from '../../components/Modal.vue';
-   import menuTree from './components/MenuComponent.vue';
-   import menuListView from './components/MenuListViewComponent.vue'
+   import MenuListListComponent from './components/MenuListComponent.vue';
+   //import menuListView from './components/MenuListViewComponent.vue'
    import axios from "../../assets/js/customAxios.js";  // 공통함수 위치 맞게 변경
 
 
@@ -324,13 +326,33 @@
       };
 
       try {
-         const response = await axios.put(`/api/authority`, requestData);
+         const result = await Swal.fire({
+            title: `"${authorityNm.value}" 권한을 수정 하시겠습니까?`,
+            icon: "question",
+            showCancelButton: true,
+            customClass: {
+               confirmButton: "btn btn-secondary btn-fill",
+               cancelButton: "btn btn-danger btn-fill"
+            },
+            confirmButtonText: "닫기",
+            cancelButtonText: "수정",
+         });
 
-         if(response.data.result === true) {
-            roles.value = response.data.list;
-            modalReset();
-            isShowModal.value = !isShowModal.value;
+         if(result.dismiss == Swal.DismissReason.cancel) {
+            const response = await axios.put(`/api/authority`, requestData);
+
+            if(response.data.result === true) {
+               roles.value = response.data.list;
+               modalReset();
+               isShowModal.value = !isShowModal.value;
+            }
+
+            Swal.fire({
+               title: "수정 완료",
+               icon: "success"
+            });
          }
+
       } catch (err) {
          roles.value = [];
 
@@ -390,9 +412,9 @@
    const authorityMenuGetList = async (code) => {
       try {
          const response = await axios.get(`/api/menu/${code}`);
-         console.log(response.data)
+         console.log("권한에 대한 메뉴 목록 조회 => ", response.data)
          // 메뉴 데이터 업데이트
-         menuData.value = menuGetListCallbackTreeBuild(response.data);
+         //menuData.value = menuGetListCallbackTreeBuild(response.data);
 
       } catch (err) {
          Swal.fire({
@@ -443,7 +465,6 @@
       isEditMenu.value = selectedRoleIdx.value === idx ? !isEditMenu.value : true;
       selectedRoleIdx.value = idx;
    };
-
 
    /**
     * @description 드롭다운 메뉴가 나타났을 때 외부 클릭 시 드롭다운 메뉴 닫힘

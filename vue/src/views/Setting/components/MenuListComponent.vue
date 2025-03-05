@@ -1,9 +1,10 @@
 <template>
    <div :class="menu.parentMenuCd == null ? 'bottom-line' : ''">
-      <div class="menu-title"  @click="toggleMenu">
+      <div class="menu-title" @click="toggleMenu">
          <div>
             <div class="form-check form-check-inline">
                <input
+                  v-if="isEditing"
                   class="form-check-input"
                   type="checkbox"
                   v-model="menu.selected"
@@ -13,14 +14,14 @@
                <span class="ms-2 font-14">({{ subMenusSelected(menu) }}/{{ menu.subMenus.length }})</span>
             </div>
          </div>
- 
+
          <div v-if="menu.subMenus.length > 0">
             <i class="fa-solid fa-angle-down" :class="{ rotated: menu.open }"></i>
          </div>
       </div>
 
       <div v-if="menu.open && menu.subMenus.length > 0" class="submenu px-4" >
-         <menuTree v-for="(subItem, idx) in menu.subMenus" :key="idx" :item="subItem" />
+         <MenuListComponent v-for="(subItem, idx) in menu.subMenus" :key="idx" :item="subItem" />
          <!-- <div v-for="(sub, i) in menu.subMenus" :key="i" class="px-4 py-2">
             <div class="form-check form-check-inline">
                <input
@@ -36,14 +37,15 @@
 </template>
 
 <script setup>
-   import menuTree from './MenuComponent.vue'
+   import MenuListComponent from './MenuListComponent.vue'
    // 부모에서 전달한 prop 이름을 item으로 변경합니다.
    const props = defineProps({
       item: { type: Object, required: true },
+      isMenuEditing: { type: Boolean },
    });
 
    const menu = props.item;
-
+   const isEditing = props.isMenuEditing;
    /**
     * 헤더 체크박스 변경 시 서브 메뉴 전체 선택
     * @param {Object} menu - 선택된 메뉴 객체
@@ -67,6 +69,7 @@
     * 메뉴 토글 (열기/닫기)
     */
    const toggleMenu = () => {
+      console.log("click")
       menu.open = !menu.open;
    };
 </script>
