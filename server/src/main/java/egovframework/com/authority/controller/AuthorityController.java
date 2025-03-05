@@ -6,6 +6,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import egovframework.com.authority.service.AuthorityDTO;
 import egovframework.com.authority.service.AuthorityService;
+import egovframework.com.securing.service.CustomerUser;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController // data 
@@ -59,10 +62,12 @@ public class AuthorityController {
 	// 권한 등록 처리
 	@PostMapping("")
 	public Map<String, Object> authorityAdd(@RequestBody AuthorityDTO dto) {
-		log.info("권한 등록 response Data", dto.toString());
-		
 		boolean result = authService.authorityInsert(dto);
 		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUser user = (CustomerUser) auth.getPrincipal();
+        dto.setCreateId(user.getUserDTO().getMberId());
+        
 		Map<String, Object> map = new HashMap<>();
 		map.put("result", result);
 		map.put("list", authService.authoritySelectAll());
@@ -74,6 +79,10 @@ public class AuthorityController {
 	@PutMapping("")
 	public Map<String, Object> authorityModify(@RequestBody AuthorityDTO dto) {
 		log.info("수정 권한 코드 출력 => " + dto.toString());
+		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUser user = (CustomerUser) auth.getPrincipal();
+        dto.setUpdateId(user.getUserDTO().getMberId());
 		
 		Map<String, Object> map = new HashMap<>();
 		
@@ -90,7 +99,11 @@ public class AuthorityController {
 	public Map<String, Object> authorityRemove(@PathVariable(name="authorityCd") String authorityCd) {
 		log.info("삭제 권한 코드 출력 => " + authorityCd);
 	    
-		boolean result = authService.authorityDelete(authorityCd);
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUser user = (CustomerUser) auth.getPrincipal();
+        String mberId = user.getUserDTO().getMberId();
+        
+		boolean result = authService.authorityDelete(authorityCd, mberId);
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("result", result);

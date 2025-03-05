@@ -131,9 +131,9 @@
 
 // ================================================== Modal ==================================================
    const isShowModal = ref(false);
-   const isEditMenu = ref(false);
-   let modalTitle = ref("");
-   let isEditMode = ref(false);
+   const isEditMenu = ref(false);   // 수정모드
+   let modalTitle = ref("");        // 모달 제목
+   let isEditMode = ref(false);     //
 
    // 모달 열기
    const modalOpen = (mode, title) => {
@@ -287,7 +287,6 @@
       const requestData = { // 서버로 보낼 데이터
          authorityNm: authorityNm.value,
          description : description.value,
-         createId : "admin"
       };
 
       try {
@@ -403,7 +402,7 @@
             text: "Error : " + err.response.data
          });
       }
-   }
+   };
 
    /**
     * @description 권한에 대한 메뉴 목록 조회 API
@@ -423,7 +422,7 @@
             text: "Error : " + err.response.data
          });
       }
-   }
+   };
 // ======================================== 메뉴 콜백 함수 ========================================
    /**
     * @description 서버에서 가져온 메뉴 리스트를 트리 형태로 변경해주는 함수
@@ -452,7 +451,7 @@
       });
 
       return tree;
-   }
+   };
 // ======================================== edit, delete Toggle DropDown Menu ========================================
    const selectedRole = ref(null); // 선택한 권한코드
    const selectedRoleIdx = ref(null); // 선택된 권한의 인덱스

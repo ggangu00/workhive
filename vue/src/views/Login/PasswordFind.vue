@@ -126,30 +126,30 @@
 
 <style scoped>
 
-.input_keep {
-   width: 15px;
-   height: 15px;
-}
+   .input_keep {
+      width: 15px;
+      height: 15px;
+   }
 
-/* 아이디 / 비밀번호 찾기 */
-.find_wrap {
-   display: flex;
-   justify-content: center;
-   margin-top: 15px;
-   font-size: 14px;
-}
+   /* 아이디 / 비밀번호 찾기 */
+   .find_wrap {
+      display: flex;
+      justify-content: center;
+      margin-top: 15px;
+      font-size: 14px;
+   }
 
-.find_wrap li {
-   list-style: none;
-   margin: 0 10px;
-}
+   .find_wrap li {
+      list-style: none;
+      margin: 0 10px;
+   }
 
-.find_wrap a {
-   text-decoration: none;
-   color: #666;
-}
+   .find_wrap a {
+      text-decoration: none;
+      color: #666;
+   }
 
-.find_wrap a:hover {
-   text-decoration: underline;
-}
+   .find_wrap a:hover {
+      text-decoration: underline;
+   }
 </style>

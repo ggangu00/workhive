@@ -83,7 +83,9 @@
 		UPDATE 
 		   authority
 		SET
-		   del_yn = UPPER('Y')
+		   del_yn = UPPER('Y'),
+		   UPDATE_DT = SYSDATE,
+		   UPDATE_ID = #{updateId}
 		WHERE
 		   authority_cd = #{authorityCd}
 	</update>

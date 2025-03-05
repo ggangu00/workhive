@@ -44,8 +44,8 @@ public class AuthorityServiceImpl implements AuthorityService {
 
 	// 권한 삭제
 	@Override
-	public boolean authorityDelete(String authorityCd) {
-		return authMapper.authorityDelete(authorityCd) == 1 ? true : false;
+	public boolean authorityDelete(@Param("authorityCd") String authorityCd, @Param("mberId") String mberId) {
+		return authMapper.authorityDelete(authorityCd, mberId) == 1 ? true : false;
 	}
 
 	// 메뉴 접근 권한 조회
