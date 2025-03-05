@@ -71,7 +71,7 @@
   import { ref, onMounted, onBeforeMount } from 'vue';
   import axios from '../../assets/js/customAxios';
   import { useRouter, useRoute } from 'vue-router';
-
+  import Swal from 'sweetalert2';
 
   const router = useRouter();
   const route = useRoute(); // 쿼리 추출 시 useRoute 사용
@@ -138,17 +138,28 @@
     });
 
     try {
-      const result = await axios.post('/api/board/boardModify', addData);
-      responseMessage.value = result.data.message || "게시판 수정완료";
-      isSuccess.value = true;
+    // 게시판 수정 요청 (POST)
+    await axios.post('/api/board/boardModify', addData);
 
-      setTimeout(() => {
+    // 성공 시 SweetAlert2 알림 표시
+    Swal.fire({
+        icon: "success",
+        title: "수정 완료",
+        text: "게시판이 성공적으로 수정되었습니다!"
+    }).then(() => {
+        // 팝업 닫은 후 게시판 목록 페이지로 이동
         router.push('/board/boardList');
-      }, 1000);
-    } catch (error) {
-      responseMessage.value = "게시판 등록에 실패했습니다. 다시 시도해주세요.";
-      isSuccess.value = false;
-    }
+    });
+
+} catch (error) {
+    // 오류 발생 시 SweetAlert2 알림 표시
+    Swal.fire({
+        icon: "error",
+        title: "게시판 수정 실패",
+        text: "Error : " + (error.response?.data?.message || "게시판 수정에 실패했습니다. 다시 시도해주세요.")
+    });
+}
+
   };
 
   // 폼 초기화

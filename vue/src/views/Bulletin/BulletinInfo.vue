@@ -5,7 +5,7 @@
       <div class="card">
         <div class="card-body">
           <h4 class="card-title float-left mt-1">게시글 상세조회</h4>
-          <button class="btn btn-danger btn-fill float-right" @click="deleteBulletin">삭제</button>
+          <!-- <button class="btn btn-danger btn-fill float-right" @click="deleteBulletin">삭제</button> -->
           <button class="btn btn-success btn-fill float-right" @click="goToBulletinModify">수정</button>
           <button @click="goToBulletinList" class="btn btn-secondary btn-sm btn-fill float-right">목록</button>
         </div>
@@ -49,8 +49,8 @@
                 </div>
               </div>
 
-                          <!-- 게시기간 -->
-                          <div class="mb-3">
+          <!-- 게시기간 -->
+              <div class="mb-3">
                 <label class="form-label">게시기간 <em class="point-red">*</em></label>
                 <div class="row">
                   <div class="col-auto">
@@ -198,18 +198,18 @@ const fetchComments = async () => {
     // 응답 데이터 구조 확인
     console.log('API 응답:', response.data);
 
-    // 댓글 목록이 배열인지 확인
-    if (Array.isArray(response.data)) {
-      comments.value = response.data;  // 댓글 목록을 배열로 저장
+    // `resultList`가 존재하고 배열인지 확인
+    if (response.data && Array.isArray(response.data.resultList)) {
+      comments.value = response.data.resultList;  // 댓글 목록을 배열로 저장
     } else {
       console.error('댓글 목록이 배열이 아닙니다:', response.data);
       comments.value = [];  // 만약 배열이 아니면 빈 배열로 초기화
     }
   } catch (error) {
     console.error('댓글 조회 오류:', error);
-
   }
 };
+
 
 // 댓글 목록
 const comments = ref([]);
@@ -223,7 +223,7 @@ const addComment = async () => {
     return;
   }
   try {
-    const response = await axios.post(`/api/comment/commentAdd/${bbsId}/${nttId}`, {
+    const response = await axios.post(`/api/comment/commentAdd?bbsId=${bbsId}&nttId=${nttId}`, {
       commentCn: newComment.value.commentCn,
       wrterNm: newComment.value.wrterNm,
     });
@@ -245,7 +245,7 @@ const addComment = async () => {
       newComment.value.commentCn = "";
       newComment.value.wrterNm = "";
     } else {
-      alert(`댓글 등록 실패: ${response.data.message}`);
+    ""
     }
   } catch (error) {
     console.error(" 댓글 등록 오류:", error.response || error);

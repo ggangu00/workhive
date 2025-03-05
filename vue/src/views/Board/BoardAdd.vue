@@ -71,6 +71,7 @@
 import { ref, onMounted } from 'vue';
 import axios from '../../assets/js/customAxios';
 import { useRoute, useRouter } from 'vue-router';
+import Swal from 'sweetalert2';
 
 const route = useRoute();
 const router = useRouter();
@@ -135,17 +136,28 @@ const BoardSave = async () => {
   });
 
   try {
-    const result = await axios.post('/api/board/boardAdd', addData);
-    responseMessage.value = result.data.message || "게시판이 성공적으로 등록되었습니다!";
-    isSuccess.value = true;
+    // 게시판 추가 요청 (POST)
+    await axios.post('/api/board/boardAdd', addData);
 
-    setTimeout(() => {
-      router.push('/board/boardList');
-    }, 1000);
-  } catch (error) {
-    responseMessage.value = "게시판 등록에 실패했습니다. 다시 시도해주세요.";
-    isSuccess.value = false;
-  }
+    // 성공 시 SweetAlert2 알림 표시
+    Swal.fire({
+        icon: "success",
+        title: "등록 완료",
+        text: "게시판이 성공적으로 등록되었습니다!"
+    }).then(() => {
+        // 팝업 닫은 후 게시판 목록 페이지로 이동
+        router.push('/board/boardList');
+    });
+
+} catch (error) {
+    // 오류 발생 시 SweetAlert2 알림 표시
+    Swal.fire({
+        icon: "error",
+        title: "게시판 등록 실패",
+        text: "Error : " + (error.response?.data?.message || "게시판 등록에 실패했습니다. 다시 시도해주세요.")
+    });
+}
+
 };
 
 // 폼 초기화

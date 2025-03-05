@@ -5,9 +5,13 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.egovframe.rte.fdl.cmmn.exception.FdlException;
 import org.egovframe.rte.fdl.property.EgovPropertyService;
 import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,9 +19,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springmodules.validation.commons.DefaultBeanValidator;
 
@@ -27,6 +31,7 @@ import egovframework.com.cmm.util.EgovUserDetailsHelper;
 import egovframework.com.cop.cmt.service.Comment;
 import egovframework.com.cop.cmt.service.CommentVO;
 import egovframework.com.cop.cmt.service.EgovArticleCommentService;
+import egovframework.com.securing.service.CustomerUser;
 import egovframework.com.utl.fcc.service.EgovStringUtil;
 
 /**
@@ -73,11 +78,15 @@ public class EgovArticleCommentController {
      * @throws Exception
      */
     //@RequestMapping("/cop/cmt/selectArticleCommentList.do")
-    @GetMapping("/commentList/{bbsId}/{nttId}")
-    public String selectArticleCommentList(@ModelAttribute("searchVO") CommentVO commentVO, ModelMap model) throws Exception {
+    @GetMapping("/commentList")
+    public Map<String, Object> selectArticleCommentList(@ModelAttribute("searchVO") CommentVO commentVO, ModelMap model) throws Exception {
 
     	CommentVO articleCommentVO = new CommentVO();
     	
+    	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUser user = (CustomerUser) auth.getPrincipal();
+        String userId = user.getUserDTO().getMberId();
+        
 		// 수정 처리된 후 댓글 등록 화면으로 처리되기 위한 구현
 		if (commentVO.isModified()) {
 		    commentVO.setCommentNo("");
@@ -85,21 +94,21 @@ public class EgovArticleCommentController {
 		}
 		
 		// 수정을 위한 처리
-		if (!commentVO.getCommentNo().equals("")) {
-		    return "forward:/cop/cmt/updateArticleCommentView.do";
-		}
+//		if (!commentVO.getCommentNo().equals("")) {
+//		    return "forward:/cop/cmt/updateArticleCommentView.do";
+//		}
 		
-		LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+		//LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
    	 	// KISA 보안취약점 조치 (2018-12-10, 신용호)
-        Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+        //Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
 
-        if(!isAuthenticated) {
-            return "redirect:/uat/uia/egovLoginUsr.do";
-        }
+//        if(!isAuthenticated) {
+//            return "redirect:/uat/uia/egovLoginUsr.do";
+//        }
 		
-		model.addAttribute("sessionUniqId", user == null ? "" : EgovStringUtil.isNullToString(user.getUniqId()));
-		
-		commentVO.setWrterNm(user == null ? "" : EgovStringUtil.isNullToString(user.getName()));
+//		model.addAttribute("sessionUniqId", user == null ? "" : EgovStringUtil.isNullToString(user.getUniqId()));
+//		
+//		commentVO.setWrterNm(user == null ? "" : EgovStringUtil.isNullToString(user.getName()));
 		
 //		commentVO.setSubPageUnit(propertyService.getInt("pageUnit"));
 //		commentVO.setSubPageSize(propertyService.getInt("pageSize"));
@@ -127,8 +136,9 @@ public class EgovArticleCommentController {
 		
 		commentVO.setCommentCn("");	// 등록 후 댓글 내용 처리
 	
-		return "egovframework/com/cop/cmt/EgovArticleCommentList";
+		return map;
     }
+    
     
     
     /**
@@ -138,45 +148,48 @@ public class EgovArticleCommentController {
      * @param comment
      * @param bindingResult
      * @param model
-     * @return
+     * @throws FdlException 
      * @throws Exception
      */
     //@RequestMapping("/cop/cmt/insertArticleComment.do")
-    @PostMapping("/commentAdd")
-    public String insertArticleComment(@ModelAttribute("searchVO") CommentVO commentVO, @ModelAttribute("comment") Comment comment, 
-	    BindingResult bindingResult, ModelMap model, @RequestParam HashMap<String, String> map) throws Exception {
+    @PostMapping("/commentAdd/{bbsId}/{nttId}")
+    public ResponseEntity<Map<String, Object>> insertArticleComment(
+            @PathVariable("bbsId") String bbsId,
+            @PathVariable("nttId") long nttId,
+            @RequestBody Comment comment) throws FdlException {
 
-		LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
-	
-		beanValidator.validate(comment, bindingResult);
-		if (bindingResult.hasErrors()) {
-		    model.addAttribute("msg", "댓글내용은 필수 입력값입니다.");
-		    
-		    return "forward:/cop/bbs/selectArticleDetail.do";
-		}
-	
-		if (isAuthenticated) {
-		    comment.setFrstRegisterId(user == null ? "" : EgovStringUtil.isNullToString(user.getUniqId()));
-		    comment.setWrterId(user == null ? "" : EgovStringUtil.isNullToString(user.getUniqId()));
-		    comment.setWrterNm(user == null ? "" : EgovStringUtil.isNullToString(user.getName()));
-		    
-		    
-		    egovArticleCommentService.insertArticleComment(comment);
-		    
-		    commentVO.setCommentCn("");
-		    commentVO.setCommentNo("");
-		}
-		
-		String chkBlog = map.get("blogAt");
-		
-		if("Y".equals(chkBlog)){
-			return "forward:/cop/bbs/selectArticleBlogList.do";
-		}else{
-			return "forward:/cop/bbs/selectArticleDetail.do";
-		}
-		
+        Map<String, Object> response = new HashMap<>();
+
+        // 필수 값 검증
+        if (comment.getCommentCn() == null || comment.getCommentCn().trim().isEmpty()) {
+            response.put("status", "fail");
+            response.put("message", "댓글 내용을 입력하세요.");
+            return ResponseEntity.badRequest().body(response);
+        }
+        if (comment.getWrterNm() == null || comment.getWrterNm().trim().isEmpty()) {
+            response.put("status", "fail");
+            response.put("message", "작성자를 입력하세요.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        // 게시판 ID와 게시글 ID를 댓글에 설정
+        comment.setBbsId(bbsId);
+        comment.setNttId(nttId);
+
+        // 댓글 저장
+        egovArticleCommentService.insertArticleComment(comment);
+
+        // 성공 응답
+        response.put("status", "success");
+        response.put("message", "댓글이 등록되었습니다.");
+        response.put("comment", comment);
+
+        return ResponseEntity.ok(response);
     }
+
+    
+		
+    
 
 
 

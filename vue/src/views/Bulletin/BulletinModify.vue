@@ -105,6 +105,7 @@ import { Editor } from '@toast-ui/editor';
 import { ref, onMounted } from 'vue';
 import axios from '../../assets/js/customAxios';
 import { useRoute, useRouter } from 'vue-router';
+import Swal from 'sweetalert2';
 
 // 라우터 훅을 사용하여 파라미터를 가져옵니다
 const route = useRoute();
@@ -251,25 +252,45 @@ const submitForm = async () => {
   formData.append('anoAt', anoAt.value ? 'Y' : 'N');
 
   try {
-    let response;
     if (bbsId.value && nttId.value) {
-      // 기존 게시글 수정 (post 요청)
-      response = await axios.post(`/api/bulletin/bulletinModify/${bbsId.value}/${nttId.value}`, formData);
+        // 기존 게시글 수정 (POST 요청)
+        await axios.post(`/api/bulletin/bulletinModify/${bbsId.value}/${nttId.value}`, formData);
+
+        // 성공 시 SweetAlert2 알림 표시
+        Swal.fire({
+            icon: "success",
+            title: "수정 완료",
+            text: "게시글이 성공적으로 수정되었습니다."
+        }).then(() => {
+            // 팝업 확인 후 목록 페이지 이동
+            router.push({ path: `/bulletin/bulletinList/${bbsId.value}` });
+        });
+
     } else {
-      // 새 게시글 추가 (POST 요청)
-      response = await axios.post("/api/bulletin/bulletinAdd", formData);
+        // 새 게시글 추가 (POST 요청)
+        await axios.post("/api/bulletin/bulletinAdd", formData);
+
+        // 성공 시 SweetAlert2 알림 표시
+        Swal.fire({
+            icon: "success",
+            title: "등록 완료",
+            text: "등록한 게시글은 목록에서 확인할 수 있습니다."
+        }).then(() => {
+            // 팝업 확인 후 목록 페이지 이동
+            router.push({ path: `/bulletin/bulletinList/${bbsId.value}` });
+        });
     }
 
-    responseMessage.value = response.data?.message ?? "게시글이 수정되었습니다!";
-    isSuccess.value = true;
+} catch (error) {
+    // 오류 발생 시 SweetAlert2 알림 표시
+    Swal.fire({
+        icon: "error",
+        title: "게시글 처리 실패",
+        text: "Error : " + (error.response?.data?.message || error.message)
+    });
+}
 
-    setTimeout(() => {
-      router.push({ path: `/bulletin/bulletinList/${bbsId.value}` });
-    }, 1000); // Redirect to the bulletin list after 1 second
-  } catch (error) {
-    responseMessage.value = "게시글 수정에 실패했습니다. 다시 시도해주세요.";
-    isSuccess.value = false;
-  }
+
 };
 
 // 게시글 목록으로 이동

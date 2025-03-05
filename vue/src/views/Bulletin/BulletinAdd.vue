@@ -119,6 +119,7 @@ import { Editor } from '@toast-ui/editor';
 import { ref, onMounted } from 'vue';
 import axios from '../../assets/js/customAxios';
 import { useRoute,useRouter } from 'vue-router';
+import Swal from 'sweetalert2';
 
 const route = useRoute();
 const router = useRouter();
@@ -205,19 +206,28 @@ const submitForm = async () => {
   }
 
   try {
-    const response = await axios.post("/api/bulletin/bulletinAdd", formData);
+    // 게시글 등록 요청
+    await axios.post("/api/bulletin/bulletinAdd", formData);
+    
+    Swal.fire({
+        icon: "success",
+        title: "등록 완료",
+        text: "등록한 게시글은 목록에서 확인할 수 있습니다."
+    }).then(() => {
+        // 팝업 닫은 후 목록 페이지로 이동
+        router.push({ path: '/bulletin/bulletinList/' + bbsId.value });
+    });
 
-    responseMessage.value = response.data?.message ?? "게시글이 성공적으로 등록되었습니다!";
-    isSuccess.value = true;
+} catch (error) {   
+    Swal.fire({
+        icon: "error",
+        title: "게시글 등록에 실패하였습니다.",
+        text: "Error : " + (error.response?.data?.message || error.message)
+    });
+}
 
-    setTimeout(() => {
-      router.push({ path: '/bulletin/bulletinList/'+ bbsId.value });
-    }, 1000); // 1초 후 페이지 이동
 
-  } catch (error) {
-    responseMessage.value = "게시글 등록에 실패했습니다. 다시 시도해주세요.";
-    isSuccess.value = false;
-  }
+
 };
 
 const goToBulletinList = () => {
