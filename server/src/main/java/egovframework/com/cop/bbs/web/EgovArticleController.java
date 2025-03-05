@@ -316,8 +316,8 @@ public class EgovArticleController {
                                 @ModelAttribute("board") BoardVO board, 
                                 ModelMap model) throws Exception {
 
-        LoginVO user = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
-        Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+        //LoginVO user = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
+        //Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
 
         // 파일 업로드 처리
         List<FileVO> result = null;
@@ -330,20 +330,20 @@ public class EgovArticleController {
         }
         board.setAtchFileId(atchFileId);
 
-        // 작성자 및 게시판 정보 설정
-        board.setFrstRegisterId((user == null || user.getUniqId() == null) ? "" : user.getUniqId());
-        board.setBbsId(board.getBbsId());
-        board.setBlogId(board.getBlogId());
-
-        // 익명 등록 처리
-        if ("Y".equals(board.getAnonymousAt())) {
-            board.setNtcrId("anonymous");
-            board.setNtcrNm("익명");
-            board.setFrstRegisterId("anonymous");
-        } else {
-            board.setNtcrId((user == null || user.getUniqId() == null) ? "" : user.getUniqId());
-            board.setNtcrNm((user == null || user.getName() == null) ? "" : user.getName());
-        }
+//        // 작성자 및 게시판 정보 설정
+//        board.setFrstRegisterId((user == null || user.getUniqId() == null) ? "" : user.getUniqId());
+//        board.setBbsId(board.getBbsId());
+//        board.setBlogId(board.getBlogId());
+//
+//        // 익명 등록 처리
+//        if ("Y".equals(board.getAnonymousAt())) {
+//            board.setNtcrId("anonymous");
+//            board.setNtcrNm("익명");
+//            board.setFrstRegisterId("anonymous");
+//        } else {
+//            board.setNtcrId((user == null || user.getUniqId() == null) ? "" : user.getUniqId());
+//            board.setNtcrNm((user == null || user.getName() == null) ? "" : user.getName());
+//        }
 
         // XSS 방지 및 게시글 내용 등록
         board.setNttCn(unscript(board.getNttCn()));
@@ -569,8 +569,8 @@ public class EgovArticleController {
 	        BindingResult bindingResult, 
 	        ModelMap model) throws Exception {
 
-		LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+//		LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+//		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
 		
 //		if(!isAuthenticated) {	//KISA 보안취약점 조치 (2018-12-10, 이정은)
 //            return "redirect:/uat/uia/egovLoginUsr.do";
@@ -582,7 +582,7 @@ public class EgovArticleController {
     	//--------------------------------------------------------
 //    	LOGGER.debug("@ XSS 권한체크 START ----------------------------------------------");
 //    	//step1 DB에서 해당 게시물의 uniqId 조회
-//    	BoardVO vo = egovArticleService.selectArticleDetail(boardVO);
+    	BoardVO vo = egovArticleService.selectArticleDetail(boardVO);
 //    	
 //    	//step2 EgovXssChecker 공통모듈을 이용한 권한체크
 //    	EgovXssChecker.checkerUserXss(multiRequest, vo.getFrstRegisterId()); 
@@ -596,13 +596,13 @@ public class EgovArticleController {
 		beanValidator.validate(board, bindingResult);
 		if (bindingResult.hasErrors()) {
 	
-		    boardVO.setFrstRegisterId((user == null || user.getUniqId() == null) ? "" : user.getUniqId());
+//		    boardVO.setFrstRegisterId((user == null || user.getUniqId() == null) ? "" : user.getUniqId());
 		    
 		    BoardMasterVO bmvo = new BoardMasterVO();
 		    BoardVO bdvo = new BoardVO();
 		    
 		    bmvo.setBbsId(boardVO.getBbsId());
-		    bmvo.setUniqId((user == null || user.getUniqId() == null) ? "" : user.getUniqId());
+//		    bmvo.setUniqId((user == null || user.getUniqId() == null) ? "" : user.getUniqId());
 	
 		    bmvo = egovBBSMasterService.selectBBSMasterInf(bmvo);
 		    bdvo = egovArticleService.selectArticleDetail(boardVO);
@@ -629,7 +629,7 @@ public class EgovArticleController {
 //			}
 //	    }
 
-	    board.setLastUpdusrId((user == null || user.getUniqId() == null) ? "" : user.getUniqId());
+//	    board.setLastUpdusrId((user == null || user.getUniqId() == null) ? "" : user.getUniqId());
 	    
 	    board.setNtcrNm("");	// dummy 오류 수정 (익명이 아닌 경우 validator 처리를 위해 dummy로 지정됨)
 	    board.setPassword("");	// dummy 오류 수정 (익명이 아닌 경우 validator 처리를 위해 dummy로 지정됨)

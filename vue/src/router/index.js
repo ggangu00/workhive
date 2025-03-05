@@ -67,9 +67,6 @@ import CrctList from '../views/Commute/CommuteCrctList.vue';
 import CrctSignManage from '../views/Commute/CommuteCrctSign.vue';
 
 // kjg
-import PaymentList from '../views/Payment/PaymentList.vue';
-import PaymentAdd from '../views/Payment/PaymentAdd.vue';
-import PaymentManage from '../views/Payment/PaymentManage.vue';
 import BoardList from '../views/Board/BoardList.vue';
 import BoardAdd from '../views/Board/BoardAdd.vue';
 import BoardModify from "../views/Board/BoardModify.vue";
@@ -77,7 +74,7 @@ import BulletinList from "../views/Bulletin/BulletinList.vue";
 import BulletinAdd from "../views/Bulletin/BulletinAdd.vue";
 import BulletinInfo from "../views/Bulletin/BulletinInfo.vue";
 import BulletinModify from "../views/Bulletin/BulletinModify.vue";
-import SecretAt from "../views/Bulletin/SecretAt.vue"
+
 
 
 
@@ -305,23 +302,7 @@ const routes = [
       component: VcSignManage,
    },
 
-   //kjg
-      {//외부지출 조회
-      path:'/payment/List',
-      name: 'PaymentList',
-      component : PaymentList,
-   },
-   {//외부지출 등록
-      path:'/payment/Add',
-      name: 'PaymentAdd',
-      component : PaymentAdd,
-   },
-      {//외부지출 승인/반려 관리
-         path:'/payment/Manage',
-         name: 'PaymentManage',
-         component : PaymentManage,
-      },
-
+   //kjg     
    {//게시판 목록
       path:'/board/boardList',
       name: 'BoardList',
@@ -357,15 +338,6 @@ const routes = [
       name: 'BulletinModify',
       component : BulletinModify,
    },
-   {//게시글 수정
-      path:'/bulletin/secretAt',
-      name: 'SecretAt',
-      component : SecretAt,
-   },
-
-
-
-
 
 
 
