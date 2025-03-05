@@ -315,17 +315,17 @@ class subjectRenderer {
     el.className = "mlp10";
 
     //남은 기간이 10일 이하인 경우 경고배지 적용
-    let term = dateTermCalc(dateFormat(rowData.endDt), dateFormat());
-
-    term > 10 ? termClass.value = 'badge-primary' : termClass.value = 'badge-danger';
+    let term = dateTermCalc(dateFormat(rowData.endDt), dateFormat()) * (-1);
+    
+    term < 10 ? termClass.value = 'badge-danger': termClass.value = 'badge-primary';
 
     el.innerHTML = `
       <div class="category">${rowData.comNm}</div>
       <div class="subject">
         <a href="#" class="mrp5">${rowData.prNm}</a>
         <span class="badge ${termClass.value}">
-          D${term > 0 ? "+" + term
-        : term < 0 ? term
+          D${term > 0 ? "-" + term
+        : term < 0 ? "+" + term * (-1)
           : "-day"}</span>
       </div>
     `;

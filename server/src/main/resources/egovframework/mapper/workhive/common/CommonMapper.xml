@@ -136,13 +136,37 @@
 	<select id="homeInfo" parameterType="String">
 	<![CDATA[
 	select
-	    NVL((select count(*) from project project join project_mem pm on project.pr_cd=pm.pr_cd where project.state='A02' and pm.mber_id=m.mber_id),0) as project_cnt, --참여자로 등록된 프로젝트 갯수
-	    NVL((select count(*) from todo todo where todo.state='A02' and mber_id=m.mber_id),0) as todo_cnt,	--금일 예정 일지 갯수
-	    NVL((select count(*) from COMTNSCHDULINFO sch WHERE TRUNC(TO_DATE(SCHDUL_BGNDE, 'YYYYMMDDHH24MI')) <= TRUNC(SYSDATE) and TRUNC(TO_DATE(SCHDUL_ENDDE, 'YYYYMMDDHH24MI')) >= TRUNC(SYSDATE)),0) as sch_cnt --금일 일정 갯수
-	from COMTNGNRLMBER m 
-	where mber_id=#{mberId}
+	        NVL(TO_CHAR(go_time, 'HH24:MI'),'--:--') AS go_time, --오늘 출근시간
+	        NVL(TO_CHAR(leave_time, 'HH24:MI'),'--:--') AS leave_time,	--오늘 퇴근시간
+		    NVL((select count(*) from project project join project_mem pm on project.pr_cd=pm.pr_cd where project.state='A02' and pm.mber_id=m.mber_id),0) as project_cnt, --참여자로 등록된 프로젝트 갯수
+		    NVL((select count(*) from todo todo where todo.state='A02' and mber_id=m.mber_id),0) as todo_cnt,	--금일 예정 일지 갯수
+		    NVL((select count(*) from COMTNSCHDULINFO sch WHERE TRUNC(TO_DATE(SCHDUL_BGNDE, 'YYYYMMDDHH24MI')) <= TRUNC(SYSDATE) and TRUNC(TO_DATE(SCHDUL_ENDDE, 'YYYYMMDDHH24MI')) >= TRUNC(SYSDATE)),0) as sch_cnt --금일 일정 갯수
+		from 
+	    COMTNGNRLMBER m 
+	left join
+	    commute cmt
+	on m.mber_id=cmt.mber_id
+	where m.mber_id=#{mberId} and TO_DATE(commute_dt, 'YYYY-MM-DD') = TO_DATE(SYSDATE, 'YYYY-MM-DD')
 	]]>
 	
+	</select>
+	
+	<!-- 홈 게시글 조회 -->
+	<select id="bbsSelect" parameterType="String" resultType="commonDTO">
+		SELECT * FROM (
+		    SELECT 
+		        ROWNUM RNUM, 			
+		        ntt_id, -- 게시글번호
+		        ntt_sj, -- 게시글제목
+		        FRST_REGIST_PNTTM AS create_dt, -- 게시글 등록일
+		        FRST_REGISTER_ID AS create_id, -- 게시글 작성자
+		        fn_get_memnm(FRST_REGISTER_ID) AS mber_nm,
+		        ANO_AT -- 공지여부
+		    FROM (
+		        SELECT * FROM comtnbbs 
+		        ORDER BY ANO_AT ASC, FRST_REGIST_PNTTM DESC
+		    )
+		) <![CDATA[ WHERE RNUM <= 4 ]]>
 	</select>
 	
 	<select id="companyInfo" resultType="CommonDTO">
@@ -160,5 +184,29 @@
 		   TO_CHAR(end_time, 'yyyy-MM-dd') AS end_time
 		FROM
 		   company
+	</select>
+	
+	<!-- 홈 일정 조회 -->
+	<select id="selectSchHome" parameterType="String" resultType="commonDTO">
+		SELECT * FROM (
+		    (SELECT 
+		        SCHDUL_NM,
+		        '일정' AS type_nm
+		     FROM COMTNSCHDULINFO
+		     WHERE 
+		        <![CDATA[
+		        TO_DATE(SUBSTR(SCHDUL_BGNDE, 1, 8), 'YYYYMMDD') <= TO_DATE(#{schDt}, 'YYYY-MM-DD') 
+		        AND TO_DATE(SUBSTR(SCHDUL_ENDDE, 1, 8), 'YYYYMMDD') >= TO_DATE(#{schDt}, 'YYYY-MM-DD')
+		        ]]>
+		    )
+		    UNION
+		    (SELECT 
+		        MTG_NM AS SCHDUL_NM,
+		        '회의' AS type_nm
+		     FROM COMTNMTGINFO
+		     WHERE TO_CHAR(MTG_DE, 'YYYY-MM-DD') = #{schDt}
+		    )
+		) 
+		<![CDATA[ where rownum<=3 ]]>		
 	</select>
 </mapper>

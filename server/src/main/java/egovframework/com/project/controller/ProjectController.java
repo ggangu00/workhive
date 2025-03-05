@@ -206,16 +206,12 @@ public class ProjectController {
 	
 	//프로젝트 일정 삭제
 	@DeleteMapping("/plan/{prPlanCd}")
-	public Map<String, Object> projectPlanRemove(@PathVariable("prPlanCd") String prPlanCd) {
+	public boolean projectPlanRemove(@PathVariable("prPlanCd") String prPlanCd) {
 	    
-	    // 서비스 로직 실행
 		boolean result = projectService.projectPlanDelete(prPlanCd);
 		
-		Map<String, Object> map = new HashMap<>();
-		map.put("result", result);
-		map.put("list", projectService.projectPlanSelectAll(prPlanCd));
+		return result;
 		
-		return map;
 	}
 		
 }

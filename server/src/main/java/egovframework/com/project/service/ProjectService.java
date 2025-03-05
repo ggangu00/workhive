@@ -48,6 +48,6 @@ public interface ProjectService {
 	//프로젝트 일정 등록
 	public boolean projectPlanInsert(ProjectDTO project);
 	
-	//프로젝트 삭제
+	//프로젝트 일정 삭제
 	public boolean projectPlanDelete(String prPlanCd);
 }

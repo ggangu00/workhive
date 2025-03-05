@@ -65,7 +65,7 @@
                                     <tbody>
                                         <tr v-for="member in members" :key="member.mberId">
                                             <td>{{ member.mberId }}</td>
-                                            <td class="profile-cell">
+                                            <td>
                                                 <div class="profile-text">
                                                     <span class="team-label">개발팀</span>
                                                     <span class="user-name">{{ member.mberNm }}</span>
@@ -139,4 +139,5 @@ const memberGetList = async () => {
         });
     }
 }
+
 </script>

@@ -32,13 +32,24 @@ public class CommonDTO extends CommonPaging {
 	private String entrprsEndTelno;		// 끝번호
 	private String fxnum;				// 거래처 팩스
 	
-	
 	// 홈 대시보드 건수 조회
 	private String mberId;		// 구성원코드
 	private String mberNm;		// 구성원이름
 	private Long projectCnt;	// 진행중인 프로젝트 갯수
 	private Long todoCnt;		// 미완료 일지 갯수
 	private Long schCnt;		// 금일 예정 일정 갯수
+	private String goTime;		// 금일 출근시간
+	private String leaveTime;	// 금일 퇴근시간
+	private String typeNm;		// 회의구분명
+	
+	// 홈 게시글 조회
+	private String nttId;
+	private String nttSj;
+	private String anoAt;
+	
+	// 홈 일정 조회
+	private String schDt;		// 일정명
+	private String schdulNm;	// 일정/회의 구분
 	
 	// 로그인 로그
 	private String logCd;		// 로그코드

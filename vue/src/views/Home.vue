@@ -14,8 +14,8 @@
             <div class="status-box attendance">
               <div class="status-title status-red">출/퇴근</div>
               <div class="status-content">
-                출근 08:50<br>
-                퇴근 --:--
+                출근 {{ homeInfo.goTime }}<br>
+                퇴근 {{ homeInfo.leaveTime }}
               </div>
             </div>
             <div class="status-box projects">
@@ -43,134 +43,80 @@
             <div class="home-container">
               <div class="home-container-header">참여예정 회의</div>
               <div class="meeting-item" :key="i" v-for="(meet, i) in meetList">
-                <div class="meeting-category">{{ meet.typeCd }}</div>
-                <div class="meeting-title">{{ meet.mtgNm }} <span class="badge badge-warning">D{{
-                  dateTermCalc(dateFormat(meet.mtgDe), dateFormat()) }}</span></div>
-                <div class="meeting-date">{{ dateFormat(meet.mtgDe) }}({{ dateGetDay(meet.mtgDe) }}) {{
-                  meet.mtgBeginTm }} ~ {{ meet.mtgEndTm }}</div>
+                <div class="meeting-category">{{ meet.typeNm }}</div>
+                <div class="meeting-title">
+                  {{ meet.mtgNm }}
+                  <span class="badge badge-warning">
+                    D{{ dateTermCalc(dateFormat(meet.mtgDe), dateFormat()) }}
+                  </span>
+                </div>
+                <div class="meeting-date">
+                  {{ dateFormat(meet.mtgDe) }}({{ dateGetDay(meet.mtgDe) }})
+                  {{ meet.mtgBeginTm }} ~ {{ meet.mtgEndTm }}
+                </div>
               </div>
+
+              <!-- 등록된 회의가 3건 미만일 경우 부족한 개수만큼 빈 회의 행을 추가 -->
               <div class="meeting-none">
-                <div class="meeting-item" :key="i" v-for="i in 3">
+                <div class="meeting-item" :key="'empty-' + i" v-for="i in Math.max(0, 3 - meetList.length)">
                   <div class="meeting-category">-</div>
                   <div class="meeting-title">예정된 회의가 없습니다.</div>
-                  <div class="meeting-date"></div>
+                  <div class="meeting-date">0000-00-00</div>
                 </div>
               </div>
             </div>
           </div>
-
         </div>
 
         <div class="col-7">
           <div class="card">
             <div class="calendar-container">
               <!-- Calendar Section -->
-              <div class="flex-grow-1 cal" style="border-right:1px solid #b5b5b5">
+              <div class="flex-grow-1 cal"
+                style="border-right: 1px solid rgb(217 217 217 / 50%); box-shadow: 2px 0px -2px 4px rgb(0 0 0 / 12%);">
                 <div class="home-container-header">월간 일정</div>
-                <table class="calendar-table">
-                  <tr>
-                    <th>일</th>
-                    <th>월</th>
-                    <th>화</th>
-                    <th>수</th>
-                    <th>목</th>
-                    <th>금</th>
-                    <th>토</th>
-                  </tr>
-                  <tr>
-                    <td></td>
-                    <td></td>
-                    <td>1</td>
-                    <td class="highlight">2</td>
-                    <td>3</td>
-                    <td class="highlight">4</td>
-                    <td>5</td>
-                  </tr>
-                  <tr>
-                    <td>6</td>
-                    <td>7</td>
-                    <td>8</td>
-                    <td>9</td>
-                    <td class="today">10</td>
-                    <td>11</td>
-                    <td>12</td>
-                  </tr>
-                  <tr>
-                    <td>13</td>
-                    <td>14</td>
-                    <td>15</td>
-                    <td>16</td>
-                    <td>17</td>
-                    <td>18</td>
-                    <td>19</td>
-                  </tr>
-                  <tr>
-                    <td>20</td>
-                    <td>21</td>
-                    <td>22</td>
-                    <td>23</td>
-                    <td>24</td>
-                    <td>25</td>
-                    <td>26</td>
-                  </tr>
-                  <tr>
-                    <td>27</td>
-                    <td>28</td>
-                    <td>29</td>
-                    <td>30</td>
-                    <td>31</td>
-                  </tr>
-                </table>
+                <div class="p-2">
+                  <Calendar  @dateSelected="handleDateSelected" />
+                </div>
               </div>
               <!-- Schedule Section -->
               <div class="home-container list">
-                <div class="home-container-header">2025-01-10</div>
+                <div class="home-container-header">{{ selectedDate }}</div>
 
-                <div class="meeting-item">
-                  <div class="meeting-category">백업</div>
-                  <div class="meeting-title">(전체) 사내 보안 문서 연간 정기백업</div>
+                <div class="meeting-item" :key="i" v-for="(cal, i) in calList">
+                  <div class="meeting-category">{{cal.typeNm}}</div>
+                  <div class="meeting-title">(전체) {{cal.schdulNm}}</div>
                 </div>
 
-                <div class="meeting-item">
-                  <div class="meeting-category">회의</div>
-                  <div class="meeting-title">(개발팀) 개발팀 부서회의</div>
+                <!-- 등록된 일정이 3건 미만일 경우 부족한 개수만큼 빈 회의 행을 추가 -->
+                <div class="meeting-none">
+                  <div class="meeting-item" :key="'empty-' + i" v-for="i in Math.max(0, 3 - calList.length)">
+                    <div class="meeting-category">-</div>
+                    <div class="meeting-title">등록된 일정이 없습니다.</div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
+      
       <div class="card">
-
         <div class="home-container">
-          <div class="home-container-header">게시판</div>
-          <div class="board-item">
-            <span class="badge badge-danger mrp10">공지</span>
-            <span class="board-title">연말정산 제출 안내 및 출력 방법 안내</span>
-            <span class="board-meta">관리자</span>
-            <span class="board-meta">2025-02-01</span>
+          <div class="home-container-header">게시글</div>
+          <div class="board-item" v-for="(bbs, i) in bbsList" :key="i">
+            <span class="badge badge-danger mrp10" v-show="bbs.anoAt == 'Y'">공지</span>
+            <span class="board-title">{{ bbs.nttSj }}</span>
+            <span class="board-meta">{{ bbs.mberNm }}</span>
+            <span class="board-meta">{{ bbs.createDt }}</span>
           </div>
-          <div class="board-item">
-            <span class="badge badge-danger mrp10">공지</span>
-            <span class="board-title">★★ 2월 거래처별 변동사항 (필독) ★★</span>
-            <span class="board-meta">관리자</span>
-            <span class="board-meta">2025-02-01</span>
-          </div>
-          <div class="board-item">
-            <span class="board-title">2025년 건강검진 미진료 대상자 안내</span>
-            <span class="board-meta">관리자</span>
-            <span class="board-meta">2025-02-01</span>
-          </div>
-          <div class="board-item">
-            <span class="board-title">2025년 건강검진 미진료 대상자 안내</span>
-            <span class="board-meta">관리자</span>
-            <span class="board-meta">2025-02-01</span>
-          </div>
-          <div class="board-item">
-            <span class="board-title">2025년 건강검진 미진료 대상자 안내</span>
-            <span class="board-meta">관리자</span>
-            <span class="board-meta">2025-02-01</span>
+
+          <!-- 등록된 게시글이 3건 미만일 경우 부족한 개수만큼 빈 회의 행을 추가 -->
+          <div class="board-none">
+            <div class="board-item" :key="'empty-' + i" v-for="i in Math.max(0, 5 - bbsList.length)">
+              <span class="board-title">등록된 게시글이 없습니다.</span>
+              <span class="board-meta">0000-00-00</span>
+            </div>
           </div>
         </div>
       </div>
@@ -180,25 +126,40 @@
 
 <script setup>
 import axios from "../assets/js/customAxios.js";
+import { onBeforeMount, ref, computed, watch } from 'vue';
+import { useUserInfoStore } from '../store/userStore';
+
+//========================== 컴포넌트 ==========================
 import Swal from 'sweetalert2';
-import { onBeforeMount, ref, computed } from 'vue';
+import Calendar from './components/Calendar.vue';
+
+//============================= js =============================
 import { numberFormat, dateFormat } from '../assets/js/common.js'
 import { dateGetDay, dateTermCalc } from '../assets/js/project.js'
-import { useUserInfoStore } from '../store/userStore';
 
 
 const userInfoStore = useUserInfoStore();
 
-const userData = computed(() => userInfoStore?.user  || {});
+const userData = computed(() => userInfoStore?.user || {});
 
-//---------------데이터--------------
-
+//========================= 공통함수 =========================
 onBeforeMount(() => {
   homeGetInfo();
   meetGetList();
+  calGetList();
+  bbsGetList();  
 });
 
-//---------------axios--------------
+const selectedDate = ref(dateFormat());
+const handleDateSelected = (date) => {
+  selectedDate.value = date;
+};
+
+watch(selectedDate, () => {
+  calGetList();
+});
+
+//=========================== axios ==========================
 const homeInfo = ref([]);
 const homeGetInfo = async () => { // 대시보드 건수 조회
   try {
@@ -223,8 +184,52 @@ const meetGetList = async () => { //회의 최신 3건 조회
 
     meetList.value = result.data;
     meetCount.value = result.data.length;
+
   } catch (err) {
     meetList.value = [];
+
+    Swal.fire({
+      icon: "error",
+      title: "API 조회 오류",
+      text: "Error : " + err
+    });
+  }
+}
+
+const calList = ref([]);
+const calCount = ref(0);
+const calGetList = async () => { //일정 최신 3건 조회
+  try {
+    const result = await axios.get(`/api/comm/calList/${selectedDate.value}`);
+
+    calList.value = result.data;
+    calCount.value = result.data.length;
+
+  } catch (err) {
+    meetList.value = [];
+
+    Swal.fire({
+      icon: "error",
+      title: "API 조회 오류",
+      text: "Error : " + err
+    });
+  }
+}
+
+const bbsList = ref([]);
+const bbsCount = ref(0);
+const bbsGetList = async () => { //게시글 5건 조회
+  try {
+    const result = await axios.get(`/api/comm/bbsList`);
+
+    bbsCount.value = result.data.length;
+    bbsList.value = result.data.map(item => ({
+      ...item,
+      createDt: dateFormat(item.createDt)
+    }));
+
+  } catch (err) {
+    bbsList.value = [];
 
     Swal.fire({
       icon: "error",

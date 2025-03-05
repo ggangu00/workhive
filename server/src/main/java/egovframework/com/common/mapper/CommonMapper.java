@@ -30,6 +30,9 @@ public interface CommonMapper {
 	// 홈 대시보드 건수 조회 (진행중인 프로젝트, 금일 예정 일정, 미완료 일지)
 	public CommonDTO homeInfo(String memCd);
 	
+	// 홈 게시글 조회
+	public List<CommonDTO> bbsSelect();
+	
 	// 이력내역 전체조회
 	public List<CommonDTO> historySelectAll();
 	
@@ -41,5 +44,8 @@ public interface CommonMapper {
 	
 	// 회사 정보 조회
 	public CommonDTO companyInfo();
+	
+	// 홈 일정 조회
+	public List<CommonDTO> selectSchHome(String calDt);
 	
 }

@@ -169,8 +169,8 @@ class logMemInfo {
       </div>
       <div>
       ${rowData.deptNm != null ? '['+rowData.deptNm+']' : ''} 
-      ${rowData.mberNm != null ? rowData.mberNm : ''} 
-      ${rowData.gradeNm != null ? rowData.gradeNm : ''}
+      ${rowData.mberNm || ''} 
+      ${rowData.gradeNm || ''}
       </div>
     `;
 

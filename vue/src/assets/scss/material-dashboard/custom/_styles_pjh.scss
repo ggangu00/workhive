@@ -116,6 +116,11 @@
    padding: 20px;
    border-radius: 10px;
 
+   h4,
+   small {
+      color: #343a40
+   }
+
    .profile-info {
       display: flex;
       align-items: center;
@@ -124,7 +129,7 @@
    .profile-icon {
       width: 80px;
       height: 80px;
-      background: #2f4858;
+      background: #343a40;
       border-radius: 50%;
       display: flex;
       justify-content: center;
@@ -144,7 +149,7 @@
       border-radius: 8px;
       box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.1), -4px -4px 10px rgba(0, 0, 0, 0.1);
       text-align: left;
-      font-weight: bold;
+      font-weight: 600;
       background-color: #ffffff;
    }
 
@@ -212,24 +217,27 @@
 }
 
 .home-container-header {
-   font-weight: bold;
+   font-weight: 600;
    padding: 10px;
-   border-bottom: 1px solid #b5b5b5;
+   border-bottom: 1px solid #c1c1c180;
+   box-shadow: 0px 2px 4px -2px rgb(0 0 0 / 12%);
 }
 
 .board-item {
    display: flex;
    align-items: center;
    padding: 12px;
-   border-bottom: 1px solid #ddd;
+   box-shadow: 0px 2px 4px -2px rgb(0 0 0 / 12%);
 }
 
 .board-item:last-child {
    border-bottom: none;
+   box-shadow: none;
 }
 
 .board-title {
    flex-grow: 1;
+   font-weight: 500;
 }
 
 .board-meta {
@@ -237,16 +245,31 @@
    min-width: 150px;
 }
 
+.board-none {
+   color: #979797;
+
+   .board-title {
+      font-weight: 400;
+   }
+
+   .board-date {
+      color: #979797;
+   }
+}
+
+/* 홈 참여예정 회의 */
+
 .meeting-item {
    display: flex;
    flex-direction: column;
    padding: 15px;
-   border-bottom: 1px solid #ddd;
+   box-shadow: 0px 2px 4px -2px rgb(0 0 0 / 12%);
    position: relative;
 }
 
 .meeting-item:last-child {
    border-bottom: none;
+   box-shadow: none;
 }
 
 .meeting-category {
@@ -255,7 +278,7 @@
 }
 
 .meeting-title {
-   font-weight: bold;
+   font-weight: 600;
    font-size: 18px;
    display: flex;
    align-items: center;
@@ -270,6 +293,22 @@
    right: 15px;
    top: 50%;
    transform: translateY(-50%);
+}
+
+.meeting-none {
+   color: #979797;
+
+   .meeting-category {
+      color: #979797 !important;
+   }
+
+   .meeting-title {
+      font-weight: 500;
+   }
+
+   .meeting-date {
+      color: #979797;
+   }
 }
 
 .calendar-container {
@@ -299,13 +338,26 @@
    border-collapse: collapse;
    text-align: center;
    position: relative;
+   color: #343a40;
+
+   tr {
+      height: 34px;
+   }
+
+   .tr-day {
+      font-weight: 600 !important;
+   }
+
+   .tr-date {
+      font-weight: 500 !important;
+   }
 }
 
 .calendar-table th,
-.calendar-table td {
-   padding: 8px;
+td {
    width: 14.28%;
    position: relative;
+   cursor: pointer;
 }
 
 .calendar-table .highlight,
@@ -327,13 +379,40 @@
 }
 
 .calendar-table .highlight::before {
-   border: 2px solid $primary;
+   border: 3px solid $primary;
    background-color: transparent;
 }
 
 .calendar-table .today::before {
-   border: 2px solid $danger;
+   border: 3px solid $danger;
    background-color: transparent;
+}
+
+.tr-day th:first-child {
+   color: #ff7979;
+   /* 일요일 */
+}
+
+.tr-day th:last-child {
+   color: #6c52ff;
+   /* 토요일 */
+}
+
+.tr-date td:first-child {
+   color: #ff7979;
+   /* 일요일 */
+}
+
+.tr-date td:last-child {
+   color: #6c52ff;
+   /* 토요일 */
+}
+
+.calendar-table button {
+   border: none;
+   background: none;
+   font-size: inherit;
+   cursor: pointer;
 }
 
 
@@ -341,7 +420,6 @@
 .todo-container {
    padding: 10px;
    text-align: center;
-
    $day-per : 3.22%;
 
    .day28 {
