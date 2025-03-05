@@ -4,6 +4,7 @@
         :headButtons="headButtons"
         :ApprovalButtons="false"
         :showFile="false"
+        :title="title"
         @button-click="buttonClick"
       />
       <!--  이벤트추가-->
@@ -124,7 +125,6 @@
   //삭제코드
   const deleteDocument = async() => {
     const response = await axios.put(`/api/document/delete/${docCd.value}`,{})
-    console.log(response)
     if (response.status == 200) {
       Swal.fire({
          icon: "success",
@@ -138,6 +138,6 @@
       });
           router.push({path: '/approval/rejectedList'})
         }
-
   }
+  const title="반려문서"
   </script>

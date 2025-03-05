@@ -4,6 +4,7 @@
       :headButtons="headButtons"
       :ApprovalButtons="false"
       :showFile="false"
+      :title="title"
       @button-click="buttonClick"
     />
     <!--  이벤트추가-->
@@ -40,13 +41,12 @@ onMounted(()=>{
   docCnEditor.value = route.query.docCnEditor || "";
   atchFileId.value=route.query.atchFileId || "";
 
-  console.log(docKind.value)
   window.history.replaceState({}, '', route.path);
 })
 //버튼명
 const headButtons = ref([
-  { label: '수신기안', class: 'btn-warning' },
-  { label: '수신확인', class: 'btn-success' },
+  { label: '수신기안', class: 'btn-warning btn-fill' },
+  { label: '수신확인', class: 'btn-primary btn-fill' },
   { label: '인쇄/다운로드', class: 'btn-success btn-fill' }
 ]);
 
@@ -75,6 +75,8 @@ const btnSelectChange = () => {
     text: "수신접수 하시겠습니까?",
     showDenyButton: false,
     showCancelButton: true,
+    cancelButtonText:"닫기",
+    reverseButtons:true,
     confirmButtonText: "수신접수",
   }).then(async (result) => {
     let modeText = '';
@@ -137,5 +139,5 @@ const restartDraft = () => {
 const downloadBtn = async () => {
   await generatePDF(docCnEditor.value, docTitle.value || "document");
 };
-
+const title="수신문서"
 </script>

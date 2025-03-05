@@ -4,6 +4,7 @@
       :headButtons="headButtons"
       :ApprovalButtons="false"
       :showFile="false"
+      :title="title"
       @button-click="buttonClick"
     />
     <!--  이벤트추가-->
@@ -44,7 +45,7 @@ onMounted(()=>{
 //버튼명
 const headButtons = ref([
   { label: '인쇄/다운로드', class: 'btn-success btn-fill' },
-  { label: '공람발송', class: 'btn-primary btn-fill' },
+  //{ label: '공람발송', class: 'btn-primary btn-fill' },
 ]);
 
 //버튼별 기능
@@ -75,4 +76,5 @@ const downloadBtn = async () => {
   await generatePDF(docCnEditor.value, docTitle.value || "document");
 };
 
+const title="완료문서"
 </script>

@@ -3,6 +3,7 @@
     :buttons="buttons" 
     :columnDefs="columnDefs" 
     :status="status"
+    :title="title"
     @button-click="buttonClick"
     ref="approvalRegisterRef"
   />
@@ -50,4 +51,5 @@ const columnDefs = ref([
   { header: '기안일시', name: 'draftDt', sortable: true },
 ]);
 const status = "H03";
+const title = "반려함";
 </script>

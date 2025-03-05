@@ -14,7 +14,7 @@
 
 	<!-- 웹 애플리케이션이 처음 실행될 때 자동으로 호출되는 초기 페이지 설정 (웹 루트에 접근하면 자동으로 불러올 파일 지정) -->
 	<welcome-file-list>
-		<welcome-file>index.jsp</welcome-file> <!-- 기본적으로 index.jsp 페이지 로드 -->
+		<welcome-file>index.html</welcome-file> <!-- 기본적으로 index.jsp 페이지 로드 -->
 		<welcome-file>egovDevIndex.jsp</welcome-file> <!-- index.jsp가 없으면 egovDevIndex.jsp 로드 -->
 	</welcome-file-list>
 

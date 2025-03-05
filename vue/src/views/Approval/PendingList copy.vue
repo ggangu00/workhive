@@ -3,6 +3,7 @@
     :buttons="buttons" 
     :columnDefs="columnDefs" 
     :status="status"
+    :title="title"
     @button-click="buttonClick"
     ref="approvalRegisterRef"
   />
@@ -11,7 +12,7 @@
 <script setup>
 import PendingListComp from '@/components/PaymentLayout/PendingListComp.vue'
 import {ref} from'vue';
-import { useRouter } from 'vue-router'; 
+import { useRouter } from 'vue-router';
 
 const router = useRouter(); 
 const approvalRegisterRef = ref(null);
@@ -52,4 +53,5 @@ const buttonClick = async (buttonName)=>{
         { header: '기안자', name: 'mberNm' ,sortable: true},
         { header: '기안일시', name: 'draftDt' ,sortable: true},
       ])
+      const title="미결함"
 </script>

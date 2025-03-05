@@ -3,6 +3,7 @@ const server = 'http://localhost:85/server';
 var path = require("path");
 
 module.exports = defineConfig({
+   //publicPath: '/api/dist',
    // outputDir : path.resolve("../server/public"),
    transpileDependencies: true,
 

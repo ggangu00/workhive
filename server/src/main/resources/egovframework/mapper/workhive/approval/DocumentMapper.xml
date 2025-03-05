@@ -204,7 +204,14 @@
       AND del_yn = UPPER('N')
       AND (
         mber_id = #{mberId} 
+        
         OR (#{status} = 'H04' AND EXISTS (
+            SELECT 1 
+            FROM approval_line al
+            WHERE al.doc_cd = D.doc_cd
+            AND al.mber_id = #{mberId}
+        ))
+        OR (#{status} = 'H02' AND EXISTS (
             SELECT 1 
             FROM approval_line al
             WHERE al.doc_cd = D.doc_cd

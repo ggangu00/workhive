@@ -7,7 +7,7 @@
                 <!-- head -->
                   <div class="d-flex justify-content-between align-items-center">
                       <div>
-                          <h4 class="card-title me-auto" >문서기안</h4>
+                          <h4 class="card-title me-auto" >{{title}}</h4>
                       </div>
                       <div>
                         <button
@@ -280,7 +280,8 @@ const initEditor = () => {
 defineProps({
   headButtons: { type: Array, required: true },
   ApprovalButtons: { type: Boolean, default: true },
-  showFile: { type: Boolean, default: true }
+  showFile: { type: Boolean, default: true },
+  title: { type: String, required: true },
 });
 
 //  모달이 열릴 때 Toast Grid를 초기화하는 함수

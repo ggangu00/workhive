@@ -3,19 +3,21 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
+          <card>
+            <h4 class="card-title float-left">{{ title }}</h4>
+            <div class="d-flex justify-content-end">
+              <button
+                v-for="(btn, index) in buttons"
+                :key="index"
+                :class="['btn', btn.class]"
+                @click="$emit('button-click', btn.label)">
+                {{ btn.label }}
+              </button>
+            </div>
+          </card>
           <div class="card">
             <!-- 버튼 & 필터 -->
             <div class="button-collection d-flex justify-content-between align-items-center flex-wrap" style="padding: 15px;">
-              <div class="d-flex">
-                <button
-                  v-for="(btn, index) in buttons"
-                  :key="index"
-                  :class="['btn', btn.class]"
-                  @click="$emit('button-click', btn.label)">
-                  {{ btn.label }}
-                </button>
-              </div>
-
               <div class="selectbox d-flex">
                 <select class="form-select w10" name="doc_kind" v-model="docKind">
                   <option v-for="(data, idx) in selectedData"
@@ -76,6 +78,8 @@ import "tui-grid/dist/tui-grid.css";
 import axios from "../../assets/js/customAxios.js";
 import Swal from 'sweetalert2';
 import { useUserInfoStore } from '../../store/userStore.js';
+//컴포넌트
+import Card from '../../components/Cards/Card.vue'
 
 
 const userInfoStore = useUserInfoStore();
@@ -85,6 +89,7 @@ const props = defineProps({
   buttons: { type: Array, required: true },
   columnDefs: { type: Array, required: true }, // Column 정의
   status: { type: String, required: true }, // 현재 진행 상태
+  title: { type: String, required: true }, // 현재 진행 상태
 });
 
 // Vue Router 사용
