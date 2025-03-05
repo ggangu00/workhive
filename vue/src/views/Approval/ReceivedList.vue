@@ -3,6 +3,7 @@
     :buttons="buttons" 
     :columnDefs="columnDefs" 
     :status="status"
+    :title="title"
     @button-click="buttonClick"
     ref="approvalRegisterRef"
   />
@@ -16,8 +17,9 @@ import { useRouter } from 'vue-router';
 const router = useRouter(); 
 const approvalRegisterRef = ref(null);
 const buttons = ref([
-  { label: '수신접수', class: 'btn-warning btn-fill'},
-  { label: '기안', class: 'btn-primary btn-fill'},
+{ label: '기안', class: 'btn-warning btn-fill'},
+{ label: '수신접수', class: 'btn-primary btn-fill'},
+
 ]);
 
 const buttonClick = async (buttonName)=>{
@@ -47,5 +49,6 @@ const columnDefs = ref([
   { header: '기안자', name: 'mberNm' ,sortable: true},
   { header: '기안일시', name: 'draftDt' ,sortable: true},
 ])
+const title="수신함"
 </script>
   

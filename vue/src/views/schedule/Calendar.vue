@@ -206,7 +206,7 @@ getEventColor(asdf) {
                 }
   });
 
-  console.log(response.data)
+
   this.calendarOptions.events = response.data.map(event => {
       return {
           id: event.schdulId,
@@ -261,7 +261,7 @@ getEventColor(asdf) {
         endtm: "",
         deptCd:"",
         deptNm:"",
-        name:"",
+        name: this.loginUser,
         mberNm:"", 
       }
     })
@@ -285,11 +285,11 @@ getEventColor(asdf) {
 
     // 날짜 변환
     const startDate = e.event.start ? e.event.start.toISOString().slice(0, 10) : "";
-    const endDate = e.event.end ? e.event.end.toISOString().slice(0, 10) : "";
+    const endDate = e.event.end ? e.event.end.toISOString().slice(0, 10) : startDate;
 
     // 시간 변환
     const startTime = e.event.start ? e.event.start.toISOString().slice(11, 16) : "";
-    const endTime = e.event.end ? e.event.end.toISOString().slice(11, 16) : "";
+    const endTime = e.event.end ? e.event.end.toISOString().slice(11, 16) : startTime;
 
     //모달에 정보담기
     this.schedule.title = e.event.title;
@@ -305,7 +305,6 @@ getEventColor(asdf) {
     this.schedule.deptCd = e.event.extendedProps.deptCd;  // 부서 코드 추가
     
     this.selectedEventId = e.event.id;//수정용 스케쥴아이디
-    console.log( this.schedule.type)
   },
 
 
@@ -315,15 +314,61 @@ getEventColor(asdf) {
     const bgndeTime = this.schedule.bgntm ? this.schedule.bgntm.replace(":", "") : "0000";
     const enddeTime = this.schedule.endtm ? this.schedule.endtm.replace(":", "") : "0000";
 
+    if (!this.isAllDay && this.schedule.bgntm && this.schedule.endtm && this.schedule.bgntm > this.schedule.endtm) {
+    Swal.fire({
+      icon: "error",
+      title: "시간 오류",
+      text: "시작 시간은 종료 시간보다 빨라야 합니다.",
+      confirmButtonText: "확인"
+    });
+    return;
+  }
+
     const addList = new FormData();
     addList.append("cmd", "save");
-    addList.append("schdulDeptId", this.schedule.deptCd);
+    addList.append("schdulDeptId", this.schedule.deptCd || '');
     addList.append("schdulSe", this.schedule.type);
     addList.append("schdulNm", this.schedule.title);
     addList.append("schdulCn", this.schedule.content);
     addList.append("schdulPlace", this.schedule.place);
     addList.append("schdulBgnde", this.schedule.start.replace(/-/g, '')  + bgndeTime);
     addList.append("schdulEndde", this.schedule.end.replace(/-/g, '') + enddeTime);
+
+
+    if(!addList.get('schdulSe')){
+      Swal.fire({
+        icon: "info",
+        title: "유형을 선택하세요"
+      });
+      return
+    }else if(!addList.get('schdulNm')){
+      Swal.fire({
+        icon: "info",
+        title: "일정명을 작성해주세요"
+      });
+      return
+    }else if(!addList.get('schdulCn')){
+      Swal.fire({
+        icon: "info",
+        title: "일정내용을 작성해주세요"
+      });
+      return
+    }
+    else if(addList.get('schdulBgnde')=='0000'){
+      Swal.fire({
+        icon: "info",
+        title: "시작 날짜를 선택해주세요"
+      });
+      return
+    }else if(addList.get('schdulEndde'=='0000')){
+      Swal.fire({
+        icon: "info",
+        title: "종료 날짜를 선택해주세요"
+      });
+      return
+    }
+
+
 
     if(this.selectedEventId){
       addList.append("schdulId", this.selectedEventId);
@@ -337,7 +382,6 @@ getEventColor(asdf) {
     }
     }else{
       const response = await axios.post('/api/schedule/register', addList );
-      console.log(response)
       if(response.request.status==200){
         Swal.fire({
         icon: "success",
@@ -373,27 +417,43 @@ this.selectedEventId = null;
 },
 
 //삭제메소드(id받을 수있으면 id에따라 버튼 다르게 할예정)
-async scheduleRemove(){
-  let response = await axios.delete(`/api/schedule/delete/${this.selectedEventId}`);
-  if(response.data == "success"){
-    Swal.fire({
-        title: "삭제 완료",
-        icon: "success",
-        buttons: {
-          cancel : "취소",
-          catch: {
-              text: "확인",
-              value: "catch"
-          },
-        }
+async scheduleRemove() {
+  Swal.fire({
+    title: "삭제 진행",
+    text: "선택한 일정을 삭제하시겠습니까?",
+    showCancelButton: true,  // 취소 버튼 활성화
+    cancelButtonText: "닫기", // 취소 버튼 텍스트
+    confirmButtonText: "삭제", // 확인 버튼 텍스트
+    icon: "warning", // 경고 아이콘 사용
+    reverseButtons: true, // 버튼 순서 반대로 (삭제 오른쪽, 닫기 왼쪽)
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        const response = await axios.delete(`/api/schedule/delete/${this.selectedEventId}`);
 
-    });
-    this.handleDateChange({
-    view: {
-      currentStart: new Date() // 현재 달력의 시작 날짜를 기준으로 API 요청
+        if (response.data == "success") {
+          Swal.fire({
+            icon: "success",
+            title: "삭제 완료",
+            text: "선택한 일정이 삭제되었습니다.",
+          });
+
+          // 캘린더 다시 불러오기
+          this.handleDateChange({
+            view: {
+              currentStart: new Date(), // 현재 달력의 시작 날짜를 기준으로 API 요청
+            }
+          });
+        }
+      } catch (err) {
+        Swal.fire({
+          icon: "error",
+          title: "삭제 실패",
+          text: "Error : " + err,
+        });
+      }
     }
-});
-  }
+  });
 },
 
 //풀캘린더 데이터형식
@@ -403,9 +463,18 @@ async scheduleRemove(){
   }
 },
 
-watch(){
-  
+watch: {
+  "schedule.type"(newType) {
+    if (this.isNewSchedule && newType == 'L01 ') { //수정모드에선 작동x
+      Swal.fire({
+        icon: "info",
+        title: "회의는 회의관리 페이지에서 등록해주세요"
+      });
+      this.schedule.type = 'L07 '
+    }
+  }
 }
+
 }
 </script>
 <style>

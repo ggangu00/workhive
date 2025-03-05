@@ -7,7 +7,7 @@
             <!-- head -->
             <div class="d-flex justify-content-between align-items-center">
               <div>
-                <h4 class="card-title me-auto">문서기안</h4>
+                <h4 class="card-title me-auto">{{title}}</h4>
               </div>
               <div>
                 <button v-for="(btn, index) in headButtons" :key="index" :class="['btn', btn.class]"
@@ -145,7 +145,8 @@ const docCnEditor = ref(""); //문서내용
 defineProps({
   headButtons: { type: Array, required: true },
   ApprovalButtons: { type: Boolean, default: true },
-  showFile: { type: Boolean, default: true }
+  showFile: { type: Boolean, default: true },
+  title: { type: String, required: true },
 });
 
 //  ApprovalLine을 참조할 ref 생성
@@ -239,7 +240,7 @@ const files = async () => {
         param_atchFileId: route.query.atchFileId
       },
     });
-    console.log("파일내용=> ",response.data);
+
     fileList.value = response.data; // 결과 저장
   } catch (error) {
     console.error("파일 목록 불러오기 실패:", error);
@@ -248,7 +249,7 @@ const files = async () => {
 
 /////////////////////파일정보가져와서 다운로드//////////////////
 const showFileInfo = async(file) => {
-  console.log("파일 정보:", file);
+
   await axios.get(`/api/cmm/fms/FileDown.do`,{
     params:{
       atchFileId : file.atchFileId,

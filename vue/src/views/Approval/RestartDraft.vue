@@ -4,6 +4,7 @@
       :headButtons="headButtons"
       :ApprovalButtons="true"
       :showFile="true"
+      :title="title"
       @button-click="buttonClick"
       ref="approvalRegisterRef"
     />
@@ -87,4 +88,6 @@ const approvalBtn = async() =>{
     router.push({path: '/approval/proceedList'})
   }
 }
+
+const title = "기안"
   </script>

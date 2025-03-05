@@ -4,6 +4,7 @@
         :headButtons="headButtons"
         :ApprovalButtons="false"
         :showFile="false"
+        :title="title"
         @button-click="buttonClick"
       />
       <!--  이벤트추가-->
@@ -118,4 +119,6 @@ const approvalBtn = () => {
 const downloadBtn = async () => {
   await generatePDF(docCnEditor.value, docTitle.value || "document");
 };
+
+const title="미결문서"
   </script>

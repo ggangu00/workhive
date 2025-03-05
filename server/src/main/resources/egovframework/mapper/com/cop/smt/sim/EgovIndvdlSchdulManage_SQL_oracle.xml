@@ -156,7 +156,7 @@
         LPAD(REPLACE(B.MTG_END_TM, ':', ''), 4, '0') AS SCHDUL_ENDDE,    
         B.MTG_NM AS SCHDUL_NM,            
         B.MTG_MTR_CN AS SCHDUL_CN,        
-        B.MTG_PLACE AS SCHDUL_PLACE,      
+        (select COMM_DTL_NM from common_detail where COMM_DTL_CD = (B.MTG_PLACE)) AS SCHDUL_PLACE,           
         NULL AS SCHDUL_IPCR_CODE,         
         NULL AS SCHDUL_CHARGER_ID,       
         NULL AS SCHDUL_CHARGER_NAME,      

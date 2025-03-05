@@ -4,6 +4,7 @@
     :columnDefs="columnDefs" 
     :status="status"
     :status1="status1"
+    :title="title"
     @button-click="buttonClick"
     ref="approvalRegisterRef"
   />
@@ -45,4 +46,5 @@ const buttonClick = async (buttonName) => {
 ]);
 const status = "H02";
 const status1 = "H01";
+const title = "진행함";
 </script>

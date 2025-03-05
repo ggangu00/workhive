@@ -3,6 +3,7 @@
     :buttons="buttons"
     :columnDefs="columnDefs"
     :status="status"
+    :title="title"
     @button-click="buttonClick"
     ref="approvalRegisterRef"
   />
@@ -30,7 +31,7 @@ const buttonClick = async (buttonName) => {
 
   const buttons = ref([
   { label: '기안', class: 'btn-warning btn-fill' },
-  { label: '공람발송', class: 'btn-primary btn-fill' },
+  //{ label: '공람발송', class: 'btn-primary btn-fill' },
   ]);
 
   const columnDefs = ref([
@@ -44,5 +45,6 @@ const buttonClick = async (buttonName) => {
   { header: '기안일시', name: 'draftDt', sortable: true },
 ]);
 const status = "H04";
+const title = "완료함";
 
 </script>

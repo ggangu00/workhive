@@ -4,6 +4,7 @@
         :headButtons="headButtons"
         :ApprovalButtons="true"
         :showFile="true"
+        :title="title"
         @button-click="buttonClick"
         ref="approvalRegisterRef"
       />
@@ -60,4 +61,6 @@
     router.push({path:'/approval/proceedList'}); 
     }
   }
+
+  const title="문서기안"
   </script>
