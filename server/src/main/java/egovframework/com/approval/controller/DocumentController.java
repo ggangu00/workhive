@@ -107,11 +107,12 @@ public class DocumentController {
 	@GetMapping("/list")
 	public Map<String, Object> getCompletedDocuments(@RequestParam(required = false) String status,
 													@RequestParam(required = false) String status1,
-												     @RequestParam(required = false) int page,
+												     @RequestParam(name = "page",required = false, defaultValue = "1") int page,
 												     @RequestParam(required = false) int perPage,
 												     @ModelAttribute SearchDTO searchDTO) throws JsonMappingException, JsonProcessingException {
 		
 		searchDTO.setPageUnit(perPage);
+		searchDTO.setPage(page);
 
 		// 페이징 조건
 		searchDTO.setStartPage(searchDTO.getFirst());
@@ -122,7 +123,7 @@ public class DocumentController {
 		// 페이징처리
 		searchDTO.setTotalRecord(documentService.getCount(searchDTO));
 		
-		System.out.println("request DATA => " +  status + " page => " +  page);
+		System.out.println("request DATA => " +  status + " page => " +  page + "총 문서개수=>" + documentService.getCount(searchDTO));
 		
 	    
 	    String str = """

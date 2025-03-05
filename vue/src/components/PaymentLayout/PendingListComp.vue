@@ -89,14 +89,14 @@ const props = defineProps({
 
 // Vue Router 사용
 const router = useRouter();
-const page = ref(1);
+//const page = ref(1);
 
 // Grid 및 필터 설정
 const grid = ref(null);
 const docKind = ref('');
 const deptNm = ref('전체');
 const formType = ref('');
-const rowData = ref([]);
+//const rowData = ref([]);
 const startDate = ref('');
 const endDate = ref('');
 
@@ -144,7 +144,7 @@ const resetBtn = () =>{
 //아이디정보 불러오서 밑에 있는 getparams에 아이디값 뿌려주기
 
 // API 요청 파라미터
-const getParams = ({
+const getParams = ref({
   status: '',
   deptNm: '',
   docKind: '',
@@ -160,7 +160,7 @@ const dataSource = {
     readData: {
       url: "/api/document/pendingList",
       method: "GET",
-      initParams: getParams,
+      initParams: getParams.value,
       headers: {
       'Authorization': `Bearer ${token}`  // 백틱 사용
       }, // 페이지, 상태코드(미결, 반려, 진행완료)
@@ -274,24 +274,14 @@ onMounted(() => {
 
 //문서 유형 셀렉트박스 변경시 필터 감지하여 재로딩
 watch([docKind, deptNm, formType, startDate, endDate], async ([newDodKind, newDeptNm, newFormType, newStartDate, newEndDate]) => {
-    const response = await axios.get("/api/document/pendingList", { params: {
-      docKind : newDodKind,
-      deptNm : newDeptNm == "전체" ? "" : newDeptNm,
-      formCd : newFormType,
-      startDate : newStartDate,
-      endDate : newEndDate,
-      perPage: 15,
-      page: page.value,
-      status : props.status,
-      mberId : loginUser
-    }
-  });
+  getParams.value.docKind=newDodKind;
+  getParams.value.formCd=newFormType;
+  getParams.value.startDate=newStartDate;
+  getParams.value.endDate=newEndDate;
+  getParams.value.deptNm = newDeptNm == "전체" ? "" :newDeptNm;
 
-    rowData.value = [...response.data?.data?.contents ?? [], {...response.data?.data?.pagination ?? []}];
-    if (grid.value) {
-      grid.value.resetData(rowData.value);
-    }
-});
+    grid.value.readData(1, getParams.value)
+}, {deep:true});
 
 defineExpose({btnSelectChange})
 </script>

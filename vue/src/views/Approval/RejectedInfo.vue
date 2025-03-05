@@ -77,7 +77,10 @@
           Swal.fire({
                icon: "success",
                title: "회수 성공",
+               text: "임시함에서 확인하세요"
             })
+            router.push({
+              path: '/approval/retrieveList'})
         } else {
           alert("회수 실패");
         }
@@ -111,7 +114,10 @@
     const response = await axios.put(`/api/document/delete/${docCd.value}`,{})
     console.log(response)
     if (response.status == 200) {
-          alert("삭제 성공");
+      Swal.fire({
+         icon: "success",
+         title: "삭제성공",
+      });
           router.push({path: '/approval/rejectedList'})
         } else {
           alert("삭제 실패");

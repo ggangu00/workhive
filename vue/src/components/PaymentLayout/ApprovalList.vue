@@ -92,14 +92,14 @@ const props = defineProps({
 
 // Vue Router 사용
 const router = useRouter();
-const page = ref(1);
+//const page = ref(1);
 
 // Grid 및 필터 설정
 const grid = ref(null);
 const docKind = ref('');
 const deptNm = ref('전체');
 const formType = ref('');
-const rowData = ref([]);
+//const rowData = ref([]);
 const startDate = ref('');
 const endDate = ref('');
 
@@ -119,7 +119,7 @@ const commonDtlList = async () =>{
 const deptList = async () =>{
    try {
       const deptNm = await axios.get('/api/department')
-      selectedDeptData.value=[{ deptNm: "전체" } , ...deptNm.data]
+      selectedDeptData.value=[{deptNm: "전체" } , ...deptNm.data]
    } catch (err) {
       Swal.fire({
          icon: "error",
@@ -147,7 +147,7 @@ const resetBtn = () =>{
 //아이디정보 불러오서 밑에 있는 getparams에 아이디값 뿌려주기
 
 // API 요청 파라미터
-const getParams = ({
+const getParams = ref({
   status: props.status,
   status1: props.status1,
   deptNm: '',
@@ -164,7 +164,7 @@ const dataSource = {
     readData: {
       url: "/api/document/list",
       method: "GET",
-      initParams: getParams, // 페이지, 상태코드(미결, 반려, 진행완료)
+      initParams: getParams.value, // 페이지, 상태코드(미결, 반려, 진행완료)
       headers: {
       'Authorization': `Bearer ${token}`  // 백틱 사용
       },
@@ -267,7 +267,7 @@ const TueGrid = () => {
     rowHeaders: ["checkbox"],
     pageOptions: {
       useClient: false, // 서버 사이드 페이지네이션 사용
-      perPage: 10,
+      perPage: 15,
     },
     data: dataSource,
   });
@@ -300,7 +300,7 @@ const handleRowClick = (e) => {
     routePath = "/approval/restartDraft"
   }
 
-  console.log(dataRow)
+
   router.push({
     path: routePath,
     query :{
@@ -309,6 +309,7 @@ const handleRowClick = (e) => {
       formType : dataRow.formType,
       formCd : dataRow.formCd,
       deptNm : dataRow.deptNm,
+      deptCd : dataRow.deptCd,
       docTitle : dataRow.docTitle,
       docCnEditor : dataRow.docCnEditor,
       atchFileId : dataRow.atchFileId,
@@ -321,29 +322,19 @@ onMounted(() => {
   commonDtlList(); //공통코드
   deptList(); //부서코드
   formList(); //문서유형
+  console.log(getParams.value)
 });
 
 //문서 유형 셀렉트박스 변경시 필터 감지하여 재로딩
-watch([docKind, deptNm, formType, startDate, endDate], async ([newDodKind, newDeptNm, newFormType, newStartDate, newEndDate]) => {
-    const response = await axios.get("/api/document/list", { params: {
-      docKind : newDodKind,
-      deptNm : newDeptNm == "전체" ? "" : newDeptNm,
-      formCd : newFormType,
-      startDate : newStartDate,
-      endDate : newEndDate,
-      perPage: 15,
-      page: page.value,
-      status : props.status,
-      status1 : props.status1,
-      mberId : loginUser
-    }
-  });
+watch([docKind, formType, startDate, deptNm, endDate], ([newDodKind,  newFormType, newStartDate, newDeptNm ,newEndDate]) => {
+  getParams.value.docKind=newDodKind;
+  getParams.value.formCd=newFormType;
+  getParams.value.startDate=newStartDate;
+  getParams.value.endDate=newEndDate;
+  getParams.value.deptNm = newDeptNm == "전체" ? "" :newDeptNm;
 
-    rowData.value = [...response.data?.data?.contents ?? [], {...response.data?.data?.pagination ?? []}];
-    if (grid.value) {
-      grid.value.resetData(rowData.value);
-    }
-});
+    grid.value.readData(1, getParams.value)
+}, {deep:true});
 
 defineExpose({btnSelectChange, reteriveBtn})
 </script>

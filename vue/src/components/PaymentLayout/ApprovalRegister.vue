@@ -61,7 +61,7 @@
                       <div class="col-5" v-if="showFile">
                           <strong>첨부파일</strong>
                           <br>
-                          <input type="file" @change="addFileList($event.target)" multiple/>
+                          <input type="file" @change="addFileList($event)" multiple/>
                           <p class="file-info">개별 파일 기준 최대 30MB까지 첨부할 수 있습니다.</p>
                       </div>
 
@@ -292,6 +292,10 @@ const handleModalOpen = () => {
  // 파일 삭제 기능
 const removeFile = (index) => {
   fileList.value.splice(index, 1);
+  const fileInput = document.querySelector("input[type='file']");
+  if (fileInput) {
+    fileInput.value = "";
+  }
 };
 
 const registerApprovals = () => {
@@ -346,11 +350,33 @@ const approvalList = async () => {
 };
 
 /////////////////////첨부파일/////////////////////////
-const addFileList = (target) => {
-  const newFile = Array.from(target.files);
-  console.log(target.files);
-  fileList.value.push(...newFile);
-}
+// const addFileList = (target) => {
+//   const newFile = Array.from(target.files);
+
+//   fileList.value.push(...newFile);
+// }
+// 파일 추가 함수 수정 (event.target.files 체크 추가)
+const addFileList = (event) => {
+  // 이벤트가 없거나 files가 없으면 return
+  if (!event || !event.target || !event.target.files) {
+    console.error("파일 선택 오류: event 또는 files가 존재하지 않습니다.");
+    return;
+  }
+
+  const newFiles = Array.from(event.target.files);
+
+  newFiles.forEach((newFile) => {
+    const isDuplicate = fileList.value.some(
+      (file) => file.name === newFile.name && file.size === newFile.size
+    );
+    if (!isDuplicate) {
+      fileList.value.push(newFile);
+    }
+  });
+
+  // input 필드 초기화 (같은 파일 다시 추가 가능)
+  event.target.value = "";
+};
 
 //  컴포넌트 언마운트 시 이벤트 리스너 제거 (페이지이동)
 onUnmounted(() => {
@@ -404,6 +430,7 @@ const conditionReset = () => { // 정보 리셋
   docCnEditor.value = "";
   approvers.value = [];
   receivers.value = [];
+  fileList.value=[];
 }
 
 //문서제목 검사
@@ -488,7 +515,9 @@ const approvalInfo = async() => {
   formData.append("reception", JSON.stringify(receivers.value));
   //첨부파일  
   fileList.value.forEach((file) => {
-    formData.append("files[]", file);
+    if (file instanceof File) {
+      formData.append("files[]", file);
+    }
   });
   try {
     const response = await axios.post('/api/document/register', formData,
@@ -515,7 +544,7 @@ const approvalInfo = async() => {
       });
       return false;
     }
-    router.push('/approval/pendingList'); 
+    router.push({path:'/approval/pendingList'}); 
   }
 defineExpose({  // modalOpen expose
   modalOpen,

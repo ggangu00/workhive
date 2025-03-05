@@ -43,7 +43,7 @@ const columnDefs = ref([
   { header: '문서번호', name: 'docCd', sortable: true },
   { header: '현재결재상태', name: 'crntSignStat', sortable: true },
   { header: '종류', name: 'docKind', sortable: true },
-  { header: '양식', name: 'formCd', sortable: true },
+  { header: '양식', name: 'formType', sortable: true },
   { header: '제목', name: 'docTitle', sortable: true },
   { header: '기안부서', name: 'deptNm', sortable: true },
   { header: '기안자', name: 'mberNm', sortable: true },

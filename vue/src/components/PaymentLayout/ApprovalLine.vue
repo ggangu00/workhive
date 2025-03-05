@@ -89,7 +89,7 @@
                 @dragover.prevent
                 @drop="onDrop(index)" style="height: 30%">
                 <i class="fa-solid fa-grip-vertical"></i>
-                <select v-model="approver.signName" @change='signNameChange(index)' class="form-select form-select-sm mx-2" style='width: 100px;'>
+                <select v-model="approver.signName" @change='signNameChange(index)' class="form-select form-select-sm mx-2" style='width: 100px;' :disabled="approver.signName == 'K01'">
                   <option v-for="(data, idx) in selectedData" :key="idx" :value="data.commDtlCd" >
                     {{ data.commDtlNm }}
                   </option>
@@ -318,7 +318,11 @@ approvers.value.unshift(signNameValue); // 맨 위 추가
 // 결재자 삭제 기능
 const removeApproval = (index) => {
   if (approvers.value[index] && approvers.value[index].signName == "K01") {
-    alert("기안자는 삭제할 수 없습니다.");
+    Swal.fire({
+               icon: "error",
+               title: "삭제 실패",
+               text: "기안자는 삭제할 수 없습니다."
+            })
     return;
   }
   approvers.value.splice(index, 1);

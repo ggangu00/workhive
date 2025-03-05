@@ -14,7 +14,9 @@
   <script setup>
   import ApprovalRegister from '@/components/PaymentLayout/ApprovalRegister.vue';
   import {ref} from'vue';
+  import { useRouter } from 'vue-router';
 
+  const router = useRouter();
   const headButtons = ref([ //빈값넣으면 버튼안나옴
           { label: "양식선택", class: "btn-primary" },
           { label: "초기화", class: "btn-warning" },
@@ -49,9 +51,13 @@
     }
   }
 
-  const approvalBtn = () =>{
+  const approvalBtn = async() =>{
     if (approvalRegisterRef.value) {
-      approvalRegisterRef.value.approvalInfo(); 
+      const approvalResult = await approvalRegisterRef.value.approvalInfo(); 
+    if(!approvalResult){
+      return;
+    }
+    router.push({path:'/approval/proceedList'}); 
     }
   }
   </script>
