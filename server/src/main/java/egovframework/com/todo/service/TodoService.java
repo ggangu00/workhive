@@ -24,5 +24,5 @@ public interface TodoService {
 	public boolean todoStateUpdate(List<String> todoArr, String state);
 	
 	//일지 삭제
-	public boolean todoDelete(List<String> todoArr);
+	public boolean todoDelete(String todoCd);
 }

@@ -195,6 +195,10 @@ const initGrid = (gridInstance, gridDiv, rowData, colData) => {
         scrollY: true,
         rowHeaders: ['checkbox'],
         columns: colData,
+        pageOptions: {
+            useClient: false,
+            perPage: 15,
+        },
         rowHeight: 50
     });
 };

@@ -139,7 +139,7 @@ onMounted(() => {
       ],
       pageOptions: {
          useClient: false,
-         perPage: 5,
+         perPage: 15,
       },
       rowHeight: 50
    })

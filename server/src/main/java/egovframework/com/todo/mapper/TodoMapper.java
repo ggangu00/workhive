@@ -28,6 +28,6 @@ public interface TodoMapper {
 	public int todoStateUpdate(TodoDTO todoDTO);
 
 	// 일지 삭제
-	public int todoDelete(List<String> todoArr);
+	public int todoDelete(String todoCd);
 
 }

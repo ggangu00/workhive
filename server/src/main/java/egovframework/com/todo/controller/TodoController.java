@@ -103,21 +103,18 @@ public class TodoController {
 	public boolean todoStateModify(@RequestBody TodoDTO todo) {		
 		List<String> todoArr = todo.getTodoArr();
 	    String state = todo.getState();
-	    log.info("결과아아ㅏㅏ ==> "+state);
 	    
 	    return todoService.todoStateUpdate(todoArr,state);
 	}
 	
 	//일지 삭제
-	@DeleteMapping("/delete")
-	public boolean todoRemove(@RequestBody Map<String, List<String>> requestBody) {
+	@DeleteMapping("/delete/{todoCd}")
+	public boolean todoRemove(@PathVariable(name="todoCd") String todoCd) {
+		log.info("삭제코드 ======>" + todoCd);
 
-	    List<String> todoArr = requestBody.get("todoArr");
-
-	    if (todoArr == null || todoArr.isEmpty()) {
-	        return false;
-	    }
-
-	    return todoService.todoDelete(todoArr);
-	}
+		boolean result = todoService.todoDelete(todoCd);
+		
+		return result;
+	}		
+		
 }
