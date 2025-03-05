@@ -17,11 +17,13 @@
 		<result property="mtgCo" column="MTG_CO"/>
 		<result property="mtgDe" column="MTG_DE"/>
 		<result property="mtgPlace" column="MTG_PLACE"/>
+		<result property="mtgPlaceNm" column="MTG_PLACE_NM"/>
 		<result property="mtgBeginTm" column="MTG_BEGIN_TM"/>
 		<result property="mtgEndTm" column="MTG_END_TM"/>
 		<result property="createDt" column="CREATE_DT"/>
 		<result property="frstRegisterNm" column="FRST_REGISTER_NM"/>
 		<result property="createId" column="CREATE_ID"/>
+		<result property="memArr" column="MEM_ARR"/>
 	</resultMap>
 	<resultMap id="meetingManageMap" type="java.util.HashMap">
 		<result property="mtgId" column="MTG_ID"/>
@@ -33,6 +35,7 @@
 		<result property="mtgCo" column="MTG_CO"/>
 		<result property="mtgDe" column="MTG_DE"/>
 		<result property="mtgPlace" column="MTG_PLACE"/>
+		<result property="mtgPlaceNm" column="MTG_PLACE_NM"/>
 		<result property="mtgBeginTm" column="MTG_BEGIN_TM"/>
 		<result property="mtgEndTm" column="MTG_END_TM"/>
 		<result property="clsdrMtgAt" column="CLSDR_MTG_AT"/>
@@ -53,6 +56,7 @@
 		<result property="atdrnCo" column="ATDRN_CO"/>
 		<result property="createDt" column="CREATE_DT"/>
 		<result property="createId" column="CREATE_ID"/>
+		<result property="memArr" column="MEM_ARR"/>
 	</resultMap>
       <!-- 회의관리::부서검색  -->
 	<select id="EgovMeetingManageLisAuthorGroupPopup" parameterType="comDefaultVO" resultType="egovMap">
@@ -213,7 +217,10 @@
 		A.MTG_PLACE,
 		fn_get_codename(A.MTG_PLACE) as MTG_PLACE_NM,
 		A.CREATE_DT,
-		A.CREATE_ID
+		A.CREATE_ID,
+				(SELECT LISTAGG(fn_get_memnm(mber_id), ', ') WITHIN GROUP (ORDER BY mber_id)
+		FROM comtnmtginfo_mem
+		WHERE mtg_id = A.mtg_id) as mem_arr
 		FROM COMTNMTGINFO A
 		WHERE 1=1
 	 

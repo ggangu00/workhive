@@ -50,4 +50,9 @@ public interface ProjectService {
 	
 	//프로젝트 일정 삭제
 	public boolean projectPlanDelete(String prPlanCd);
+	
+	//====================프로젝트 참여자 관리===================
+	
+	//프로젝트별 참여자 조회 트리
+	public List<ProjectDTO> projectTree();
 }
