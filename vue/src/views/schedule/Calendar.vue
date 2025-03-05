@@ -115,7 +115,7 @@
         <button type="button" class="btn btn-secondary btn-fill" data-bs-dismiss="modal">닫기</button>
         <button v-if="isNewSchedule" type="button" class="btn btn-primary btn-fill" data-bs-dismiss="modal" @click="scheduleAdd">저장</button>
         <template v-else>
-          <button v-if="isScheduleName" type="button" class="btn btn-primary btn-fill" data-bs-dismiss="modal" @click="scheduleAdd">수정</button>
+          <button v-if="isScheduleName && this.schedule.type !=='L01 '" type="button" class="btn btn-primary btn-fill" data-bs-dismiss="modal" @click="scheduleAdd">수정</button>
           <button v-if="isScheduleName && this.schedule.type !=='L01 '" type="button" class="btn btn-danger btn-fill" data-bs-dismiss="modal" @click="scheduleRemove">삭제</button>
         </template>
       </div>
@@ -413,6 +413,7 @@ watch(){
 width: 70%;
 height: 60%;
 margin: 0 auto;
+cursor: pointer;
 }
 
 </style>

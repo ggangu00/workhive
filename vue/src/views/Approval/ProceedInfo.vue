@@ -15,6 +15,8 @@
   import ApprovalInfo from '@/components/PaymentLayout/ApprovalInfo.vue';
   import axios from '../../assets/js/customAxios';
   import { useRoute } from 'vue-router';
+  import Swal from 'sweetalert2';
+  import { generatePDF } from '@/assets/js/pdfDownload.js'; 
 
   const route = useRoute();
   const docCd = ref('');
@@ -49,22 +51,40 @@
       case '회수' :
         await retrieveBtn();
         break;
+
+      case '인쇄/다운로드' :
+        await downloadBtn();
+        break;  
     }
   }
 
   //회수코드
   const retrieveBtn = async () => {
     if (!docCd.value) {
-        alert("문서 코드 x");
+      Swal.fire({
+      icon: "error",
+      title: "등록실패",
+      text: "문서가 없습니다.",
+    })
         return;
       }
         const response = await axios.put(`/api/document/retrieve/${docCd.value}`, {});
         if (response.status === 200) {
-          alert("회수 성공");
+          Swal.fire({
+               icon: "success",
+               title: "회수 성공",
+               text: "임시함에서 확인하세요"
+            })
         } else {
-          alert("회수 실패");
+          Swal.fire({
+          icon: "errowr",
+          title: "회수실패"
+          })
         }
     };
 
+const downloadBtn = async () => {
+  await generatePDF(docCnEditor.value, docTitle.value || "document");
+};
 
   </script>

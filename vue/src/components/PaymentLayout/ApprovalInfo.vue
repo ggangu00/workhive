@@ -280,7 +280,7 @@ const getApprovalStatusName = (code) => {
   return approvalStatusMap[code] || code; // 코드가 없으면 기존 코드 그대로 표시
 };
 </script>
-<style>
+<style scoped>
 .modal-xl {
   max-width: 70vw !important;
   /* 모달 가로 크기 확장 */
@@ -384,5 +384,9 @@ const getApprovalStatusName = (code) => {
 .tooltip-container:hover .tooltip-text {
   visibility: visible;
   opacity: 1;
+}
+
+.file-list{
+  cursor: pointer;
 }
 </style>
