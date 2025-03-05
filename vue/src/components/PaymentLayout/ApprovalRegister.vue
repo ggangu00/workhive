@@ -363,11 +363,11 @@ const addFileList = (event) => {
     return;
   }
 
-  const newFiles = Array.from(event.target.files);
+  const newFiles = Array.from(event.target.files); //배열로
 
-  newFiles.forEach((newFile) => {
+  newFiles.forEach((newFile) => { //중복체크
     const isDuplicate = fileList.value.some(
-      (file) => file.name === newFile.name && file.size === newFile.size
+      (file) => file.name == newFile.name && file.size == newFile.size
     );
     if (!isDuplicate) {
       fileList.value.push(newFile);
@@ -603,4 +603,5 @@ watch(()=> docCnEditor.value, async()=>{
     height: 100%;
     padding: 10px;
   }
+
 </style>

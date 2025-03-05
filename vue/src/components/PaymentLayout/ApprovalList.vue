@@ -322,7 +322,6 @@ onMounted(() => {
   commonDtlList(); //공통코드
   deptList(); //부서코드
   formList(); //문서유형
-  console.log(getParams.value)
 });
 
 //문서 유형 셀렉트박스 변경시 필터 감지하여 재로딩

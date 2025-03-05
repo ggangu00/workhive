@@ -17,6 +17,7 @@ import axios from '../../assets/js/customAxios';
 import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
 import Swal from 'sweetalert2';
+import { generatePDF } from '@/assets/js/pdfDownload.js'; 
 
 const route = useRoute();
 const docCd = ref('');
@@ -45,7 +46,8 @@ onMounted(()=>{
 //버튼명
 const headButtons = ref([
   { label: '수신기안', class: 'btn-warning' },
-  { label: '수신확인', class: 'btn-success' }
+  { label: '수신확인', class: 'btn-success' },
+  { label: '인쇄/다운로드', class: 'btn-success btn-fill' }
 ]);
 
 //버튼별 기능
@@ -57,6 +59,10 @@ const buttonClick = async (buttonName)=>{
 
     case '수신기안':
       await restartDraft();
+      break;
+
+    case '인쇄/다운로드' :
+      await downloadBtn();
       break;
   }
 }
@@ -107,7 +113,11 @@ const btnSelectChange = () => {
 const router = useRouter();
 const restartDraft = () => {
   if (!docCd.value) {
-    alert("문서 코드 x");
+    Swal.fire({
+      icon: "error",
+      title: "등록실패",
+      text: "문서가 없습니다.",
+    })
     return;
   }
   router.push(`/approval/restartDraft?docCd=${docCd.value}`);
@@ -123,6 +133,9 @@ const restartDraft = () => {
     docCnEditor: docCnEditor.value
   }
 });
+};
+const downloadBtn = async () => {
+  await generatePDF(docCnEditor.value, docTitle.value || "document");
 };
 
 </script>

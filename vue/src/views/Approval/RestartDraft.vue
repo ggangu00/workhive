@@ -17,6 +17,7 @@ import {ref, onMounted} from 'vue';
 import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
 import axios from "../../assets/js/customAxios.js";
+import Swal from 'sweetalert2';
 
 const route = useRoute();
 const docCd = ref('');
@@ -79,7 +80,10 @@ const approvalBtn = async() =>{
   if (response.status == 200) {
     router.push({path: '/approval/proceedList'})
   } else {
-    alert("삭제 실패");
+    Swal.fire({
+      icon: "error ",
+      title: "삭제실패",
+    })
     router.push({path: '/approval/proceedList'})
   }
 }

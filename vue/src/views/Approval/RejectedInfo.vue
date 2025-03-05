@@ -18,6 +18,7 @@
   import { useRouter } from 'vue-router';
   import Swal from 'sweetalert2';
 
+
   const route = useRoute();
   const docCd = ref('');
   const docKind = ref('');
@@ -69,7 +70,11 @@
   //회수코드
   const retrieveBtn = async () => {
       if (!docCd.value) {
-        alert("문서 코드 x");
+        Swal.fire({
+        icon: "error",
+        title: "등록실패",
+        text: "문서가 없습니다.",
+      })
         return;
       }
         const response = await axios.put(`/api/document/retrieve/${docCd.value}`, {});
@@ -82,7 +87,10 @@
             router.push({
               path: '/approval/retrieveList'})
         } else {
-          alert("회수 실패");
+          Swal.fire({
+          icon: "errowr",
+          title: "회수실패"
+          })
         }
 
     };
@@ -91,7 +99,11 @@
   const router = useRouter();
   const restartDraft = () => {
     if (!docCd.value) {
-      alert("문서 코드 x");
+      Swal.fire({
+      icon: "error",
+      title: "등록실패",
+      text: "문서가 없습니다.",
+    })
       return;
     }
     router.push(`/approval/restartDraft?docCd=${docCd.value}`);
@@ -120,7 +132,10 @@
       });
           router.push({path: '/approval/rejectedList'})
         } else {
-          alert("삭제 실패");
+         Swal.fire({
+         icon: "error",
+         title: "삭제실패",
+      });
           router.push({path: '/approval/rejectedList'})
         }
 
