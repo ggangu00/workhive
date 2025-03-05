@@ -20,7 +20,16 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  */
 @SuppressWarnings("serial")
 public class CommentVO extends Comment {
-    /** 정렬순서(DESC,ASC) */
+	private String password="";
+    public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	/** 정렬순서(DESC,ASC) */
     private long sortOrdr = 0L;
 
     /** 현재페이지 */

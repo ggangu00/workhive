@@ -61,7 +61,6 @@ const BoardGetList = async () => {
     console.error('게시글 목록 불러오는 중 오류 발생:', error);
     BoardList.value = [];
   }
-  console.log("테스트", BoardList.value);
 };
 
 // 조건 검색 필터링 함수
@@ -206,8 +205,6 @@ const udtEvent = (rowKey) => {
     alert('선택된 게시글을 찾을 수 없습니다.');
     return;
   }
-  console.log(`수정 버튼 클릭됨:`, selectedRow);
-
 
   router.push({  
     path: '/board/boardModify',
@@ -220,7 +217,6 @@ const udtEvent = (rowKey) => {
       useAt: selectedRow.useAt
     }    
   });
-  console.log()
 };
 </script>
 

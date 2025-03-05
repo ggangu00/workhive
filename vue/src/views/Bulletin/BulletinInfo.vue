@@ -98,7 +98,7 @@
                 <input
                   type="text"
                   class="form-control"
-                  v-model="commentItem.commentCn"
+                  v-model="commentItem.commentNo"
                   placeholder="내용을 입력해주세요"
                   :readonly="!commentItem.isEditing"
                   style="border-radius: 5px; margin-right: 10px;">
@@ -141,8 +141,7 @@ const router = useRouter();
 const nttId = route.params.nttId
 const bbsId = route.params.bbsId
 
-console.log("수정할 게시판 ID:", bbsId);
-console.log("수정할 게시글 ID:", nttId);
+
 
 const formatDate = (date) => {
   if (!date) return '-'; // 날짜가 없으면 대체 텍스트 출력
@@ -215,6 +214,7 @@ const fetchComments = async () => {
 const comments = ref([]);
 
 // 댓글 추가
+// 댓글 추가
 const addComment = async () => {
   console.log(" 댓글 등록 요청 - bbsId:", bbsId, "nttId:", nttId);
 
@@ -231,8 +231,8 @@ const addComment = async () => {
     console.log("✅ 댓글 추가 응답:", response.data);
 
     if (response.data.status === "success") {
-      // 댓글 목록에 추가
-      comments.value.push({
+      // 댓글 목록에 최신 댓글을 맨 앞에 추가
+      comments.value.unshift({
         commentCn: response.data.comment.commentCn,
         wrterNm: response.data.comment.wrterNm,
         isEditing: false,
@@ -245,13 +245,14 @@ const addComment = async () => {
       newComment.value.commentCn = "";
       newComment.value.wrterNm = "";
     } else {
-    ""
+      alert("댓글 등록 실패");
     }
   } catch (error) {
     console.error(" 댓글 등록 오류:", error.response || error);
-
+    alert("댓글 등록에 실패했습니다.");
   }
 };
+
 
 
 

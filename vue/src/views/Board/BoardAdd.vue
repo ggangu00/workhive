@@ -76,18 +76,7 @@ import Swal from 'sweetalert2';
 const route = useRoute();
 const router = useRouter();
 
-//  쿼리 파라미터에서 데이터 추출 (쿼리 파라미터 이름과 일치시킴)
-let boardData = ref({
-  bbsNm: route.query.bbsNm || '',
-  bbsTyCode: route.query.bbsTyCode || '',          //  게시판 유형
-  fileAtchPosblAt: route.query.fileAtchPosblAt || '', //  파일 첨부 여부
-  answerAt: route.query.answerAt || ''  ,    //  댓글 여부
-  useAt: route.query.useAt || ''           //  사용여부
-});
-console.log(' route.query:', route.query);
-console.log('받은 데이터:', boardData.value);
-
-// 게시판 데이터 변수
+// 게시판 데이터 변수 (boardData 제거)
 const formValues = ref({
   bbsId: 'abc',
   bbsNm: '',
@@ -104,6 +93,7 @@ const formValues = ref({
 const responseMessage = ref('');
 const isSuccess = ref(false);
 
+// 쿼리 파라미터에서 값을 받아와 formValues에 적용
 const setFormValuesFromQuery = () => {
   const query = route.query;
 
@@ -111,10 +101,8 @@ const setFormValuesFromQuery = () => {
   formValues.value.bbsTyCode = query.bbsTyCode ?? '';
   formValues.value.fileAtchPosblAt = query.fileAtchPosblAt ?? '';
   formValues.value.answerAt = query.answerAt ?? '';
-
-  console.log('✅ 적용된 formValues:', formValues.value);
+  formValues.value.useAt = query.useAt ?? '';
 };
-
 
 // 폼 입력값 검증
 const validateForm = () => {
@@ -149,15 +137,14 @@ const BoardSave = async () => {
         router.push('/board/boardList');
     });
 
-} catch (error) {
+  } catch (error) {
     // 오류 발생 시 SweetAlert2 알림 표시
     Swal.fire({
         icon: "error",
         title: "게시판 등록 실패",
         text: "Error : " + (error.response?.data?.message || "게시판 등록에 실패했습니다. 다시 시도해주세요.")
     });
-}
-
+  }
 };
 
 // 폼 초기화
@@ -181,11 +168,6 @@ onMounted(() => {
   setFormValuesFromQuery();
 });
 </script>
-
-
-
-
-
 
 <style scoped>
 /* 필요한 스타일을 여기에 추가하세요 */

@@ -116,11 +116,8 @@ const nttId = ref(route.params.nttId);  // nttId는 URL 파라미터에서 받�
 const bbsId = ref(route.params.bbsId);   // bbsId는 쿼리 파라미터에서 받아옵니다.
 //const bulletinInfo = ref({});
 
-console.log("nttId:", nttId.value);
-console.log("bbsId:", bbsId.value);
 
-console.log("Route Params:", route.params);  // URL 파라미터 확인
-console.log("Route Query:", route.query);    // URL 쿼리 확인
+
 
 
 // 필드 데이터
@@ -302,8 +299,7 @@ const goToBulletinList = () => {
 onMounted(() => {
   fetchBulletinInfo();
   initEditor();  // 에디터 초기화
-  console.log("nttId:", nttId.value);  // nttId 값 확인
-  console.log("bbsId:", bbsId.value);  // bbsId 값 확인
+ 
 });
 </script>
 

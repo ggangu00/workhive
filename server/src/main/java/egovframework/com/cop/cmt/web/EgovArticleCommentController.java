@@ -152,42 +152,41 @@ public class EgovArticleCommentController {
      * @throws Exception
      */
     //@RequestMapping("/cop/cmt/insertArticleComment.do")
-    @PostMapping("/commentAdd/{bbsId}/{nttId}")
-    public ResponseEntity<Map<String, Object>> insertArticleComment(
-            @PathVariable("bbsId") String bbsId,
-            @PathVariable("nttId") long nttId,
-            @RequestBody Comment comment) throws FdlException {
+    @PostMapping("/commentAdd")
+    public void insertArticleComment(@ModelAttribute("searchVO") CommentVO commentVO, @ModelAttribute("comment") Comment comment, 
+	    BindingResult bindingResult, ModelMap model, @RequestParam HashMap<String, String> map) throws Exception {
 
-        Map<String, Object> response = new HashMap<>();
-
-        // 필수 값 검증
-        if (comment.getCommentCn() == null || comment.getCommentCn().trim().isEmpty()) {
-            response.put("status", "fail");
-            response.put("message", "댓글 내용을 입력하세요.");
-            return ResponseEntity.badRequest().body(response);
-        }
-        if (comment.getWrterNm() == null || comment.getWrterNm().trim().isEmpty()) {
-            response.put("status", "fail");
-            response.put("message", "작성자를 입력하세요.");
-            return ResponseEntity.badRequest().body(response);
-        }
-
-        // 게시판 ID와 게시글 ID를 댓글에 설정
-        comment.setBbsId(bbsId);
-        comment.setNttId(nttId);
-
-        // 댓글 저장
-        egovArticleCommentService.insertArticleComment(comment);
-
-        // 성공 응답
-        response.put("status", "success");
-        response.put("message", "댓글이 등록되었습니다.");
-        response.put("comment", comment);
-
-        return ResponseEntity.ok(response);
+		//LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+		//Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+	
+		beanValidator.validate(comment, bindingResult);
+		if (bindingResult.hasErrors()) {
+		    model.addAttribute("msg", "댓글내용은 필수 입력값입니다.");
+		    
+		   // return "forward:/cop/bbs/selectArticleDetail.do";
+		}
+	
+		egovArticleCommentService.insertArticleComment(comment);
+		
+		commentVO.setCommentCn("");
+		commentVO.setCommentNo("");
+//		if (isAuthenticated) {
+//		    comment.setFrstRegisterId(user == null ? "" : EgovStringUtil.isNullToString(user.getUniqId()));
+//		    comment.setWrterId(user == null ? "" : EgovStringUtil.isNullToString(user.getUniqId()));
+//		    comment.setWrterNm(user == null ? "" : EgovStringUtil.isNullToString(user.getName()));
+//		    
+//		    
+//		}
+		
+//		String chkBlog = map.get("blogAt");
+//		
+//		if("Y".equals(chkBlog)){
+//			return "forward:/cop/bbs/selectArticleBlogList.do";
+//		}else{
+//			return "forward:/cop/bbs/selectArticleDetail.do";
+//		}
+		
     }
-
-    
 		
     
 
@@ -240,7 +239,7 @@ public class EgovArticleCommentController {
      * @return
      * @throws Exception
      */
-    //@RequestMapping("/cop/cmt/updateArticleCommentView.do")
+    @RequestMapping("/cop/cmt/updateArticleCommentView.do")
     @PostMapping("/commentModify")
     public String updateArticleCommentView(@ModelAttribute("searchVO") CommentVO commentVO, ModelMap model) throws Exception {
 
@@ -297,28 +296,29 @@ public class EgovArticleCommentController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/cop/cmt/updateArticleComment.do")
+   // @RequestMapping("/cop/cmt/updateArticleComment.do")
+    @PostMapping("/commentModify")
     public String updateArticleComment(@ModelAttribute("searchVO") CommentVO commentVO, @ModelAttribute("comment") Comment comment, 
 	    BindingResult bindingResult, ModelMap model) throws Exception {
 
-		LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
-		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
+		//LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
+		//Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
 	
-		beanValidator.validate(comment, bindingResult);
-		if (bindingResult.hasErrors()) {
-		    model.addAttribute("msg", "내용은 필수 입력 값입니다.");
+		//beanValidator.validate(comment, bindingResult);
+		//if (bindingResult.hasErrors()) {
+		   // model.addAttribute("msg", "내용은 필수 입력 값입니다.");
 		    
-		    return "forward:/cop/bbs/selectArticleDetail.do";
-		}
+		   // return "forward:/cop/bbs/selectArticleDetail.do";
+		//}
 	
-		if (isAuthenticated) {
-		    comment.setLastUpdusrId(user == null ? "" : EgovStringUtil.isNullToString(user.getUniqId()));
+		egovArticleCommentService.updateArticleComment(comment);
+		
+		commentVO.setCommentCn("");
+		commentVO.setCommentNo("");
+		//if (isAuthenticated) {
+		   // comment.setLastUpdusrId(user == null ? "" : EgovStringUtil.isNullToString(user.getUniqId()));
 		    
-		    egovArticleCommentService.updateArticleComment(comment);
-		    
-		    commentVO.setCommentCn("");
-		    commentVO.setCommentNo("");
-		}
+		//}
 	
 		return "forward:/cop/bbs/selectArticleDetail.do";
     }
