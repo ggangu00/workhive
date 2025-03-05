@@ -99,7 +99,7 @@
    };
 </script>
 
-<style>
+<style scoped>
 
    /* 부서명 들여쓰기 */
    tbody tr td:first-child {

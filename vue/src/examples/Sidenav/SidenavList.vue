@@ -108,7 +108,6 @@
          const response = await axios.get('/api/board/boardList');
 
          boardList.value = response.data.resultList; // 받은 데이터를 boardList에 저장
-         console.log("bbs 정보 : ", response.data.resultList);
 
       } catch (error) {
          Swal.fire({

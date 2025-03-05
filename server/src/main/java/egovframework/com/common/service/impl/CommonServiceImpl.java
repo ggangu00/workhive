@@ -57,6 +57,18 @@ public class CommonServiceImpl implements CommonService {
 	public CommonDTO homeInfo(String memCd) {
 		return commonMapper.homeInfo(memCd);
 	}
+	
+	// 홈 게시글 조회
+	@Override
+	public List<CommonDTO> bbsSelect() {
+		return commonMapper.bbsSelect();
+	}
+	
+	// 홈 일정 조회
+	@Override
+	public List<CommonDTO> calSelect(String calDt) {
+		return commonMapper.selectSchHome(calDt);
+	}
 
 	@Override
 	public CommonDTO companyInfo() {

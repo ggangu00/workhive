@@ -214,7 +214,7 @@ const memberGetList = async () => {
         const result = await axios.get(`/api/member`);
         memList.value = result.data;
         options.value = result.data.map((row) => ({
-            label: `[${row.deptNm}] ${row.mberNm} ${row.gradeNm}`, // 드롭다운에 표시될 값
+            label: `${row.deptNm ? '['+row.deptNm+']' : ''} ${row.mberNm || ''} ${row.gradeNm || ''}`, // 드롭다운에 표시될 값
             value: row // 선택 시 바인딩할 값 (사원코드)
         }));
 

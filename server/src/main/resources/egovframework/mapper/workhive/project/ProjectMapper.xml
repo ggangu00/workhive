@@ -284,13 +284,14 @@
 		)		
 	</insert>
 	
+	
 	<!-- 프로젝트 일정삭제 -->
 	<delete id="projectPlanDelete" parameterType="String">
 		delete 
 		from
 		   project_plan
 		WHERE
-		   pr_cd = #{prCd}
+		   pr_plan_cd = #{prPlanCd}
 	</delete>
 
 </mapper>

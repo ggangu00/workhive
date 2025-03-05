@@ -102,6 +102,24 @@ public class CommonController {
 		return map;
 	}
 	
+	// 홈 게시글 조회
+	@GetMapping("/bbsList")
+	public List<CommonDTO> bbsList() {
+		  
+		List<CommonDTO> result = service.bbsSelect();
+		 
+		return result;
+	}
+	
+	// 홈 일정 조회
+	@GetMapping("/calList/{calDt}")
+	public List<CommonDTO> calList(@PathVariable("calDt") String calDt) {
+		  
+		List<CommonDTO> result = service.calSelect(calDt);
+		 
+		return result;
+	}		
+	
 	// 사용자 ip 출력	
 	@GetMapping("/log")
     public String myApi(HttpServletRequest request) {

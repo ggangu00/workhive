@@ -165,7 +165,7 @@ if (route.query.prCd) { //수정일 경우
   prCd.value = route.query.prCd;
   isUpdated.value = true;
   txt = '수정';
-}else{
+} else {
   txt = '등록';
 }
 
@@ -227,9 +227,32 @@ onMounted(() => {
     rowHeaders: ['checkbox'],
     columns: [
       { header: '과업내용', name: 'prWorkNm', editor: 'text', formatter: ({ value }) => value ? value : '과업을 입력하세요' },
-      { header: '진행률', name: 'progress', editor: 'text', formatter: ({ value }) => value ? value : '진행률을 입력하세요' },
+      {
+        header: '진행률',
+        name: 'progress',
+        editor: {
+          type: 'text',
+          options: {
+            inputType: 'number' // 숫자 입력만 허용
+          }
+        },
+        formatter: ({ value }) => {
+          if (!value) return '진행률을 입력하세요';
+          return value.toString().replace(/\D/g, ''); // 숫자만 남기기
+        }
+      },
       {
         header: '완료상태', name: 'state',
+        formatter: ({ value }) => {
+
+          if (!value) return '완료상태를 선택해주세요';
+
+          const item = [
+            { text: '미완료', value: 'A02' },
+            { text: '완료', value: 'A01' }
+          ].find(i => i.value === value);
+          return item ? item.text : value;
+        },
         editor: {
           type: 'select',
           options: {
@@ -251,7 +274,7 @@ onMounted(() => {
 //행 추가 시 컬럼값
 const appendedData = {
   prWorkNm: '',
-  progress: '',
+  progress: 0,
   state: '',
 };
 
@@ -285,10 +308,13 @@ const btnWorkAdd = () => {
 const btnWorkRemove = () => {
   if (!grid.value) return;
 
-  const checkedRows = grid.value.getCheckedRows(); 
+  const checkedRows = grid.value.getCheckedRows();
 
   if (checkedRows.length === 0) {
-    alert("삭제할 항목을 선택하세요.");
+    Swal.fire({
+      icon: "error",
+      title: "삭제할 항목을 선택하세요"
+    });
     return;
   }
 
@@ -402,14 +428,14 @@ const projectAdd = async () => {
 
   try {
     const response = ref([]);
-    if(isUpdated.value) response.value = await axios.put(`/api/project`, requestData); //수정
+    if (isUpdated.value) response.value = await axios.put(`/api/project`, requestData); //수정
     else response.value = await axios.post("/api/project", requestData); //등록
 
     if (response.value.data === true) {
       Swal.fire({
         icon: "success",
-        title: txt+"완료",
-        text: txt+"한 프로젝트는 목록에서 확인할 수 있습니다",
+        title: txt + "완료",
+        text: txt + "한 프로젝트는 목록에서 확인할 수 있습니다",
       }).then(() => {
         router.replace({ name: 'ProjectList' }) //프로젝트 조회페이지로 이동
       });
@@ -417,8 +443,8 @@ const projectAdd = async () => {
   } catch (err) {
     Swal.fire({
       icon: "error",
-      title: txt+"실패",
-      text: "프로젝트 "+txt+" 실패",
+      title: txt + "실패",
+      text: "프로젝트 " + txt + " 실패",
     })
   }
 }

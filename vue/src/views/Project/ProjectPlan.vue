@@ -10,7 +10,7 @@
           <p class="card-sub">{{ projectInfo.comNm }}</p>
           <h5 class="card-title mb-3">
             {{ projectInfo.prNm }}
-            <span class="badge" :class="projectInfo.term > 10 ? 'badge-primary' : 'badge-danger'">D{{ term }}</span>
+            <span class="badge" :class="projectInfo.term *(-1) > 10 ? 'badge-primary' : 'badge-danger'">D{{ term }}</span>
           </h5>
           <p class="card-sub"><b>기간 : </b> {{ projectInfo.startDt }} ~ {{ projectInfo.endDt }}
           </p>
@@ -30,8 +30,8 @@
                 </th>
               </tr>
             </thead>
-            <tbody>
-              <template v-if="planCount > 0">
+            <tbody v-if="planCount > 0">
+              <template>
                 <tr :key="plan" v-for="plan in planList"> <!--등록된 일정갯수만큼-->
                   <td :key="date" v-for="date in dateTermArr"> <!--시작일 ~ 종료일 날짜 기간만큼-->
                     <div class="task" v-if="date == plan.startDt"
@@ -42,13 +42,19 @@
                   </td>
                 </tr>
               </template>
-              <tr v-else class="list-nodata">
-                <td :colspan="13">
-                  <div>프로젝트 일정을 등록해주세요</div>
-                </td>
-              </tr>
             </tbody>
           </table>
+          <v-else>
+            <table>
+              <tbody>
+                <tr class="list-nodata">
+                  <td>  
+                    <div>프로젝트 일정을 등록해주세요</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </v-else>
         </div>
       </Card>
     </div>
@@ -90,9 +96,9 @@
     </template>
 
     <!-- 모달 푸터 -->
-    <template v-slot:footer>
-      <button type="button" class="btn btn-primary btn-fill" @click="btnProjectPlanAdd">등록</button>
+    <template v-slot:footer>      
       <button type="button" class="btn btn-secondary btn-fill" @click="modalClose">닫기</button>
+      <button type="button" class="btn btn-fill" :class="isUpdated ? 'btn-success' : 'btn-primary'" @click="btnProjectPlanAdd">{{isUpdated ? '저장' : '등록'}}</button>
     </template>
   </Modal>
   <!--일정등록 모달[e]-->
@@ -116,6 +122,7 @@ import { dateTermCalc, dateGetDay, dateFormatDay } from '../../assets/js/project
 
 //========================= 데이터 초기화 =========================
 
+const isUpdated = ref(false);
 const route = useRoute();
 const prCd = ref('');            //해당 프로젝트 코드
 const term = ref('');            //프로젝트 남은일수
@@ -156,6 +163,7 @@ const modalClose = (e) => { //일정 등록/수정 모달 닫기
   } else {
     isShowModal.value = false;
   }
+  isUpdated.value = false;
 }
 
 //======================= 버튼이벤트 =======================
@@ -170,6 +178,7 @@ const btnProjectPlanAdd = () => {
 const btnProjectPlanUpdate = (code) => {
   modalOpen();
   projectPlanGetInfo(code);
+  isUpdated.value = true;
 }
 
 //일정 삭제
@@ -179,13 +188,13 @@ const btnProjectPlanRemove = (code) => {
     icon: "question",
     showCancelButton: true,
     customClass: {
-      confirmButton: "btn btn-danger btn-fill",
-      cancelButton: "btn btn-secondary btn-fill"
+      confirmButton: "btn btn-secondary btn-fill",
+      cancelButton: "btn btn-danger btn-fill"
     },
-    cancelButtonText: "닫기",
-    confirmButtonText: "삭제",
-  }).then((result) => {
-    if (result.isConfirmed) {
+    cancelButtonText: "삭제",
+    confirmButtonText: "닫기",
+  }).then(async(result) => {
+    if (result.dismiss == Swal.DismissReason.cancel) {
       projectPlanRemove(code);
     }
   });
@@ -208,7 +217,7 @@ const projectDateTerm = (startDate, endDate) => {
 //입력정보 초기화
 const formReset = () => {
   planNm.value = '';
-  color.value = '';
+  color.value = '#fd9b9b';
   startDt.value = '';
   endDt.value = '';
 }
@@ -345,7 +354,7 @@ const projectPlanRemove = async (prPlanCd) => {
   try {
     const response = await axios.delete(`/api/project/plan/${prPlanCd}`);
 
-    if (response.data.result === true) {
+    if (response.data === true) {
       Swal.fire({
         icon: "success",
         title: "삭제완료",

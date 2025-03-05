@@ -10,6 +10,7 @@
 	<resultMap id="MeetingManageListMap" type="java.util.HashMap">
 		<result property="mtgId" column="MTG_ID"/>
 		<result property="typeCd" column="TYPE_CD"/>
+		<result property="typeNm" column="TYPE_NM"/>
 		<result property="mtgNm" column="MTG_NM" javaType="java.lang.String"/>
 		<result property="mtgMtrCn" column="MTG_MTR_CN" javaType="java.lang.String"/>
 		<result property="mtgSn" column="MTG_SN"/>
@@ -25,6 +26,7 @@
 	<resultMap id="meetingManageMap" type="java.util.HashMap">
 		<result property="mtgId" column="MTG_ID"/>
 		<result property="typeCd" column="TYPE_CD"/>
+		<result property="typeNm" column="TYPE_NM"/>
 		<result property="mtgNm" column="MTG_NM"/>
 		<result property="mtgMtrCn" column="MTG_MTR_CN"/>
 		<result property="mtgSn" column="MTG_SN"/>

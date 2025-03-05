@@ -131,9 +131,9 @@ import { getComm, dateFormat } from '../../assets/js/common'
 
 //========================= 데이터 초기화 =========================
 
+const isUpdated = ref(false);
 const year = ref(new Date().getFullYear()); // 현재 연도 기본값
 const month = ref(new Date().getMonth() + 1); // 현재 월 기본값 (1~12 범위)
-const isUpdated = ref(false);
 
 const typeCd = ref('B01');        //등록 시 업무구분
 const typeCdArr = ref([]);        //업무구분 공통코드 목록
