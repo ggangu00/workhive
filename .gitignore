@@ -21,7 +21,7 @@ mail.properties
 .project
 .classpath
 target/
-
+dist/
 # External tool builders
 .externalToolBuilders/
 

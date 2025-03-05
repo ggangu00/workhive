@@ -3,6 +3,7 @@ const server = 'http://localhost:85/server';
 var path = require("path");
 
 module.exports = defineConfig({
+   publicPath: '/api/dist',
    // outputDir : path.resolve("../server/public"),
    transpileDependencies: true,
 
@@ -16,7 +17,7 @@ module.exports = defineConfig({
          '^/api' : {
             target : server,
             changeOrigin : true,
-            pathRewrite : { '^/api' : '/' },
+          //  pathRewrite : { '^/api' : '/' },
             ws : false //vue가 가지고 있는 웹소켓 (소켓을 설정 안했기 때문에 false)
          }
       }
