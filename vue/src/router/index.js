@@ -302,7 +302,7 @@ const routes = [
       component: VcSignManage,
    },
 
-   //kjg     
+   //kjg
    {//게시판 목록
       path:'/board/boardList',
       name: 'BoardList',
