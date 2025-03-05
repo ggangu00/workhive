@@ -209,4 +209,26 @@
 		) 
 		<![CDATA[ where rownum<=3 ]]>		
 	</select>
+	
+	<!-- 홈 일자별 건수 조회 -->
+	<select id="selectSchCntHome" parameterType="String" resultType="commonDTO">
+		<![CDATA[			
+			WITH Calendar AS (
+			    SELECT TO_CHAR(TO_DATE(#{schDt}, 'YYYY-MM-DD') + LEVEL - 1, 'YYYYMMDD') || '0000' AS CAL_DATE
+			    FROM DUAL
+			    CONNECT BY LEVEL <= LAST_DAY(TO_DATE(SUBSTR(#{schDt}, 1, 7), 'YYYY-MM')) 
+			                       - TO_DATE(SUBSTR(#{schDt}, 1, 7) || '-01', 'YYYY-MM-DD') + 1
+			)
+			SELECT 
+			    TO_NUMBER(TO_CHAR(TO_DATE(CAL.CAL_DATE, 'YYYYMMDDHH24MI'), 'DD')) AS listDt,
+			    COUNT(SCHED.SCHDUL_BGNDE) AS listCnt
+			FROM Calendar CAL
+			LEFT JOIN COMTNSCHDULINFO SCHED 
+			    ON TO_DATE(CAL.CAL_DATE, 'YYYYMMDDHH24MI') BETWEEN TO_DATE(SCHED.SCHDUL_BGNDE, 'YYYYMMDDHH24MI') 
+			    AND TO_DATE(SCHED.SCHDUL_ENDDE, 'YYYYMMDDHH24MI')
+			GROUP BY TO_NUMBER(TO_CHAR(TO_DATE(CAL.CAL_DATE, 'YYYYMMDDHH24MI'), 'DD'))
+			HAVING COUNT(SCHED.SCHDUL_BGNDE) > 0
+			ORDER BY listDt
+		]]>	
+	</select>
 </mapper>

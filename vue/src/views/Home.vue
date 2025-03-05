@@ -14,8 +14,8 @@
             <div class="status-box attendance">
               <div class="status-title status-red">출/퇴근</div>
               <div class="status-content">
-                출근 {{ homeInfo.goTime }}<br>
-                퇴근 {{ homeInfo.leaveTime }}
+                출근 {{ homeInfo.goTime || '--:--' }}<br>
+                퇴근 {{ homeInfo.leaveTime || '--:--' }}
               </div>
             </div>
             <div class="status-box projects">
@@ -85,7 +85,7 @@
 
                 <div class="meeting-item" :key="i" v-for="(cal, i) in calList">
                   <div class="meeting-category">{{cal.typeNm}}</div>
-                  <div class="meeting-title">(전체) {{cal.schdulNm}}</div>
+                  <div class="meeting-title">{{cal.schdulNm}}</div>
                 </div>
 
                 <!-- 등록된 일정이 3건 미만일 경우 부족한 개수만큼 빈 회의 행을 추가 -->
@@ -137,9 +137,7 @@ import Calendar from './components/Calendar.vue';
 import { numberFormat, dateFormat } from '../assets/js/common.js'
 import { dateGetDay, dateTermCalc } from '../assets/js/project.js'
 
-
 const userInfoStore = useUserInfoStore();
-
 const userData = computed(() => userInfoStore?.user || {});
 
 //========================= 공통함수 =========================
@@ -147,6 +145,7 @@ onBeforeMount(() => {
   homeGetInfo();
   meetGetList();
   calGetList();
+  calGetCnt();
   bbsGetList();  
 });
 
@@ -215,6 +214,24 @@ const calGetList = async () => { //일정 최신 3건 조회
     });
   }
 }
+
+//일자별 일정 건수조회
+const calCntList = ref([]);
+const calGetCnt = async () => {
+  try {
+    const result = await axios.get(`/api/comm/calList/cnt/${dateFormat().slice(0, 7)+'-01'}`);
+    calCntList.value = result.data;
+
+  } catch (err) {
+    calCntList.value = [];
+
+    Swal.fire({
+      icon: "error",
+      title: "API 조회 오류",
+      text: "Error : " + err
+    });
+  }
+};
 
 const bbsList = ref([]);
 const bbsCount = ref(0);

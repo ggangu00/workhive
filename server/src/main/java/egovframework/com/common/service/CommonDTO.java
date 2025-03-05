@@ -48,8 +48,10 @@ public class CommonDTO extends CommonPaging {
 	private String anoAt;
 	
 	// 홈 일정 조회
-	private String schDt;		// 일정명
-	private String schdulNm;	// 일정/회의 구분
+	private String schDt;		// 검색 일자
+	private String schdulNm;	// 일정명
+	private String listDt;		// 건수 일자
+	private String listCnt;		// 건수
 	
 	// 로그인 로그
 	private String logCd;		// 로그코드

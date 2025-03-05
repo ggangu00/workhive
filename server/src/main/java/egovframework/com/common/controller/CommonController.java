@@ -118,7 +118,16 @@ public class CommonController {
 		List<CommonDTO> result = service.calSelect(calDt);
 		 
 		return result;
-	}		
+	}	
+	
+	// 홈 일자별 일정 건수 조회
+	@GetMapping("/calList/cnt/{calDt}")
+	public List<CommonDTO> calCntList(@PathVariable("calDt") String calDt) {
+		  
+		List<CommonDTO> result = service.calCntSelect(calDt);
+		 
+		return result;
+	}	
 	
 	// 사용자 ip 출력	
 	@GetMapping("/log")

@@ -1,5 +1,7 @@
 <script setup>
-import { ref, computed, defineEmits } from "vue";
+import axios from "../../assets/js/customAxios.js";
+import { ref, computed, defineEmits, onBeforeMount } from "vue";
+import { dateFormat } from '../../assets/js/common.js'
 
 // 부모(Home.vue)로 클릭한 날짜를 전달하는 이벤트 설정
 const emit = defineEmits(["dateSelected"]);
@@ -9,6 +11,19 @@ const today = new Date();
 const currentYear = ref(today.getFullYear());
 const currentMonth = ref(today.getMonth()); // 0: 1월, 11: 12월
 const nowDt = ref(today.getDate()); // 0: 1월, 11: 12월
+
+
+// 데이터 로드
+onBeforeMount(() => {
+    calGetCnt();
+});
+
+//일자별 일정 건수조회
+const calCntList = ref([]);
+const calGetCnt = async () => {
+    const result = await axios.get(`/api/comm/calList/cnt/${dateFormat().slice(0, 7)+'-01'}`);
+    calCntList.value = result.data.map(item => Number(item.listDt));
+};
 
 // 요일 배열
 const weekDays = ["일", "월", "화", "수", "목", "금", "토"];
@@ -55,9 +70,6 @@ const selectDate = (date) => {
         emit("dateSelected", selectedDate);
     }
 };
-
-
-
 </script>
 
 <template>
@@ -71,8 +83,14 @@ const selectDate = (date) => {
         </thead>
         <tbody>
             <tr v-for="(week, weekIndex) in calendarDays" :key="weekIndex" class="tr-date">
-                <td v-for="(date, dateIndex) in week" :key="dateIndex" :class="date == nowDt ? 'today' : ''" @click="selectDate(date)">
-                    {{ date }}
+                <td v-for="(date, dateIndex) in week" 
+                    :key="dateIndex" 
+                    :class="{
+                        'today' : date == nowDt,
+                        'highlight': calCntList.includes(date)
+                    }"
+                    @click="selectDate(date)">
+                    {{ date }} 
                 </td>
             </tr>
         </tbody>
