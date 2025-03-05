@@ -82,6 +82,7 @@
   import { dateTimeFormat } from '../../assets/js/common';
   import * as vcFormat from '../../assets/js/formatter.js';
   import Swal from 'sweetalert2';
+  import { swalCheck } from '../../assets/js/common.js';
   
   const token = localStorage.getItem("token");
 
@@ -196,7 +197,6 @@
   // 결재 - 휴가 신청자의 연차 정보, 신청일자의 대상 연도, -> 연차정보 없을시 생성, 
   const btnVcSign = async (e) => {
     let selectedRows = e.target.value === 'D01' ? signGridInstance.value.getCheckedRows() : vcGridInstance.value.getCheckedRows();
-    // let originList = e.target.value === 'D01' ? originSignList : originVcList;
   
     let signDataArray = [];
   
@@ -214,42 +214,28 @@
       }
   
       signDataArray.push({ signData, yearVcData });
-  
-      // let originalRow = originList.find(item => item.vcCd === row.vcCd);
-      // if (originalRow) {
-      //   let signData = {
-      //     vcCd: originalRow.vcCd,
-      //     signState: e.target.value
-      //   };
-  
-      //   console.log('originalRow : ', originalRow);
-      //   let yearVcData = {
-      //     mberId: originalRow.createId,
-      //     targetYear: dateTimeFormat(originalRow.vcStartDt, 'yyyy'),
-      //     useDays: e.target.value === 'D02' ? originalRow.useDays : 
-      //              e.target.value === 'D01' && originalRow.signState === 'D02' ? -originalRow.useDays : 0
-      //   }
-  
-      //   signDataArray.push({ signData, yearVcData });
-      // }
     }
   
-    console.log("전체 데이터 : ", signDataArray);
-  
-    // 해당 데이터들을 서버에 보내도록 수정
-    if (signDataArray.length) {
-      if(e.target.value == 'D01' || e.target.value == 'D02') {
+    let check = await swalCheck('결재');
+    if(check.isConfirmed) {
+      // 해당 데이터들을 서버에 보내도록 수정
+      if (signDataArray.length) {
+        if(e.target.value == 'D01' || e.target.value == 'D02') {
+          try {
+            await axios.post('/api/yearVc/yearVcModify', signDataArray.map(data => data.yearVcData)); 
+          } catch (err) {
+            Swal.fire({ icon: "error", title: "연차 정보 수정 실패", text: "Error : " + err });
+          }
+        }
         try {
-          await axios.post('/api/yearVc/yearVcModify', signDataArray.map(data => data.yearVcData)); 
+          await axios.post('/api/vacation/signModify', signDataArray.map(data => data.signData)); 
         } catch (err) {
-          Swal.fire({ icon: "error", title: "연차 정보 수정에 실패하였습니다.", text: "Error : " + err });
+          Swal.fire({ icon: "error", title: "휴가 신청 결재 실패", text: "Error : " + err });
         }
       }
-      try {
-        await axios.post('/api/vacation/signModify', signDataArray.map(data => data.signData)); 
-      } catch (err) {
-        Swal.fire({ icon: "error", title: "휴가 신청 결재에 실패하였습니다.", text: "Error : " + err });
-      }
+    }
+    else {
+      return;
     }
   
     // 리스트 새로 고침

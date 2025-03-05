@@ -26,10 +26,13 @@
           <tbody>
             <tr>
               <th>휴가 시작일</th>
-              <td colspan="2"><input type="date" id="startDate" class="form-control" v-model="vcData.vcStartDt" :readonly="isDetail"></td>
+              <td colspan="2">
+                <input type="date" id="startDate" class="form-control" :max="vcData.vcEndDt" 
+                       v-model="vcData.vcStartDt" :readonly="isDetail">
+              </td>
               <th>휴가 종료일</th>
               <td colspan="2">
-                <input type="date" id="startDate" class="form-control"
+                <input type="date" id="startDate" class="form-control" :min="vcData.vcStartDt" 
                        v-model="vcData.vcEndDt" :readonly="vcData.vcType === 'E02' || vcData.vcType === 'E03' || isDetail">
               </td>
             </tr>
@@ -50,21 +53,24 @@
             </tr>
             <tr>
               <th>휴가 사유</th>
-              <td colspan="5"><textarea class="form-control" v-model="vcData.vcReason" :readonly="isDetail"></textarea></td>
+              <td colspan="5"><textarea id="vcReason" class="form-control" v-model="vcData.vcReason" :readonly="isDetail"></textarea></td>
             </tr>
             <tr>
               <th>파일 첨부</th>
               <td colspan="5">
                 <div class="form-control custom-file-div">
-                  <label class="btn btn-fill cell-btn-custom" for="inputFile">파일선택</label>
-                  <a>{{ (fileList.length == 0) ? "선택된 파일 없음" : `파일 ${fileList.length}개` }}</a>
-                  <p class="file-info">개별 파일 기준 최대 30MB까지 첨부할 수 있습니다.</p>
-                  <input type="file" id="inputFile" style="display: none;" @change="addFileList($event.target)" multiple>
-                  <hr>
+                  <div v-if="!isDetail">
+                    <label class="btn btn-fill cell-btn-custom" for="inputFile">파일선택</label>
+                    <a>{{ (fileList.length == 0) ? "선택된 파일 없음" : `파일 ${fileList.length}개` }}</a>
+                    <p class="file-info">개별 파일 기준 최대 30MB까지 첨부할 수 있습니다.</p>
+                    <input type="file" id="inputFile" style="display: none;" @change="addFileList($event.target)" multiple>
+                    <hr>
+                  </div>
+
                   <div class="row file-list">
                     <div class="col-4" v-for="(file, index) in fileList" :key="index">
                     {{ file.name }}
-                    <button class="btn btn-sm btn-danger cell-btn-custom" @click="removeFile(index)">삭제</button>
+                    <button class="btn btn-sm btn-danger cell-btn-custom" @click="removeFile(index)" v-if="!isDetail">삭제</button>
                     </div>
                     <div class="col" v-if="fileList.length == 0">첨부된 파일이 없습니다.</div>
                   </div>
@@ -103,6 +109,7 @@ import { dateTimeFormat } from '../../assets/js/common';
 import * as vacation from '../../assets/js/vacation';
 import SignerModal from '../components/Modal/SignerModal.vue';
 import Swal from 'sweetalert2';
+import { swalCheck } from '../../assets/js/common.js';
 
 // query에서 isUpdate 받아오기
 const route = useRoute();
@@ -132,7 +139,7 @@ const vcGetInfo = async () => {
   try {
     result = await axios.get(`/api/vacation/vcInfo?vcCd=${vcCd.value}`);
   } catch (err) {
-    Swal.fire({ icon: "error", title: "휴가 신청 정보 조회에 실패하였습니다.", text: "Error : " + err });
+    Swal.fire({ icon: "error", title: "휴가 신청 정보 조회 실패", text: "Error : " + err });
   }
   vcData.value = result.data;
 
@@ -160,13 +167,12 @@ const files = async () => {
       },
     });
 
-    console.log("파일내용=> ",response.data);
     fileList.value = response.data; // 결과 저장
     fileList.value.forEach(i => {
       i.name = i.orignlFileNm;
     })
   } catch (error) {
-    console.error("파일 목록 불러오기 실패:", error);
+    console.error("파일 목록 조회 실패:", error);
   }
 }
 
@@ -285,14 +291,21 @@ const btnVcManage = async () => {
     try {
       await axios.post('/api/vacation/vcAdd', formData);
     } catch (err) {
-      Swal.fire({ icon: "error", title: "휴가 신청 등록에 실패하였습니다.", text: "Error : " + err });
+      Swal.fire({ icon: "error", title: "휴가 신청 등록 실패", text: "Error : " + err });
     }
   } else {
     formData.append("vcCd", vcCd.value);
-    try {
-      await axios.post('/api/vacation/vcModify', formData);
-    } catch (err) {
-      Swal.fire({ icon: "error", title: "휴가 신청 수정에 실패하였습니다.", text: "Error : " + err });
+
+    let check = await swalCheck('수정');
+    if(check.isConfirmed) {
+      try {
+        await axios.post('/api/vacation/vcModify', formData);
+      } catch (err) {
+        Swal.fire({ icon: "error", title: "휴가 신청 수정 실패", text: "Error : " + err });
+      }
+    }
+    else {
+      return;
     }
   }
 
@@ -322,6 +335,8 @@ const validCheck = () => {
     return false;
   }
   if(!vcData.value.vcReason?.trim()) {
+    const focusTag = document.querySelector('#vcReason');
+    focusTag?.focus();
     Swal.fire({
       icon: "info",
       title: "휴가 사유를 입력하세요.",

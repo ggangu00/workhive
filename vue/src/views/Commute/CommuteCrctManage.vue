@@ -42,31 +42,34 @@
                       <th>정정 출근 시간</th>
                       <td colspan="2">
                         <input type="datetime-local" class="form-control" style="width: 47.5%;" 
-                               v-model="crctData.crctGoTime" :readonly="isDetail">
+                               v-model="crctData.crctGoTime" :max="crctData.crctLeaveTime" :readonly="isDetail">
                       </td>
                       <th>정정 퇴근 시간</th>
                       <td colspan="2">
                         <input type="datetime-local" class="form-control" style="width: 47.5%;" 
-                               v-model="crctData.crctLeaveTime" :readonly="isDetail">
+                               v-model="crctData.crctLeaveTime" :min="crctData.crctGoTime" :readonly="isDetail">
                       </td>
                     </tr>
                     <tr>
                       <th>정정 사유</th>
-                      <td colspan="5"><textarea class="form-control" v-model="crctData.crctReason" :readonly="isDetail"></textarea></td>
+                      <td colspan="5"><textarea id="crctReason" class="form-control" v-model="crctData.crctReason" :readonly="isDetail"></textarea></td>
                     </tr>
                     <tr>
                       <th>파일 첨부</th>
                       <td colspan="5">
                         <div class="form-control custom-file-div">
-                          <label class="btn btn-fill cell-btn-custom" for="inputFile">파일선택</label>
-                          <a>{{ (fileList.length == 0) ? "선택된 파일 없음" : `파일 ${fileList.length}개` }}</a>
-                          <p class="file-info">개별 파일 기준 최대 30MB까지 첨부할 수 있습니다.</p>
-                          <input type="file" id="inputFile" style="display: none;" @change="addFileList($event.target)" multiple>
-                          <hr>
+                          <div v-if="!isDetail">
+                            <label class="btn btn-fill cell-btn-custom" for="inputFile">파일선택</label>
+                            <a>{{ (fileList.length == 0) ? "선택된 파일 없음" : `파일 ${fileList.length}개` }}</a>
+                            <p class="file-info">개별 파일 기준 최대 30MB까지 첨부할 수 있습니다.</p>
+                            <input type="file" id="inputFile" style="display: none;" @change="addFileList($event.target)" multiple>
+                            <hr>
+                          </div>
+
                           <div class="row file-list">
                             <div class="col-4" v-for="(file, index) in fileList" :key="index">
                             {{ file.name }}
-                            <button class="btn btn-sm btn-danger cell-btn-custom" @click="removeFile(index)">삭제</button>
+                            <button class="btn btn-sm btn-danger cell-btn-custom" @click="removeFile(index)" v-if="!isDetail">삭제</button>
                             </div>
                             <div class="col" v-if="fileList.length == 0">첨부된 파일이 없습니다.</div>
                           </div>
@@ -107,7 +110,7 @@
 import { useRoute, useRouter } from 'vue-router';
 import axios from '../../assets/js/customAxios.js';
 import { ref , onMounted, watch } from 'vue';
-import { dateTimeFormat } from '../../assets/js/common.js';
+import { dateTimeFormat, swalCheck } from '../../assets/js/common.js';
 import SignerModal from '../components/Modal/SignerModal.vue';
 import Swal from 'sweetalert2';
 
@@ -161,7 +164,7 @@ watch (() => crctData.value.commuteDt, async () => {
     try {
       result = await axios.get(`/api/commute/dateCmtInfo`, {params: {commuteDt: crctData.value.commuteDt}});
     } catch (err) {
-      Swal.fire({ icon: "error", title: "근무 일자 조회에 실패하였습니다.", text: "Error : " + err });
+      Swal.fire({ icon: "error", title: "근무 일자 조회 실패", text: "Error : " + err });
     }
     crctData.value.commuteCd = result.data.commuteCd;
     crctData.value.goTime = result.data.goTime;
@@ -176,7 +179,7 @@ const cmtGetInfo = async () => {
   try {
     result = await axios.get(`/api/commute/cmtInfo?commuteCd=${cmtCd}`);
   } catch (err) {
-    Swal.fire({ icon: "error", title: "출퇴근 정보를 가져오지 못했습니다.", text: "Error : " + err });
+    Swal.fire({ icon: "error", title: "출퇴근 정보 조회 실패", text: "Error : " + err });
   }
 
   crctData.value.commuteCd = result.data.commuteCd;
@@ -192,7 +195,7 @@ const crctGetInfo = async () => {
   try {
     result = await axios.get(`/api/commute/crctInfo?crctCd=${crctCd}`);
   } catch (err) {
-    Swal.fire({ icon: "error", title: "출퇴근 정보를 가져오지 못했습니다.", text: "Error : " + err });
+    Swal.fire({ icon: "error", title: "출퇴근 정보 조회 실패", text: "Error : " + err });
   }
   crctData.value = result.data;
   crctData.value.commuteDt = dateTimeFormat(result.data.commuteDt, 'yyyy-MM-dd');
@@ -210,13 +213,12 @@ const files = async () => {
       },
     });
 
-    console.log("파일내용=> ",response.data);
     fileList.value = response.data; // 결과 저장
     fileList.value.forEach(i => {
       i.name = i.orignlFileNm;
     })
   } catch (err) {
-    Swal.fire({ icon: "error", title: "파일 목록을 불러오지 못했습니다.", text: "Error : " + err });
+    Swal.fire({ icon: "error", title: "파일 목록 조회 실패", text: "Error : " + err });
   }
 }
 
@@ -256,14 +258,20 @@ const btnCrctManage = async () => {
     try {
       await axios.post('/api/commute/crctAdd', formData);
     } catch(err) {
-      Swal.fire({icon:"error", title: "출퇴근 정정 등록에 실패하였습니다.", text: "Error : " + err});
+      Swal.fire({icon:"error", title: "출퇴근 정정 요청 등록 실패", text: "Error : " + err});
     }
   }
   else {
-    try {
-      await axios.post('/api/commute/crctModify', formData);
-    } catch (err) {
-      Swal.fire({ icon: "error", title: "출퇴근 정정 수정에 실패하였습니다.", text: "Error : " + err });
+    let  check = await swalCheck('수정');
+    if(check.isConfirmed) {
+      try {
+        await axios.post('/api/commute/crctModify', formData);
+      } catch (err) {
+        Swal.fire({ icon: "error", title: "출퇴근 정정 요청 수정 실패", text: "Error : " + err });
+      }
+    }
+    else {
+      return;
     }
   }
 
@@ -312,6 +320,8 @@ const validCheck = () => {
     return false;
   }
   if(!crctData.value.crctReason?.trim()) {
+    const focusTag = document.querySelector('#crctReason');
+    focusTag?.focus();
     Swal.fire({
       icon: "info",
       title: "정정 사유를 입력하세요.",

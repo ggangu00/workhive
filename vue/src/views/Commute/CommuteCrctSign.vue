@@ -82,6 +82,8 @@ import Grid from 'tui-grid';
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 import { cmtCheck } from '../../assets/js/commute';
 import * as crctFormat from '../../assets/js/formatter.js';
+import Swal from 'sweetalert2';
+import { swalCheck } from '../../assets/js/common.js';
 
 const token = localStorage.getItem("token");
 
@@ -156,54 +158,6 @@ let signCol = [
   { header: '결재상태', name: 'signState', align: 'center', formatter: crctFormat.signFormatter },
 ];
 
-
-// 그리드 데이터 조회 메소드
-// const crctGetList = async () => {
-//   const result = await axios.get('/api/commute/signerList', { params : crctSrchData.value });
-
-//   originCrctList = JSON.parse(JSON.stringify(result.data)); // 깊은 복사
-//   crctList.value = result.data;
-//   listFormat(crctList.value);
-
-//   crctGridInstance.value.resetData(crctList.value);
-// }
-// const signGetList = async () => {
-//   const result = await axios.get('/api/commute/signedList', { params : signSrchData.value });
-
-//   originSignList = JSON.parse(JSON.stringify(result.data)); // 깊은 복사
-//   signList.value = result.data;
-//   listFormat(signList.value);
-
-//   signGridInstance.value.resetData(signList.value);
-// }
-
-// 그리드 데이터 형식 변경
-// const listFormat = (list) => {
-//   list.forEach(i => {
-//     i.commuteDt = dateTimeFormat(i.commuteDt, 'yyyy-MM-dd');
-//     i.preGoTime = dateTimeFormat(i.preGoTime, 'MM/dd hh:mm');
-//     i.preLeaveTime = dateTimeFormat(i.preLeaveTime, 'MM/dd hh:mm');
-//     i.crctGoTime = dateTimeFormat(i.crctGoTime, 'MM/dd hh:mm');
-//     i.crctLeaveTime = dateTimeFormat(i.crctLeaveTime, 'MM/dd hh:mm');
-//     i.createDt = dateTimeFormat(i.createDt, 'yyyy-MM-dd');
-//     i.signDt = dateTimeFormat(i.signDt, 'yyyy-MM-dd');
-//     switch(i.signState) {
-//       case "D01":
-//         i.signState = "미결재";
-//         break;
-//       case "D02":
-//         i.signState = "승인";
-//         break;
-//       case "D03":
-//         i.signState = "보완";
-//         break;
-//       case "D04":
-//         i.signState = `<a>반려</a>`;
-//         break;
-//     }
-//   });
-// }
-
 // 실시간 조회 조건
 watch(() => crctSrchData, () => {
   crctGetList();
@@ -247,7 +201,6 @@ onBeforeUnmount(() => {
 const btnCrctSign = async (e) => {
   console.log(e);
   let selectedRows = e.target.value === 'D01' ? signGridInstance.value.getCheckedRows() : crctGridInstance.value.getCheckedRows();
-  // let originList = e.target.value === 'D01' ? originSignList : originCrctList;
 
   let signDataArray = [];
 
@@ -271,36 +224,28 @@ const btnCrctSign = async (e) => {
 
     // signData와 cmtData를 모두 포함한 객체를 배열에 추가
     signDataArray.push({ signData, cmtData });
-
-    // let originalRow = originList.find(item => item.commuteCd === row.commuteCd);
-    // if (originalRow) {
-    //   let signData = {
-    //     crctCd: originalRow.crctCd,
-    //     signState: e.target.value
-    //   };
-
-    //   let cmtData = {
-    //     commuteCd: originalRow.commuteCd,
-    //     goTime: e.target.value === 'D01' ? originalRow.preGoTime : originalRow.crctGoTime,
-    //     leaveTime: e.target.value === 'D01' ? originalRow.preLeaveTime : originalRow.crctLeaveTime
-    //   };
-
-    //   let changeData = await cmtCheck(cmtData.goTime, cmtData.leaveTime);
-    //   cmtData.goState = changeData.goState;
-    //   cmtData.leaveState = changeData.leaveState;
-    //   cmtData.workTime = changeData.workTime;
-    //   cmtData.overWorkTime = changeData.overWorkTime;
-
-    //   // signData와 cmtData를 모두 포함한 객체를 배열에 추가
-    //   signDataArray.push({ signData, cmtData });
-    // }
   }
 
-  // 해당 데이터들을 서버에 보내도록 수정
-  if (signDataArray.length) {
-    if(e.target.value == 'D01' || e.target.value == 'D02')
-      await axios.post('/api/commute/crctSignModify', signDataArray.map(data => data.cmtData));
-    await axios.post('/api/commute/signModify', signDataArray.map(data => data.signData));
+  let  check = await swalCheck('결재');
+  if(check.isConfirmed) {
+    // 해당 데이터들을 서버에 보내도록 수정
+    if (signDataArray.length) {
+      if(e.target.value == 'D01' || e.target.value == 'D02') {
+        try {
+          await axios.post('/api/commute/crctSignModify', signDataArray.map(data => data.cmtData));
+        } catch (err) {
+          Swal.fire({ icon: "error", title: "출퇴근 정정 요청 수정 실패", text: "Error : " + err });
+        }
+      }
+      try {
+        await axios.post('/api/commute/signModify', signDataArray.map(data => data.signData));
+      } catch (err) {
+        Swal.fire({ icon: "error", title: "출퇴근 정정 요청 결재 실패", text: "Error : " + err });
+      }
+    }
+  }
+  else {
+    return;
   }
 
   // 리스트 새로 고침

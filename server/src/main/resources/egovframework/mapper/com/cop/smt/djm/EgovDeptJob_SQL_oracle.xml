@@ -482,13 +482,13 @@
 		A.DEPT_JOB_ID,
 		A.DEPT_JOB_NM,
 		A.PRIORT,
-		C.USER_NM CHARGER_NM,
+		C.MBER_NM CHARGER_NM,
 		TO_DATE(A.CREATE_DT) CREATE_DT
 		FROM COMTNDEPTJOB A
 		LEFT OUTER JOIN COMTNDEPTJOBBX B
 		ON A.DEPT_JOBBX_ID = B.DEPT_JOBBX_ID
-		LEFT OUTER JOIN COMTNEMPLYRINFO C
-		ON A.CHARGER_ID = C.ESNTL_ID
+		LEFT OUTER JOIN COMTNGNRLMBER C
+		ON A.CHARGER_ID = C.MBER_ID
 
 		<if test='searchDeptJobBxId != null and searchDeptJobBxId != ""'>
 			WHERE A.DEPT_JOBBX_ID = #{searchDeptJobBxId}
@@ -496,14 +496,19 @@
 		<if test='searchDeptJobBxId == null or searchDeptJobBxId == ""'>
 			WHERE B.DEPT_CD = #{searchDeptCd}
 		</if>
-		<if test='searchCnd == "0"'>AND
-			A.DEPT_JOB_NM LIKE '%'||#{searchWrd}||'%'
+		<if test='searchCnd == "0"'>
+			AND (A.DEPT_JOB_NM LIKE '%'||#{searchWrd}||'%'
+			OR A.DEPT_JOB_CN LIKE '%'||#{searchWrd}||'%'
+			OR C.MBER_NM LIKE '%'||#{searchWrd}||'%')
 		</if>
-		<if test='searchCnd == "1"'>AND
-			A.DEPT_JOB_CN LIKE '%'||#{searchWrd}||'%'
+		<if test='searchCnd == "1"'>
+			AND A.DEPT_JOB_NM LIKE '%'||#{searchWrd}||'%'
 		</if>
-		<if test='searchCnd == "2"'>AND
-			C.USER_NM LIKE '%'||#{searchWrd}||'%'
+		<if test='searchCnd == "2"'>
+			AND A.DEPT_JOB_CN LIKE '%'||#{searchWrd}||'%'
+		</if>
+		<if test='searchCnd == "3"'>
+			AND C.MBER_NM LIKE '%'||#{searchWrd}||'%'
 		</if>
 
 		ORDER BY A.CREATE_DT DESC
@@ -527,23 +532,28 @@
 		COMTNDEPTJOB A
 		LEFT OUTER JOIN COMTNDEPTJOBBX B
 		ON A.DEPT_JOBBX_ID = B.DEPT_JOBBX_ID
-		LEFT OUTER JOIN COMTNEMPLYRINFO C
-		ON A.CHARGER_ID = C.ESNTL_ID
-
+		LEFT OUTER JOIN COMTNGNRLMBER C
+		ON A.CHARGER_ID = C.MBER_ID
+		
 		<if test='searchDeptJobBxId != null and searchDeptJobBxId != ""'>
 			WHERE A.DEPT_JOBBX_ID = #{searchDeptJobBxId}
 		</if>
 		<if test='searchDeptJobBxId == null or searchDeptJobBxId == ""'>
 			WHERE B.DEPT_CD = #{searchDeptCd}
 		</if>
-		<if test='searchCnd == "0"'>AND
-			A.DEPT_JOB_NM LIKE '%'||#{searchWrd}||'%'
+		<if test='searchCnd == "0"'>
+			AND (A.DEPT_JOB_NM LIKE '%'||#{searchWrd}||'%'
+			OR A.DEPT_JOB_CN LIKE '%'||#{searchWrd}||'%'
+			OR C.MBER_NM LIKE '%'||#{searchWrd}||'%')
 		</if>
-		<if test='searchCnd == "1"'>AND
-			A.DEPT_JOB_CN LIKE '%'||#{searchWrd}||'%'
+		<if test='searchCnd == "1"'>
+			AND A.DEPT_JOB_NM LIKE '%'||#{searchWrd}||'%'
 		</if>
-		<if test='searchCnd == "2"'>AND
-			C.USER_NM LIKE '%'||#{searchWrd}||'%'
+		<if test='searchCnd == "2"'>
+			AND A.DEPT_JOB_CN LIKE '%'||#{searchWrd}||'%'
+		</if>
+		<if test='searchCnd == "3"'>
+			AND C.MBER_NM LIKE '%'||#{searchWrd}||'%'
 		</if>
 	</select>
 

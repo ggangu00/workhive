@@ -58,13 +58,13 @@
               </div>
 
               <div class="mb-3">
-                <label>업무명<em class="point-red">*</em></label>
-                <input type="text" class="form-control" placeholder="업무명을 입력해주세요" v-model="formValues.deptJobNm" :readonly="isDetail">
+                <label for="jobNm">업무명<em class="point-red">*</em></label>
+                <input id="jobNm" type="text" class="form-control" placeholder="업무명을 입력해주세요" v-model="formValues.deptJobNm" :readonly="isDetail">
               </div>
 
               <div class="mb-3">
-                <label>업무내용<em class="point-red">*</em></label>
-                <textarea class="form-control" placeholder="업무내용을 입력해주세요" style="height: 86px;" v-model="formValues.deptJobCn" :readonly="isDetail"></textarea>
+                <label for="jobCn">업무내용<em class="point-red">*</em></label>
+                <textarea id="jobCn" class="form-control" placeholder="업무내용을 입력해주세요" style="height: 86px;" v-model="formValues.deptJobCn" :readonly="isDetail"></textarea>
               </div>
 
               <div class="mb-3">
@@ -81,15 +81,18 @@
               <div class="mb-3">
                 <label>파일첨부</label>
                 <div class="form-control">
-                  <label class="btn btn-fill cell-btn-custom" for="inputFile">파일선택</label>
-                  <a>{{ (fileList.length == 0) ? "선택된 파일 없음" : `파일 ${fileList.length}개` }}</a>
-                  <p class="file-info">개별 파일 기준 최대 30MB까지 첨부할 수 있습니다.</p>
-                  <input type="file" id="inputFile" style="display: none;" @change="addFileList($event.target)" multiple>
-                  <hr>
+                  <div v-if="!props.isDetail">
+                    <label class="btn btn-fill cell-btn-custom" for="inputFile">파일선택</label>
+                    <a>{{ (fileList.length == 0) ? "선택된 파일 없음" : `파일 ${fileList.length}개` }}</a>
+                    <p class="file-info">개별 파일 기준 최대 30MB까지 첨부할 수 있습니다.</p>
+                    <input type="file" id="inputFile" style="display: none;" @change="addFileList($event.target)" multiple>
+                    <hr>
+                  </div>
+
                   <div class="row file-list">
                     <div class="col-4" v-for="(file, index) in fileList" :key="index">
                     {{ file.name }}
-                    <button class="btn btn-sm btn-danger cell-btn-custom" @click="removeFile(index)">삭제</button>
+                    <button class="btn btn-sm btn-danger cell-btn-custom" @click="removeFile(index)" v-if="!props.isDetail">삭제</button>
                     </div>
                     <div class="col" v-if="fileList.length == 0">첨부된 파일이 없습니다.</div>
                   </div>
@@ -116,6 +119,7 @@ import axios from '../../assets/js/customAxios.js';
 import { useStore } from 'vuex';
 import SignerModal from '../components/Modal/SignerModal.vue';
 import Swal from 'sweetalert2';
+import { swalCheck } from '../../assets/js/common.js';
 
 const props = defineProps({
   isShowJobModal: Boolean,
@@ -192,7 +196,7 @@ watch(() => props.selectedRowData, async (newVal) => {
     try {
       result = await axios.get('/api/deptstore/jobInfo', { params: {deptJobId: newVal.deptJobId} });
     } catch (err) {
-      Swal.fire({ icon: "error", title: "업무 상세 정보 조회에 실패하였습니다.", text: "Error : " + err });
+      Swal.fire({ icon: "error", title: "업무 상세 정보 조회 실패", text: "Error : " + err });
     }
     console.log("업무 상세 정보 : ", result.data);
 
@@ -227,7 +231,7 @@ const files = async () => {
       i.name = i.orignlFileNm;
     })
   } catch (error) {
-    console.error("파일 목록 불러오기 실패:", error);
+    console.error("파일 목록 조회 실패:", error);
   }
 }
 
@@ -241,7 +245,13 @@ const modalConfirmJob = async () => {
   if(!props.isUpdate) {
     await jobAdd();
   } else {
-    await jobUpdate();
+    let check = await swalCheck('수정');
+    if(check.isConfirmed) {
+      await jobUpdate();
+    }
+    else {
+      return;
+    }
   }
   emit('modalConfirmJob');
 }
@@ -262,7 +272,7 @@ const jobAdd = async () => {
   try {
     await axios.post('/api/deptstore/jobAdd', addData);
   } catch (err) {
-    Swal.fire({ icon: "error", title: "업무 등록에 실패하였습니다.", text: "Error : " + err });
+    Swal.fire({ icon: "error", title: "업무 등록 실패", text: "Error : " + err });
   }
 }
 
@@ -283,13 +293,27 @@ const jobUpdate = async () => {
   try {
     await axios.post('/api/deptstore/jobModify', modifyData);
   } catch (err) {
-    Swal.fire({ icon: "error", title: "업무 수정에 실패하였습니다.", text: "Error : " + err });
+    Swal.fire({ icon: "error", title: "업무 수정 실패", text: "Error : " + err });
   }
 }
 
 
 // 유효성 체크
 const validCheck = () => {
+  if(!formValues.value.deptCd?.trim()) {
+    Swal.fire({
+      icon: "info",
+      title: "부서를 선택하세요.",
+    });
+    return false;
+  }
+  if(!formValues.value.deptJobBxId?.trim()) {
+    Swal.fire({
+      icon: "info",
+      title: "업무함명을 선택하세요.",
+    });
+    return false;
+  }
   if(!formValues.value.priort?.trim()) {
     Swal.fire({
       icon: "info",
@@ -298,6 +322,8 @@ const validCheck = () => {
     return false;
   }
   if(!formValues.value.deptJobNm?.trim()) {
+    const focusTag = document.querySelector('#jobNm');
+    focusTag?.focus();
     Swal.fire({
       icon: "info",
       title: "업무명을 입력하세요.",
@@ -305,6 +331,8 @@ const validCheck = () => {
     return false;
   }
   if(!formValues.value.deptJobCn?.trim()) {
+    const focusTag = document.querySelector('#jobCn');
+    focusTag?.focus();
     Swal.fire({
       icon: "info",
       title: "업무 내용을 입력하세요.",

@@ -70,3 +70,16 @@ export function numberFormat(num) {
    if (!num) return '0';
    return Number(num).toLocaleString();
 };
+
+
+// 수정 여부 체크
+export const swalCheck = async (title) => {
+   const result = Swal.fire({
+      icon: 'question',
+      title: '내역을 ' + title + ' 하시겠습니까?',
+      showCancelButton: true,
+      cancelButtonText: '취소',
+      confirmButtonText: '확인',
+   });
+   return result;
+}
