@@ -355,7 +355,6 @@ public class EgovIndvdlSchdulManageController {
         CustomerUser user = (CustomerUser) auth.getPrincipal();
         String userId = user.getUserDTO().getMberId();
         String deptCd = user.getUserDTO().getDeptCd();
-		System.out.println("adsfdasf=>" + user);
 		 if (user.getUserDTO() != null) {
 		        searchVO.setMberId(userId);
 		        searchVO.setDeptCd(deptCd);

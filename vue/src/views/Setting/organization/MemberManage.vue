@@ -11,18 +11,12 @@
             <div class="card-body">
                <div class="row m-0">
                   <!-- 트리 뷰 (왼쪽) -->
-                  <div class="col-3 treeview">
+                  <div class="col-3 depth treeview">
                      <button @click="modalOpen">모달 오픈</button>
-                     <ul>
-                        <TreeNode
-                           v-for="node in organizationTree"
-                           :key="node.id"
-                           :node="node"
-                           @toggle="toggleTree"
-                           @menuToggle="toggleMenu"
-                           @action="handleAction"
-                        />
-                     </ul>
+                     <DepartmentComponent
+                        v-if="Array.isArray(departmentTree.value) && departmentTree.value.length > 0"
+                        :treeData="departmentTree.value"
+                     />
                   </div>
 
                   <!-- 구성원 테이블 (오른쪽) -->
@@ -70,8 +64,7 @@
                                  </div>
                               </td>
                               <td>{{ member.id }}</td>
-                              <td class="profile-cell">
-                                 <img :src="member.profileImage" alt="프로필 이미지" class="profile-img">
+                              <td>
                                  <div class="profile-text">
                                     <span class="team-label">개발팀</span>
                                     <span class="user-name">{{ member.name }}</span>
@@ -132,60 +125,73 @@
 </template>
 
 <script setup>
-   import { ref } from "vue";
-   import TreeNode from "../../../components/TreeView/TreeNode.vue";
+   import { ref, onBeforeMount } from "vue";
+   import Swal from 'sweetalert2';
+   import axios from "../../../assets/js/customAxios"; // 공통 Axios 설정 파일
    import Modal from '../../../components/Modal.vue';
-   import Card from '../../../components/Cards/Card.vue'
+   import Card from '../../../components/Cards/Card.vue';
+   import DepartmentComponent from "../../../components/Department/DepartmentComponent.vue";
 
    const isShowModal = ref(false);
+// ================================================== 생명주기 함수 ==================================================
+   // 컴포넌트가 마운트되기 전에 권한 및 메뉴 목록 조회 실행
+   onBeforeMount(async () => {
+      await departmentGetList() // 비동기 완전 끝나야 데이터 있음
+   });
 
-   const organizationTree = ref([
-   {
-      id: "workhive",
-      name: "WorkHive",
-      count: 50,
-      children: [
-         {
-            id: "devteam",
-            name: "개발팀",
-            count: 37,
-            children: [
-               { id: "dev1", name: "개발 1팀", count: 10, children: [] },
-               { id: "dev2", name: "개발 2팀", count: 12, children: [] },
-               { id: "dev3", name: "개발 3팀", count: 15, children: [] },
-            ],
-         },
-         {
-            id: "designteam",
-            name: "디자인팀",
-            count: 13,
-            children: [
-               { id: "design1", name: "디자인 1팀", count: 5, children: [] },
-               { id: "design2", name: "디자인 2팀", count: 6, children: [] },
-               { id: "design3", name: "디자인 3팀", count: 2, children: [] },
-            ],
-         },
-      ],
-   },
-   ]);
+// ================================================== 부서관련 axios ==================================================
+   const departmentTree = ref([]);
 
-   const toggleTree = (node) => {
-      node.expanded = !node.expanded;
-   };
+   const departmentGetList = async () => {
+      try {
+         const response = await axios.get('/api/department')
+         console.log('API 응답 데이터:', response.data)
 
-   const toggleMenu = (node) => {
-      node.showMenu = !node.showMenu;
-   };
+         const tree = convertToTreeFormat(response.data)
+         console.log('트리 변환 결과:', tree)
 
-   const handleAction = (action, node) => {
-      if (action === "edit") {
-         console.log("조직 수정:", node.name);
-      } else if (action === "add") {
-         console.log("하위 조직 추가:", node.name);
-      } else if (action === "delete") {
-         console.log("조직 삭제:", node.name);
+         departmentTree.value = tree
+         console.log("departmentTree.value.length => ", departmentTree.value.length)
+
+      } catch (err) {
+         departmentTree.value = []  // 실패 시 안전장치
+
+         Swal.fire({
+            icon: "error",
+            title: "API 조회 실패",
+            text: `Error: ${err.response?.data?.error || err.message}`
+         })
+
       }
-   };
+   }
+
+   const convertToTreeFormat = (flatList = []) => {
+      console.log("flatList => ", flatList)
+      const map = {}
+      const tree = []
+
+      flatList.forEach(dept => {
+         const node = {
+               id: dept.deptCd,
+               label: dept.deptNm,
+               children: []   // ✅ 이거 반드시 children
+         }
+         map[dept.deptCd] = node  // 자기 자신 등록
+
+         if (dept.parentCd) {
+               if (!map[dept.parentCd]) {
+                  map[dept.parentCd] = { id: dept.parentCd, label: '(알 수 없음)', children: [] }
+               }
+               map[dept.parentCd].children.push(node)  // ✅ 여기도 children
+         } else {
+               tree.push(node)
+         }
+      })
+
+      return tree
+   }
+
+
 
    const members = ref([
       { id: "2025001", name: "김민진", rank: "부장" },

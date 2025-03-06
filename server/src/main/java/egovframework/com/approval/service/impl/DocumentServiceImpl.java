@@ -101,7 +101,6 @@ public class DocumentServiceImpl implements DocumentService{
 
                 // 파일을 DB에 저장하고 생성된 첨부파일 ID를 가져옴
                 atchFileId = fileMngService.insertFileInfs(fileVOList);
-                System.out.println("생성된 첨부파일 ID: " + atchFileId);
             } catch (Exception e) {
                 e.printStackTrace();
                 return 0; // 파일 저장 중 오류 발생 시 중단
@@ -116,8 +115,6 @@ public class DocumentServiceImpl implements DocumentService{
         //문서코드가져오기
         String docCd = documentMapper.lastDocCdGet();
         
-        System.out.println("생성된 문서 코드: " + docCd);
-
 		//결재자
         List<ApprovalLine> approvalLines = approvalParentDTO.getApprovalLine();
         

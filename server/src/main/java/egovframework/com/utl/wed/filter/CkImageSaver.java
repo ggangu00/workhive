@@ -140,7 +140,6 @@ public class CkImageSaver {
 
 			if (isAllowFileType(FilenameUtils.getName(uplFile.getName()))) {
 				String uploadFilePath = fileSaveManager.saveFile(uplFile, imageBaseDir);
-				//System.out.println("===>>> uploadFilePath = "+uploadFilePath);
 				
 				String fileName = uploadFilePath.substring(uploadFilePath.lastIndexOf('/') + 1);
 				String filePath = imageBaseDir+uploadFilePath.substring(0,uploadFilePath.lastIndexOf('/'));
@@ -151,7 +150,6 @@ public class CkImageSaver {
 					    + "&physical=" + this.encrypt(fileName,request)
 					    + "&contentType=" + this.encrypt(uplFile.getContentType(),request);
 				
-				//System.out.println("===>>> relUrl = "+relUrl);
 			} else {
 				errorMessage = "Restricted Image Format";
 			}

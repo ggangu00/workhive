@@ -112,4 +112,16 @@ public class AuthorityController {
 		return map;
 	}
 	
+	// 권한에 대한 메뉴 관리
+	@PostMapping("/authMenu")
+	public Map<String, Object> authorityMenuManage(@RequestBody AuthorityDTO dto) {
+		log.info("authorityMenuManage 받은 객체 => ", dto.toString());
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUser user = (CustomerUser) auth.getPrincipal();
+        dto.setCreateId(user.getUserDTO().getMberId());
+        
+        
+        return null;
+	}
+		
 }

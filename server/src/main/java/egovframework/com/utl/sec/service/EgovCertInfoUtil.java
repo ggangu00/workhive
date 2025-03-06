@@ -69,8 +69,6 @@ public class EgovCertInfoUtil {
 
 	GPKIHttpServletRequest gpkirequest = null;
 
-	//System.out.println(request.getParameter("encryptedData"));
-
 	gpkirequest = new GPKIHttpServletRequest(request);
 
 	X509Certificate cert = gpkirequest.getSignerCert();

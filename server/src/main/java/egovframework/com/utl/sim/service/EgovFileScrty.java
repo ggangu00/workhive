@@ -265,8 +265,6 @@ public class EgovFileScrty {
     		
     		String first = encryptPassword(password, salt.getBytes());
     		String second = encryptPassword(password, salt.getBytes());
-			System.out.println(password + " => " + first + " : " + checkPassword(password, first, salt.getBytes()));
-			System.out.println(password + " => " + second + " : " + checkPassword(password, second, salt.getBytes()));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

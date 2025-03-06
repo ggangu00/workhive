@@ -28,7 +28,6 @@ public class CustomLoginFailedHandler implements AuthenticationFailureHandler  {
         Map<String, Object> responseData = new HashMap<>();
         responseData.put("result", "failed");
         
-        System.out.println("responseData => " + responseData);
         // JSON 응답 설정
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpStatus.UNAUTHORIZED.value()); // HTTP 401 Unauthorized
