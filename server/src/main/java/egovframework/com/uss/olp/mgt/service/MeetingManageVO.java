@@ -125,6 +125,9 @@ public class MeetingManageVO implements Serializable {
 
 	/** 최종수정자 아이디 */
 	private String updateId = "";
+	
+	/** 회의 참여자 목록 */
+	private String memArr = "";
 
 	/** 화면 명령 처리 */
 	private String cmd = "";
@@ -634,6 +637,12 @@ public class MeetingManageVO implements Serializable {
 	}
 	public void setMtgPlaceNm(String mtgPlaceNm) {
 		this.mtgPlaceNm = mtgPlaceNm;
+	}
+	public String getMemArr() {
+		return memArr;
+	}
+	public void setMemArr(String memArr) {
+		this.memArr = memArr;
 	}
 
 }

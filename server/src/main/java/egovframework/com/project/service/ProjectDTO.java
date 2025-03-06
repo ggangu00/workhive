@@ -76,4 +76,9 @@ public class ProjectDTO extends CommonPaging {
 	private String prPlanCd;	// 일정코드
 	private String planNm;		// 일정명
 	private String color;		// 일정 색상
+	
+	//======================프로젝트 참여자 관리=====================
+	private int parent;			// 프로젝트별 참여자 트리에서 부모 여부
+	private String mberId;		// 프로젝트별 참여자 아이디
+	private String mberNm;		// 프로젝트별 참여자 이름
 }

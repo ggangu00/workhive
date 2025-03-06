@@ -69,6 +69,12 @@ public class CommonServiceImpl implements CommonService {
 	public List<CommonDTO> calSelect(String calDt) {
 		return commonMapper.selectSchHome(calDt);
 	}
+	
+	// 홈 일자별 일정 건수 조회
+	@Override
+	public List<CommonDTO> calCntSelect(String calDt) {
+		return commonMapper.selectSchCntHome(calDt);
+	}
 
 	@Override
 	public CommonDTO companyInfo() {

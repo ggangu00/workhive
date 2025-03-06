@@ -32,6 +32,9 @@ public interface CommonService {
 	// 홈 일정 조회
 	public List<CommonDTO> calSelect(String calDt);
 	
+	// 홈 일자별 일정 건수 조회
+	public List<CommonDTO> calCntSelect(String calDt);
+	
 	// 회사 정보 조회
 	public CommonDTO companyInfo();
 	

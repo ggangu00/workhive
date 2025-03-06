@@ -141,13 +141,13 @@
 
    .status-boxes {
       display: flex;
-      gap: 10px;
+      gap: 30px;
    }
 
    .status-box {
       width: 180px;
       border-radius: 8px;
-      box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.1), -4px -4px 10px rgba(0, 0, 0, 0.1);
+      box-shadow: 5px 5px 15px #7474741a, -5px -5px 15px #7474741a;
       text-align: left;
       font-weight: 600;
       background-color: #ffffff;
@@ -379,12 +379,12 @@ td {
 }
 
 .calendar-table .highlight::before {
-   border: 3px solid $primary;
+   border: 2px solid $primary;
    background-color: transparent;
 }
 
 .calendar-table .today::before {
-   border: 3px solid $danger;
+   border: 2px solid $danger;
    background-color: transparent;
 }
 

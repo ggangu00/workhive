@@ -36,10 +36,10 @@
                             <table class="table table-hover project">
                                 <tbody>
                                     <tr>
-                                        <th class="table-secondary">회의주제</th>
+                                        <th class="table-secondary" width="10%">회의주제</th>
                                         <td class="text-start">{{ meetInfo.mtgNm }}</td>
-                                        <th class="table-secondary">구분</th>
-                                        <td class="text-start">{{ meetInfo.typeCd }}</td>
+                                        <th class="table-secondary" width="10%">구분</th>
+                                        <td class="text-start">{{ meetInfo.typeNm }}</td>
                                     </tr>
                                     <tr>
                                         <th class="table-secondary">회의일시</th>
@@ -48,7 +48,7 @@
                                                 meetInfo.mtgEndTm }}
                                         </td>
                                         <th class="table-secondary">회의실</th>
-                                        <td class="text-start">{{ meetInfo.mtgPlace }}</td>
+                                        <td class="text-start">{{ meetInfo.mtgPlaceNm }}</td>
                                     </tr>
                                     <tr>
                                         <th class="table-secondary">참여자</th>
@@ -164,16 +164,16 @@ let nowCol = [
     { header: "구분", name: "typeCd", align: "center", formatter: ({ row }) => `${row.typeCd == 'A04' ? '완료' : '진행중'}` },
     { header: "회의주제", name: "mtgNm", align: "center", renderer: BtnRendererModal },
     { header: "회의일시", name: "mtgDe", align: "center", formatter: ({ row }) => `${dateFormat(row.mtgDe)} (${dateGetDay(row.mtgDe)}) ${row.mtgBeginTm} ~ ${row.mtgEndTm}` },
-    { header: "회의실", name: "mtgPlace", align: "center" },
-    { header: "참여자", name: "", align: "center" },
+    { header: "회의실", name: "mtgPlaceNm", align: "center" },
+    { header: "참여자", name: "memArr", align: "center" },
     { header: "관리", align: "center", renderer: BtnRendererSetting },
 ];
 let allCol = [
     { header: "구분", name: "typeCd", align: "center", formatter: ({ row }) => `${row.typeCd == 'A04' ? '완료' : '진행중'}` },
     { header: "회의주제", name: "mtgNm", align: "center", renderer: BtnRendererModal },
     { header: "회의일시", name: "mtgDe", align: "center", formatter: ({ row }) => `${dateFormat(row.mtgDe)} (${dateGetDay(row.mtgDe)}) ${row.mtgBeginTm} ~ ${row.mtgEndTm}` },
-    { header: "회의실", name: "mtgPlace", align: "center" },
-    { header: "참여자", name: "", align: "center" },
+    { header: "회의실", name: "mtgPlaceNm", align: "center" },
+    { header: "참여자", name: "memArr", align: "center" },
     { header: "관리", align: "center", renderer: BtnRendererSetting },
 ];
 

@@ -59,6 +59,9 @@
 	    <if test="searchState == 3">
 	         AND state='A04'
 	    </if>
+	    <if test="searchState == 4">
+	         AND state!='A04'
+	    </if>
 	    
 	    <!-- 프로젝트 검색조건 -->
 		<if test="searchCondition == 0">AND
@@ -293,5 +296,31 @@
 		WHERE
 		   pr_plan_cd = #{prPlanCd}
 	</delete>
+	
+	
+	<!-- 프로젝트 참여자 조회 트리 -->
+	<select id="projectTree" parameterType="projectDTO" resultType="projectDTO">
+	SELECT pr_cd, pr_nm, mber_id, mber_nm, CONNECT_BY_ISCYCLE as "parent"
+		FROM (
+		    SELECT 
+		        p.pr_cd,
+		        p.pr_nm,
+		        NULL AS mber_id,
+		        NULL AS mber_nm
+		    FROM PROJECT p
+		    where UPPER(del_yn) = UPPER('N') and state!='A04' 
+		
+		    UNION ALL
+		
+		    SELECT 
+		        m.pr_cd,
+		        NULL AS pr_nm,
+		        m.mber_id,
+		        fn_get_memnm(m.mber_id) AS mber_nm
+		    FROM PROJECT_MEM m
+		)
+		START WITH pr_nm IS NOT NULL
+		CONNECT BY NOCYCLE PRIOR pr_cd = pr_cd AND PRIOR pr_nm IS NOT NULL	
+	</select>
 
 </mapper>

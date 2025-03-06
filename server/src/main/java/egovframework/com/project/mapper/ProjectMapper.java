@@ -62,4 +62,10 @@ public interface ProjectMapper {
 	public int projectPlanDelete(String prPlanCd);
 
 	public String getLastInsertedPrCd();
+	
+	//====================프로젝트 참여자 관리===================
+
+	//프로젝트별 참여자 조회 트리
+	public List<ProjectDTO> projectTree();
+	
 }

@@ -87,16 +87,7 @@
                             <div class="treeview p-2">
                                 <!-- 조직 트리 -->
                                 <ul class="list-unstyled">
-                                    <li>📂 개발팀 (137)</li>
-                                    <li class="ms-3">• 개발 1팀 (10)</li>
-                                    <li class="ms-3">• 개발 2팀 (12)</li>
-                                    <li class="ms-3">• 개발 3팀 (15)</li>
-                                    <li>📂 디자인팀 (13)</li>
-                                    <li class="ms-3">• 디자인 1팀 (5)</li>
-                                    <li class="ms-3">• 디자인 2팀 (6)</li>
-                                    <li class="ms-3">• 디자인 3팀 (2)</li>
-                                    <li>📂 인사팀 (6)</li>
-                                    <li>📂 기획팀 (9)</li>
+                                    <li v-for="project in projectList" :class="project.parent == 0 ? 'ms-3' : ''" :key="project">{{ project.parent == 1 ? '📂 '+project.prNm : '• '+project.mberNm }}</li>
                                 </ul>
                             </div>
                         </div>
@@ -117,6 +108,7 @@ import Card from '../../components/Cards/Card.vue'
 
 onBeforeMount(() => {
     memberGetList();
+    projectGetList();
 });
 
 //======================= axios =======================
@@ -138,6 +130,26 @@ const memberGetList = async () => {
             text: "Error : " + err
         });
     }
+}
+
+//진행중인 프로젝트 전체조회
+const projectList = ref([]);
+const projectGetList = async () => {
+
+  try {
+    const result = await axios.get('/api/project/tree');
+    projectList.value = result.data;
+    console.log(projectList.value);
+
+  } catch (err) {
+    projectList.value = [];
+
+    Swal.fire({
+      icon: "error",
+      title: "API 조회 오류",
+      text: "Error : " + err
+    });
+  }
 }
 
 </script>
