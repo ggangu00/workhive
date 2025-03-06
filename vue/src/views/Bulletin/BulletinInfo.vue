@@ -23,7 +23,7 @@
             <div style="background-color: #f4f4f4; padding: 10px; text-align: center; font-size: 14px; color: #555; margin-bottom: 20px;">
               <span style="font-weight: bold;">작성자:</span>
               <span style="font-weight: bold; text-align: center; width: 150px; display: inline-block; margin-left: 5px;">
-              {{ bulletinInfo.frstRegisterId || '-' }}
+              {{ bulletinInfo.wrterNm || '-' }}
               </span>
 
               <span style="margin: 0 15px;">|</span>
@@ -73,53 +73,74 @@
             </div>
 
             <!-- 댓글 입력 -->
-            <div class="mb-3">
-              <label>댓글 등록</label>
-              <div class="input-group mb-3" style="background-color: #f8f9fa; padding: 10px; border-radius: 5px;">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="내용을 입력해주세요"
-                  v-model="newComment.commentCn"
-                  style="border-radius: 5px; margin-right: 10px;">
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="작성자"
-                  v-model="newComment.wrterNm"
-                  style="border-radius: 5px; margin-right: 10px;">
-                <button class="btn btn-success btn-fill" @click.prevent="addComment" style="border-radius: 5px; margin-right: 10px;">등록</button>
-              </div>
-            </div>
+<div class="mb-3">
+  <label>댓글 등록</label>
+  <div class="input-group mb-3" style="background-color: #f8f9fa; padding: 10px; border-radius: 5px;">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="내용을 입력해주세요"
+      v-model="newComment.commentCn"
+      style="border-radius: 5px; margin-right: 10px;">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="작성자"
+      v-model="newComment.wrterNm"
+      style="border-radius: 5px; margin-right: 10px;">
+    <button class="btn btn-success btn-fill" @click.prevent="addComment" style="border-radius: 5px; margin-right: 10px;">등록</button>
+  </div>
+</div>
 
-            <!-- 댓글 목록 -->
-            <div class="mb-3" v-for="(commentItem, index) in comments" :key="index">
-              <div class="input-group mb-3" style="background-color: #f8f9fa; padding: 10px; border-radius: 5px;">
-                <input
-                  type="text"
-                  class="form-control"
-                  v-model="commentItem.commentNo"
-                  placeholder="내용을 입력해주세요"
-                  :readonly="!commentItem.isEditing"
-                  style="border-radius: 5px; margin-right: 10px;">
-                <input
-                  type="text"
-                  class="form-control"
-                  v-model="commentItem.wrterNm"
-                  placeholder="작성자"
-                  :readonly="!commentItem.isEditing"
-                  style="border-radius: 5px; margin-right: 10px;">
+<!-- 댓글 목록 -->
+<div class="mb-3">
+  <label>댓글 목록</label>
+  <div class="table-responsive">
+    <table class="table table-bordered">
+      <thead>
+        <tr style="background-color: #f8f9fa;">
+          <th style="width: 80px; text-align: center;">댓글번호</th>
+          <th style="text-align: center;">댓글내용</th>
+          <th style="width: 150px; text-align: center;">작성자</th>
+          <th style="width: 180px; text-align: center;">작성시간</th>
+          <th style="width: 160px; text-align: center;">관리</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(commentItem, index) in comments" :key="index">
+          <!-- 댓글번호 (조회 전용) -->
+          <td style="text-align: center;">
+            <input type="text" class="form-control text-center" v-model="commentItem.commentNo" readonly>
+          </td>
+          <!-- 댓글내용 (수정 가능) -->
+          <td>
+            <input type="text" class="form-control" v-model="commentItem.commentCn" :readonly="!commentItem.isEditing">
+          </td>
+          <!-- 작성자 (수정 가능) -->
+          <td>
+            <input type="text" class="form-control" v-model="commentItem.wrterNm" :readonly="!commentItem.isEditing">
+          </td>
+          <!-- 작성시간 (조회 전용) -->
+          <td style="text-align: center;">
+            <input type="text" class="form-control text-center" v-model="commentItem.frstRegisterPnttm" readonly>
+          </td>
+          <!-- 관리 버튼 -->
+          <td style="text-align: center;">
+            <template v-if="!commentItem.isEditing">
+              <button class="btn btn-success btn-sm" @click="enterEdit(index)">수정</button>
+              <button class="btn btn-danger btn-sm" @click="deleteComment(index)">삭제</button>
+            </template>
+            <template v-else>
+              <button class="btn btn-primary btn-sm" @click="saveEdit(index)">저장</button>
+              <button class="btn btn-secondary btn-sm" @click="cancelEdit(index)">취소</button>
+            </template>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
-                <template v-if="!commentItem.isEditing">
-                  <button class="btn btn-success btn-fill" @click="enterEdit(index)" style="border-radius: 5px; margin-right: 10px;">수정</button>
-                  <button class="btn btn-danger btn-fill" @click="deleteComment(index)" style="border-radius: 5px;">삭제</button>
-                </template>
-                <template v-else>
-                  <button class="btn btn-success btn-fill" @click="saveEdit(index)" style="border-radius: 5px; margin-right: 10px;">저장</button>
-                  <button class="btn btn-secondary btn-fill" @click="cancelEdit(index)" style="border-radius: 5px;">취소</button>
-                </template>
-              </div>
-            </div>
 
           </form>
         </div>
@@ -153,6 +174,7 @@ const formatDate = (date) => {
 
 // 게시글 상세 데이터
 const bulletinInfo = ref({
+  wrterNm:'',
   nttSj: '',
   ntcrNm: '',
   frstRegistPnttm: '',
@@ -167,7 +189,7 @@ const bulletinInfo = ref({
 
 
 // 새 댓글 등록 데이터
-const newComment = ref({
+const newComment = ref({ 
   commentCn: '',
   wrterNm: ''
 });
@@ -213,7 +235,7 @@ const fetchComments = async () => {
 // 댓글 목록
 const comments = ref([]);
 
-// 댓글 추가
+
 // 댓글 추가
 const addComment = async () => {
   console.log(" 댓글 등록 요청 - bbsId:", bbsId, "nttId:", nttId);
@@ -224,6 +246,7 @@ const addComment = async () => {
   }
   try {
     const response = await axios.post(`/api/comment/commentAdd?bbsId=${bbsId}&nttId=${nttId}`, {
+      
       commentCn: newComment.value.commentCn,
       wrterNm: newComment.value.wrterNm,
     });

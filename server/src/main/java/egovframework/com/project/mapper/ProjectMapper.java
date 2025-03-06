@@ -68,4 +68,10 @@ public interface ProjectMapper {
 	//프로젝트별 참여자 조회 트리
 	public List<ProjectDTO> projectTree();
 	
+	//프로젝트 참여자 추가
+	public int projectMemInsert(ProjectDTO projectDTO);
+	
+	//프로젝트 참여자 삭제
+	public int projectMemDelete(ProjectDTO projectDTO);
+	
 }

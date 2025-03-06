@@ -14,14 +14,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import egovframework.com.approval.service.ApprovalLine;
 import egovframework.com.cmm.ComDefaultVO;
 import egovframework.com.common.service.CommonDTO;
 import egovframework.com.common.service.CommonService;
 import egovframework.com.common.util.GridUtil;
+import egovframework.com.commute.service.CommuteDTO;
 import egovframework.com.member.service.MemberService;
 import egovframework.com.securing.service.CustomerUser;
 import lombok.extern.slf4j.Slf4j;
@@ -145,4 +148,23 @@ public class CommonController {
 		return dto;
 	}
 	
+	//회사 정보 변경
+	@PutMapping("/company")
+	public int updateCompanyInfo(@ModelAttribute CommonDTO commonDTO) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		CustomerUser user = (CustomerUser) auth.getPrincipal();
+		
+		String userId = user.getUserDTO().getMberId();
+		commonDTO.setMberId(userId);
+		
+	    System.out.println("받은 요청 데이터: " + commonDTO.toString());
+
+	    int result = service.updateCompanyInfo(commonDTO);
+
+	    // 📌 서비스 메서드 수행 결과 로그
+	    System.out.println("DB 업데이트 결과: " + result);
+		service.updateCompanyInfo(commonDTO);
+		
+		return 1;	
+	}
 }

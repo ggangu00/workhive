@@ -38,4 +38,7 @@ public interface CommonService {
 	// 회사 정보 조회
 	public CommonDTO companyInfo();
 	
+	// 회사정보수정
+	public int updateCompanyInfo(CommonDTO commonDTO);
+	
 }

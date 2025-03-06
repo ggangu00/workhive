@@ -20,6 +20,36 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  */
 @SuppressWarnings("serial")
 public class CommentVO extends Comment {
+	private int answerNo=1;
+	
+	public int getAnswerNo() {
+		return answerNo;
+	}
+
+	public void setAnswerNo(int answerNo) {
+		this.answerNo = answerNo;
+	}
+
+	private String commentPassword="";
+
+	public String getCommentPassword() {
+		return commentPassword;
+	}
+
+	public void setCommentPassword(String commentPassword) {
+		this.commentPassword = commentPassword;
+	}
+
+	private String commentCn="";
+	
+	public String getCommentCn() {
+		return commentCn;
+	}
+
+	public void setCommentCn(String commentCn) {
+		this.commentCn = commentCn;
+	}
+
 	private String password="";
     public String getPassword() {
 		return password;

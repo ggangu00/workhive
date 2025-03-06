@@ -73,16 +73,12 @@
 	<insert id="insertArticleComment" parameterType="egovframework.com.cop.cmt.service.CommentVO">
 		
 		
-			INSERT INTO COMTNCOMMENT
-			(ANSWER_NO, NTT_ID, BBS_ID, WRTER_ID, WRTER_NM, COMMENT_CN, PASSWORD, 
-			 ANSWER, USE_AT, 
-			 FRST_REGISTER_ID, FRST_REGIST_PNTTM
-			 )
-			VALUES
-			( #{commentNo}, #{nttId}, #{bbsId}, #{wrterId}, #{wrterNm},#{commentCn}, #{commentPassword}, #{password},
-			  'Y',
-			  #{frstRegisterId}, SYSDATE
-			 )
+	INSERT INTO COMTNCOMMENT
+        (ANSWER_NO, NTT_ID, BBS_ID, WRTER_ID, WRTER_NM, PASSWORD, 
+         ANSWER, USE_AT, COMMENT_CN,FRST_REGISTER_ID, FRST_REGIST_PNTTM)
+    VALUES
+        (SEQ_ANSWER_NO.NEXTVAL, #{nttId}, #{bbsId}, #{wrterId}, #{wrterNm}, #{password}, 
+         #{answer}, 'Y', #{commentCn}, #{frstRegisterId}, SYSDATE)
 		
 	</insert>
 	
