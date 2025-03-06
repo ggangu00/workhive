@@ -73,12 +73,14 @@
                                         </tr>
                                     </thead>
 
-                                    <tbody>
+                                    <VueDraggableNext v-if="members.length > 0" :list="members" tag="tbody"
+                                        :animation="300">
                                         <tr v-for="(member, i) in members" :key="i">
                                             <td>{{ i + 1 }}</td>
                                             <td>
                                                 <div class="profile-text" align="left">
-                                                    <span class="team-label" style="text-align:left">{{ member.deptNm
+                                                    <span class="team-label" style="text-align:left">{{
+                                                        member.deptNm
                                                         }}</span>
                                                     <span class="user-name">{{ member.mberNm }} ({{ member.mberId
                                                         }})</span>
@@ -87,7 +89,7 @@
                                             <td>{{ member.gradeNm }}</td>
                                             <td>{{ member.projectCnt }}건</td>
                                         </tr>
-                                    </tbody>
+                                    </VueDraggableNext>
                                 </table>
                             </div>
 
@@ -137,36 +139,6 @@
             </div>
         </div>
     </div>
-
-    <div class="container">
-        <!-- 원본 리스트 -->
-        <div class="list">
-            <h3>원본 리스트</h3>
-            <VueDraggableNext v-model="sourceItems" group="shared" item-key="id" @start="dragging = true"
-                @end="dragging = false" @choose="onChoose" @unchoose="onUnchoose" :move="onMove"
-                class="draggable-container">
-                <template #item="{ element }">
-                    <div :class="['draggable-item', { selected: selectedItems.includes(element.id) }]"
-                        @click="toggleSelection(element.id, $event)">
-                        {{ element.name }}
-                    </div>
-                </template>
-            </VueDraggableNext>
-        </div>
-
-        <!-- 타겟 리스트 -->
-        <div class="list">
-            <h3>타겟 리스트</h3>
-            <VueDraggableNext v-model="targetItems" group="shared" item-key="id" class="draggable-container">
-                <template #item="{ element }">
-                    <div class="draggable-item">
-                        {{ element.name }}
-                    </div>
-                </template>
-            </VueDraggableNext>
-        </div>
-    </div>
-
 </template>
 
 <script setup>
@@ -190,53 +162,6 @@ onBeforeMount(() => {
 const toggleMemMenu = (memberMenu) => {
     memberMenu.isHidden = !memberMenu.isHidden;
 };
-
-//========================== drag ==========================
-const sourceItems = ref([
-    { id: 1, name: "🍎 사과" },
-    { id: 2, name: "🍌 바나나" },
-    { id: 3, name: "🍇 포도" },
-    { id: 4, name: "🍊 오렌지" },
-    { id: 5, name: "🍉 수박" }
-]);
-
-const targetItems = ref([]);
-const selectedItems = ref([]);
-const dragging = ref(false);
-
-// 아이템 선택/해제 (Ctrl/Command 키 체크)
-const toggleSelection = (id, event) => {
-    if (event.ctrlKey || event.metaKey) {
-        if (selectedItems.value.includes(id)) {
-            selectedItems.value = selectedItems.value.filter(item => item !== id);
-        } else {
-            selectedItems.value.push(id);
-        }
-    } else {
-        selectedItems.value = [id]; // 단일 선택
-    }
-};
-
-// 드래그 시 선택된 아이템만 이동하도록 필터
-const onMove = (event) => {
-    if (selectedItems.value.length > 0) {
-        return selectedItems.value.includes(event.draggedContext.element.id);
-    }
-    return true;
-};
-
-// 드래그 시작 시 선택된 요소 유지
-const onChoose = (event) => {
-    if (!selectedItems.value.includes(event.item.__draggable_context.element.id)) {
-        selectedItems.value = [event.item.__draggable_context.element.id];
-    }
-};
-
-// 드래그가 끝난 후 선택 목록 초기화
-const onUnchoose = () => {
-    selectedItems.value = [];
-};
-
 
 //======================= axios =======================
 
