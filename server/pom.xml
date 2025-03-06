@@ -18,6 +18,11 @@
 	</properties>
 	<repositories>
 		<repository>
+			<id>oracle</id>
+			<name>ORACLE JDBC Repository</name>
+			<url>http://www.datanucleus.org/downloads/maven2/</url>
+		</repository>
+		<repository>
 			<id>mvn2s</id>
 			<url>https://repo1.maven.org/maven2/</url>
 			<releases>
@@ -600,6 +605,20 @@
 			       <artifactId>exec-maven-plugin</artifactId>
 			       <version>1.6.0</version>
 			       <executions>
+					   
+		   			<!--npm install-->
+		           <execution>
+			            <id>npm install</id>
+			            <goals><goal>exec</goal></goals>
+			            <phase>generate-resources</phase>  <!-- 빌드 전에 실행 -->
+			            <configuration>
+			                <executable>npm</executable>
+			                <arguments>
+			                    <argument>install</argument>
+			                </arguments>
+			                <workingDirectory>../vue</workingDirectory>
+			            </configuration>
+			        </execution>
 			       <!-- npm run build -->
 			         <execution>
 			           <id>front-end build package</id>
@@ -615,7 +634,7 @@
 			         </execution>
 			       </executions>
 			       <configuration>
-			         <workingDirectory>${basedir}/front-end</workingDirectory>
+			         <workingDirectory>../vue</workingDirectory>
 			       </configuration>
 			   </plugin>
 				

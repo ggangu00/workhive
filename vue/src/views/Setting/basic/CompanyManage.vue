@@ -38,15 +38,15 @@
                         <div class="row p-1">
                            <div class="col-md-3">
                               <label>대표전화 <i class="fa-solid fa-asterisk"></i></label>
-                              <input type="text" v-model="viewData.mberId" class="form-control readonly" />
+                              <input type="text" v-model="viewData.tel" class="form-control readonly" />
                            </div>
                            <div class="col-md-3">
                               <label>이메일 <i class="fa-solid fa-asterisk"></i></label>
-                              <input type="text" v-model="viewData.esntlId" class="form-control readonly" />
+                              <input type="text" v-model="viewData.email" class="form-control readonly" />
                            </div>
                            <div class="col-md-3">
                               <label>팩스 <i class="fa-solid fa-asterisk"></i></label>
-                              <input type="text" v-model="formData.mberNm" class="form-control editable" />
+                              <input type="text" v-model="viewData.telFax" class="form-control editable" />
                            </div>
                         </div>
 
@@ -57,15 +57,15 @@
                         <div class="row p-1">
                            <div class="col-md-1">
                               <label>우편번호 <i class="fa-solid fa-asterisk"></i></label>
-                              <input type="text" v-model="viewData.mberId" class="form-control editable" />
+                              <input type="text" v-model="viewData.post" class="form-control editable" />
                            </div>
                            <div class="col-md-5">
                               <label>주소 <i class="fa-solid fa-asterisk"></i></label>
-                              <input type="text" v-model="viewData.esntlId" class="form-control editable" />
+                              <input type="text" v-model="viewData.addr" class="form-control editable" />
                            </div>
                            <div class="col-md-5">
                               <label>상세주소 <i class="fa-solid fa-asterisk"></i></label>
-                              <input type="text" v-model="formData.mberNm" class="form-control editable" />
+                              <input type="text" v-model="viewData.addrDtl" class="form-control editable" />
                            </div>
                         </div>
 
@@ -74,17 +74,13 @@
                      <div class="section">
                         <div class="section-header">[ 설정 ]</div>
                         <div class="row p-1">
-                           <div class="col-md-6">
-                              <label class="align-items-center">메뉴사용 <i class="fa-solid fa-asterisk"></i></label>
-                              <input type="email" v-model="formData.mberEmailAdres" class="editable" />
-                           </div>
                            <div class="col-md-3">
                               <label class="align-items-center">근무 시작시간 <i class="fa-solid fa-asterisk"></i></label>
-                              <input type="email" v-model="formData.mberEmailAdres" class="editable" />
+                              <input type="time" v-model="viewData.startTime" class="editable" />
                            </div>
                            <div class="col-md-3">
                               <label class="align-items-center">근무 종료시간 <i class="fa-solid fa-asterisk"></i></label>
-                              <input type="email" v-model="formData.mberEmailAdres" class="editable" />
+                              <input type="time" v-model="viewData.endTime" class="editable" />
                            </div>
                         </div>
                      </div>
@@ -113,18 +109,25 @@
       areaNo: "",
       middleTelno: "",
       endTelno: "",
-      mbtlnum: ""
+      mbtlnum: "",
+
    });
 
    const originalData = ref({});  // 원본 데이터 저장 (수정 비교용)
 
    // 📌 읽기 전용 데이터 (화면 표시용)
    const viewData = ref({
-      deptNm: "",
-      gradeNm: "",
-      respNm: "",
-      mberId: "",
-      esntlId: "",
+      compNm:"",
+      businessNo:"",
+      ceoNm :"" ,
+      tel:"",
+      email:"",
+      telFax:"",
+      post:"",
+      addr:"",
+      addrDtl:"",
+      startTime:"",
+      endTime:"",
    });
 
    // 📌 공통코드 목록 (지역번호)
@@ -150,7 +153,7 @@
 
    // 저장 버튼 이벤트
    const btnMemberSave = () => {
-      const modifiedData = getModifiedFields(originalData.value, formData.value);
+      const modifiedData = getModifiedFields(originalData.value, viewData.value);
 
       if (!validateFormData()) {
         return;  // 유효성 검사 실패 시 중단
@@ -165,7 +168,7 @@
       }
 
       Swal.fire({
-         title: `${formData.value.mberNm}님의 정보를 수정하시겠습니까?`,
+         title: `${viewData.value.ceoNm}님의 정보를 수정하시겠습니까?`,
          icon: "question",
          showCancelButton: true,
          customClass: {
@@ -177,7 +180,7 @@
       }).then((result) => {
          if (result.dismiss == Swal.DismissReason.cancel) {
             // 회원정보 수정
-            memberModify(formData.value);
+            memberModify(viewData.value);
 
             Swal.fire({
                icon: "success",
@@ -189,19 +192,26 @@
    };
 
    // ============================================= Axios Event =============================================
-   // 회원 정보 조회
+   // 회사 정보 조회
    const memberGet = async () => {
       try {
-         const result = await axios.get('/api/member/info');
+         const result = await axios.get('/api/comm/company');
          const data = result.data;
 
          // 읽기전용 데이터
          viewData.value = {
-            deptNm: data.deptNm || "",
-            gradeNm: data.gradeNm || "",
-            respNm: data.respNm || "",
-            mberId: data.mberId || "",
-            esntlId: data.esntlId || "",
+            compNm: data.compNm || "",
+            businessNo: data.businessNo ||"",
+            ceoNm : data.ceoNm || "" ,
+            tel:data.tel||"",
+            email:data.email||"",
+            telFax:data.telFax||"",
+            post:data.post||"",
+            addr:data.addr||"",
+            addrDtl:data.addrDtl||"",
+            startTime:data.startTime ? data.startTime.substring(0, 5) : "08:30",
+            endTime:data.endTime ? data.endTime.substring(0, 5) : "18:00"
+            ,
          };
 
          // 수정 가능 데이터
@@ -215,7 +225,7 @@
          };
 
          // 원본 데이터 저장 (수정 비교용)
-         originalData.value = JSON.parse(JSON.stringify(formData.value));
+         originalData.value = JSON.parse(JSON.stringify(viewData.value));
       } catch (err) {
          Swal.fire({
             icon: "error",
@@ -226,15 +236,15 @@
    };
 
    // 회원 정보 수정 (이름/이메일/전화/휴대폰만 전송)
-   const memberModify = async (modifiedData) => {
+   const memberModify = async () => {
       try {
 
-         await axios.put('/api/member', modifiedData, {
+         await axios.put('/api/comm/company', originalData.value, {
                headers: { 'Content-Type': 'application/json' }
          });
 
          // 저장 성공 후 원본 데이터 갱신
-         originalData.value = JSON.parse(JSON.stringify(formData.value));
+         originalData.value = JSON.parse(JSON.stringify(viewData.value));
       } catch (err) {
          Swal.fire({
             icon: "error",
@@ -269,61 +279,45 @@
    };
 
    const validateFormData = () => {
-      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;   // 이메일 형식 체크
-      const phonePattern = /^[0-9]*$/;                     // 숫자만 허용 (전화번호)
+      //const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;   // 이메일 형식 체크
+      //const phonePattern = /^[0-9]*$/;                     // 숫자만 허용 (전화번호)
 
-      if (!formData.value.mberNm?.trim()) {
+      if (!viewData.value.post) {
          Swal.fire({
             icon: "info",
-            title: "이름을 입력하세요.",
+            title: "팩스입력",
          });
          return false;
       }
 
-      if (!formData.value.mberEmailAdres?.trim()) {
+      if (!viewData.value.addr) {
          Swal.fire({
             icon: "info",
-            title: "이메일을 입력하세요.",
+            title: "주소입력",
          });
          return false;
       }
 
-      if (!emailPattern.test(formData.value.mberEmailAdres)) {
+      if (!viewData.value.addrDtl) {
          Swal.fire({
             icon: "info",
-            title: "이메일 형식을 확인하세요.",
+            title: "상세주소입력",
          });
          return false;
       }
 
-      if (!formData.value.middleTelno || formData.value.middleTelno.length > 5) {
+      if (!viewData.value.startTime) {
          Swal.fire({
             icon: "info",
-            title: "전화번호는 4자리로 이하로 입력하세요.",
+            title: "출근시간입력",
          });
          return false;
       }
 
-      if (!formData.value.endTelno || formData.value.endTelno.length > 5) {
+      if (!viewData.value.endTime) {
          Swal.fire({
             icon: "info",
-            title: "전화번호는 4자리 이하로 입력하세요.",
-         });
-         return false;
-      }
-
-      if (formData.value.middleTelNo && !phonePattern.test(formData.value.middleTelNo)) {
-         Swal.fire({
-            icon: "info",
-            title: "전화번호는 숫자만 입력 가능합니다.",
-         });
-         return false;
-      }
-
-      if (formData.value.endTelno && !phonePattern.test(formData.value.endTelno)) {
-         Swal.fire({
-            icon: "info",
-            title: "전화번호는 숫자만 입력 가능합니다.",
+            title: "퇴근시간입력",
          });
          return false;
       }

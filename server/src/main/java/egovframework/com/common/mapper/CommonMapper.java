@@ -51,4 +51,7 @@ public interface CommonMapper {
 	// 홈 일자별 일정건수 조회
 	public List<CommonDTO> selectSchCntHome(String calDt);
 	
+	//회사 정보 수정
+	public int updateCompanyInfo(CommonDTO commonDTO);
+	
 }

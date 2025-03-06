@@ -73,11 +73,11 @@ public class CommonDTO extends CommonPaging {
 	private String addr;		// 주소
 	private String addrDtl;		// 상세주소
 	
-	@DateTimeFormat(pattern = "HH:mm:ss")
-	private Date start_time;
+	//@DateTimeFormat(pattern = "HH:mm:ss")
+	private String startTime;
 	
-	@DateTimeFormat(pattern = "HH:mm:ss")
-	private Date end_time;
+	//@DateTimeFormat(pattern = "HH:mm:ss")
+	private String endTime;
 		
 	// 이력 히스토리
 	private String histCd;		// 이력히스토리 코드

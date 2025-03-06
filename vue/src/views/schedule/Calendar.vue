@@ -1,19 +1,21 @@
 <template>
 <div class="content">
   <div class="container-fluid">
-    <div class="card card-header d-flex justify-content-between align-items-center flex-row">
-    <h3 class="card-title m-0">일정관리</h3>
-    <button class="btn btn-primary btn-fill" data-bs-toggle="modal" data-bs-target="#scheduleModal" id='openModalButton'>
-      일정 등록
-    </button>
-  </div>
+    <card>
+      <h4 class="card-title float-left">일정관리</h4>
+      <div class="d-flex justify-content-end">
+        <button class="btn btn-primary btn-fill btn-sm" data-bs-toggle="modal" data-bs-target="#scheduleModal" id='openModalButton'>
+          일정 등록
+        </button>
+      </div>  
+    </card>
 
     <div class="card" style="padding: 10px;">
       <div class='calendar'>
         <FullCalendar
         :options="calendarOptions"
         />
-      </div>
+      </div> 
   </div>
 </div>
 </div>
@@ -110,7 +112,7 @@
           </div>
 
         </div>
-      <!-- 모달 푸터 -->
+      <!-- 모달 푸터 -->   
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary btn-fill" data-bs-dismiss="modal">닫기</button>
         <button v-if="isNewSchedule" type="button" class="btn btn-primary btn-fill" data-bs-dismiss="modal" @click="scheduleAdd">저장</button>
@@ -133,10 +135,11 @@ import axios from "../../assets/js/customAxios";
 import { Modal } from "bootstrap";
 import Swal from 'sweetalert2';
 import { useUserInfoStore } from '../../store/userStore.js';
+import Card from '../../components/Cards/Card.vue'
 
 export default {
 components: {
-  FullCalendar
+  FullCalendar, Card
 },
 data() {
   //캘린더 옵션

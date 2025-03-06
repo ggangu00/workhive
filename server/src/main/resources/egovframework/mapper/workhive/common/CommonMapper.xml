@@ -180,8 +180,8 @@
 		   post,
 		   addr,
 		   addr_dtl,
-		   TO_CHAR(start_time, 'yyyy-MM-dd') AS start_time,
-		   TO_CHAR(end_time, 'yyyy-MM-dd') AS end_time
+		   TO_CHAR(start_time, 'HH24:MI:SS') AS start_time,
+		   TO_CHAR(end_time, 'HH24:MI:SS') AS end_time  
 		FROM
 		   company
 	</select>
@@ -231,4 +231,18 @@
 			ORDER BY listDt
 		]]>	
 	</select>
+	
+	<!-- 회사시간등록 -->
+	<update id="updateCompanyInfo" parameterType="commonDTO">
+		UPDATE company
+		SET 
+		    tel_fax = #{telFax},
+		    post = #{post},
+		    addr = #{addr},
+		    addr_dtl = #{addrDtl},
+		    start_time = TO_DATE(#{startTime}, 'HH24:MI:SS'),
+		    end_time = TO_DATE(#{endTime},'HH24:MI:SS')
+		WHERE
+			ceo_nm = (select mber_nm from comtngnrlmber where mber_id = #{mberId})	
+	</update>
 </mapper>

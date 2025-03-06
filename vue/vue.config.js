@@ -4,6 +4,7 @@ var path = require("path");
 
 module.exports = defineConfig({
    //publicPath: '/api/dist',
+   publicPath: process.env.NODE_ENV == 'production' ? '/api/dist' : '/' ,
    // outputDir : path.resolve("../server/public"),
    transpileDependencies: true,
 
