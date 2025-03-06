@@ -22,6 +22,14 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  */
 @SuppressWarnings("serial")
 public class Comment implements Serializable {
+	private String password="";
+    public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
     /** 댓글번호 */
     private String commentNo = "";
     
