@@ -42,6 +42,11 @@
 			<name>Project Repository</name>
 			<url>file://${project.basedir}/src/main/webapp/WEB-INF/lib</url>
 		</repository>
+		<repository>
+			<id>projectRepository2</id>
+			<name>Project Repository</name>
+			<url>file:///C:/Users/admin/git/workhive/server/src/main/webapp/WEB-INF/lib</url>
+		</repository>
 	</repositories>
 	<dependencies>
 		<!-- 표준프레임워크 실행환경 -->
