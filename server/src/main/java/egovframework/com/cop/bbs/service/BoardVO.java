@@ -23,8 +23,79 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  */
 @SuppressWarnings("serial")
 public class BoardVO extends Board implements Serializable {
+	
+	private String replyLc = "";
+	public String getReplyLc() {
+		return replyLc;
+	}
 
-    /** 검색시작일 */
+	public void setReplyLc(String replyLc) {
+		this.replyLc = replyLc;
+	}
+
+	private String answerLc = "";
+	public String getAnswerLc() {
+		return answerLc;
+	}
+
+	public void setAnswerLc(String answerLc) {
+		this.answerLc = answerLc;
+	}
+
+	private int parntscttNo = 1;
+	public int getParntscttNo() {
+		return parntscttNo;
+	}
+
+	public void setParntscttNo(int parntscttNo) {
+		this.parntscttNo = parntscttNo;
+	}
+
+	private String answerAt = "";
+	public String getAnswerAt() {
+		return answerAt;
+	}
+
+	public void setAnswerAt(String answerAt) {
+		this.answerAt = answerAt;
+	}
+
+	private int rdCnt = 1;
+	public int getRdCnt() {
+		return rdCnt;
+	}
+
+	public void setRdCnt(int rdCnt) {
+		this.rdCnt = rdCnt;
+	}
+
+	private String mberId = "";
+	private String wrterNm = "";		
+    public String getWrterNm() {
+		return wrterNm;
+	}
+
+	public void setWrterNm(String wrterNm) {
+		this.wrterNm = wrterNm;
+	}
+
+	public String getMberId() {
+		return mberId;
+	}
+
+	public void setMberId(String mberId) {
+		this.mberId = mberId;
+	}
+
+	public String getAnoAt() {
+		return anoAt;
+	}
+
+	public void setAnoAt(String anoAt) {
+		this.anoAt = anoAt;
+	}
+
+	/** 검색시작일 */
     private String searchBgnDe = "";
     
     /** 검색조건 */

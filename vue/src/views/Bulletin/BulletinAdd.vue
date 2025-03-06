@@ -125,6 +125,8 @@ const route = useRoute();
 const router = useRouter();
 
 // 필드 데이터
+const mberId = ref();
+const wrterNm = ref();
 const bbsId = ref(route.query.bbsId);              // 게시판id
 const nttSj = ref('');             // 제목
 const nttCn = ref('');             // 에디터의 HTML 내용 (게시글 내용)
@@ -191,6 +193,8 @@ const submitForm = async () => {
   if (!validateForm()) return;
 
   const formData = new FormData();
+  formData.append('mberId', mberId.value);
+  formData.append('wrterNm', wrterNm.value);
   formData.append('nttSj', nttSj.value);
   formData.append('nttCn', nttCn.value);
   formData.append('noticeAt', noticeAt.value ? 'Y' : 'N');
