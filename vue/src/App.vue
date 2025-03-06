@@ -27,7 +27,6 @@ Coded by www.creative-tim.com
          v-if="showNavbar"
       />
       <router-view :key="$route.fullPath" />
-      <app-footer v-show="showFooter" />
       <configurator
          :toggle="toggleConfigurator"
          :class="[showConfig ? 'show' : '', hideConfigButton ? 'd-none' : '']"

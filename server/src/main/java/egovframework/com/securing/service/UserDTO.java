@@ -111,6 +111,8 @@ public class UserDTO {
 	private String deptCd;			// 부서코드
 	private String deptNm;     		// 부서명
 	
+	private String projectCnt;     	// 진행중인 프로젝트 개수
+	
 	// 직급정보
 	private String gradeNm;
 
