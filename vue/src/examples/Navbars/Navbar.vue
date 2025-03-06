@@ -123,6 +123,7 @@ import { useRouter } from "vue-router";
 import { cmtCheck } from "../../assets/js/commute";
 import { dateTimeFormat } from "../../assets/js/common";
 import { useUserInfoStore } from '../../store/userStore.js';
+import Swal from 'sweetalert2';
 
 export default {
 
@@ -155,21 +156,19 @@ export default {
    // 출퇴근 기능 추가
    setup() {
       const userInfoStore = useUserInfoStore();
-      let loginUser = userInfoStore.user ? userInfoStore.user.mberId : ""; // 로그인한 사용자 정보 사용
-
+      
       const store = useStore();  //vuex
       const router = useRouter();// router
-
+      
       // 로그인 체크
+      const token = localStorage.getItem("token");
+      let isLogin = ref(token != null);
       let lastCmt = ref(null);
-      let isLogin = ref(loginUser != "");
       let isCmt = ref(false);
       watch(() => lastCmt.value, () => {
-         console.log("lastCmt watch");
          isCmt.value = lastCmt.value != null;
       });
       watch(() => isCmt.value, () => {
-         console.log("isCmt watch");
          store.commit('isCmtSet', isCmt.value);
       })
 
@@ -192,7 +191,6 @@ export default {
          try {
             const result = await cmtCheck(null, null); // 현재 시간 기준 출근 체크
             const addData = new FormData();
-            addData.append("mberId", loginUser);
             addData.append("goTime", dateTimeFormat(result.goTime, 'yyyy-MM-dd hh:mm:ss'));
             addData.append("goState", result.goState);
 
@@ -202,8 +200,8 @@ export default {
             store.commit("setEndDate", "");
 
             await lastCmtGetInfo(); // 출근 후 마지막 기록 갱신
-         } catch (error) {
-            console.error('출근 처리 중 오류:', error);
+         } catch (err) {
+            Swal.fire({ icon: "error", title: "출근 정보 등록 실패", text: "Error : " + err });
          } finally {
             isLoadingAdd.value = false;
          }
@@ -230,8 +228,8 @@ export default {
             store.commit("setEndDate", "");
 
             await lastCmtGetInfo(); // 퇴근 후 마지막 기록 갱신
-         } catch (error) {
-            console.error('퇴근 처리 중 오류:', error);
+         } catch (err) {
+            Swal.fire({ icon: "error", title: "퇴근 정보 등록 실패", text: "Error : " + err });
          } finally {
             isLoadingModify.value = false;
          }
@@ -239,13 +237,16 @@ export default {
 
       // 마지막 출퇴근 기록 조회
       const lastCmtGetInfo = async () => {
-         const result = await axios.get(`/api/commute/lastCmtInfo?mberId=${loginUser}`);
+         let result;
+         try {
+            result = await axios.get(`/api/commute/lastCmtInfo`);
+         } catch(err) {
+            Swal.fire({ icon: "error", title: "마지막 출퇴근 정보 조회 실패", text: "Error : " + err });
+         }
          lastCmt.value = result.data ? result.data : null;
       }
       onMounted(async () => {
          if(isLogin.value) await lastCmtGetInfo();
-         console.log("로그인 체크 : ", isLogin.value);
-         console.log("출퇴근 체크 : ", isCmt.value);
       })
 
       return {
@@ -256,7 +257,6 @@ export default {
          isCmt,
 
          userInfoStore, // 유저정보 저장소
-         loginUser, // 현재 로그인되어있는 유저 id
          btnLogout,
       }
    },

@@ -332,7 +332,7 @@ onMounted(() => {
     el: document.getElementById('jobGrid'),
     data: dataSource,
     scrollX: false,
-    scrollY: true,
+    scrollY: false,
     rowHeaders: ['checkbox', 'rowNum'],
     pageOptions: {
       useClient: false,
@@ -358,7 +358,6 @@ let isDetail = ref(false);
 const handleRowClick = (e) => {
   if (!gridInstance.value || e.rowKey == null || e.rowKey == undefined ) return;
   if (e.nativeEvent.target.type == "checkbox") {
-    console.log("체크박스 클릭 감지, 행 클릭 이벤트 무시");
     return;
   }
 
@@ -444,6 +443,11 @@ const btnJobListRemove = async () => {
     deptJobId: row.deptJobId,
     atchFileId: row.atchFileId,
   }));
+
+  if(selectedRows.length == 0) {
+    Swal.fire({ icon: "info", title: "삭제할 업무를 선택하세요." });
+    return;
+  }
 
   let check = await swalCheck('삭제');
   if(check.isConfirmed) {

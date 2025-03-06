@@ -38,6 +38,11 @@ public class CommuteController {
 	@PostMapping("/cmtAdd")
 	public String cmtAdd(@Validated CommuteDTO commuteDTO, BindingResult bindingResult, RedirectAttributes rttr) {
 
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUser user = (CustomerUser) auth.getPrincipal();
+        String userId = user.getUserDTO().getMberId();
+        commuteDTO.setMberId(userId);
+		
 		if(bindingResult.hasErrors()) {
 			return "commute/cmtAdd";
 		}
@@ -100,7 +105,11 @@ public class CommuteController {
 	
 	// 마지막 출퇴근 정보 조회
 	@GetMapping("/lastCmtInfo")
-	public CommuteDTO lastCmtInfo(@RequestParam(name="mberId") String mberId) {
+	public CommuteDTO lastCmtInfo() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUser user = (CustomerUser) auth.getPrincipal();
+        String mberId = user.getUserDTO().getMberId();
+        
 		CommuteDTO result = service.lastCmtSelect(mberId);
 		
 		return result;

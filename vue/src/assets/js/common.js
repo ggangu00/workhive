@@ -72,7 +72,7 @@ export function numberFormat(num) {
 };
 
 
-// 수정 여부 체크
+// 수정 삭제 여부 체크
 export const swalCheck = async (title) => {
    const result = Swal.fire({
       icon: 'question',
