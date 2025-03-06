@@ -22,6 +22,24 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  */
 @SuppressWarnings("serial")
 public class Comment implements Serializable {
+	private int answerNo = 1;
+	private String answer="";
+	
+	public String getAnswer() {
+		return answer;
+	}
+
+	public void setAnswer(String answer) {
+		this.answer = answer;
+	}
+
+	public int getAnswerNo() {
+		return answerNo;
+	}
+
+	public void setAnswerNo(int answerNo) {
+		this.answerNo = answerNo;
+	}
 	private String password="";
     public String getPassword() {
 		return password;

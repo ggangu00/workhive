@@ -316,6 +316,14 @@ public class EgovArticleController {
                                 @ModelAttribute("board") BoardVO board, 
                                 ModelMap model) throws Exception {
 
+    	  Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+          CustomerUser user = (CustomerUser) auth.getPrincipal();
+          String userId = user.getUserDTO().getMberId();
+          
+          board.setMberId(userId);
+          board.setWrterNm(user.getUserDTO().getMberNm());
+          //user.getUserDTO().getMberNm();
+          
         //LoginVO user = (LoginVO) EgovUserDetailsHelper.getAuthenticatedUser();
         //Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
 
