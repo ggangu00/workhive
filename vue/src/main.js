@@ -11,6 +11,11 @@ import VTooltip from "v-tooltip"
 
 import LightBootstrap from "./light-bootstrap-main";
 
+import 'primevue/resources/themes/lara-light-blue/theme.css'
+import 'primevue/resources/primevue.min.css'
+import 'primeicons/primeicons.css'
+
+
 const appInstance = createApp(App);
 const pinia = createPinia(); // ✅ Pinia 인스턴스 생성
 

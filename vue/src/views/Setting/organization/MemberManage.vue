@@ -13,9 +13,10 @@
                   <!-- 트리 뷰 (왼쪽) -->
                   <div class="col-3 depth treeview">
                      <button @click="modalOpen">모달 오픈</button>
+                     <!-- 데이터 로딩 끝난 후에만 자식 렌더링 -->
                      <DepartmentComponent
-                        v-if="Array.isArray(departmentTree.value) && departmentTree.value.length > 0"
-                        :treeData="departmentTree.value"
+                        v-if="isTreeLoaded"
+                        :departmentTree="departmentTree"
                      />
                   </div>
 
@@ -136,55 +137,50 @@
 // ================================================== 생명주기 함수 ==================================================
    // 컴포넌트가 마운트되기 전에 권한 및 메뉴 목록 조회 실행
    onBeforeMount(async () => {
-      await departmentGetList() // 비동기 완전 끝나야 데이터 있음
+      await departmentGetList();
+      isTreeLoaded.value = true;
    });
 
 // ================================================== 부서관련 axios ==================================================
    const departmentTree = ref([]);
-
+   // 데이터 로드 완료 플래그
+   const isTreeLoaded = ref(false)
    const departmentGetList = async () => {
       try {
          const response = await axios.get('/api/department')
-         console.log('API 응답 데이터:', response.data)
-
-         const tree = convertToTreeFormat(response.data)
-         console.log('트리 변환 결과:', tree)
-
+         const tree = buildPrimeVueTree(response.data)
          departmentTree.value = tree
-         console.log("departmentTree.value.length => ", departmentTree.value.length)
-
       } catch (err) {
-         departmentTree.value = []  // 실패 시 안전장치
-
+         departmentTree.value = []
          Swal.fire({
             icon: "error",
             title: "API 조회 실패",
             text: `Error: ${err.response?.data?.error || err.message}`
          })
-
       }
    }
 
-   const convertToTreeFormat = (flatList = []) => {
-      console.log("flatList => ", flatList)
-      const map = {}
+
+   const buildPrimeVueTree = (flatList) => {
+      const map = new Map()
+
+      // 전체 데이터 Map에 먼저 등록
+      flatList.forEach(item => {
+         map.set(item.deptCd, {
+            key: item.deptCd,
+            label: item.deptNm,
+            children: []
+         })
+      })
+
       const tree = []
 
-      flatList.forEach(dept => {
-         const node = {
-               id: dept.deptCd,
-               label: dept.deptNm,
-               children: []   // ✅ 이거 반드시 children
-         }
-         map[dept.deptCd] = node  // 자기 자신 등록
-
-         if (dept.parentCd) {
-               if (!map[dept.parentCd]) {
-                  map[dept.parentCd] = { id: dept.parentCd, label: '(알 수 없음)', children: [] }
-               }
-               map[dept.parentCd].children.push(node)  // ✅ 여기도 children
+      // 부모-자식 연결
+      flatList.forEach(item => {
+         if (item.parentCd) {
+            map.get(item.parentCd).children.push(map.get(item.deptCd))
          } else {
-               tree.push(node)
+            tree.push(map.get(item.deptCd))
          }
       })
 
