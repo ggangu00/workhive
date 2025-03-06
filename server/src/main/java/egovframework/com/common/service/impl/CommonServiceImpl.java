@@ -81,5 +81,10 @@ public class CommonServiceImpl implements CommonService {
 		return commonMapper.companyInfo();
 	}
 
+	@Override
+	public int updateCompanyInfo(CommonDTO commonDTO) {
+		return commonMapper.updateCompanyInfo(commonDTO);
+	}
+
 	
 }
