@@ -18,11 +18,6 @@
 	</properties>
 	<repositories>
 		<repository>
-			<id>oracle</id>
-			<name>ORACLE JDBC Repository</name>
-			<url>http://www.datanucleus.org/downloads/maven2/</url>
-		</repository>
-		<repository>
 			<id>mvn2s</id>
 			<url>https://repo1.maven.org/maven2/</url>
 			<releases>
