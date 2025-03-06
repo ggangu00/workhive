@@ -55,4 +55,10 @@ public interface ProjectService {
 	
 	//프로젝트별 참여자 조회 트리
 	public List<ProjectDTO> projectTree();
+	
+	//프로젝트 참여자 추가
+	public boolean projectMemInsert(ProjectDTO projectDTO);
+	
+	//프로젝트 참여자 삭제
+	public boolean projectMemDelete(ProjectDTO projectDTO);
 }

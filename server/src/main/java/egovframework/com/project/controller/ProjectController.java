@@ -221,5 +221,25 @@ public class ProjectController {
 	public List<ProjectDTO> projectTree() {	  
 	  return projectService.projectTree();
 	}
+	
+	//프로젝트 참여자 추가
+	@PostMapping("/tree/add")
+	public boolean projectTreeAdd(@RequestBody ProjectDTO dto) {
+		
+		boolean result = projectService.projectMemInsert(dto);
+		
+		return result;
+	}
+
+	//프로젝트 참여자 삭제
+	@DeleteMapping("/tree/delete")
+	public boolean projectTreeRemove(@RequestParam("prCd") String prCd, 
+        @RequestParam("mberId") String mberId) {
+		ProjectDTO dto = new ProjectDTO();
+		dto.setPrCd(prCd);
+		dto.setMberId(mberId);
+		
+		return projectService.projectMemDelete(dto);
+	}
 		
 }

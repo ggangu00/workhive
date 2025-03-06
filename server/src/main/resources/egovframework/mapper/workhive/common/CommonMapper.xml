@@ -155,7 +155,8 @@
 	<select id="bbsSelect" parameterType="String" resultType="commonDTO">
 		SELECT * FROM (
 		    SELECT 
-		        ROWNUM RNUM, 			
+		        ROWNUM RNUM, 		
+		        bbs_id, -- 게시판코드	
 		        ntt_id, -- 게시글번호
 		        ntt_sj, -- 게시글제목
 		        FRST_REGIST_PNTTM AS create_dt, -- 게시글 등록일
@@ -213,6 +214,7 @@
 	<!-- 홈 일자별 건수 조회 -->
 	<select id="selectSchCntHome" parameterType="String" resultType="commonDTO">
 		<![CDATA[			
+		
 			WITH Calendar AS (
 			    SELECT TO_CHAR(TO_DATE(#{schDt}, 'YYYY-MM-DD') + LEVEL - 1, 'YYYYMMDD') || '0000' AS CAL_DATE
 			    FROM DUAL
@@ -224,8 +226,9 @@
 			    COUNT(SCHED.SCHDUL_BGNDE) AS listCnt
 			FROM Calendar CAL
 			LEFT JOIN COMTNSCHDULINFO SCHED 
-			    ON TO_DATE(CAL.CAL_DATE, 'YYYYMMDDHH24MI') BETWEEN TO_DATE(SCHED.SCHDUL_BGNDE, 'YYYYMMDDHH24MI') 
-			    AND TO_DATE(SCHED.SCHDUL_ENDDE, 'YYYYMMDDHH24MI')
+			    ON TRUNC(TO_DATE(CAL.CAL_DATE, 'YYYYMMDDHH24MI')) 
+			       BETWEEN TRUNC(TO_DATE(SCHED.SCHDUL_BGNDE, 'YYYYMMDDHH24MI')) 
+			       AND TRUNC(TO_DATE(SCHED.SCHDUL_ENDDE, 'YYYYMMDDHH24MI'))
 			GROUP BY TO_NUMBER(TO_CHAR(TO_DATE(CAL.CAL_DATE, 'YYYYMMDDHH24MI'), 'DD'))
 			HAVING COUNT(SCHED.SCHDUL_BGNDE) > 0
 			ORDER BY listDt

@@ -3,7 +3,7 @@ import comm from './common.js';
 import project from './project.js';
 
 export default {
-  install: () => {
+  setup() {
     provide('comm', comm);
     provide('project', project);
   }
