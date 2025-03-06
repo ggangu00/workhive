@@ -71,7 +71,6 @@
     * 메뉴 토글 (열기/닫기)
     */
    const toggleMenu = () => {
-      console.log("click")
       menu.open = !menu.open;
    };
 </script>

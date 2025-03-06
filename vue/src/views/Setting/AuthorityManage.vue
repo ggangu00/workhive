@@ -199,10 +199,15 @@
 
    // 메뉴 수정모드 진입
    const isMenuEditing = ref(false);
+   // 수정 모드 진입
    const btnMenuModifyMode = () => {
       isMenuEditing.value = true;
-      updateMenuDataByMode();
-      console.log('수정모드 진입', isMenuEditing.value, menuData.value);
+
+      // 전체 메뉴 보여줘야 하므로 fullMenuList 복사
+      menuData.value = JSON.parse(JSON.stringify(fullMenuList.value));
+
+      // 복사 후 selected 강제 초기화
+      applySelectedState(menuData.value);
    };
 
    // 메뉴 수정모드 취소
@@ -456,6 +461,16 @@
 
       return tree;
    }
+
+   // 수정 모드 진입 시 체크 상태 재적용
+   const applySelectedState = (menus) => {
+      menus.forEach(menu => {
+         menu.selected = menu.authYn === 1;
+         if (menu.subMenus && menu.subMenus.length > 0) {
+            applySelectedState(menu.subMenus);
+         }
+      });
+   };
 
 // ================================================== 드롭다운 토글 ==================================================
    const optionsToggle = (idx) => {
