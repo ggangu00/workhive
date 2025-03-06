@@ -4,6 +4,7 @@
     background-color: $form-switch-bg-color;
     height: $form-switch-height;
     width: $form-switch-width;
+    margin-right: 12px;
 
     &:after {
       transition: transform $form-check-transition-time ease-in-out, background-color $form-check-transition-time ease-in-out;
@@ -22,12 +23,12 @@
 
     &:checked:after {
       transform: translateX($form-switch-translate-x-end);
-      border-color: $dark-gradient;
+      border-color: #bebebe;
     }
 
     &:checked {
-      border-color: $dark-gradient;
-      background-color: $dark-gradient;
+      border-color: $primary;
+      background-color: $primary;
       &:active{
         &:after{
           box-shadow: $form-switch-check-active-checked-after-shadow;

@@ -86,7 +86,7 @@
                                                         }})</span>
                                                 </div>
                                             </td>
-                                            <td>{{ member.gradeNm }}</td>
+                                            <td>{{ member.gradeNm || '-' }}</td>
                                             <td>{{ member.projectCnt }}건</td>
                                         </tr>
                                     </VueDraggableNext>
@@ -111,9 +111,8 @@
                             <div class="project treeview">
                                 <!-- 프로젝트 트리 -->
                                 <ul class="list-unstyled" v-for="project in projectList" :key="project"
-                                    @click="project.memberArr.length > 0 ? toggleMemMenu(project) : ''"
                                     style="cursor: pointer;">
-                                    <span>
+                                    <span @click="project.memberArr.length > 0 ? toggleMemMenu(project) : ''">
                                         <i :class="['folder', project.isHidden ? 'bi bi-folder-minus' : 'bi bi-folder-plus',
                                             project.memberArr.length < 1 ? 'bi bi-folder' : '']"></i>
                                         {{ project.prNm }} ({{ project.memberArr.length }})
@@ -121,15 +120,20 @@
 
                                     <li v-for="member in project.memberArr" :key="member" class="ms-3"
                                         v-show="project.isHidden">
-                                        <span>
-                                            <i class="bi bi-dot"></i>
-                                            {{ member.deptNm != null ? '[' + member.deptNm + ']' : '' }}
-                                            {{ member.mberNm || '' }}
-                                            {{ member.gradeNm || '' }}
+
+                                        <div class="form-check form-switch d-flex"
+                                            style="justify-content: start; align-items: center;">
+                                            <input class="form-check-input" type="checkbox" role="switch"
+                                                id="flexSwitchCheckChecked" checked>
+                                            <span>
+                                                {{ member.deptNm != null ? '[' + member.deptNm + ']' : '' }}
+                                                {{ member.mberNm || '' }}
+                                                {{ member.gradeNm || '' }}</span>
                                             <i class="bi bi-x" @click="btnProjectMemRemove(member)"></i>
                                             <i class="fa-solid fa-crown master mlp5" aria-hidden="true"
                                                 v-show="member.mgrSt == 'A01'"></i>
-                                        </span>
+                                        </div>
+
                                     </li>
                                 </ul>
                             </div>
