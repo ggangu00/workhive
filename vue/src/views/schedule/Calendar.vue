@@ -194,8 +194,8 @@ mounted() {
 methods: {
 getEventColor(asdf) {
   switch (asdf) {
-    case 'L01 ': return '#ffc0cb'; //회의
-    default: return '#3788d8'; // 기본 색상
+    case 'L01 ': return '#c7e3b2'; //회의
+    default: return '#83a2e9'; // 기본 색상
   }
 },
 

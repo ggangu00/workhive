@@ -73,7 +73,14 @@
                                         </tr>
                                     </thead>
 
-                                    <VueDraggableNext v-if="members.length > 0" :list="members" tag="tbody"
+                                    <VueDraggableNext 
+                                        v-if="members.length > 0" 
+                                        tag="tbody"
+                                        :list="members"  
+                                        :multiDrag="true"
+                                        :selected-class="'selected'"                                      
+                                        @start="onDragStart"
+                                        @end="onDrop"
                                         :animation="300">
                                         <tr v-for="(member, i) in members" :key="i">
                                             <td>{{ i + 1 }}</td>
@@ -163,6 +170,21 @@ const toggleMemMenu = (memberMenu) => {
     memberMenu.isHidden = !memberMenu.isHidden;
 };
 
+const draggedEmployee = ref([]);
+const onDragStart = (event) => {
+    draggedEmployee.value = members.value[event.oldIndex];
+};
+
+const onDrop = (event) => {
+  if (!draggedEmployee.value) return;
+
+  const projectIndex = event.newIndex; // 드롭된 위치의 인덱스
+  const project = projectList.value[projectIndex];
+
+  // 프로젝트 코드 출력
+  console.log("드롭된 프로젝트 코드:", project.value);
+
+};
 //======================= axios =======================
 
 //구성원 전체조회

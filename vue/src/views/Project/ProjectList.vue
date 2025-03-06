@@ -93,6 +93,7 @@
 
             <div class="table-responsive">
               <table class="table table-hover project">
+                <colgroup><col width="10%"><col><col width="10%"><col></colgroup>
                 <tbody>
                   <tr>
                     <th class="table-secondary">프로젝트명</th>
@@ -124,10 +125,11 @@
           <card>
             <p class="card-title mb-2">프로젝트 과업</p>
             <div class="progress-bar ">
-              <div class="progress-bar-fill " :style="'width:' + progress + '%'">{{ workProgress }}%</div>
+              <div class="progress-bar-fill " :style="'width:' + progress + '%'">{{ Math.floor(workProgress) }}%</div>
             </div>
             <div class="table-responsive" :style="workCount > 0 ? 'max-height: 200px; overflow-y: auto;' : ''">
               <table class="table table-hover project">
+                <colgroup><col width="10%"><col width="40%"><col><col></colgroup>
                 <thead class="table-secondary">
                   <tr>
                     <th>순서</th>
@@ -317,7 +319,11 @@ class subjectRenderer {
     //남은 기간이 10일 이하인 경우 경고배지 적용
     let term = dateTermCalc(dateFormat(rowData.endDt), dateFormat()) * (-1);
     
-    term < 10 ? termClass.value = 'badge-danger': termClass.value = 'badge-primary';
+    if(rowData.state == 'A04'){
+      termClass.value = 'badge-secondary';
+    }else{
+      term < 10 ? termClass.value = 'badge-danger': termClass.value = 'badge-primary';
+    }
 
     el.innerHTML = `
       <div class="category">${rowData.comNm}</div>

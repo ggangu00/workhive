@@ -24,6 +24,43 @@
                 </div>
               </div>
 
+              <!--박주현 레이아웃 수정[S]-->
+              <div class="vc-info-card">
+                <div class="item dash">
+                    <div class="label">대상연도</div>
+                    <div class="value">{{ vcInfo.targetYear }}년</div>
+                </div>
+                <div class="item">
+                    <div class="label">부여일수</div>
+                    <div class="value">{{ vcInfo.giveDays }}일</div>
+                </div>
+                <div class="separator"><i class="fa-solid fa-minus"></i></div>
+                <div class="item">
+                    <div class="label">사용일수</div>
+                    <div class="value">{{ vcInfo.useDays }}일</div>
+                </div>
+                <div class="separator"><i class="fa-solid fa-equals"></i></div>
+                <div class="item dash">
+                    <div class="label">잔여일수</div>
+                    <div class="value">{{ vcInfo.remainDays }}일</div>
+                </div>
+                <div class="item dash">
+                    <div class="label">신청가능일수</div>
+                    <div class="value primary">{{ vcInfo.requestDays }}일</div>
+                </div>
+                <div class="item dash">
+                    <div class="label">결재대기</div>
+                    <div class="value danger">{{ vcInfo.signWait }}건</div>
+                </div>
+                <div class="item">
+                    <div class="label">보완요청</div>
+                    <div class="value warning">{{ vcInfo.signSup }}건</div>
+                </div>
+              </div>
+              <!--박주현 레이아웃 수정[E]-->
+
+              
+              <!--
               <div class="row">
                 <div class="col vc-card">
                   <div class="vc-header">대상연도</div>
@@ -61,6 +98,7 @@
                   <hr>
                 </div>
               </div>
+              -->
 
             </div>
           </div>
@@ -131,5 +169,49 @@ const yearVcCheck = async () => {
 </script>
 
 <style scoped>
+.vc-info-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #ccc;
+  padding: 30px 7px;
+
+  .item {
+      text-align: center;
+      flex: 1;
+      position: relative;
+  }
+  .item.dash:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      top: 10%;
+      height: 80%;
+      width: 1px;
+      background-color: #ccc;
+  }
+  .label {
+      font-size: 17px;
+      color: #747474;
+  }
+  .value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #565656;
+  }
+  .separator i {
+    color: #bfbfbf;
+  }
+
+  .primary {
+    color: #81a1eb;
+  }
+  .warning {
+    color: #ffc479;
+  }
+  .danger {
+    color: #ff9097;
+  }
+}
 
 </style>
