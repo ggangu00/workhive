@@ -58,6 +58,8 @@ import Grid from 'tui-grid';
 import { ref, onBeforeUnmount, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { timeFormatter, dateFormatter } from '../../assets/js/formatter.js';
+import { swalCheck } from '../../assets/js/common.js';
+import Swal from 'sweetalert2';
 
 const token = localStorage.getItem("token");
 
@@ -189,7 +191,17 @@ const btnCrctUpdate = (rowKey) => {
 const btnCrctDelete = async (rowKey) => {
   let crctCd = gridInstance.value.getRow(rowKey).crctCd;
 
-  await axios.post(`/api/commute/crctRemove?crctCd=${crctCd}`);
+  let  check = await swalCheck('삭제');
+  if(check.isConfirmed) {
+    try {
+      await axios.post(`/api/commute/crctRemove?crctCd=${crctCd}`);
+    } catch (err) {
+      Swal.fire({ icon: "error", title: "출퇴근 정정 요청 삭제 실패", text: "Error : " + err });
+    }
+  }
+  else {
+    return;
+  }
   crctGetList();
 };
 

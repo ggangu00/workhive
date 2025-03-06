@@ -3,7 +3,7 @@
     <div class="flex-container">
       <!-- 부서 열기/닫기 아이콘 -->
       <i :class="isOpen ? 'fa-regular fa-folder-open' : 'fa-solid fa-folder'" @click="toggle"></i>
-      <span @click="toggle">{{ dept.deptNm }}</span>
+      <div @click="deptClicked(dept)"><span @click="toggle">{{ dept.deptNm }}</span></div>
       <i class="fa-solid fa-plus" @click.stop="jobBxManage('add', dept)"></i>
     </div>
 
@@ -69,9 +69,25 @@ watch(() => props.jobBoxes, () => {
   if(selectedJobBx != undefined) jobBoxClicked(selectedJobBx);
 });
 
-// 업무함 클릭시 vuex 정보 변경
 const store = useStore();
 let selectedJobBx;
+
+// 부서 선택
+const deptClicked = (dept) => {
+  console.log(dept);
+  const relatedJobBoxes = props.jobBoxes.filter(j => j.deptCd === dept.deptCd);
+
+  store.dispatch('jobBxSelectedUpdate', { 
+    searchDeptCd: dept.deptCd, 
+    searchDeptNm: dept.deptNm,
+    searchDeptJobBxId: '',
+    searchDeptJobBxNm: '',
+  });
+
+  store.dispatch('jobBxListUpdate', relatedJobBoxes);
+}
+
+// 업무함 클릭시 vuex 정보 변경
 const jobBoxClicked = (job) => {
   selectedJobBx = job;
   const relatedJobBoxes = props.jobBoxes.filter(j => j.deptCd === job.deptCd);

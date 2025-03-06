@@ -59,6 +59,7 @@ import axios from '../../assets/js/customAxios.js';
 import { useRouter } from 'vue-router';
 import * as vcFormat from '../../assets/js/formatter.js';
 import Swal from 'sweetalert2';
+import { swalCheck } from '../../assets/js/common.js';
 
 let gridInstance = ref();
 
@@ -194,10 +195,16 @@ const btnVcUpdate = (rowKey) => {
 const btnVcDelete = async (rowKey) => {
   let vcCd = gridInstance.value.getRow(rowKey).vcCd;
 
-  try {
-    await axios.post(`/api/vacation/vcRemove?vcCd=${vcCd}`);
-  } catch (err) {
-    Swal.fire({ icon: "error", title: "휴가 신청 삭제에 실패하였습니다.", text: "Error : " + err });
+  let check = await swalCheck('삭제');
+  if(check.isConfirmed) {
+    try {
+      await axios.post(`/api/vacation/vcRemove?vcCd=${vcCd}`);
+    } catch (err) {
+      Swal.fire({ icon: "error", title: "휴가 신청 삭제 실패", text: "Error : " + err });
+    }
+  }
+  else {
+    return;
   }
 
   vcGetList();

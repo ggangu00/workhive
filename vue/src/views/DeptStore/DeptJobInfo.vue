@@ -38,26 +38,32 @@
                   <div class="content">
                     <div class="container-fluid">
 
-                      <div class="row">
-                        <div class="col">
-                          <div class="mb-3">
-                            <label>부서명</label>
-                            <input type="text" class="form-control" v-model="jobBxData.deptNm" placeholder="부서명" readonly />
+                      <div class="card">
+                        <div class="card-body">
+
+                          <div class="row">
+                            <div class="col">
+                              <div class="mb-3">
+                                <label>부서명</label>
+                                <input type="text" class="form-control" v-model="jobBxData.deptNm" placeholder="부서명" readonly />
+                              </div>
+                            </div>
+                            <div class="col">
+                              <div class="mb-3">
+                                <label for="indictOrdr">표시순서<em class="point-red">*</em></label>
+                                <input id="indictOrdr" type="number" class="form-control" v-model="jobBxData.indictOrdr" />
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                        <div class="col">
-                          <div class="mb-3">
-                            <label>표시순서</label>
-                            <input type="number" class="form-control" v-model="jobBxData.indictOrdr" />
+                          <div class="row">
+                            <div class="col">
+                              <div class="mb-3">
+                                <label for="jobBxNm">업무함명<em class="point-red">*</em></label>
+                                <input id="jobBxNm" type="text" class="form-control" v-model="jobBxData.deptJobBxNm" placeholder="업무함명을 입력해주세요." />
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col">
-                          <div class="mb-3">
-                            <label>업무함명</label>
-                            <input type="text" class="form-control" v-model="jobBxData.deptJobBxNm" placeholder="업무함명을 입력해주세요." />
-                          </div>
+                          
                         </div>
                       </div>
 
@@ -91,9 +97,14 @@
                   />
                 </div>
                 <div class="col d-flex justify-content-end align-items-center">
-                  <label for="title-search" class="m-0 me-2">제목 검색</label>
+                  <select class="form-select" v-model="jobSearch.searchCnd" style="width: 100px; margin-right: 5px;">
+                    <option value="0">전체</option>
+                    <option value="1">업무명</option>
+                    <option value="2">업무내용</option>
+                    <option value="3">담당자명</option>
+                  </select>
 
-                  <input type="text" class="form-control w-auto me-2" placeholder="제목을 입력해주세요" id="title-search" v-model="jobSearch.searchWrd">
+                  <input type="text" class="form-control w-auto me-2" placeholder="" id="title-search" v-model="jobSearch.searchWrd">
                   <button class="btn btn-info btn-fill" @click="jobGetList">검색</button>
                 </div>
               </div>
@@ -129,6 +140,7 @@ import { provide } from 'vue'; // 자식에게 전달
 import DeptJobBx from "./DeptJobBx.vue";
 import JobManage from "./JobManage.vue";
 import Modal from '../../components/Modal.vue';
+import { swalCheck } from '../../assets/js/common.js';
 
 const token = localStorage.getItem("token");
 
@@ -167,7 +179,7 @@ const deptGetList = async () => {
     departments.value = result.data;
 
   } catch (err) {
-    Swal.fire({ icon: "error", title: "부서 조회에 실패하였습니다.", text: "Error : " + err });
+    Swal.fire({ icon: "error", title: "부서 조회 실패", text: "Error : " + err });
   }
 };
 
@@ -178,7 +190,7 @@ const jobBxGetList  = async () => {
     jobBoxes.value = result.data;
 
   } catch (err) {
-    Swal.fire({ icon: "error", title: "업무함 조회에 실패하였습니다.", text: "Error : " + err });
+    Swal.fire({ icon: "error", title: "업무함 조회 실패", text: "Error : " + err });
   }
 };
 
@@ -220,11 +232,7 @@ const jobBxCheck = async (type, data) => {
       modalOpen();
       break;
     case 'remove':
-      try {
-        await axios.delete('/api/deptstore/jobBxRemove', { params: { deptJobBxId: data.deptJobBxId } });
-      } catch (err) {
-        Swal.fire({ icon: "error", title: "업무함 삭제에 실패하였습니다.", text: "Error : " + err });
-      }
+      await jobBxRemove(data.deptJobBxId);
       deptGetList();
       jobBxGetList();
       break;
@@ -232,6 +240,20 @@ const jobBxCheck = async (type, data) => {
 
 }
 provide('jobBxCheck', jobBxCheck);
+
+const jobBxRemove = async (deptJobBxId) => {
+  let check = await swalCheck('삭제');
+  if(check.isConfirmed) {
+    try {
+      await axios.delete('/api/deptstore/jobBxRemove', { params: { deptJobBxId: deptJobBxId } });
+    } catch (err) {
+      Swal.fire({ icon: "error", title: "업무함 삭제 실패", text: "Error : " + err });
+    }
+  }
+  else {
+    return;
+  }
+}
 
 // 업무함 관리 모달
 let isShowModal = ref(false);
@@ -253,15 +275,22 @@ const modalConfirm = async () => {
     try {
       await axios.post('/api/deptstore/jobBxAdd', formData);
     } catch (err) {
-      Swal.fire({ icon: "error", title: "업무함 등록에 실패하였습니다.", text: "Error : " + err });
+      Swal.fire({ icon: "error", title: "업무함 등록 실패", text: "Error : " + err });
     }
 
   } else if(jobBxModalType == 'modify') {
     formData.append("deptJobBxId", jobBxData.value.deptJobBxId);
-    try {
-      await axios.post('/api/deptstore/jobBxModify', formData);
-    } catch (err) {
-      Swal.fire({ icon: "error", title: "업무함 수정에 실패하였습니다.", text: "Error : " + err });
+
+    let check = await swalCheck('수정');
+    if(check.isConfirmed) {
+      try {
+        await axios.post('/api/deptstore/jobBxModify', formData);
+      } catch (err) {
+        Swal.fire({ icon: "error", title: "업무함 수정 실패", text: "Error : " + err });
+      }
+    }
+    else {
+      return;
     }
   }
   deptGetList();
@@ -271,7 +300,18 @@ const modalConfirm = async () => {
 
 // 업무함 유효성 체크
 const jobBxValidCheck = () => {
+  if(jobBxData.value.indictOrdr === '') {
+    const focusTag = document.querySelector('#indictOrdr');
+    focusTag?.focus();
+    Swal.fire({
+      icon: "info",
+      title: "표시순서를 입력하세요.",
+    });
+    return false;
+  }
   if(!jobBxData.value.deptJobBxNm?.trim()) {
+    const focusTag = document.querySelector('#jobBxNm');
+    focusTag?.focus();
     Swal.fire({
       icon: "info",
       title: "업무함명을 입력하세요.",
@@ -299,7 +339,7 @@ onMounted(() => {
       perPage: 13,
     },
     columns: [ // 체크박스 / 번호 / 제목 / 담당자 / 작성일 / 버튼
-      { header: '제목', name: 'deptJobNm', sortable: true},
+      { header: '업무명', name: 'deptJobNm', sortable: true},
       { header: '담당자', name: 'chargerNm', sortable: true},
       { header: '작성일', name: 'frstRegisterPnttm', sortable: true},
       {
@@ -381,10 +421,16 @@ class BtnRenderer {
 const delEvent = async (rowKey) => {
   selectedRowData = gridInstance.value.getRow(rowKey);
   
-  try {
-    await axios.delete('/api/deptstore/jobRemove', { params: { deptJobId: selectedRowData.deptJobId } });
-  } catch (err) {
-    Swal.fire({ icon: "error", title: "업무 삭제에 실패하였습니다.", text: "Error : " + err });
+  let check = await swalCheck('삭제');
+  if(check.isConfirmed) {
+    try {
+      await axios.delete('/api/deptstore/jobRemove', { params: { deptJobId: selectedRowData.deptJobId } });
+    } catch (err) {
+      Swal.fire({ icon: "error", title: "업무 삭제 실패", text: "Error : " + err });
+    }
+  }
+  else {
+    return;
   }
 
   jobGetList();
@@ -399,10 +445,16 @@ const btnJobListRemove = async () => {
     atchFileId: row.atchFileId,
   }));
 
-  try {
-    await axios.post('/api/deptstore/jobListRemove', jobList);
-  } catch (err) {
-    Swal.fire({ icon: "error", title: "업무 목록 삭제에 실패하였습니다.", text: "Error : " + err });
+  let check = await swalCheck('삭제');
+  if(check.isConfirmed) {
+    try {
+      await axios.post('/api/deptstore/jobListRemove', jobList);
+    } catch (err) {
+      Swal.fire({ icon: "error", title: "업무 목록 삭제 실패", text: "Error : " + err });
+    }
+  }
+  else {
+    return;
   }
 
   jobGetList();
