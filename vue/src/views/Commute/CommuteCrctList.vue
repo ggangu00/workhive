@@ -96,7 +96,7 @@ onMounted(() => {
     el: document.getElementById('crctGrid'),
     data: dataSource,
     scrollX: false,
-    scrollY: true,
+    scrollY: false,
     pageOptions: {
       useClient: false,
       perPage: 13,
@@ -161,7 +161,6 @@ class BtnRenderer {
       const rowKey = props.row?.rowKey ?? props.grid.getRow(props.rowKey)?.rowKey;
 
       if (rowKey === undefined) {
-        console.error("BtnRenderer: rowKey를 가져올 수 없습니다.", props);
         return;
       }
 

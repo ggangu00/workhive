@@ -401,7 +401,6 @@ public class EgovDeptJobController {
 //		if (isAuthenticated) {
 //			deptJobBxVO.setLastUpdusrId(user == null ? "" : EgovStringUtil.isNullToString(user.getUniqId()));
 //			deptJobService.updateDeptJobBx(deptJobBxVO);
-//			System.out.println("jobBx update check");
 //		}
 //		deptJobBxVO.setLastUpdusrId(user == null ? "user01" : EgovStringUtil.isNullToString(user.getUniqId()));
 		
@@ -839,9 +838,7 @@ public class EgovDeptJobController {
 	// 업무 전체 삭제
 	@PostMapping("/jobListRemove")
 	public void deleteDeptJobList(@RequestBody List<DeptJob> jobList) throws Exception {
-		System.out.println("delete test : " + jobList);
 		jobList.forEach(deptJob -> {
-			System.out.println("job : " + deptJob);
 			try {
 				deleteDeptJob(deptJob);
 			} catch (Exception e) {

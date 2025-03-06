@@ -104,7 +104,6 @@ let signGridInstance = ref();
 // 그리드 로우 데이터
 const crctGetList = () => {
   crctGridInstance.value.readData(1,  crctSrchData.value);
-  console.log("readData : ", crctGridInstance.value.readData(1,  crctSrchData.value));
 }
 const crctList = {
   api: {
@@ -172,7 +171,7 @@ const initGrid = (gridInstance, gridDiv, rowData, colData) => {
     el: document.getElementById(gridDiv),
     data: rowData,
     scrollX: false,
-    scrollY: true,
+    scrollY: false,
     rowHeaders: ['checkbox'],
     pageOptions: {
       useClient: false,
@@ -199,7 +198,6 @@ onBeforeUnmount(() => {
 
 // 정정 요청 결재 기능
 const btnCrctSign = async (e) => {
-  console.log(e);
   let selectedRows = e.target.value === 'D01' ? signGridInstance.value.getCheckedRows() : crctGridInstance.value.getCheckedRows();
 
   let signDataArray = [];
@@ -230,14 +228,10 @@ const btnCrctSign = async (e) => {
   if(check.isConfirmed) {
     // 해당 데이터들을 서버에 보내도록 수정
     if (signDataArray.length) {
-      if(e.target.value == 'D01' || e.target.value == 'D02') {
-        try {
-          await axios.post('/api/commute/crctSignModify', signDataArray.map(data => data.cmtData));
-        } catch (err) {
-          Swal.fire({ icon: "error", title: "출퇴근 정정 요청 수정 실패", text: "Error : " + err });
-        }
-      }
       try {
+        if(e.target.value == 'D01' || e.target.value == 'D02')
+          await axios.post('/api/commute/crctSignModify', signDataArray.map(data => data.cmtData));
+        
         await axios.post('/api/commute/signModify', signDataArray.map(data => data.signData));
       } catch (err) {
         Swal.fire({ icon: "error", title: "출퇴근 정정 요청 결재 실패", text: "Error : " + err });

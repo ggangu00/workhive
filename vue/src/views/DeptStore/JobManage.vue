@@ -82,7 +82,7 @@
                 <label>파일첨부</label>
                 <div class="form-control">
                   <div v-if="!props.isDetail">
-                    <label class="btn btn-fill cell-btn-custom" for="inputFile">파일선택</label>
+                    <label class="btn btn-sm btn-fill cell-btn-custom" for="inputFile">파일선택</label>
                     <a>{{ (fileList.length == 0) ? "선택된 파일 없음" : `파일 ${fileList.length}개` }}</a>
                     <p class="file-info">개별 파일 기준 최대 30MB까지 첨부할 수 있습니다.</p>
                     <input type="file" id="inputFile" style="display: none;" @change="addFileList($event.target)" multiple>
@@ -93,6 +93,7 @@
                     <div class="col-4" v-for="(file, index) in fileList" :key="index">
                     {{ file.name }}
                     <button class="btn btn-sm btn-danger cell-btn-custom" @click="removeFile(index)" v-if="!props.isDetail">삭제</button>
+                    <button class="btn btn-sm cell-btn-custom" @click="downloadFile(file)" v-if="props.isDetail">다운</button>
                     </div>
                     <div class="col" v-if="fileList.length == 0">첨부된 파일이 없습니다.</div>
                   </div>
@@ -120,6 +121,7 @@ import { useStore } from 'vuex';
 import SignerModal from '../components/Modal/SignerModal.vue';
 import Swal from 'sweetalert2';
 import { swalCheck } from '../../assets/js/common.js';
+import FileSaver from 'file-saver';
 
 const props = defineProps({
   isShowJobModal: Boolean,
@@ -166,6 +168,8 @@ watch(() => props.isShowJobModal, () => {
     formValues.value.deptJobNm = '';
     formValues.value.deptJobCn = '';
     formValues.value.chargerId = '';
+    formValues.value.chargerNm = '';
+
     fileList.value = [];
   }
 })
@@ -198,7 +202,6 @@ watch(() => props.selectedRowData, async (newVal) => {
     } catch (err) {
       Swal.fire({ icon: "error", title: "업무 상세 정보 조회 실패", text: "Error : " + err });
     }
-    console.log("업무 상세 정보 : ", result.data);
 
     formValues.value.deptCd = result.data.deptCd;
     formValues.value.deptNm = result.data.deptNm;
@@ -234,6 +237,26 @@ const files = async () => {
     console.error("파일 목록 조회 실패:", error);
   }
 }
+
+// 파일 다운로드 기능
+const downloadFile = async (file) => {
+  try {
+    // 파일 다운로드 API 호출
+    const response = await axios.get(`/api/cmm/fms/FileDown.do`, {
+      params: {
+        atchFileId: file.atchFileId,  // 파일 ID
+        fileSn: file.fileSn,          // 파일 시리얼 넘버
+      },
+      responseType: "blob",  // 바이너리 데이터 형식으로 받기
+    });
+    
+    // 받은 데이터를 Blob으로 변환하고, FileSaver를 사용하여 다운로드
+    const blob = new Blob([response.data]);
+    FileSaver.saveAs(blob, file.name);  // 파일명으로 다운로드
+  } catch (err) {
+    Swal.fire({ icon: "error", title: "파일 다운로드 실패", text: "Error : " + err });
+  }
+};
 
 const emit = defineEmits(['modalCloseJob', 'modalConfirmJob']);
 const modalCloseJob = () => {
@@ -360,7 +383,6 @@ const modalClose = () => {
 }
 const modalConfirm = (row) => {
   isShowModal.value = false;
-  console.log("결재자 : ", row);
   formValues.value.chargerId = row.mberId;
   formValues.value.chargerNm = row.mberNm;
 }

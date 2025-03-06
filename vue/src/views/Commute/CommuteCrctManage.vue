@@ -59,7 +59,7 @@
                       <td colspan="5">
                         <div class="form-control custom-file-div">
                           <div v-if="!isDetail">
-                            <label class="btn btn-fill cell-btn-custom" for="inputFile">파일선택</label>
+                            <label class="btn btn-sm btn-fill cell-btn-custom" for="inputFile">파일선택</label>
                             <a>{{ (fileList.length == 0) ? "선택된 파일 없음" : `파일 ${fileList.length}개` }}</a>
                             <p class="file-info">개별 파일 기준 최대 30MB까지 첨부할 수 있습니다.</p>
                             <input type="file" id="inputFile" style="display: none;" @change="addFileList($event.target)" multiple>
@@ -68,8 +68,9 @@
 
                           <div class="row file-list">
                             <div class="col-4" v-for="(file, index) in fileList" :key="index">
-                            {{ file.name }}
-                            <button class="btn btn-sm btn-danger cell-btn-custom" @click="removeFile(index)" v-if="!isDetail">삭제</button>
+                              {{ file.name }}
+                              <button class="btn btn-sm btn-danger cell-btn-custom" @click="removeFile(index)" v-if="!isDetail">삭제</button>
+                              <button class="btn btn-sm cell-btn-custom" @click="downloadFile(file)" v-if="isDetail">다운</button>
                             </div>
                             <div class="col" v-if="fileList.length == 0">첨부된 파일이 없습니다.</div>
                           </div>
@@ -88,11 +89,9 @@
                 @modalClose="modalClose"
                 @modalConfirm="modalConfirm"
               />
-              <div class="row justify-content-center">
-                <div class="col-auto">
+              <div class="text-center">
                   <button class="btn btn-secondary btn-fill mx-2" @click="btnCrctCancle">취소</button>
                   <button class="btn btn-success btn-fill" @click="btnCrctManage" v-if="!isDetail">저장</button>
-                </div>
               </div>
             </div>
           </div>
@@ -113,23 +112,13 @@ import { ref , onMounted, watch } from 'vue';
 import { dateTimeFormat, swalCheck } from '../../assets/js/common.js';
 import SignerModal from '../components/Modal/SignerModal.vue';
 import Swal from 'sweetalert2';
+import FileSaver from 'file-saver';
 
 const route = useRoute();
 let isUpdate = ref(route.query.isUpdate === 'true');
 let isDetail = ref(route.query.isDetail === 'true');
 let cmtCd;
 let crctCd;
-
-// 같은 페이지로 push될 때 감지하고 새로고침
-watch(
-   () => route.fullPath,
-   (newPath, oldPath) => {
-      if (newPath === oldPath) {
-        console.log("reloaded");
-         window.location.reload(); // 강제 새로고침
-      }
-   }
-);
 
 // 첨부파일
 const fileList = ref([]);
@@ -222,6 +211,26 @@ const files = async () => {
   }
 }
 
+// 파일 다운로드 기능
+const downloadFile = async (file) => {
+  try {
+    // 파일 다운로드 API 호출
+    const response = await axios.get(`/api/cmm/fms/FileDown.do`, {
+      params: {
+        atchFileId: file.atchFileId,  // 파일 ID
+        fileSn: file.fileSn,          // 파일 시리얼 넘버
+      },
+      responseType: "blob",  // 바이너리 데이터 형식으로 받기
+    });
+    
+    // 받은 데이터를 Blob으로 변환하고, FileSaver를 사용하여 다운로드
+    const blob = new Blob([response.data]);
+    FileSaver.saveAs(blob, file.name);  // 파일명으로 다운로드
+  } catch (err) {
+    Swal.fire({ icon: "error", title: "파일 다운로드 실패", text: "Error : " + err });
+  }
+};
+
 onMounted(() => {
   if(route.query.cmtCd != undefined) {
     cmtCd = route.query.cmtCd;
@@ -291,7 +300,6 @@ const modalClose = () => {
 }
 const modalConfirm = (row) => {
   isShowModal.value = false;
-  console.log("결재자 : ", row);
   crctData.value.signId = row.mberId;
   crctData.value.signNm = row.mberNm;
 }
