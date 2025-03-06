@@ -24,8 +24,8 @@
                 </div>
               </div> -->
 
-              <div class="row profile-section">
-                <div class="col status-boxes">
+              <div class="row profile-section justify-content-center">
+                <div class="col-auto status-boxes">
 
                   <div class="status-box projects">
                     <div class="status-title" style="background-color: gray;">대상연도</div>
