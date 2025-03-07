@@ -4,7 +4,7 @@
       <div class="row">
         <div class="col-12">
           <card>
-            <h4 class="card-title float-left">{{ title }}</h4>
+            <h4 class="card-title float-left mt-1">{{ title }}</h4>
             <div class="d-flex justify-content-end">
               <button
                 v-for="(btn, index) in buttons"
@@ -15,58 +15,59 @@
               </button>
             </div>
           </card>
-          <div class="card">
+          <card>
             <!-- 버튼 & 필터 -->
-            <div class="button-collection d-flex justify-content-between align-items-center flex-wrap" style="padding: 15px;">
-              <div class="selectbox d-flex">
-                <select class="form-select w10" name="doc_kind" v-model="docKind">
+            <div class="row justify-content-between align-items-end">
+              <div class="col-3"></div>
+              <div class="selectbox col d-flex align-items-center">
+                <select class="form-control form-select w50" name="doc_kind" v-model="docKind">
                   <option v-for="(data, idx) in selectedData"
                   :key="idx"
                   :value="data.commDtlCd">
                   {{ data.commDtlNm }}
                   </option>
                 </select>
-                <select class="form-select w10" name="dept_nm" v-model="deptNm">
+                <select class="form-control form-select w50" name="dept_nm" v-model="deptNm">
                   <option v-for="(data, idx) in selectedDeptData"
                   :key="idx"
                   :value="data.deptNm">
                   {{ data.deptNm }}
                   </option>
                 </select>
-                <select class="form-select w10" name="form_cd" v-model="formType">
+                <select class="form-control form-select w50" name="form_cd" v-model="formType">
                   <option v-for="(data, idx) in selectedFormData"
                   :key="idx"
                   :value="data.formCd">
                   {{ data.formType }}
                   </option>
                 </select>
-                <div class="d-flex">
+                
                   <div class="input-group">
                     <span class="input-group-text fw-bold">기안일(시작)</span>
-                    <input type="date" class="form-control" v-model="startDate">
+                    <input type="date" class="form-control w50" v-model="startDate">
                   </div>
                   <span class="fw-bold">~</span>
                   <div class="input-group">
                     <span class="input-group-text fw-bold">기안일(종료)</span>
-                    <input type="date" class="form-control" v-model="endDate">
+                    <input type="date" class="form-control w50" v-model="endDate">
                   </div>
-                </div>
+                
 
-                <button class="btn btn-secondary btn-fill" @click="resetBtn">초기화</button>
+                <button class="btn btn-secondary btn-fill w20" @click="resetBtn">초기화</button>
               </div>
             </div>
-          </div>
+          </card>
         </div>
 
         <!-- Toast UI Grid 영역 -->
-        <card>
-          
+        <div class="card">
+          <div class="card-body">
             <div class="col-12">
               <div id="tableGrid" class="toastui"></div>
               <!-- <div id="pagination" class="tui-pagination"></div> -->
             </div>
-          
-        </card>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -353,6 +354,10 @@ defineExpose({btnSelectChange, reteriveBtn})
 <style scoped>
 .button-collection button {
   margin-right: 10px;
+}
+.input-group-text {
+  background-color: #eee;
+  color: #747474;
 }
 .selectbox select {
   margin-right: 10px;

@@ -11,7 +11,7 @@
               <ul>
                 <li v-for="dept in departmentTree" :key="dept.deptCd">
                   <span @click="toggleDept(dept), selectDept(dept)" class="tree-node">
-                    <i :class="dept.expanded ? 'fa-solid fa-folder-open' : 'fa-solid fa-folder'"></i>
+                    <i :class="dept.expanded ? 'fa-solid fa-angle-right rotated90' : 'fa-solid fa-angle-right'"></i>
                     {{ dept.deptNm }}
                   </span>
 
@@ -19,7 +19,7 @@
                   <ul v-if="dept.expanded && (dept.children || []).length">
                     <li v-for="subDept in dept.children || []" :key="subDept.deptCd">
                       <span @click="toggleDept(subDept), selectDept(subDept)" class="tree-node">
-                        <i :class="subDept.expanded ? 'fa-solid fa-folder-open' : 'fa-solid fa-folder'"></i>
+                        <i :class="subDept.expanded ? 'fa-solid fa-angle-right rotated90' : 'fa-solid fa-angle-right'"></i>
                         {{ subDept.deptNm }}
                       </span>
 
@@ -27,7 +27,7 @@
                       <ul v-if="subDept.expanded && (subDept.children || []).length">
                         <li v-for="subSubDept in subDept.children || []" :key="subSubDept.deptCd">
                           <span @click="selectDept(subSubDept)">
-                            <i class="fa-solid fa-folder" ></i>
+                            <i class="fa-solid fa-angle-right" ></i>
                             {{ subSubDept.deptNm }}
                           </span>
                         </li>
@@ -337,9 +337,9 @@ const initGrid = () => {
     scrollY: true,
     rowHeaders: ['checkbox'],
     columns: [
-      { header: '이름', name: 'mberNm' },
-      { header: '직책', name: 'gradeNm' },
-      { header: '부서', name: 'deptNm' },
+      { header: '이름', name: 'mberNm', align:'center' },
+      { header: '직책', name: 'gradeNm', align:'center' },
+      { header: '부서', name: 'deptNm', align:'center'},
     ]
   });
 };
@@ -455,4 +455,11 @@ defineExpose({onModalOpen,addApproval,removeApproval,addReceiver,removeReceiver,
   background-color: #e9ecef;
 }
 
+ul{
+  list-style: none;
+}
+
+li{
+  list-style: none;
+}
 </style>
