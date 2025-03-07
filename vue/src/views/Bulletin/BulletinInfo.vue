@@ -7,7 +7,7 @@
           <h4 v-if="bbsNm" class="card-title float-left mt-1 font-weight-bold">{{ bbsNm }}</h4>   
           <!-- <button class="btn btn-danger btn-fill float-right" @click="deleteBulletin">삭제</button> -->
           <button class="btn btn-success btn-fill float-right" @click="goToBulletinModify">수정</button>
-          <button @click="goToBulletinList" class="btn btn-secondary btn-sm btn-fill float-right">목록</button>
+          <button @click="goToBulletinList" class="btn btn-secondary btn-fill float-right">목록</button>
         </div>
       </div>
 
@@ -51,7 +51,7 @@
 
           <!-- 게시기간 -->
               <div class="mb-3">
-                <label class="form-label">게시기간 <em class="point-red">*</em></label>
+                <label class="form-label">게시기간 </label><br>
                 <div class="row">
                   <div class="col-auto">
                     <span class="info-box">{{ formatDate(bulletinInfo.ntceBgnde) }}</span>
@@ -65,35 +65,35 @@
 
 
             <!-- 파일첨부 -->
-            <div class="mb-3" v-if="bulletinInfo.attachFileName">
+            <!-- <div class="mb-3" v-if="bulletinInfo.attachFileName">
               <label>파일첨부</label>
               <div>
                 <a :href="bulletinInfo.attachFileUrl" target="_blank">{{ bulletinInfo.attachFileName }}</a>
               </div>
-            </div>
+            </div> -->
 
             <!-- 댓글 입력 -->
-<div class="mb-3">
-  <label>댓글 등록</label>
-  <div class="input-group mb-3" style="background-color: #f8f9fa; padding: 10px; border-radius: 5px;">
-    <input
-      type="text"
-      class="form-control"
-      placeholder="내용을 입력해주세요"
-      v-model="newComment.commentCn"
-      style="border-radius: 5px; margin-right: 10px;">
-    <input
-      type="text"
-      class="form-control"
-      placeholder="작성자"
-      v-model="newComment.wrterNm"
-      style="border-radius: 5px; margin-right: 10px;">
-    <button class="btn btn-success btn-fill" @click.prevent="addComment" style="border-radius: 5px; margin-right: 10px;">등록</button>
-  </div>
-</div>
+        <!-- <div class="mb-3">
+          <label>댓글 등록</label>
+          <div class="input-group mb-3" style="background-color: #f8f9fa; padding: 10px; border-radius: 5px;">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="내용을 입력해주세요"
+              v-model="newComment.commentCn"
+              style="border-radius: 5px; margin-right: 10px;">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="작성자"
+              v-model="newComment.wrterNm"
+              style="border-radius: 5px; margin-right: 10px;">
+            <button class="btn btn-success btn-fill" @click.prevent="addComment" style="border-radius: 5px; margin-right: 10px;">등록</button>
+          </div>
+        </div> -->
 
 <!-- 댓글 목록 -->
-<div class="mb-3">
+<!-- <div class="mb-3">
   <label>댓글 목록</label>
   <div class="table-responsive">
     <table class="table table-bordered">
@@ -108,38 +108,38 @@
       </thead>
       <tbody>
         <tr v-for="(commentItem, index) in comments" :key="index">
-          <!-- 댓글번호 (조회 전용) -->
+        
           <td style="text-align: center;">
             <input type="text" class="form-control text-center" v-model="commentItem.commentNo" readonly>
           </td>
-          <!-- 댓글내용 (수정 가능) -->
+          
           <td>
             <input type="text" class="form-control" v-model="commentItem.commentCn" :readonly="!commentItem.isEditing">
           </td>
-          <!-- 작성자 (수정 가능) -->
+        
           <td>
             <input type="text" class="form-control" v-model="commentItem.wrterNm" :readonly="!commentItem.isEditing">
           </td>
-          <!-- 작성시간 (조회 전용) -->
+          
           <td style="text-align: center;">
             <input type="text" class="form-control text-center" v-model="commentItem.frstRegisterPnttm" readonly>
           </td>
-          <!-- 관리 버튼 -->
+     
           <td style="text-align: center;">
             <template v-if="!commentItem.isEditing">
-              <button class="btn btn-success btn-sm" @click="enterEdit(index)">수정</button>
-              <button class="btn btn-danger btn-sm" @click="deleteComment(index)">삭제</button>
+              <button class="btn btn-success " @click="enterEdit(index)">수정</button>
+              <button class="btn btn-danger " @click="deleteComment(index)">삭제</button>
             </template>
             <template v-else>
-              <button class="btn btn-primary btn-sm" @click="saveEdit(index)">저장</button>
-              <button class="btn btn-secondary btn-sm" @click="cancelEdit(index)">취소</button>
+              <button class="btn btn-primary " @click="saveEdit(index)">저장</button>
+              <button class="btn btn-secondary " @click="cancelEdit(index)">취소</button>
             </template>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
-</div>
+</div>  -->
 
 
           </form>
@@ -189,10 +189,10 @@ const bulletinInfo = ref({
 
 
 // 새 댓글 등록 데이터
-const newComment = ref({ 
-  commentCn: '',
-  wrterNm: ''
-});
+// const newComment = ref({ 
+//   commentCn: '',
+//   wrterNm: ''
+// });
 
 // 게시글 상세 조회 API 호출
 
@@ -250,85 +250,85 @@ const comments = ref([]);
 
 
 // 댓글 추가
-const addComment = async () => {
-  console.log(" 댓글 등록 요청 - bbsId:", bbsId, "nttId:", nttId);
+// const addComment = async () => {
+//   console.log(" 댓글 등록 요청 - bbsId:", bbsId, "nttId:", nttId);
 
-  if (!newComment.value.commentCn.trim() || !newComment.value.wrterNm.trim()) {
-    alert("댓글 내용과 작성자를 입력해주세요.");
-    return;
-  }
-  try {
-    const response = await axios.post(`/api/comment/commentAdd?bbsId=${bbsId}&nttId=${nttId}`, {
+//   if (!newComment.value.commentCn.trim() || !newComment.value.wrterNm.trim()) {
+//     alert("댓글 내용과 작성자를 입력해주세요.");
+//     return;
+//   }
+//   try {
+//     const response = await axios.post(`/api/comment/commentAdd?bbsId=${bbsId}&nttId=${nttId}`, {
       
-      commentCn: newComment.value.commentCn,
-      wrterNm: newComment.value.wrterNm,
-    });
+//       commentCn: newComment.value.commentCn,
+//       wrterNm: newComment.value.wrterNm,
+//     });
 
-    console.log("✅ 댓글 추가 응답:", response.data);
+//     console.log("✅ 댓글 추가 응답:", response.data);
 
-    if (response.data.status === "success") {
-      // 댓글 목록에 최신 댓글을 맨 앞에 추가
-      comments.value.unshift({
-        commentCn: response.data.comment.commentCn,
-        wrterNm: response.data.comment.wrterNm,
-        isEditing: false,
-      });
+//     if (response.data.status === "success") {
+//       // 댓글 목록에 최신 댓글을 맨 앞에 추가
+//       comments.value.unshift({
+//         commentCn: response.data.comment.commentCn,
+//         wrterNm: response.data.comment.wrterNm,
+//         isEditing: false,
+//       });
 
-      // 댓글 목록 새로고침 (Vue의 반응성 문제 해결)
-      comments.value = [...comments.value];
+//       // 댓글 목록 새로고침 (Vue의 반응성 문제 해결)
+//       comments.value = [...comments.value];
 
-      // 입력 필드 초기화
-      newComment.value.commentCn = "";
-      newComment.value.wrterNm = "";
-    } else {
-      alert("댓글 등록 실패");
-    }
-  } catch (error) {
-    console.error(" 댓글 등록 오류:", error.response || error);
-    alert("댓글 등록에 실패했습니다.");
-  }
-};
+//       // 입력 필드 초기화
+//       newComment.value.commentCn = "";
+//       newComment.value.wrterNm = "";
+//     } else {
+//       alert("댓글 등록 실패");
+//     }
+//   } catch (error) {
+//     console.error(" 댓글 등록 오류:", error.response || error);
+//     alert("댓글 등록에 실패했습니다.");
+//   }
+// };
 
 
 
 
 
 // 댓글 수정
-const enterEdit = (index) => {
-  comments.value[index].isEditing = true;
-};
+// const enterEdit = (index) => {
+//   comments.value[index].isEditing = true;
+// };
 
-const saveEdit = async (index) => {
-  const { commentCn, wrterNm } = comments.value[index];
-  try {
-    await axios.put('/api/comment/commentUpdate', { commentCn, wrterNm, nttId });
-    comments.value[index].isEditing = false;
-    alert('댓글이 수정되었습니다.');
-  } catch (error) {
-    console.error('댓글 수정 오류:', error.response || error);
-    alert(`댓글 수정 실패: ${error.response?.statusText || '서버 오류'}`);
-  }
-};
+// const saveEdit = async (index) => {
+//   const { commentCn, wrterNm } = comments.value[index];
+//   try {
+//     await axios.put('/api/comment/commentUpdate', { commentCn, wrterNm, nttId });
+//     comments.value[index].isEditing = false;
+//     alert('댓글이 수정되었습니다.');
+//   } catch (error) {
+//     console.error('댓글 수정 오류:', error.response || error);
+//     alert(`댓글 수정 실패: ${error.response?.statusText || '서버 오류'}`);
+//   }
+// };
 
-const cancelEdit = (index) => {
-  comments.value[index].isEditing = false;
-};
+// const cancelEdit = (index) => {
+//   comments.value[index].isEditing = false;
+// };
 
 // 댓글 삭제
-const deleteComment = async (index) => {
-  if (!confirm('정말 삭제하시겠습니까?')) return;
+// const deleteComment = async (index) => {
+//   if (!confirm('정말 삭제하시겠습니까?')) return;
 
-  try {
-    await axios.delete('/api/comment/commentDelete', {
-      data: { nttId, commentId: comments.value[index].commentId },
-    });
-    comments.value.splice(index, 1);
-    alert('댓글이 삭제되었습니다.');
-  } catch (error) {
-    console.error('댓글 삭제 오류:', error.response || error);
-    alert(`댓글 삭제 실패: ${error.response?.statusText || '서버 오류'}`);
-  }
-};
+//   try {
+//     await axios.delete('/api/comment/commentDelete', {
+//       data: { nttId, commentId: comments.value[index].commentId },
+//     });
+//     comments.value.splice(index, 1);
+//     alert('댓글이 삭제되었습니다.');
+//   } catch (error) {
+//     console.error('댓글 삭제 오류:', error.response || error);
+//     alert(`댓글 삭제 실패: ${error.response?.statusText || '서버 오류'}`);
+//   }
+// };
 
 // 📌 게시글 삭제
 // const deleteBulletin = async () => {

@@ -5,7 +5,7 @@
         <div class="card">
           <div class="card-body">
             <h4 v-if="bbsNm" class="card-title float-left mt-1 font-weight-bold">{{ bbsNm }}</h4>   
-            <button class="btn btn-primary btn-sm btn-fill float-right" @click="goToBulletinAdd">등록</button>
+            <button class="btn btn-primary btn-fill float-right" @click="goToBulletinAdd">등록</button>
           </div>
         </div>
       </div>

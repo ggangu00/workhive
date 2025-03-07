@@ -6,7 +6,7 @@
         <div class="card-body">
           <h4 class="card-title float-left mt-1">게시글 수정</h4>
           <button class="btn btn-success btn-fill float-right" @click="submitForm">저장</button>
-          <button @click="goToBulletinList" class="btn btn-secondary btn-sm btn-fill float-right">목록</button>
+          <button @click="goToBulletinList" class="btn btn-secondary btn-fill float-right">목록</button>
         </div>
       </div>
 
@@ -32,14 +32,14 @@
               </div>
             </div>
 
-            <div class="mb-3">
+            <!-- <div class="mb-3">
               <label>익명여부</label>
               <div class="form-check form-check-inline" style="margin-left: 10px;">
                 <input class="form-check-input" type="checkbox" v-model="anoAt" />
               </div>
-            </div>
+            </div> -->
 
-            <div class="mb-3">
+            <!-- <div class="mb-3">
               <label>비밀여부</label>
               <div class="form-check form-check-inline" style="margin-left: 10px;">
                 <input
@@ -49,9 +49,9 @@
                   @click="togglePasswordField"
                 />
               </div>
-            </div>
+            </div> -->
 
-            <div class="mb-3" v-show="showPasswordField">
+            <!-- <div class="mb-3" v-show="showPasswordField">
               <label>비밀번호 4자리를 입력해주세요</label>
               <input
                 type="password"
@@ -60,7 +60,7 @@
                 maxlength="4"
                 v-model="password"
               />
-            </div>
+            </div> -->
 
             <div class="mb-3">
               <label class="form-label">게시기간 <em class="point-red">*</em></label>
@@ -75,13 +75,13 @@
               </div>
             </div>
 
-            <!-- 파일첨부 (선택 사항) -->
-            <div class="mb-3">
+            
+            <!-- <div class="mb-3">
               <label>파일첨부</label>
               <div class="input-group w30" style="border: 1px solid #ccc; border-radius: 3px; background-color: #fff;">
                 <input type="file" class="form-control" ref="fileInput" />
               </div>
-            </div>
+            </div> -->
           </form>
         </div>
       </div>
@@ -129,22 +129,22 @@ const anoAt = ref(false);          // 익명여부
 const password = ref('');          // 비밀번호 (비밀글일 경우)
 const ntceBgnde = ref('');         // 게시 시작일
 const ntceEndde = ref('');         // 게시 종료일
-const showPasswordField = ref(false); // 비밀번호 입력 필드 노출 여부
+//const showPasswordField = ref(false); // 비밀번호 입력 필드 노출 여부
 
 // TOAST UI Editor 인스턴스
 let editor =null;
 
 // 파일 첨부용 ref
-const fileInput = ref(null);
+//const fileInput = ref(null);
 
 // 응답 메시지 및 성공 여부
 const responseMessage = ref('');
 const isSuccess = ref(false);
 
 // 비밀번호 필드 토글 함수
-const togglePasswordField = () => {
-  showPasswordField.value = !showPasswordField.value;
-};
+// const togglePasswordField = () => {
+//   showPasswordField.value = !showPasswordField.value;
+// };
 
 // TOAST UI Editor 초기화
 const initEditor = () => {

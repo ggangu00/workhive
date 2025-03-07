@@ -6,7 +6,7 @@
           <div class="card-body">
             <h4 class="card-title float-left mt-1">게시판 수정</h4>
             <button class="btn btn-success btn-fill float-right" @click="BoardSave">수정</button>
-            <button class="btn btn-secondary btn-sm btn-fill float-right" @click="resetForm">초기화</button>
+            <button class="btn btn-secondary btn-fill float-right" @click="resetForm">초기화</button>
           </div>
         </div>
       </div>
@@ -20,44 +20,44 @@
               <input v-model="formValues.bbsNm" type="text" class="form-control" placeholder="게시판명을 입력해주세요">
             </div>
 
-            <div class="mb-3">
+            <!-- <div class="mb-3">
               <label class="form-label">게시판 유형</label>
               <select v-model="formValues.bbsTyCode" class="form-select w30">
                 <option value="" disabled selected>선택하세요</option>
                 <option value="A01">공지사항</option>
                 <option value="A02">사내게시판</option>
               </select>
-            </div>
+            </div> -->
 
-            <div class="mb-3">
+            <!-- <div class="mb-3">
               <label class="form-label">파일첨부 가능여부</label>
               <select v-model="formValues.fileAtchPosblAt" class="form-select w30">
                 <option value="" disabled selected>선택하세요</option>
                 <option value="A01">예</option>
                 <option value="A02">아니오</option>
               </select>
-            </div>
+            </div> -->
 
-            <div class="mb-3">
+            <!-- <div class="mb-3">
               <label class="form-label">댓글 가능여부</label>
               <select v-model="formValues.answerAt" class="form-select w30">
                 <option value="" disabled selected>선택하세요</option>
                 <option value="A01">예</option>
                 <option value="A02">아니오</option>
               </select>
-            </div>
+            </div> -->
 
-            <div class="mb-3">
+            <!-- <div class="mb-3">
               <label class="form-label">사용여부</label>
               <select v-model="formValues.useAt" class="form-select w30">
                 <option value="" disabled selected>선택하세요</option>
                 <option value="A01">예</option>
                 <option value="A02">아니오</option>
               </select>
-            </div>
+            </div>-->
           </form>
         </div>
-      </div>
+      </div> 
 
       <!-- 응답 메시지 -->
       <div v-if="responseMessage" class="alert" :class="isSuccess ? 'alert-success' : 'alert-danger'">
