@@ -80,6 +80,7 @@ export const swalCheck = async (title) => {
       showCancelButton: true,
       cancelButtonText: '취소',
       confirmButtonText: '확인',
+      reverseButtons:true
    });
    return result;
 }
