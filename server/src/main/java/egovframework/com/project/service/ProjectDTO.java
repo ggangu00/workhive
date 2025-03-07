@@ -81,4 +81,7 @@ public class ProjectDTO extends CommonPaging {
 	private int parent;			// 프로젝트별 참여자 트리에서 부모 여부
 	private String mberId;		// 프로젝트별 참여자 아이디
 	private String mberNm;		// 프로젝트별 참여자 이름
+	private String deptNm;		// 프로젝트별 참여자 부서
+	private String gradeNm;		// 프로젝트별 참여자 직급
+	private String mgrSt;		// 프로젝트 담당자 여부
 }

@@ -131,7 +131,7 @@ const initializeGrid = () => {
       },
       {
         header: '등록자',
-        name: 'ntcrNm',
+        name: 'wrterNm',
         align: 'center',
         width: 120,
         sortable: true,

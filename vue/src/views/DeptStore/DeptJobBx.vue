@@ -74,7 +74,6 @@ let selectedJobBx;
 
 // 부서 선택
 const deptClicked = (dept) => {
-  console.log(dept);
   const relatedJobBoxes = props.jobBoxes.filter(j => j.deptCd === dept.deptCd);
 
   store.dispatch('jobBxSelectedUpdate', { 

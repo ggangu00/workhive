@@ -188,5 +188,23 @@ public class ProjectServiceImpl implements ProjectService{
 	public List<ProjectDTO> projectTree() {
 		return projectMapper.projectTree();
 	}
+	
+	//프로젝트 참여자 추가
+	@Override
+	public boolean projectMemInsert(ProjectDTO projectDTO) {
+		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUser user = (CustomerUser) auth.getPrincipal();
+        String userId = user.getUserDTO().getMberId();
+        projectDTO.setCreateId(userId);
+        
+		return projectMapper.projectMemInsert(projectDTO) == 1 ? true : false;
+	}
+	
+	//프로젝트 참여자 삭제
+	@Override
+	public boolean projectMemDelete(ProjectDTO projectDTO) {
+		return projectMapper.projectMemDelete(projectDTO) == 1 ? true : false;
+	}
 
 }

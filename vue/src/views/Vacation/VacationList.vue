@@ -98,7 +98,7 @@ onMounted(() => {
     el: document.getElementById('vcGrid'),
     data: dataSource,
     scrollX: false,
-    scrollY: true,
+    scrollY: false,
     pageOptions: {
       useClient: false,
       perPage: 5,

@@ -42,6 +42,11 @@
 			<name>Project Repository</name>
 			<url>file://${project.basedir}/src/main/webapp/WEB-INF/lib</url>
 		</repository>
+		<repository>
+			<id>projectRepository2</id>
+			<name>Project Repository</name>
+			<url>file:///C:/Users/admin/git/workhive/server/src/main/webapp/WEB-INF/lib</url>
+		</repository>
 	</repositories>
 	<dependencies>
 		<!-- 표준프레임워크 실행환경 -->
@@ -390,7 +395,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.28</version>
+			<version>1.18.30</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -590,68 +595,7 @@
 					</configuration>
 				</plugin>
 				
-				<plugin>
-			       <groupId>org.codehaus.mojo</groupId> <!-- 명령어를 실행 시키도록 해주는 plugin -->
-			       <artifactId>exec-maven-plugin</artifactId>
-			       <version>1.6.0</version>
-			       <executions>
-			       <!-- npm run build -->
-			         <execution>
-			           <id>front-end build package</id>
-			           <goals><goal>exec</goal></goals>
-			           <phase>prepare-package</phase>
-			           <configuration>
-			             <executable>npm</executable>
-			             <arguments>
-			               <argument>run</argument>
-			               <argument>build</argument>
-			             </arguments>
-			           </configuration>
-			         </execution>
-			       </executions>
-			       <configuration>
-			         <workingDirectory>${basedir}/front-end</workingDirectory>
-			       </configuration>
-			   </plugin>
 				
-				
-				
-				 <plugin>
-					 <artifactId>maven-resources-plugin</artifactId>
-					 <version>3.1.0</version>
-					 <executions>
-					 <!-- disc 폴더 에서 html 파일을 /src/main/resources/templates 로 이동-->
-					   <execution>
-					     <id>copy front-end template</id>
-					     <goals><goal>copy-resources</goal></goals>
-					     <phase>prepare-package</phase>
-					     <configuration>
-					       <outputDirectory>${basedir}/src/main/webapp</outputDirectory>
-					       <resources>
-					         <resource>
-					           <directory>../vue/dist</directory>
-					           <includes><include>index.html</include></includes>
-					         </resource>
-					       </resources>
-					     </configuration>
-					   </execution>
-					 <!-- disc 폴더 에서 html 파일을 제외하고 /src/main/resources/static 폴더로 이동-->
-					   <execution>
-					     <id>copy front-end static assets</id>
-					     <goals><goal>copy-resources</goal></goals>
-					     <phase>prepare-package</phase>
-					     <configuration>
-					       <outputDirectory>${basedir}/src/main/webapp/dist</outputDirectory>
-					       <resources>
-					         <resource>
-					           <directory>../vue/dist</directory>
-					           <excludes><exclude>index.html</exclude></excludes>
-					         </resource>
-					       </resources>
-					     </configuration>
-					   </execution>
-					 </executions>
-					</plugin>
 				
 				
 				
@@ -712,7 +656,79 @@
 			</plugins>
 		</pluginManagement>
 		<plugins>
-			<!-- EMMA -->
+
+			
+			
+			<plugin>
+			       <groupId>org.codehaus.mojo</groupId> <!-- 명령어를 실행 시키도록 해주는 plugin -->
+			       <artifactId>exec-maven-plugin</artifactId>
+			       <version>1.6.0</version>
+			       <executions>
+			       <!-- npm run build -->
+			         <execution>
+			           <id>front-end build package</id>
+			           <goals><goal>exec</goal></goals>
+			           <phase>prepare-package</phase>
+			           <configuration>
+			             <executable>npm</executable>
+			             <arguments>
+			               <argument>run</argument>
+			               <argument>build</argument>
+			             </arguments>
+			           </configuration>
+			         </execution>
+			       </executions>
+			       <configuration>
+			         <workingDirectory>../vue</workingDirectory>
+			       </configuration>
+			   </plugin>
+				
+				
+				
+				 <plugin>
+					 <artifactId>maven-resources-plugin</artifactId>
+					 <version>3.1.0</version>
+					 <executions>
+					 <!-- disc 폴더 에서 html 파일을 /src/main/resources/templates 로 이동-->
+					   <execution>
+					     <id>copy front-end template</id>
+					     <goals><goal>copy-resources</goal></goals>
+					     <phase>prepare-package</phase>
+					     <configuration>
+					       <outputDirectory>${basedir}/src/main/webapp</outputDirectory>
+					       <resources>
+					         <resource>
+					           <directory>../vue/dist</directory>
+					           <includes><include>index.html</include></includes>
+					         </resource>
+					       </resources>
+					     </configuration>
+					   </execution>
+					 <!-- disc 폴더 에서 html 파일을 제외하고 /src/main/resources/static 폴더로 이동-->
+					   <execution>
+					     <id>copy front-end static assets</id>
+					     <goals><goal>copy-resources</goal></goals>
+					     <phase>prepare-package</phase>
+					     <configuration>
+					       <outputDirectory>${basedir}/src/main/webapp/dist</outputDirectory>
+					       <resources>
+					         <resource>
+					           <directory>../vue/dist</directory>
+					           <excludes><exclude>index.html</exclude></excludes>
+					         </resource>
+					       </resources>
+					     </configuration>
+					   </execution>
+					 </executions>
+					</plugin>
+			
+			
+			
+			
+			
+			
+			
+					<!-- EMMA -->	
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>

@@ -104,7 +104,7 @@
       <div class="card">
         <div class="home-container">
           <div class="home-container-header">게시글</div>
-          <div class="board-item" v-for="(bbs, i) in bbsList" :key="i">
+          <div class="board-item" v-for="(bbs, i) in bbsList" :key="i" @click="goToBulletinInfo(bbs);">
             <span class="badge badge-danger mrp10" v-show="bbs.anoAt == 'Y'">공지</span>
             <span class="board-title">{{ bbs.nttSj }}</span>
             <span class="board-meta">{{ bbs.mberNm }}</span>
@@ -126,6 +126,7 @@
 
 <script setup>
 import axios from "../assets/js/customAxios.js";
+import { useRouter } from 'vue-router';
 import { onBeforeMount, ref, computed, watch } from 'vue';
 import { useUserInfoStore } from '../store/userStore';
 
@@ -137,6 +138,7 @@ import Calendar from './components/Calendar.vue';
 import { numberFormat, dateFormat } from '../assets/js/common.js'
 import { dateGetDay, dateTermCalc } from '../assets/js/project.js'
 
+const router = useRouter();
 const userInfoStore = useUserInfoStore();
 const userData = computed(() => userInfoStore?.user || {});
 
@@ -255,4 +257,9 @@ const bbsGetList = async () => { //게시글 5건 조회
     });
   }
 }
+
+// 게시글 상세 조회 이동
+const goToBulletinInfo = (row) => {
+  router.push({ path: `/bulletin/bulletinInfo/${row.bbsId}/${row.nttId}` });
+};
 </script>

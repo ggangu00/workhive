@@ -43,9 +43,10 @@ public class CommonDTO extends CommonPaging {
 	private String typeNm;		// 회의구분명
 	
 	// 홈 게시글 조회
-	private String nttId;
-	private String nttSj;
-	private String anoAt;
+	private String bbsId;		// 게시판 코드
+	private String nttId;		// 게시글 코드
+	private String nttSj;		// 게시글 제목
+	private String anoAt;		// 공지여부
 	
 	// 홈 일정 조회
 	private String schDt;		// 검색 일자
@@ -73,11 +74,11 @@ public class CommonDTO extends CommonPaging {
 	private String addr;		// 주소
 	private String addrDtl;		// 상세주소
 	
-	@DateTimeFormat(pattern = "HH:mm:ss")
-	private Date start_time;
+	//@DateTimeFormat(pattern = "HH:mm:ss")
+	private String startTime;
 	
-	@DateTimeFormat(pattern = "HH:mm:ss")
-	private Date end_time;
+	//@DateTimeFormat(pattern = "HH:mm:ss")
+	private String endTime;
 		
 	// 이력 히스토리
 	private String histCd;		// 이력히스토리 코드

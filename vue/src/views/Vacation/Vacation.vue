@@ -125,7 +125,6 @@ const yearVcCheck = async () => {
 
   // 휴가 정보 입력
   vcInfo.value = vacation.vcGetInfo(yearVcData, requestData);
-  console.log(vcInfo);
 }
 
 
