@@ -1,5 +1,6 @@
 <template>
-  <li class="ms-3">
+  <!-- <li class="ms-3"> -->
+  <li :class="['ms-3', 'my-1', `depth-${dept.depth}`]" :style="{ fontSize: `${18 - dept.depth}px`, width: `${100 - dept.depth * 5}%` }">
     <div class="flex-container">
       <!-- 부서 열기/닫기 아이콘 -->
       <i :class="isOpen ? 'fa-solid fa-angle-down' : 'fa-solid fa-angle-right'" @click="toggle"></i>
@@ -19,12 +20,13 @@
       </li>
 
       <!-- 업무함 렌더링 -->
-      <li v-for="job in deptJobBoxes" :key="job.deptJobBxId" class="job-box ms-3">
+      <li v-for="job in deptJobBoxes" :key="job.deptJobBxId" class="job-box ms-3 my-1">
         <div class="flex-container">
           <i class="folder bi bi-folder-plus bi bi-folder" @click="jobBoxClicked(job)"></i>
           <span @click="jobBoxClicked(job)">{{ job.deptJobBxNm }}</span>
-          <i class="fa-solid fa-pen" @click.stop="jobBxManage('modify', job)"></i>
-          <i class="fa-solid fa-x" @click.stop="jobBxManage('remove', job)"></i>
+          <i class="bi bi-pencil-square" @click.stop="jobBxManage('modify', job)"></i>
+          <i class="fa-solid fa-xmark align-self-center" @click.stop="jobBxManage('remove', job)"
+             :style="{ fontSize: `${23 - dept.depth}px`}"></i>
         </div>
       </li>
     </ul>
@@ -115,10 +117,15 @@ span {
   font-weight: bold;
   cursor: pointer;
   margin-right: 8px;
+  
+  white-space: normal; /* 공백을 처리하여 줄바꿈이 가능하게 함 */
+  word-wrap: break-word; /* 텍스트가 길어지면 줄바꿈을 시도 */
+  word-break: break-word; /* 긴 단어가 줄바꿈되지 않으면 강제로 끊음 */
 }
 
 i {
   margin-right: 8px;
+  cursor: pointer;
 }
 
 </style>

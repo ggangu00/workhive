@@ -248,12 +248,12 @@
 		and del_yn = 'N'
 		<if test='!startDate.isEmpty()'>
 			<![CDATA[
-			and create_dt >= to_date(#{startDate}, 'yyyy-mm-dd')
+			and sign_dt >= to_date(#{startDate}, 'yyyy-mm-dd')
 			]]>
 		</if>
 		<if test='!endDate.isEmpty()'>
 			<![CDATA[
-			and create_dt < to_date(#{endDate}, 'yyyy-mm-dd') + 1
+			and sign_dt < to_date(#{endDate}, 'yyyy-mm-dd') + 1
 			]]>
 		</if>
 		order by create_dt desc
@@ -271,12 +271,12 @@
 		and del_yn = 'N'
 		<if test='!startDate.isEmpty()'>
 			<![CDATA[
-			and create_dt >= to_date(#{startDate}, 'yyyy-mm-dd')
+			and sign_dt >= to_date(#{startDate}, 'yyyy-mm-dd')
 			]]>
 		</if>
 		<if test='!endDate.isEmpty()'>
 			<![CDATA[
-			and create_dt < to_date(#{endDate}, 'yyyy-mm-dd') + 1
+			and sign_dt < to_date(#{endDate}, 'yyyy-mm-dd') + 1
 			]]>
 		</if>
 		order by create_dt desc

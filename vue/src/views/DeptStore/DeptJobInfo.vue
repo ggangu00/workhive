@@ -15,18 +15,8 @@
           <div class="row">
             <!-- 업무함 사이드바 -->
             <div class="col-3">
-              <!-- <div class="jobBx">
-                <ul>
-                  <DeptJobBx
-                    v-for="dept in rootDepartments"
-                    :key="dept.deptCd"
-                    :dept="dept"
-                    :departments="departments"
-                    :jobBoxes="jobBoxes"
-                  />
-                </ul>
-              </div> -->
-              <div class="depth treeview">
+
+              <div class="depth treeview jobBx">
                 <ul class="list-unstyled">
                   <DeptJobBx
                     v-for="dept in rootDepartments"
@@ -107,7 +97,7 @@
                   />
                 </div>
                 <div class="col d-flex justify-content-end align-items-center">
-                  <select class="form-select" v-model="jobSearch.searchCnd" style="width: 100px; margin-right: 5px;">
+                  <select class="form-select me-2" v-model="jobSearch.searchCnd" style="width: 100px;">
                     <option value="0">전체</option>
                     <option value="1">업무명</option>
                     <option value="2">업무내용</option>
@@ -115,7 +105,7 @@
                   </select>
 
                   <input type="text" class="form-control w-auto me-2" placeholder="" id="title-search" v-model="jobSearch.searchWrd">
-                  <button class="btn btn-info btn-fill" @click="jobGetList">검색</button>
+                  <button class="btn btn-info btn-fill" @click="jobGetList" style="margin: 4 0 !important;">검색</button>
                 </div>
               </div>
 
@@ -527,35 +517,6 @@ onBeforeUnmount(() => {
 
 
 <style scoped>
-.jobBx {
-  background-color: gray;
-  border-radius: 5px;
-  color: white;
-  height: 660px;
-  margin: 5px 0;
-  /* padding: 5px; */
-}
-ul {
-  list-style: none;
-  padding-left: 15px;
-}
-li {
-  margin: 5px 0;
-}
-span {
-  font-weight: bold;
-  cursor: pointer;
-}
-.job-box {
-  color: blue;
-  font-style: italic;
-  margin-left: 15px;
-}
-/* 아이콘 스타일 */
-i {
-  margin-right: 8px;
-}
-
 div::v-deep .nav-link {
   display: flex !important;
 }
