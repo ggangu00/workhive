@@ -58,6 +58,9 @@ public interface ProjectMapper {
 	// 프로젝트 일정등록
 	public int projectPlanInsert(ProjectDTO projectDTO);
 	
+	// 프로젝트 일정수정
+	public int projectPlanUpdate(ProjectDTO projectDTO);
+	
 	// 프로젝트 일정삭제
 	public int projectPlanDelete(String prPlanCd);
 

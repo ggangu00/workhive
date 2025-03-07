@@ -21,41 +21,29 @@
                   </li>
                </ul>
             </card>
-            <card>
-               <div class="mb-3 row">
-                  <label for="staticEmail" class="col-sm-2 col-form-label">검색</label>
-                  <div class="col-auto">
-                     <select class="form-select" v-model="searchData.searchCondition">
-                        <option value="0">아이디</option>
-                        <option value="1">아이피</option>
-                     </select>
-                  </div>
-                  <div class="col-auto">
-                     <input type="text" class="form-control" placeholder="검색어를 입력해주세요"
-                        v-model="searchData.searchKeyword">
-                  </div>
-               </div>
-               <div class="mb-3 row">
-                  <label for="inputPassword" class="col-sm-2 col-form-label">조회 기간</label>
-                  <div class="col-auto">
-                     <input type="date" class="form-control" v-model="searchData.searchStartDt">
-                  </div>
-                  <div class="col-auto">~</div>
-                  <div class="col-auto">
-                     <input type="date" class="form-control" v-model="searchData.searchEndDt">
-                  </div>
-               </div>
-               <div class="text-center">
-                  <button type="reset" class="btn btn-secondary btn-fill">
-                     초기화
-                  </button>
-                  <button type="submit" class="btn btn-info btn-fill">
-                     검색
-                  </button>
-               </div>
-            </card>
          </form>
          <card>
+            <div class="row justify-content-between align-items-end mb-2">
+               <div class="col-4"></div>
+               <div class="selectbox col d-flex align-items-center">
+               <select class="form-select w50" v-model="searchData.searchCondition">
+                  <option value="0">아이디</option>
+                  <option value="1">아이피</option>
+               </select>
+
+               <input type="text" class="form-control mlp10" placeholder="검색어를 입력해주세요" v-model="searchData.searchKeyword">
+               <div class="input-group">
+                  <span class="input-group-text fw-bold">시작일</span>
+                  <input type="date" class="form-control w50" v-model="searchData.searchStartDt">
+               </div>
+               <span class="fw-bold">~</span>
+               <div class="input-group">
+                  <span class="input-group-text fw-bold">종료일</span>
+                  <input type="date" class="form-control w50" v-model="searchData.searchEndDt">
+               </div>
+               <button class="btn btn-secondary btn-fill w30 mlp10">초기화</button>
+               </div>
+            </div>
             <div id="logGrid" class="project"></div>
          </card>
       </div>

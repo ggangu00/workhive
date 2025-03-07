@@ -29,5 +29,8 @@ public interface TodoMapper {
 
 	// 일지 삭제
 	public int todoDelete(String todoCd);
+	
+	// 일지 다중 삭제
+	public int todoListDelete(List<String> todoArr);
 
 }

@@ -10,8 +10,10 @@
           <p class="card-sub">{{ projectInfo.comNm }}</p>
           <h5 class="card-title mb-3">
             {{ projectInfo.prNm }}
-            <span class="badge" :class="projectInfo.term * (-1) > 10 ? 'badge-primary' : 'badge-danger'">D{{ term
+
+            <span class="badge" :class="projectInfo.term * (-1) > 10 ? 'badge-primary' : 'badge-danger'" v-if="projectInfo.state=='A03'">D{{ term
             }}</span>
+            <span v-else class="badge badge-secondary">완료</span>
           </h5>
           <p class="card-sub"><b>기간 : </b> {{ projectInfo.startDt }} ~ {{ projectInfo.endDt }}
           </p>
@@ -69,19 +71,19 @@
           <div class="form-group has-label">
             <label>일정색상</label>
           </div>
-          <input type="color" :name="color" v-model="color" class="form-control form-control-color"
+          <input type="color" v-model="color" class="form-control form-control-color"
             id="exampleColorInput" title="Choose your color">
         </div>
         <div class="mb-3">
           <label class="form-label">기간 <em class="point-red">*</em></label>
           <div class="row">
             <div class="col-auto">
-              <input type="date" :name="startDt" v-model="startDt" :min="dateFormat(projectInfo.startDt)"
+              <input type="date" v-model="startDt" :min="dateFormat(projectInfo.startDt)"
                 class="form-control">
             </div>
             <div class="col-auto p-none">~</div>
             <div class="col-auto">
-              <input type="date" :name="endDt" v-model="endDt" :min="startDt" :max="dateFormat(projectInfo.endDt)"
+              <input type="date" v-model="endDt" :min="startDt" :max="dateFormat(projectInfo.endDt)"
                 class="form-control">
             </div>
           </div>
@@ -90,7 +92,7 @@
           <div class="form-group has-label">
             <label>일정명 <em class="point-red">*</em></label>
           </div>
-          <input type="text" :name="planNm" v-model="planNm" class="form-control" placeholder="일정내용을 입력해주세요">
+          <input type="text" v-model="planNm" class="form-control" placeholder="일정내용을 입력해주세요">
         </div>
       </card>
     </template>
@@ -132,7 +134,6 @@ const color = ref('#fd9b9b');    //화면에 보여질 일정색상
 const startDt = ref('');         //일정 시작일
 const endDt = ref('');           //일정 종료일
 const dateTermArr = ref([]);        //일정 시작일~종료일 모든 일자 출력
-const createId = ref('admin');
 
 onBeforeMount(() => {
   prCd.value = route.query.prCd;
@@ -318,33 +319,41 @@ const projectPlanAdd = async () => {
     return;
   }
 
-  const formData = new FormData();
-  formData.append("prCd", prCd.value);
-  formData.append("planNm", planNm.value);
-  formData.append("startDt", startDt.value);
-  formData.append("endDt", endDt.value);
-  formData.append("color", color.value);
-  formData.append("createId", createId.value);
+  let txt = '';
+  if(isUpdated.value) txt = "수정";
+  else txt = "등록";
+  
+  const requestData = {
+    prPlanCd: projectPlanInfo.value.prPlanCd,
+    prCd: prCd.value,
+    planNm: planNm.value,
+    startDt: startDt.value,
+    endDt: endDt.value,
+    color: color.value
+  };
 
   try {
-    const response = await axios.post('/api/project/plan', formData);
-
-    if (response.data.result === true) {
+    
+    const response = ref([]);
+    if (isUpdated.value) response.value = await axios.put(`/api/project/plan`, requestData); //수정
+    else response.value = await axios.post("/api/project/plan", requestData); //등록
+    
+    if (response.value.data === true) {
+        Swal.fire({
+          icon: "success",
+          title: txt + "완료",
+          text: txt + "한 일정은 목록에서 확인할 수 있습니다",
+        })
+        formReset();
+        projectPlanGetList(prCd.value);
+      }
+    } catch (err) {
       Swal.fire({
-        icon: "success",
-        title: "등록완료",
-        text: "등록한 일정은 목록에서 확인할 수 있습니다",
+        icon: "error",
+        title: txt + "실패",
+        text: "일정 " + txt + " 실패",
       })
-      formReset();
-      projectPlanGetList(prCd.value);
     }
-  } catch (err) {
-    Swal.fire({
-      icon: "error",
-      title: "등록실패",
-      text: "프로젝트 등록 실패",
-    })
-  }
 }
 
 //프로젝트 일정삭제

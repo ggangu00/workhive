@@ -79,15 +79,6 @@
 		<if test="searchEndDt != null and searchEndDt != ''">
 		    <![CDATA[ AND start_dt <= TO_DATE(#{searchEndDt}, 'YYYY-MM-DD') ]]>
 		</if>
-	    
-	    <!-- 프로젝트 금액범위 검색 -->  
-	    <if test="searchStartPrice > 0">AND
-	        <![CDATA[price >= #{searchStartPrice}]]>
-	    </if>
-	    
-	    <if test="searchEndPrice > 0">AND
-	       	<![CDATA[price <= #{searchEndPrice}]]>
-	    </if>
     </sql>
 	
 	<!-- 프로젝트 단건조회 -->
@@ -286,6 +277,30 @@
 			#{createId}
 		)		
 	</insert>
+	
+	<!-- 프로젝트 일정수정 -->
+	<update id="projectPlanUpdate" parameterType="projectDTO">
+	    update project_plan
+	    set    
+	        <if test="planNm != null and planNm != ''">
+	            plan_nm = #{planNm}, 
+	        </if>
+	        <if test="startDt != null">
+	            start_dt = #{startDt},
+	        </if>
+	        <if test="endDt != null">
+	            end_dt = #{endDt},
+	        </if>
+	        <if test="color != null">
+	            color = #{color},
+	        </if>
+	        <if test="updateId != null">
+	            update_id = #{updateId},
+	        </if>
+	        update_dt = sysdate
+	    where 
+	        pr_plan_cd = #{prPlanCd}   
+	</update>
 	
 	
 	<!-- 프로젝트 일정삭제 -->

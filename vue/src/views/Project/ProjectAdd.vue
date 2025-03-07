@@ -231,6 +231,7 @@ onMounted(() => {
       {
         header: '진행률',
         name: 'progress',
+        align: "center",
         editor: {
           type: 'text',
           options: {
@@ -239,11 +240,11 @@ onMounted(() => {
         },
         formatter: ({ value }) => {
           if (!value) return '진행률을 입력하세요';
-          return value.toString().replace(/\D/g, ''); // 숫자만 남기기
+          return value.toString().replace(/\D/g, '') + "%"; // 숫자만 남기기
         }
       },
       {
-        header: '완료상태', name: 'state',
+        header: '완료상태', name: 'state', align: "center",
         formatter: ({ value }) => {
 
           if (!value) return '완료상태를 선택해주세요';
@@ -411,6 +412,7 @@ const projectAdd = async () => {
   const newData = modifiedRows.createdRows; // 새로 추가된 데이터만 추출
 
   const requestData = {
+    mode : isUpdated.value ? 'edit' : 'add',
     workArr: newData.map(row => ({
       prWorkNm: row.prWorkNm,
       progress: row.progress,

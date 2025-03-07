@@ -28,61 +28,37 @@
             </li>
           </ul>
         </card>
-        <card>
-          <div class="mb-3 row">
-            <label for="staticEmail" class="col-sm-2 col-form-label">검색</label>
-            <div class="col-auto">
-              <select class="form-select" v-model="searchData.searchCondition">
+      </form>
+      <card>
+          <div class="row justify-content-between align-items-end mb-2">
+            <div class="col-4">
+              <button class="btn btn-danger btn-fill btn-sm" @click="projectListRemove">다중삭제</button>
+              <button class="btn btn-excel btn-sm" @click="exportToExcel">
+                <img class="me-1" src="../../assets/img/icon/excel.svg" alt="xls">엑셀다운로드
+              </button>
+            </div>
+            <div class="selectbox col d-flex align-items-center">
+              <select class="form-select w50" v-model="searchData.searchCondition">
                 <option value="0">프로젝트명</option>
                 <option value="1">거래처</option>
                 <option value="2">담당자</option>
               </select>
-            </div>
 
-            <div class="col-auto">
-              <input type="text" class="form-control" placeholder="검색어를 입력해주세요" v-model="searchData.searchKeyword">
+              <input type="text" class="form-control mlp10" placeholder="검색어를 입력해주세요" v-model="searchData.searchKeyword">
+              <div class="input-group">
+                <span class="input-group-text fw-bold">시작일</span>
+                <input type="date" class="form-control w50" v-model="searchData.searchStartDt">
+              </div>
+              <span class="fw-bold">~</span>
+              <div class="input-group">
+                <span class="input-group-text fw-bold">종료일</span>
+                <input type="date" class="form-control w50" v-model="searchData.searchEndDt">
+              </div>
+              <button class="btn btn-secondary btn-fill w30 mlp10">초기화</button>
             </div>
           </div>
-          <div class="mb-3 row">
-            <label for="inputPassword" class="col-sm-2 col-form-label">프로젝트 기간</label>
-            <div class="col-auto">
-              <input type="date" class="form-control" v-model="searchData.searchStartDt">
-            </div>
-            <div class="col-auto">~</div>
-            <div class="col-auto">
-              <input type="date" class="form-control" v-model="searchData.searchEndDt">
-            </div>
-          </div>
-          <div class="mb-3 row">
-            <label for="inputPassword" class="col-sm-2 col-form-label">프로젝트 금액</label>
-            <div class="col-auto">
-              <input type="number" class="form-control" v-model="searchData.searchStartPrice">
-            </div>
-            <div class="col-auto">~</div>
-            <div class="col-auto">
-              <input type="number" class="form-control" v-model="searchData.searchEndPrice">
-            </div>
-          </div>
-          <div class="text-center">
-            <button class="btn btn-secondary btn-fill">
-              초기화
-            </button>
-            <button type="submit" class="btn btn-info btn-fill">
-              검색
-            </button>
-          </div>
-        </card>
-      </form>
-      <card>
-        <div class="d-flex">
-          <div class="p-2 w90">
-            <button class="btn btn-danger btn-fill btn-sm" @click="projectListRemove">다중삭제</button>
-            <button class="btn btn-excel btn-sm" @click="exportToExcel"><img class="me-1"
-                src="../../assets/img/icon/excel.svg" alt="xls">
-              엑셀다운로드</button>
-          </div>
-        </div>
-        <div id="tableGrid" class="toastui project"></div>
+
+          <div id="tableGrid" class="toastui project"></div>
       </card>
 
       <!--프로젝트 상세보기 모달[s]-->
@@ -93,7 +69,12 @@
 
             <div class="table-responsive">
               <table class="table table-hover project">
-                <colgroup><col width="10%"><col><col width="10%"><col></colgroup>
+                <colgroup>
+                  <col width="10%">
+                  <col>
+                  <col width="10%">
+                  <col>
+                </colgroup>
                 <tbody>
                   <tr>
                     <th class="table-secondary">프로젝트명</th>
@@ -129,7 +110,12 @@
             </div>
             <div class="table-responsive" :style="workCount > 0 ? 'max-height: 200px; overflow-y: auto;' : ''">
               <table class="table table-hover project">
-                <colgroup><col width="10%"><col width="40%"><col><col></colgroup>
+                <colgroup>
+                  <col width="10%">
+                  <col width="40%">
+                  <col>
+                  <col>
+                </colgroup>
                 <thead class="table-secondary">
                   <tr>
                     <th>순서</th>
@@ -214,6 +200,7 @@ const animateProgress = (endValue) => {
   requestAnimationFrame(step);
 };
 
+
 //========================= Toast grid =========================
 
 //프로젝트 전체조회
@@ -228,9 +215,7 @@ const searchData = ref({
   searchCondition: '0',
   searchKeyword: '',
   searchStartDt: '',
-  searchEndDt: '',
-  searchStartPrice: '',
-  searchEndPrice: ''
+  searchEndDt: ''
 });
 
 //검색조건이 변경되면 리스트가 새로 로드됨
@@ -260,19 +245,19 @@ onMounted(() => {
   grid.value = new Grid({
     el: document.getElementById("tableGrid"),
     data: dataSource,
-    scrollX: true,
-    scrollY: true,
+    scrollX: false,
+    scrollY: false,
     columns: [
       { header: "진행상태", name: "state", align: "center", width: 80, formatter: ({ row }) => `${row.state == 'A03' ? '진행중' : '완료'}` },
-      { header: "프로젝트명", name: "prNm", align: "center", renderer: subjectRenderer },
+      { header: "프로젝트명", name: "prNm", align: "center", renderer: subjectRenderer, sortable: true },
       {
         header: "프로젝트 기간", name: "startDt", align: "center", width: 200,
         formatter: ({ row }) => dateFormat(row.startDt) + ' ~ ' + dateFormat(row.endDt)
       },
-      { header: "금액", name: "price", align: "center", width: 120, },
+      { header: "금액", name: "price", align: "center", width: 120, sortable: true },
       { header: "일정", name: "plan", align: "center", width: 100, renderer: BtnRendererPlan },
       { header: "완료처리", name: "end", align: "center", width: 100, renderer: BtnRendererEnd },
-      { header: "등록일", name: "createDt", align: "center", width: 100, formatter: ({ row }) => dateFormat(row.createDt) },
+      { header: "등록일", name: "createDt", align: "center", width: 100, formatter: ({ row }) => dateFormat(row.createDt), sortable: true },
       { header: "관리", name: "managementSetting", align: "center", width: 150, renderer: BtnRendererSetting }
     ],
     pageOptions: {
@@ -300,6 +285,7 @@ const exportToExcel = () => {
       useFormattedValue: true,
       onlySelected: false,
       includeHiddenColumns: false,
+      columnNames: ['state', 'prNm', 'startDt', 'price', 'createDt']
     });
   }
 };
@@ -318,11 +304,11 @@ class subjectRenderer {
 
     //남은 기간이 10일 이하인 경우 경고배지 적용
     let term = dateTermCalc(dateFormat(rowData.endDt), dateFormat()) * (-1);
-    
-    if(rowData.state == 'A04'){
+
+    if (rowData.state == 'A04') {
       termClass.value = 'badge-secondary';
-    }else{
-      term < 10 ? termClass.value = 'badge-danger': termClass.value = 'badge-primary';
+    } else {
+      term < 10 ? termClass.value = 'badge-danger' : termClass.value = 'badge-primary';
     }
 
     el.innerHTML = `
@@ -330,9 +316,10 @@ class subjectRenderer {
       <div class="subject">
         <a href="#" class="mrp5">${rowData.prNm}</a>
         <span class="badge ${termClass.value}">
-          D${term > 0 ? "-" + term
-        : term < 0 ? "+" + term * (-1)
-          : "-day"}</span>
+          ${rowData.state == 'A04' ? '완료'
+        : term > 0 ? "D-" + term
+          : term < 0 ? "D+" + term * (-1)
+            : "D-day"}</span>
       </div>
     `;
 
@@ -689,3 +676,10 @@ const projectWorkGetList = async (prCd) => {
   }
 }
 </script>
+
+<style scoped>
+.input-group-text {
+  background-color: #eee;
+  color: #747474;
+}
+</style>

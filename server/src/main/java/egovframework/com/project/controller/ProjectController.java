@@ -204,6 +204,20 @@ public class ProjectController {
 	  return map;
 	}
 	
+	//프로젝트 일정수정
+	@PutMapping("/plan")
+	public boolean projectPlanModify(@RequestBody ProjectDTO project) {
+		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUser user = (CustomerUser) auth.getPrincipal();
+        String userId = user.getUserDTO().getMberId();
+        
+        project.setUpdateId(user == null ? "" : EgovStringUtil.isNullToString(userId));
+		
+		boolean result = projectService.projectPlanUpdate(project);		
+		return result;
+	}
+	
 	//프로젝트 일정 삭제
 	@DeleteMapping("/plan/{prPlanCd}")
 	public boolean projectPlanRemove(@PathVariable("prPlanCd") String prPlanCd) {

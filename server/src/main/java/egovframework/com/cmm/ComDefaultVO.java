@@ -98,25 +98,6 @@ public class ComDefaultVO implements Serializable {
 	public void setSearchEndDt(String searchEndDt) {
 		this.searchEndDt = searchEndDt;
 	}
-
-	public Long getSearchStartPrice() {
-		return searchStartPrice;
-	}
-
-	public void setSearchStartPrice(Long searchStartPrice) {
-		this.searchStartPrice = searchStartPrice;
-	}
-
-	public Long getSearchEndPrice() {
-		return searchEndPrice;
-	}
-
-	public void setSearchEndPrice(Long searchEndPrice) {
-		this.searchEndPrice = searchEndPrice;
-	}
-
-	private Long searchStartPrice;
-    private Long searchEndPrice;
     
     /** (회의) 진행예정 / 금일 구분 */
     private String state = "";  

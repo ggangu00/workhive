@@ -25,4 +25,7 @@ public interface TodoService {
 	
 	//일지 삭제
 	public boolean todoDelete(String todoCd);
+	
+	//일지 다중 삭제
+	public boolean todoListDelete(List<String> todoArr);
 }

@@ -84,7 +84,7 @@
   .nav-link {
     background: none;
     border: 0;
-    @include border-radius($nav-pills-border-radius);
+    border-radius: 3px;
   }
 
   .nav-link.active,
