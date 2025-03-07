@@ -54,7 +54,6 @@
                 <span class="input-group-text fw-bold">종료일</span>
                 <input type="date" class="form-control w50" v-model="searchData.searchEndDt">
               </div>
-              <button class="btn btn-secondary btn-fill w30 mlp10">초기화</button>
             </div>
           </div>
 

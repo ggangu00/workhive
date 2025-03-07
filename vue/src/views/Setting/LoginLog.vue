@@ -117,11 +117,17 @@ onMounted(() => {
       el: document.getElementById('logGrid'),
       data: dataSource,
       scrollX: false,
-      scrollY: true,
+      scrollY: false,
       columns: [
          { header: '사용자', name: 'logId', renderer: logMemInfo },
          { header: 'IP 주소', name: 'logIp', align: 'center' },
-         { header: '성공여부', name: 'state', align: 'center', formatter: ({ row }) => `${row.state == 'A01' ? '로그인 성공' : '로그인 실패'}` },
+         { header: '성공여부', name: 'state', align: 'center', 
+           formatter: ({ row }) => {
+               if (row.state == 'A01'){ return `<span class="point-blue">로그인 성공</span>`;}
+               else {return `<span class="point-red">로그인 실패</span>`;}
+               
+            },
+         },
          { header: "잠금상태", name: "plan", align: "center", renderer: BtnRenderer },
          { header: '날짜', name: 'createDt', align: 'center', sortable: true, formatter: ({ row }) => dateTimeFormat(row.createDt, 'yyyy-MM-dd hh:mm:ss') }
       ],
@@ -267,3 +273,11 @@ const lockChg = async (logId) => {
 }
 
 </script>
+
+
+<style scoped>
+.input-group-text {
+  background-color: #eee;
+  color: #747474;
+}
+</style>
