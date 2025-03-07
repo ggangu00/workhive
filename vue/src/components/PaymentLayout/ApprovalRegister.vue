@@ -108,6 +108,8 @@
                       [{{ approver.deptNm }}] {{ approver.mberNm }} {{ approver.gradeNm }}
                   </div>
                 </div>
+
+                <div style="height: 15px;"></div>
                 <span>수신</span>
                   <div class="approval-box">
                   <div v-for="(receiver, index) in receivers" :key="index" class="approval-item">
@@ -202,9 +204,12 @@ import ApprovalLine from '../../components/PaymentLayout/ApprovalLine.vue';
 import { useRoute } from 'vue-router';
 import Swal from 'sweetalert2';
 import Modal from '../../components/Modal.vue';
+import Card from '../Cards/Card.vue';
 import axios from '../../assets/js/customAxios.js';
 import { useUserInfoStore } from '../../store/userStore.js';
 import { useRouter } from 'vue-router'; 
+import { applyEditorStyles } from '@/assets/js/editorStyle.js'
+
 
 const router = useRouter();
 
@@ -265,6 +270,7 @@ onMounted(() => {
 
 //에디터
 const initEditor = () => {
+  applyEditorStyles();
   //새로운 에디터 생성
   editor = new Editor({
     el: editorElement.value,
@@ -273,9 +279,11 @@ const initEditor = () => {
     previewStyle: 'vertical',
     usageStatistics: false,
     plugins: [tableMergedCell],
-    initialValue :'양식을 선택후 작성해주세요'
+    initialValue :'양식을 선택후 작성해주세요', 
   });
+  
 };
+
 
 defineProps({
   headButtons: { type: Array, required: true },
@@ -421,6 +429,9 @@ const formSelect = (params) => {
   formCd.value = params.formCd;
   editor.setHTML(formFile.value);
   isShowModal.value = false;
+
+  console.log(editor.getHTML(formFile.value));
+
 }
 
 ////////////////////리셋버튼/////////////////////////
@@ -520,6 +531,8 @@ const approvalInfo = async() => {
       formData.append("files[]", file);
     }
   });
+
+  console.log(editor.getHTML());
   try {
     const response = await axios.post('/api/document/register', formData,
       {headers: { "Content-Type": "multipart/form-data" }});
@@ -601,7 +614,7 @@ watch(()=> docCnEditor.value, async()=>{
     background-color: #fafafa;
   }
   .left-card, .right-card {
-    height: 100%;
+    height: 95%;
     padding: 10px;
   }
 
