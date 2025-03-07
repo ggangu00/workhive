@@ -346,7 +346,7 @@
 	</select>
 	
 	<!-- 프로젝트 참여자추가 -->
-	<delete id="projectMemInsert" parameterType="ProjectDTO">		   
+	<insert id="projectMemInsert" parameterType="ProjectDTO">		   
 		INSERT INTO project_mem (
 			mber_id,		--구성원 코드
 		    pr_cd,			--프로젝트 코드
@@ -361,14 +361,7 @@
 			#{createId},
 			sysdate
 		)
-	</delete>
-	
-	<!-- 프로젝트 참여자등록 -->
-	<insert id="projectMemInsert" parameterType="ProjectDTO">
-	    INSERT INTO project_mem (mber_id, pr_cd, create_id, create_dt)
-	    VALUES (#{mberId}, #{prCd}, #{creatdId}, sysdate)
 	</insert>
-	
 	
 	<!-- 프로젝트 참여자삭제 -->
 	<delete id="projectMemDelete" parameterType="ProjectDTO">
