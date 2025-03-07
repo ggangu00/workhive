@@ -121,13 +121,13 @@ const initializeGrid = () => {
         align: 'left',
         minWidth: 200, // 최소 너비 설정
       },
-      {
-        header: '작성자',
-        name: 'frstRegisterNm',
-        sortable: true,
-        align: 'center',
-        width: 120,
-      },
+      // {
+      //   header: '작성자',
+      //   name: 'frstRegisterNm',
+      //   sortable: true,
+      //   align: 'center',
+      //   width: 120,
+      // },
       {
         header: '작성일',
         name: 'frstRegisterPnttm',
@@ -135,14 +135,14 @@ const initializeGrid = () => {
         align: 'center',
         width: 140,
       },
-      {
-        header: '사용여부',
-        name: 'useAt',
-        sortable: true,
-        align: 'center',
-        width: 140,
-        formatter: ({ value }) => value === 'A01' ? 'Y' : value === 'A02' ? 'N' : value
-      },
+      // {
+      //   header: '사용여부',
+      //   name: 'useAt',
+      //   sortable: true,
+      //   align: 'center',
+      //   width: 140,
+      //   formatter: ({ value }) => value === 'A01' ? 'Y' : value === 'A02' ? 'N' : value
+      // },
       {
         header: '관리',
         name: 'action',

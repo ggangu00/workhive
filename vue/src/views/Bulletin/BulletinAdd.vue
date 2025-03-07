@@ -5,8 +5,8 @@
       <div class="card">
         <div class="card-body">
           <h4 class="card-title float-left mt-1">게시글 등록</h4>
-          <button @click="submitForm" class="btn btn-primary btn-sm btn-fill float-right">등록</button>
-          <button @click="goToBulletinList" class="btn btn-secondary btn-sm btn-fill float-right">목록</button>
+          <button @click="submitForm" class="btn btn-primary btn-fill float-right">등록</button>
+          <button @click="goToBulletinList" class="btn btn-secondary btn-fill float-right">목록</button>
         </div>
       </div>
 
@@ -38,7 +38,7 @@
               </div>
             </div>
 
-            <div class="mb-3">
+            <!-- <div class="mb-3">
               <label>익명여부</label>
               <div class="form-check form-check-inline" style="margin-left: 10px;">
                 <input
@@ -49,9 +49,9 @@
                   @change="handleCheckChange('anonymous')"
                 />
               </div>
-            </div>
+            </div> -->
 
-            <div class="mb-3">
+            <!-- <div class="mb-3">
               <label>비밀여부</label>
               <div class="form-check form-check-inline" style="margin-left: 10px;">
                 <input
@@ -62,10 +62,10 @@
                   @change="handleCheckChange('secret')"
                 />
               </div>
-            </div>
+            </div> -->
 
             <!-- 비밀번호 입력 필드 -->
-            <div class="mb-3" v-show="secretAt">
+            <!-- <div class="mb-3" v-show="secretAt">
               <label>비밀번호 4자리를 입력해주세요</label>
               <input
                 type="password"
@@ -74,7 +74,7 @@
                 maxlength="4"
                 v-model="password"
               />
-            </div>
+            </div> -->
 
             <div class="mb-3">
               <label class="form-label">게시기간 <em class="point-red">*</em></label>
@@ -90,15 +90,15 @@
             </div>
 
             <!-- 파일첨부 (선택 사항) -->
-            <div class="mb-3">
+            <!-- <div class="mb-3">
               <label>파일첨부</label>
               <div class="input-group w30" style="border: 1px solid #ccc; border-radius: 3px; background-color: #fff;">
                 <input type="file" class="form-control" ref="fileInput" />
               </div>
-            </div>
+            </div>-->
           </form>
         </div>
-      </div>
+      </div> 
 
       <!-- 응답 메시지 -->
       <div

@@ -333,7 +333,7 @@ public class EgovArticleController {
         // 파일 업로드 처리
         List<FileVO> result = null;
         String atchFileId = "";
-
+       
         final List<MultipartFile> files = multiRequest.getFiles("file_1");
         if (!files.isEmpty()) {
             result = fileUtil.parseFileInf(files, "BBS_", 0, "", "");
