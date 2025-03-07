@@ -4,7 +4,7 @@
       <!-- 상단 버튼 영역 -->
       <div class="card">
         <div class="card-body">
-          <h4 class="card-title float-left mt-1">게시글 상세조회</h4>
+          <h4 v-if="bbsNm" class="card-title float-left mt-1 font-weight-bold">{{ bbsNm }}</h4>   
           <!-- <button class="btn btn-danger btn-fill float-right" @click="deleteBulletin">삭제</button> -->
           <button class="btn btn-success btn-fill float-right" @click="goToBulletinModify">수정</button>
           <button @click="goToBulletinList" class="btn btn-secondary btn-sm btn-fill float-right">목록</button>
@@ -162,7 +162,7 @@ const router = useRouter();
 const nttId = route.params.nttId
 const bbsId = route.params.bbsId
 
-
+const bbsNm = ref(''); // ✅ bbsNm을 ref로 선언
 
 const formatDate = (date) => {
   if (!date) return '-'; // 날짜가 없으면 대체 텍스트 출력
@@ -173,7 +173,7 @@ const formatDate = (date) => {
 
 
 // 게시글 상세 데이터
-const bulletinInfo = ref({
+const bulletinInfo = ref({ 
   wrterNm:'',
   nttSj: '',
   ntcrNm: '',
@@ -197,17 +197,30 @@ const newComment = ref({
 // 게시글 상세 조회 API 호출
 
 const fetchBulletinInfo = async () => {
-  const route = useRoute(); // 현재 라우트 정보 가져오기
-  const nttId = route.params.nttId; // URL에서 bulletinId 추출
-
   try {
     const response = await axios.get(`/api/bulletin/bulletinInfo?nttId=${nttId}&bbsId=${bbsId}`);
-    bulletinInfo.value = response.data.result;
+
+    console.log("게시글 상세 정보:", response.data);
+
+    // 게시글 정보 저장
+    if (response.data.result) {
+      bulletinInfo.value = response.data.result;
+    }
+
+    // ✅ boardMasterVO 객체에서 bbsNm 값 가져오기
+    if (response.data.boardMasterVO && response.data.boardMasterVO.bbsNm) {
+      bbsNm.value = response.data.boardMasterVO.bbsNm; // ref로 선언된 bbsNm에 값 저장
+      console.log("bbsNm 값:", bbsNm.value);
+    } else {
+      console.warn("bbsNm 값이 없습니다.");
+    }
+
   } catch (error) {
     console.error('게시글 상세 조회 오류:', error.response || error);
-
   }
 };
+
+
 
 
 // 댓글 조회
