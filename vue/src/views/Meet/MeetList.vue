@@ -35,9 +35,9 @@
                                 <tbody>
                                     <tr>
                                         <th class="table-secondary" width="10%">회의주제</th>
-                                        <td class="text-start">{{ meetInfo.mtgNm }}</td>
+                                        <td class="text-start">{{ meetInfo.mtgNm || '-' }}</td>
                                         <th class="table-secondary" width="10%">구분</th>
-                                        <td class="text-start">{{ meetInfo.typeNm }}</td>
+                                        <td class="text-start">{{ meetInfo.typeNm || '-' }}</td>
                                     </tr>
                                     <tr>
                                         <th class="table-secondary">회의일시</th>
@@ -46,21 +46,21 @@
                                                 meetInfo.mtgEndTm }}
                                         </td>
                                         <th class="table-secondary">회의실</th>
-                                        <td class="text-start">{{ meetInfo.mtgPlaceNm }}</td>
+                                        <td class="text-start">{{ meetInfo.mtgPlaceNm || '-' }}</td>
                                     </tr>
                                     <tr>
                                         <th class="table-secondary">참여자</th>
                                         <td colspan="3" class="text-start">
-                                            {{ memArr.join(", ") }}
+                                            {{ memArr.join(", ") || '-' }}
                                         </td>
                                     </tr>
                                     <tr>
                                         <th class="table-secondary">회의안건</th>
-                                        <td colspan="3" class="text-start">{{ meetInfo.mtgMtrCn }}</td>
+                                        <td colspan="3" class="text-start" style="white-space: pre-line;">{{ meetInfo.mtgMtrCn || '-' }}</td>
                                     </tr>
                                     <tr>
                                         <th class="table-secondary">회의결과</th>
-                                        <td colspan="3" class="text-start">{{ meetInfo.mtgResultCn }}</td>
+                                        <td colspan="3" class="text-start" style="white-space: pre-line;">{{ meetInfo.mtgResultCn || '-' }}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -125,6 +125,38 @@ class BtnRendererModal {
     }
 }
 
+//회의 참여자 목록
+class BtnRendererMember {
+    constructor(props) {
+        const rowKey = props.row?.rowKey ?? props.grid.getRow(props.rowKey)?.rowKey;
+        const rowData = props.grid.getRow(rowKey);
+
+        const el = document.createElement("div");
+        
+        const meetArr = rowData.memArr.split(", ").map(name => name.trim());
+        const meetLmt = [];
+
+        meetArr.forEach((data, index) => {
+            const newIndex = index + 1;
+            if (newIndex <= 3) { 
+                meetLmt.push(data);
+            }
+        });
+
+        el.innerHTML = `${meetLmt.join(", ")}`;
+
+        if(meetArr.length > 3) {
+           el.innerHTML += ` 외 ${meetArr.length - 3}명`;
+        }
+
+        this.el = el;
+    }
+
+    getElement() {
+        return this.el;
+    }
+}
+
 //회의 수정/삭제 버튼
 class BtnRendererSetting {
     constructor(props) {
@@ -159,19 +191,19 @@ class BtnRendererSetting {
 
 // 그리드 컬럼 데이터
 let nowCol = [
-    { header: "구분", name: "typeCd", align: "center", formatter: ({ row }) => `${row.typeCd == 'A04' ? '완료' : '진행중'}` },
-    { header: "회의주제", name: "mtgNm", align: "center", renderer: BtnRendererModal },
+    { header: "구분", name: "typeCd", align: "center", formatter: ({ row }) => `${row.MTG_RESULT_CN ? '완료' : '진행중'}` },
+    { header: "회의주제", name: "mtgNm", align: "center", renderer: BtnRendererModal, sortable: true },
     { header: "회의일시", name: "mtgDe", align: "center", formatter: ({ row }) => `${dateFormat(row.mtgDe)} (${dateGetDay(row.mtgDe)}) ${row.mtgBeginTm} ~ ${row.mtgEndTm}` },
     { header: "회의실", name: "mtgPlaceNm", align: "center" },
-    { header: "참여자", name: "memArr", align: "center" },
+    { header: "참여자", name: "memArr", align: "center", renderer: BtnRendererMember },
     { header: "관리", align: "center", renderer: BtnRendererSetting },
 ];
 let allCol = [
-    { header: "구분", name: "typeCd", align: "center", formatter: ({ row }) => `${row.typeCd == 'A04' ? '완료' : '진행중'}` },
-    { header: "회의주제", name: "mtgNm", align: "center", renderer: BtnRendererModal },
+    { header: "구분", name: "typeCd", align: "center", formatter: ({ row }) => `${row.MTG_RESULT_CN ? '완료' : '진행중'}` },
+    { header: "회의주제", name: "mtgNm", align: "center", renderer: BtnRendererModal, sortable: true },
     { header: "회의일시", name: "mtgDe", align: "center", formatter: ({ row }) => `${dateFormat(row.mtgDe)} (${dateGetDay(row.mtgDe)}) ${row.mtgBeginTm} ~ ${row.mtgEndTm}` },
     { header: "회의실", name: "mtgPlaceNm", align: "center" },
-    { header: "참여자", name: "memArr", align: "center" },
+    { header: "참여자", name: "memArr", align: "left", renderer: BtnRendererMember },
     { header: "관리", align: "center", renderer: BtnRendererSetting },
 ];
 
@@ -190,7 +222,7 @@ const initGrid = (gridInstance, gridDiv, rowData, colData) => {
         el: document.getElementById(gridDiv),
         data: rowData.value,
         scrollX: false,
-        scrollY: true,
+        scrollY: false,
         rowHeaders: ['checkbox'],
         columns: colData,
         pageOptions: {
@@ -276,10 +308,10 @@ const meetList = ref([]);
 const meetCount = ref(0);
 const meetGetList = async () => { //진행 예정 회의 전체출력
     try {
-        const result = await axios.get('/api/meet/list?state=ing');
-
+        const result = await axios.get('/api/meet/list');
         meetList.value = result.data;
         meetCount.value = result.data.length;
+
     } catch (err) {
         meetList.value = [];
 

@@ -85,10 +85,12 @@
     background: none;
     border: 0;
     border-radius: 3px;
+    cursor: pointer;
   }
 
   .nav-link.active,
   .show > .nav-link {
+    cursor: pointer;
   }
 }
 
