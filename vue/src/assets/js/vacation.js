@@ -1,12 +1,19 @@
 import axios from "../../assets/js/customAxios";
 import { dateTimeFormat } from "./common";
+import Swal from 'sweetalert2';
 
 // 연차 조회
 export async function yearVcGetInfo(targetYear) {
   let searchData = {
     targetYear: targetYear,
   }
-  let result = await axios.get('/api/yearVc/yearVcInfo', { params : searchData });
+
+  let result;
+  try {
+    result = await axios.get('/api/yearVc/yearVcInfo', { params : searchData });
+  } catch (err) {
+    Swal.fire({ icon: "error", title: "연차 정보 조회 실패", text: "Error : " + err });
+  }
   return result.data;
 }
 
@@ -17,7 +24,11 @@ export async function yearVcAdd(targetYear) {
   formData.append("giveDays", 15);
   formData.append("useDays", 0);
 
-  await axios.post('/api/yearVc/yearVcAdd', formData);
+  try {
+    await axios.post('/api/yearVc/yearVcAdd', formData);
+  } catch (err) {
+    Swal.fire({ icon: "error", title: "연차 정보 등록 실패", text: "Error : " + err });
+  }
 }
 
 // 사용 예정일 조회
@@ -25,7 +36,13 @@ export async function reqVcGetInfo(targetYear) {
   let searchData = {
     createDt: targetYear,
   }
-  let result = await axios.get('/api/vacation/expectInfo', { params : searchData });
+
+  let result;
+  try {
+    result = await axios.get('/api/vacation/expectInfo', { params : searchData });
+  } catch (err) {
+    Swal.fire({ icon: "error", title: "사용 예정일 조회 실패", text: "Error : " + err });
+  }
   return result.data;
 }
 

@@ -6,6 +6,23 @@ export const timeFormatter = ({ value }) => dateTimeFormat(value, 'MM/dd hh:mm')
 // 년-월-일
 export const dateFormatter = ({ value }) => dateTimeFormat(value, 'yyyy-MM-dd');
 
+// 우선순위
+export const priortFormatter = ({ value }) => {
+  let priort = '';
+  switch(value) {
+    case '1':
+      priort = "높음";
+      break;
+    case '2':
+      priort = "보통";
+      break;
+    case '3':
+      priort = "낮음";
+      break;
+  }
+  return priort;
+};
+
 // 결재 상태
 export const signFormatter = ({ value }) => {
   let signState = '';

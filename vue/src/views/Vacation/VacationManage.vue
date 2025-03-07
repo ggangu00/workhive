@@ -25,6 +25,17 @@
           </colgroup>
           <tbody>
             <tr>
+              <th>휴가 종류</th>
+              <td colspan="5">
+                <select class="form-select" aria-label="Default select example" v-model="vcData.vcType" :disabled="isDetail" style="width: 18.6%;">
+                  <option value="E01" :disabled="props.vcInfo.requestDays < 1">연차</option>
+                  <option value="E02">오전반차</option>
+                  <option value="E03">오후반차</option>
+                  <option value="E04">공가</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
               <th>휴가 시작일</th>
               <td colspan="2">
                 <input type="date" id="startDate" class="form-control" 
@@ -32,7 +43,8 @@
                             ? vacation.vcDateCalc(vcData.vcEndDt, props.vcInfo.requestDays, vcData.vcType, false)
                             : dateFormat()" 
                        :max="vcData.vcType === 'E01' || vcData.vcType === 'E04' ? vcData.vcEndDt : ''" 
-                       v-model="vcData.vcStartDt" :readonly="isDetail">
+                       v-model="vcData.vcStartDt" :readonly="isDetail" 
+                       style="width: 47.5%;">
               </td>
               <th>휴가 종료일</th>
               <td colspan="2">
@@ -41,23 +53,15 @@
                        :max="vcData.vcType === 'E01' 
                             ? vacation.vcDateCalc(vcData.vcStartDt, props.vcInfo.requestDays, vcData.vcType, true)
                             : ''" 
-                       v-model="vcData.vcEndDt" :readonly="vcData.vcType === 'E02' || vcData.vcType === 'E03' || isDetail">
+                       v-model="vcData.vcEndDt" :readonly="vcData.vcType === 'E02' || vcData.vcType === 'E03' || isDetail" 
+                       style="width: 47.5%;">
               </td>
             </tr>
             <tr>
-              <th>휴가 종류</th>
-              <td>
-                <select class="form-select" aria-label="Default select example" v-model="vcData.vcType" :disabled="isDetail">
-                  <option value="E01" :disabled="props.vcInfo.requestDays < 1">연차</option>
-                  <option value="E02">오전반차</option>
-                  <option value="E03">오후반차</option>
-                  <option value="E04">공가</option>
-                </select>
-              </td>
               <th>사용 일수</th>
-              <td><input type="text" class="form-control" v-model="vcData.useDays" readonly></td>
+              <td colspan="2"><input type="text" class="form-control" v-model="vcData.useDays" style="width: 47.5%;" readonly></td>
               <th>예상 잔여 일수</th>
-              <td><input type="text" class="form-control" v-model="vcData.remainDays" readonly></td>
+              <td colspan="2"><input type="text" class="form-control" v-model="vcData.remainDays" style="width: 47.5%;" readonly></td>
             </tr>
             <tr>
               <th>휴가 사유</th>

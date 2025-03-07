@@ -510,8 +510,8 @@
 		<if test='searchCnd == "3"'>
 			AND C.MBER_NM LIKE '%'||#{searchWrd}||'%'
 		</if>
-
-		ORDER BY A.CREATE_DT DESC
+		ORDER BY TO_NUMBER(A.PRIORT) ASC,
+				 A.CREATE_DT DESC
 
 
 
