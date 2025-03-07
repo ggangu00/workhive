@@ -3,28 +3,6 @@
 <mapper namespace="egovframework.com.department.mapper.DepartmentMapper">
 
 	<!-- 부서 전체조회 -->
-	<!--<select id="departmentSelectAll" resultType="departmentDTO">
-		SELECT
-		   dept_cd,
-		   depth,
-		   parent_cd,
-		   seq,
-		   dept_nm,
-		   description,
-		   manager,
-		   create_id,
-		   create_dt,
-		   update_id,
-		   update_dt,
-		   del_yn
-		FROM 
-		   department
-		WHERE
-		   del_yn = UPPER('n')
-		AND
-		   <![CDATA[dept_cd > 0]]>
-   	</select> -->
-   	
    	<select id="departmentSelectAll" resultType="departmentDTO">
 		SELECT
 		   LEVEL, <!-- 트리내에서 어떤 단계에 있는지 나타내는 값 --> 
@@ -34,12 +12,7 @@
 		   manager,
 		   depth,
 		   parent_cd,
-		   seq,
-		   create_id,
-		   create_dt,
-		   update_id,
-		   update_dt,
-		   del_yn
+		   seq
 		FROM
 		   department
 		WHERE 
@@ -53,6 +26,7 @@
 		   seq ASC <!-- 정렬 기준 -->
    	</select>
    	
+   	<!-- 부서 단건조회 -->
    	<select id="departmentSelect" resultType="departmentDTO" parameterType="int">
 		SELECT
 		   dept_cd,
@@ -62,10 +36,6 @@
 		   dept_nm,
 		   description,
 		   manager,
-		   create_id,
-		   create_dt,
-		   update_id,
-		   update_dt,
 		   del_yn
 		FROM 
 		   department
@@ -75,6 +45,47 @@
 		   dept_cd = #{deptCd}
    	</select>
 	
+	<!-- 부서 등록 -->
+	<insert id="departmentInsert" parameterType="DepartmentDTO">
+		INSERT INTO
+		   department(
+		      dept_cd,
+		      depth,
+		      parent_cd,
+		      seq,
+		      dept_nm,
+		      description,
+		      manager,
+		      create_id
+		   )
+		VALUES (
+		   #{deptCd},
+		   #{depth},
+		   #{parentCd},
+		   #{seq},
+		   #{deptNm},
+		   #{description},
+		   #{manager},
+		   #{createId}
+		)
+	</insert>
+	
+	<!-- 부서 수정 -->
+	<update id="departmentUpdate" parameterType="DepartmentDTO">
+		UPDATE 
+		   department
+		SET 
+		   depth = #{depth},
+		   parent_cd = #{parentCd},
+		   seq = #{seq},
+		   dept_nm = #{deptNm},
+		   description = #{description},
+		   manager = #{manager},
+		   update_dt = SYSDATE,
+		   update_id = #{updateId}
+		WHERE
+		   dept_cd = #{deptCd}
+	</update>
 	
 	<!-- 부서 트리 조회 : 사용자의 부서 기준 관련 부서 검색 -->
 	<select id="deptTreeSelectAll" parameterType="String" resultType="departmentDTO">

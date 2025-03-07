@@ -27,6 +27,24 @@ public class DepartmentServiceImpl implements DepartmantService {
 		return dMapper.departmentSelect(deptCd);
 	}
 
+	// 부서 등록
+	@Override
+	public boolean departmentInsert(DepartmentDTO dto) {
+		return dMapper.departmentInsert(dto) == 1 ? true : false ;
+	}
+
+	// 부서 수정
+	@Override
+	public boolean departmentUpdate(DepartmentDTO dto) {
+		return dMapper.departmentUpdate(dto) == 1 ? true : false ;
+	}
+
+	// 부서 삭제
+	@Override
+	public boolean departmentDelete(String deptCd) {
+		return dMapper.departmentDelete(deptCd) == 1 ? true : false ;
+	}
+	
 	// 부서 트리 조회
 	@Override
 	public List<DepartmentDTO> deptTreeSelectAll(String deptCd) {

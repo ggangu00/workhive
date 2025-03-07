@@ -11,18 +11,13 @@
             <div class="card-body">
                <div class="row m-0">
                   <!-- 트리 뷰 (왼쪽) -->
-                  <div class="col-3 treeview">
+                  <div class="col-3 depth treeview">
                      <button @click="modalOpen">모달 오픈</button>
-                     <ul>
-                        <TreeNode
-                           v-for="node in organizationTree"
-                           :key="node.id"
-                           :node="node"
-                           @toggle="toggleTree"
-                           @menuToggle="toggleMenu"
-                           @action="handleAction"
-                        />
-                     </ul>
+                     <!-- 데이터 로딩 끝난 후에만 자식 렌더링 -->
+                     <DepartmentComponent
+                        v-if="isTreeLoaded"
+                        :departmentTree="departmentTree"
+                     />
                   </div>
 
                   <!-- 구성원 테이블 (오른쪽) -->
@@ -70,8 +65,7 @@
                                  </div>
                               </td>
                               <td>{{ member.id }}</td>
-                              <td class="profile-cell">
-                                 <img :src="member.profileImage" alt="프로필 이미지" class="profile-img">
+                              <td>
                                  <div class="profile-text">
                                     <span class="team-label">개발팀</span>
                                     <span class="user-name">{{ member.name }}</span>
@@ -132,60 +126,68 @@
 </template>
 
 <script setup>
-   import { ref } from "vue";
-   import TreeNode from "../../../components/TreeView/TreeNode.vue";
+   import { ref, onBeforeMount } from "vue";
+   import Swal from 'sweetalert2';
+   import axios from "../../../assets/js/customAxios"; // 공통 Axios 설정 파일
    import Modal from '../../../components/Modal.vue';
-   import Card from '../../../components/Cards/Card.vue'
+   import Card from '../../../components/Cards/Card.vue';
+   import DepartmentComponent from "../../../components/Department/DepartmentComponent.vue";
 
    const isShowModal = ref(false);
+// ================================================== 생명주기 함수 ==================================================
+   // 컴포넌트가 마운트되기 전에 권한 및 메뉴 목록 조회 실행
+   onBeforeMount(async () => {
+      await departmentGetList();
+      isTreeLoaded.value = true;
+   });
 
-   const organizationTree = ref([
-   {
-      id: "workhive",
-      name: "WorkHive",
-      count: 50,
-      children: [
-         {
-            id: "devteam",
-            name: "개발팀",
-            count: 37,
-            children: [
-               { id: "dev1", name: "개발 1팀", count: 10, children: [] },
-               { id: "dev2", name: "개발 2팀", count: 12, children: [] },
-               { id: "dev3", name: "개발 3팀", count: 15, children: [] },
-            ],
-         },
-         {
-            id: "designteam",
-            name: "디자인팀",
-            count: 13,
-            children: [
-               { id: "design1", name: "디자인 1팀", count: 5, children: [] },
-               { id: "design2", name: "디자인 2팀", count: 6, children: [] },
-               { id: "design3", name: "디자인 3팀", count: 2, children: [] },
-            ],
-         },
-      ],
-   },
-   ]);
-
-   const toggleTree = (node) => {
-      node.expanded = !node.expanded;
-   };
-
-   const toggleMenu = (node) => {
-      node.showMenu = !node.showMenu;
-   };
-
-   const handleAction = (action, node) => {
-      if (action === "edit") {
-         console.log("조직 수정:", node.name);
-      } else if (action === "add") {
-         console.log("하위 조직 추가:", node.name);
-      } else if (action === "delete") {
-         console.log("조직 삭제:", node.name);
+// ================================================== 부서관련 axios ==================================================
+   const departmentTree = ref([]);
+   // 데이터 로드 완료 플래그
+   const isTreeLoaded = ref(false)
+   const departmentGetList = async () => {
+      try {
+         const response = await axios.get('/api/department')
+         const tree = buildPrimeVueTree(response.data)
+         departmentTree.value = tree
+      } catch (err) {
+         departmentTree.value = []
+         Swal.fire({
+            icon: "error",
+            title: "API 조회 실패",
+            text: `Error: ${err.response?.data?.error || err.message}`
+         })
       }
-   };
+   }
+
+
+   const buildPrimeVueTree = (flatList) => {
+      const map = new Map()
+
+      // 전체 데이터 Map에 먼저 등록
+      flatList.forEach(item => {
+         map.set(item.deptCd, {
+            key: item.deptCd,
+            label: item.deptNm,
+            children: []
+         })
+      })
+
+      const tree = []
+
+      // 부모-자식 연결
+      flatList.forEach(item => {
+         if (item.parentCd) {
+            map.get(item.parentCd).children.push(map.get(item.deptCd))
+         } else {
+            tree.push(map.get(item.deptCd))
+         }
+      })
+
+      return tree
+   }
+
+
 
    const members = ref([
       { id: "2025001", name: "김민진", rank: "부장" },

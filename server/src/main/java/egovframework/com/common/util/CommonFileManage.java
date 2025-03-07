@@ -51,7 +51,6 @@ public class CommonFileManage {
 				// 변환된 파일 정보 리스트를 DB에 저장하고 첨부파일 ID 반환
 				atchFileId = fileMngService.insertFileInfs(fileVOList);
 				
-				System.out.println("생성된 첨부파일 ID: " + atchFileId);
 			} catch (Exception e) {
 				e.printStackTrace();
 				return ""; // 파일 저장 중 오류 발생 시 중단

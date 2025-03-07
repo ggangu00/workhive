@@ -119,8 +119,6 @@ public class EgovWebApplicationInitializer implements WebApplicationInitializer 
 			FilterRegistration.Dynamic egovSpringSecurityLogoutFilter = servletContext.addFilter("egovSpringSecurityLogoutFilter", new EgovSpringSecurityLogoutFilter());
 			egovSpringSecurityLogoutFilter.addMappingForUrlPatterns(null, false, "/uat/uia/actionLogout.do");
 		
-			System.out.println("application");
-			
 		} else if("session".equals(EgovProperties.getProperty("Globals.Auth").trim())) {
 			//-------------------------------------------------------------
 			// EgovLoginPolicyFilter 설정

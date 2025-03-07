@@ -103,7 +103,6 @@ public class EgovLoginController {
 		 Map<String, Object> responseData = new HashMap<>();
 		 responseData.put("status", "success");
 		 responseData.put("message", "로그인 성공");
-		 	System.out.println("로그인 성공 !" );
 			ObjectMapper objMap = new ObjectMapper(); // json 형태
 
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON)
@@ -116,7 +115,6 @@ public class EgovLoginController {
 		 Map<String, Object> responseData = new HashMap<>();
 		 responseData.put("status", "fail");
 		 responseData.put("message", "로그인 실패");
-		 System.out.println("loginFail.do => ");
 		 
 		 ObjectMapper objMap = new ObjectMapper(); // json 형태
 

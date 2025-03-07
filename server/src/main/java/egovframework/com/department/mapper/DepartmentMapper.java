@@ -14,6 +14,14 @@ public interface DepartmentMapper {
 	// 부서 단건조회
 	DepartmentDTO departmentSelect(int deptCd);
 
+	// 부서 등록
+	int departmentInsert(DepartmentDTO dto);
+	
+	// 부서 수정
+	int departmentUpdate(DepartmentDTO dto);
+
+	// 부서 삭제
+	int departmentDelete(String deptCd);
 	
 	// 부서 트리 조회
 	List<DepartmentDTO> deptTreeSelectAll(String deptCd);

@@ -8,8 +8,12 @@ import javax.annotation.Resource;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,6 +36,7 @@ public class DepartmentController {
 		return deptService.departmentSelectAll();
 	}
 	
+	// 부서 단건조회
 	@GetMapping("/{deptCd}")
 	public Map<String, Object> departmentInfo(@PathVariable(name="deptCd") int deptCd) {
 		log.info(Integer.toString(deptCd));
@@ -49,6 +54,45 @@ public class DepartmentController {
 	    	map.put("info", "해당 권한이 없습니다.");
 	    }
 		
+		return map;
+	}
+	
+	// 부서 등록
+	@PostMapping("")
+	public Map<String, Object> departmentAdd(@RequestBody DepartmentDTO dto) {
+		log.info("부서등록 정보 => ", dto.toString());
+		
+		Map<String, Object> map = new HashMap<>();
+		
+		map.put("result", deptService.departmentInsert(dto));
+        map.put("deptList", deptService.departmentSelectAll());
+        
+		return map;
+	}
+	
+	// 부서 수정
+	@PutMapping("")
+	public Map<String, Object> departmentModify(@RequestBody DepartmentDTO dto) {
+		log.info("부서수정 정보 => ", dto.toString());
+		
+		Map<String, Object> map = new HashMap<>();
+		
+		map.put("result", deptService.departmentUpdate(dto));
+        map.put("deptList", deptService.departmentSelectAll());
+        
+		return map;
+	}
+	
+	// 부서 삭제
+	@DeleteMapping("/{deptCd}")
+	public Map<String, Object> departmentRemove(@PathVariable(name="deptCd") String deptCd) {
+		log.info("부서삭제 정보 => ", deptCd);
+		
+		Map<String, Object> map = new HashMap<>();
+		
+		map.put("result", deptService.departmentDelete(deptCd));
+        map.put("deptList", deptService.departmentSelectAll());
+        
 		return map;
 	}
 	

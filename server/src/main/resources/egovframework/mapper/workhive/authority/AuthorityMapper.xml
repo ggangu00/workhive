@@ -90,6 +90,7 @@
 		   authority_cd = #{authorityCd}
 	</update>
 	
+	<!-- 메뉴 접근권한 체크 -->
 	<select id="isMenuAccessible" resultType="int">
 		SELECT 
 		   count(*) 
@@ -100,5 +101,24 @@
 		AND   
 		   menu_cd = #{menuCd}
 	</select>
+	
+	<!-- 일단 권한에 대한 접근 메뉴 테이블에서 조건절에 아이값을 넣고 그 아이디 값에 대한 전체를 싹 다 지우고 체크 된 값 새로 등록 -->
+	<delete id="authorityMenuDelete">
+		DELETE FROM 
+		   authority_menu
+		WHERE 
+		   authority_cd = #{authorityCd}
+	</delete>
+	
+	<insert id="authorityMenuInsert">
+		INSERT INTO 
+		   authority_menu(
+		      menu_cd,
+		      authority_cd)
+		VALUES (
+		   menu_cd,
+		   authority_cd
+		)
+	</insert>
 
 </mapper>

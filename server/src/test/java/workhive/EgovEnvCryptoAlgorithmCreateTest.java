@@ -30,7 +30,6 @@ public class EgovEnvCryptoAlgorithmCreateTest {
 		LOGGER.info("알고리즘 키(algorithmKey) : "+cryptoTest.algorithmKey);
 		LOGGER.info("알고리즘 키 Hash(algorithmKeyHash) : "+egovPasswordEncoder.encryptPassword(cryptoTest.algorithmKey));
 		LOGGER.info("알고리즘 블럭사이즈(algorithmBlockSize)  :"+cryptoTest.algorithmBlockSize);
-		System.out.println(EgovFileScrty.encryptPassword("1234", "USER"));
 		//lZRQJQ1OROo33Kgfvg1pczGZXV0T/3WJ+343tCnIG+c=
 	}
 }
