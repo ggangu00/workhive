@@ -17,13 +17,49 @@
           <div class="row">
             <div class="col">
                 
-              <div class="row">
+              <!-- <div class="row">
                 <div class="col header">
                   <h4>  [ 휴가 정보 ]</h4>
                   <hr>
                 </div>
-              </div>
+              </div> -->
 
+              <div class="row profile-section justify-content-center">
+                <div class="col-auto status-boxes">
+
+                  <div class="status-box projects">
+                    <div class="status-title" style="background-color: gray;">대상연도</div>
+                    <div class="status-content">{{ vcInfo.targetYear }} 년</div>
+                  </div>
+
+                  <div class="status-box projects">
+                    <div class="status-title" style="background-color: gray;">부여일수</div>
+                    <div class="status-content">{{ vcInfo.giveDays }} 일</div>
+                  </div>
+                  
+                  <div class="status-box projects">
+                    <div class="status-title" style="background-color: gray;">잔여일수</div>
+                    <div class="status-content">{{ vcInfo.remainDays }} 일</div>
+                  </div>
+                  
+                  <div class="status-box projects">
+                    <div class="status-title" style="background-color: gray;">신청가능일수</div>
+                    <div class="status-content">{{ vcInfo.requestDays }} 일</div>
+                  </div>
+                  
+                  <div class="status-box projects">
+                    <div class="status-title" style="background-color: gray;">결재대기</div>
+                    <div class="status-content">{{ vcInfo.signWait }} 건</div>
+                  </div>
+                  
+                  <div class="status-box projects">
+                    <div class="status-title" style="background-color: gray;">보완요청</div>
+                    <div class="status-content">{{ vcInfo.signSup }} 건</div>
+                  </div>
+
+                </div>
+              </div>
+<!-- 
               <div class="row">
                 <div class="col vc-card">
                   <div class="vc-header">대상연도</div>
@@ -61,6 +97,7 @@
                   <hr>
                 </div>
               </div>
+  -->
 
             </div>
           </div>
