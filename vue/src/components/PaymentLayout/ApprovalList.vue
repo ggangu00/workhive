@@ -44,12 +44,12 @@
                 
                   <div class="input-group">
                     <span class="input-group-text fw-bold">기안일(시작)</span>
-                    <input type="date" class="form-control w50" v-model="startDate">
+                    <input type="date" class="form-control w50" :max="endDate" v-model="startDate">
                   </div>
                   <span class="fw-bold">~</span>
                   <div class="input-group">
                     <span class="input-group-text fw-bold">기안일(종료)</span>
-                    <input type="date" class="form-control w50" v-model="endDate">
+                    <input type="date" class="form-control w50" :min="startDate" v-model="endDate">
                   </div>
                 
 
@@ -273,11 +273,11 @@ const TueGrid = () => {
     scrollX: true,
     scrollY: true,
     columns: props.columnDefs,
-    bodyHeight: 40 * 13,
+    bodyHeight: 40 * 10,
     rowHeaders: ["checkbox"],
     pageOptions: {
       useClient: false, // 서버 사이드 페이지네이션 사용
-      perPage: 13,
+      perPage: 10,
     },
     data: dataSource,
   });
@@ -291,10 +291,10 @@ const handleRowClick = (e) => {
   if (!grid.value || e.rowKey == null || e.rowKey == undefined ) return;
   const dataRow = grid.value.getRow(e.rowKey);
   if (e.nativeEvent.target.type == "checkbox") {
-
     return;
   }
 
+  console.log(loginUser)
   let routePath ='';
 
   // 특정 조건일 때 페이지 이동
@@ -302,7 +302,7 @@ const handleRowClick = (e) => {
     routePath = "/approval/rejectedInfo"
   }else if (dataRow?.crntSignStat == "완료") {
     routePath = "/approval/completedInfo";
-  }else if (dataRow?.crntSignStat == "미결" && loginUser == dataRow?.mberId) {
+  }else if (dataRow?.crntSignStat == "미결" && loginUser != dataRow?.mberId) {
     routePath = "/approval/proceedInfo"
   }else if (dataRow?.crntSignStat == "미결") {
     routePath = "/approval/pendingInfo"
