@@ -117,10 +117,6 @@ span {
   font-weight: bold;
   cursor: pointer;
   margin-right: 8px;
-  
-  white-space: normal; /* 공백을 처리하여 줄바꿈이 가능하게 함 */
-  word-wrap: break-word; /* 텍스트가 길어지면 줄바꿈을 시도 */
-  word-break: break-word; /* 긴 단어가 줄바꿈되지 않으면 강제로 끊음 */
 }
 
 i {

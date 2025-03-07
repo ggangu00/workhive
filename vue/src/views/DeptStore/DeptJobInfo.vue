@@ -520,6 +520,9 @@ onBeforeUnmount(() => {
 div::v-deep .nav-link {
   display: flex !important;
 }
+.jobBx {
+  padding-left: 2px !important;
+}
 
 </style>
 
