@@ -189,7 +189,10 @@ public class EgovBBSMasterController {
     //@RequestMapping("/cop/bbs/selectBBSMasterInfs.do")
     @GetMapping("/boardList")
     public Map<String, Object> selectBBSMasterInfs(@ModelAttribute("searchVO") BoardMasterVO boardMasterVO, ModelMap model) throws Exception {
-		boardMasterVO.setPageUnit(propertyService.getInt("pageUnit"));
+    	  
+    	
+        
+    	boardMasterVO.setPageUnit(propertyService.getInt("pageUnit"));
 		boardMasterVO.setPageSize(propertyService.getInt("pageSize"));
 	
 		PaginationInfo paginationInfo = new PaginationInfo();
