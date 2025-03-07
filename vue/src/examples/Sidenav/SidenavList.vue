@@ -98,6 +98,7 @@
    import SidenavCollapse from "./SidenavCollapse.vue";
    import axios from "../../assets/js/customAxios";
    import Swal from 'sweetalert2';
+   import { useUserInfoStore } from '../../store/userStore.js';
 
    const router = useRouter();
 //================================= 조회 ===========================
@@ -131,9 +132,17 @@
    };
 
 // ============================================= Axios Event =============================================
+   const userInfoStore = useUserInfoStore();
+   let loginUser = userInfoStore.user; //
+
    const menus = ref([]);
    const menuGetList = async () => {
       try {
+
+         if(loginUser == null) {
+            return;
+         }
+
          const response = await axios.get('/api/menu/authList');
 
          menuBuildTree(response.data);
