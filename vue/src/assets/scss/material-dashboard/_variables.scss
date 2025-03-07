@@ -1112,7 +1112,7 @@ $form-check-input-indeterminate-bg-color: $component-active-bg !default;
 $form-check-input-indeterminate-border-color: $form-check-input-indeterminate-bg-color !default;
 $form-check-input-indeterminate-bg-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path fill='none' stroke='#{$form-check-input-indeterminate-color}' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10h8'/></svg>") !default;
 
-$form-switch-color: rgba(0, 0, 0, 1) !default;
+$form-switch-color: $primary !default;
 $form-switch-bg-color: $gray-400 !default;
 $form-switch-height: 0.9375rem !default;
 $form-switch-width: $form-switch-height * 2 !default;

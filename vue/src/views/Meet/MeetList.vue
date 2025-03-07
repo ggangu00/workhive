@@ -1,13 +1,11 @@
 <template>
     <div class="content" @keydown.esc="modalClose">
         <div class="container-fluid">
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title float-left mt-1">회의 조회</h4>
-                    <button class="btn btn-primary btn-sm btn-fill float-right" onclick="location.href ='/meet/add'">회의
-                        등록</button>
-                </div>
-            </div>
+            <card>
+                <h4 class="card-title float-left mt-1">회의 조회</h4>
+                <button class="btn btn-primary btn-sm btn-fill float-right" onclick="location.href ='/meet/add'">회의
+                    등록</button>
+            </card>
             <card>
                 <h5>금일 예정 회의 ({{ numberFormat(meetNowCount) }}건)</h5>
                 <div id="nowGrid" class="toastui project"></div>

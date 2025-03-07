@@ -4,58 +4,47 @@
       <div class="row">
         <div class="col-12">
           <card>
-            <h4 class="card-title float-left">{{ title }}</h4>
+            <h4 class="card-title float-left mt-1">{{ title }}</h4>
             <div class="d-flex justify-content-end">
-              <button
-                v-for="(btn, index) in buttons"
-                :key="index"
-                :class="['btn', btn.class]"
+              <button v-for="(btn, index) in buttons" :key="index" :class="['btn', btn.class]"
                 @click="$emit('button-click', btn.label)">
                 {{ btn.label }}
               </button>
             </div>
           </card>
-          <div class="card">
+          <card>
             <!-- 버튼 & 필터 -->
-            <div class="button-collection d-flex justify-content-between align-items-center flex-wrap" style="padding: 15px;">
-              <div class="selectbox d-flex">
-                <select class="form-select w10" name="doc_kind" v-model="docKind">
-                  <option v-for="(data, idx) in selectedData"
-                  :key="idx"
-                  :value="data.commDtlCd">
-                  {{ data.commDtlNm }}
+            <div class="row justify-content-between align-items-end">
+              <div class="col-3"></div>
+              <div class="selectbox col d-flex align-items-center">
+                <select class="form-control form-select w50" name="doc_kind" v-model="docKind">
+                  <option v-for="(data, idx) in selectedData" :key="idx" :value="data.commDtlCd">
+                    {{ data.commDtlNm }}
                   </option>
                 </select>
-                <select class="form-select w10" name="dept_nm" v-model="deptNm">
-                  <option v-for="(data, idx) in selectedDeptData"
-                  :key="idx"
-                  :value="data.deptNm">
-                  {{ data.deptNm }}
+                <select class="form-control form-select w50" name="dept_nm" v-model="deptNm">
+                  <option v-for="(data, idx) in selectedDeptData" :key="idx" :value="data.deptNm">
+                    {{ data.deptNm }}
                   </option>
                 </select>
-                <select class="form-select w10" name="form_cd" v-model="formType">
-                  <option v-for="(data, idx) in selectedFormData"
-                  :key="idx"
-                  :value="data.formCd">
-                  {{ data.formType }}
+                <select class="form-control form-select w50" name="form_cd" v-model="formType">
+                  <option v-for="(data, idx) in selectedFormData" :key="idx" :value="data.formCd">
+                    {{ data.formType }}
                   </option>
                 </select>
-                <div class="d-flex">
-                  <div class="input-group">
-                    <span class="input-group-text fw-bold">기안일(시작)</span>
-                    <input type="date" class="form-control" v-model="startDate">
-                  </div>
-                  <span class="fw-bold">~</span>
-                  <div class="input-group">
-                    <span class="input-group-text fw-bold">기안일(종료)</span>
-                    <input type="date" class="form-control" v-model="endDate">
-                  </div>
+                <div class="input-group">
+                  <span class="input-group-text fw-bold">기안일(시작)</span>
+                  <input type="date" class="form-control w50" v-model="startDate">
                 </div>
-
-                <button class="btn btn-secondary btn-fill" @click="resetBtn">초기화</button>
+                <span class="fw-bold">~</span>
+                <div class="input-group">
+                  <span class="input-group-text fw-bold">기안일(종료)</span>
+                  <input type="date" class="form-control w50" v-model="endDate">
+                </div>
+                <button class="btn btn-secondary btn-fill w20" @click="resetBtn">초기화</button>
               </div>
             </div>
-          </div>
+          </card>
         </div>
 
         <!-- Toast UI Grid 영역 -->
@@ -107,38 +96,38 @@ const endDate = ref('');
 
 //셀렉트박스
 const selectedData = ref([]); //문서종류 셀렉트박스
-const selectedDeptData =ref([]); //부서종류 셀렉트박스
-const selectedFormData =ref([]); //문서양식종류 셀렉트박스
+const selectedDeptData = ref([]); //부서종류 셀렉트박스
+const selectedFormData = ref([]); //문서양식종류 셀렉트박스
 
 //공통코드 가져오기
-const commonDtlList = async () =>{
+const commonDtlList = async () => {
   const docKind = await axios.get(`/api/comm/codeList`, {
-    params: {cd:'DK'}
+    params: { cd: 'DK' }
   });
-  selectedData.value = [{ commDtlCd: "", commDtlNm: "전체" } ,...docKind.data]
+  selectedData.value = [{ commDtlCd: "", commDtlNm: "전체" }, ...docKind.data]
 }
 //부서명 가져오기
-const deptList = async () =>{
-   try {
-      const deptNm = await axios.get('/api/department')
-      selectedDeptData.value=[{ deptNm: "전체" } , ...deptNm.data]
-   } catch (err) {
-      Swal.fire({
-         icon: "error",
-         title: "조회 실패",
-         text:  "Error : " + err.response.data.error
-      });
-   }
+const deptList = async () => {
+  try {
+    const deptNm = await axios.get('/api/department')
+    selectedDeptData.value = [{ deptNm: "전체" }, ...deptNm.data]
+  } catch (err) {
+    Swal.fire({
+      icon: "error",
+      title: "조회 실패",
+      text: "Error : " + err.response.data.error
+    });
+  }
 
 
 }
 //양식유형 가져오기
-const formList = async () =>{
-   const formType = await axios.get('/api/document/form')
-   selectedFormData.value=[{ formCd:'', formType: "전체"}, ...formType.data]
+const formList = async () => {
+  const formType = await axios.get('/api/document/form')
+  selectedFormData.value = [{ formCd: '', formType: "전체" }, ...formType.data]
 }
 //초기화 버튼
-const resetBtn = () =>{
+const resetBtn = () => {
   deptNm.value = "전체";  // 부서 선택 초기화
   docKind.value = "";       // 문서 종류 초기화
   startDate.value = "";     // 날짜 초기화
@@ -167,7 +156,7 @@ const dataSource = {
       method: "GET",
       initParams: getParams.value,
       headers: {
-      'Authorization': `Bearer ${token}`  // 백틱 사용
+        'Authorization': `Bearer ${token}`  // 백틱 사용
       }, // 페이지, 상태코드(미결, 반려, 진행완료)
     },
   },
@@ -200,7 +189,7 @@ const btnSelectChange = () => {
     try {
       const response = await axios.put(`/api/document/state`, {
         approvalArr: checkedData.map(row => row.docCd),
-        mberId: loginUser , // 실제 로그인 아이디로 변경
+        mberId: loginUser, // 실제 로그인 아이디로 변경
         signStat: newSignStat
       });
 
@@ -243,30 +232,30 @@ const TueGrid = () => {
 
 // 행 클릭 이벤트 핸들러
 const handleRowClick = (e) => {
-  if (!grid.value || e.rowKey == null || e.rowKey == undefined ) return;
+  if (!grid.value || e.rowKey == null || e.rowKey == undefined) return;
   const dataRow = grid.value.getRow(e.rowKey);
   if (e.nativeEvent.target.type == "checkbox") {//행클릭무시 체크박스면
     return;
   }
 
-  let routePath ='';
+  let routePath = '';
 
   // 특정 조건일 때 페이지 이동
-if (dataRow?.crntSignStat == "미결" ||dataRow?.crntSignStat == "진행중" ) {
+  if (dataRow?.crntSignStat == "미결" || dataRow?.crntSignStat == "진행중") {
     routePath = "/approval/pendingInfo"
-}
+  }
 
 
   router.push({
     path: routePath,
-    query :{
-      docCd : dataRow.docCd,
-      docKind : dataRow.docKind,
-      formType : dataRow.formType,
-      formCd : dataRow.formCd,
-      deptNm : dataRow.deptNm,
-      docTitle : dataRow.docTitle,
-      docCnEditor : dataRow.docCnEditor,
+    query: {
+      docCd: dataRow.docCd,
+      docKind: dataRow.docKind,
+      formType: dataRow.formType,
+      formCd: dataRow.formCd,
+      deptNm: dataRow.deptNm,
+      docTitle: dataRow.docTitle,
+      docCnEditor: dataRow.docCnEditor,
     }
   });
 };
@@ -280,25 +269,28 @@ onMounted(() => {
 
 //문서 유형 셀렉트박스 변경시 필터 감지하여 재로딩
 watch([docKind, deptNm, formType, startDate, endDate], async ([newDodKind, newDeptNm, newFormType, newStartDate, newEndDate]) => {
-  getParams.value.docKind=newDodKind;
-  getParams.value.formCd=newFormType;
-  getParams.value.startDate=newStartDate;
-  getParams.value.endDate=newEndDate;
-  getParams.value.deptNm = newDeptNm == "전체" ? "" :newDeptNm;
+  getParams.value.docKind = newDodKind;
+  getParams.value.formCd = newFormType;
+  getParams.value.startDate = newStartDate;
+  getParams.value.endDate = newEndDate;
+  getParams.value.deptNm = newDeptNm == "전체" ? "" : newDeptNm;
 
-    grid.value.readData(1, getParams.value)
-}, {deep:true});
+  grid.value.readData(1, getParams.value)
+}, { deep: true });
 
-defineExpose({btnSelectChange})
+defineExpose({ btnSelectChange })
 </script>
 
 <style scoped>
-.button-collection button {
-  margin-right: 10px;
-}
 .selectbox select {
   margin-right: 10px;
 }
+
+.input-group-text {
+  background-color: #eee;
+  color: #747474;
+}
+
 .toastui {
   width: 100%;
   height: 95%;

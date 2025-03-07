@@ -88,6 +88,9 @@
         <p class="card-title mb-2">거래처 목록</p>
         <div class="table-responsive">
           <table class="table table-hover project">
+            <colgroup>
+              <col width="5%"><col width="20%"><col width="20%"><col width="5%"><col width="10%"><col width="10%">
+            </colgroup>
             <thead class="table-light">
               <tr>
                 <th>번호</th>
@@ -95,7 +98,6 @@
                 <th>사업자등록번호</th>
                 <th>대표자</th>
                 <th>연락처</th>
-                <th>팩스</th>
                 <th></th>
               </tr>
             </thead>
@@ -104,12 +106,11 @@
                 <tr :key="i" v-for="(company, i) in companyList">
                   <td>{{ i + 1 }}</td>
                   <td>{{ company.cmpnyNm }}</td>
-                  <td>{{ company.bizrno ? company.bizrno : "-" }}</td>
-                  <td>{{ company.cxfc ? company.cxfc : "-" }}</td>
+                  <td>{{ company.bizrno || "-" }}</td>
+                  <td>{{ company.cxfc || "-" }}</td>
                   <td>{{ company.areaNo + "-" + company.entrprsMiddleTelno + "-" + company.entrprsEndTelno }}</td>
-                  <td>{{ company.fxnum ? company.fxnum : "-" }}</td>
                   <td>
-                    <button class="btn btn-info btn-fill btn-sm mr-1" @click="comSelect(company)">선택</button>
+                    <button class="btn btn-info btn-fill btn-sm" @click="comSelect(company)">선택</button>
                   </td>
                 </tr>
               </template>

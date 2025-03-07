@@ -10,7 +10,8 @@
           <p class="card-sub">{{ projectInfo.comNm }}</p>
           <h5 class="card-title mb-3">
             {{ projectInfo.prNm }}
-            <span class="badge" :class="projectInfo.term *(-1) > 10 ? 'badge-primary' : 'badge-danger'">D{{ term }}</span>
+            <span class="badge" :class="projectInfo.term * (-1) > 10 ? 'badge-primary' : 'badge-danger'">D{{ term
+            }}</span>
           </h5>
           <p class="card-sub"><b>기간 : </b> {{ projectInfo.startDt }} ~ {{ projectInfo.endDt }}
           </p>
@@ -30,31 +31,30 @@
                 </th>
               </tr>
             </thead>
-            <tbody v-if="planCount > 0">
-              <template>
-                <tr :key="plan" v-for="plan in planList"> <!--등록된 일정갯수만큼-->
-                  <td :key="date" v-for="date in dateTermArr"> <!--시작일 ~ 종료일 날짜 기간만큼-->
-                    <div class="task" v-if="date == plan.startDt"
-                      :style="'width: ' + (dateTermCalc(plan.startDt, plan.endDt) * 100 - 10) + '%; background-color:' + plan.color">
-                      <span @click="btnProjectPlanUpdate(plan.prPlanCd)">{{ plan.planNm }}</span>
-                      <button class="close" @click="btnProjectPlanRemove(plan.prPlanCd)" v-show="projectInfo.state == 'A03'">×</button>
-                    </div>
-                  </td>
-                </tr>
-              </template>
+          </table>
+          <table v-if="planCount > 0">
+            <tbody>
+              <tr :key="plan" v-for="plan in planList"> <!--등록된 일정갯수만큼-->
+                <td :key="date" v-for="date in dateTermArr"> <!--시작일 ~ 종료일 날짜 기간만큼-->
+                  <div class="task" v-if="date == plan.startDt"
+                    :style="'width: ' + (dateTermCalc(plan.startDt, plan.endDt) * 100 - 10) + '%; background-color:' + plan.color">
+                    <span @click="btnProjectPlanUpdate(plan.prPlanCd)">{{ plan.planNm }}</span>
+                    <button class="close" @click="btnProjectPlanRemove(plan.prPlanCd)"
+                      v-show="projectInfo.state == 'A03'">×</button>
+                  </div>
+                </td>
+              </tr>
             </tbody>
           </table>
-          <v-else>
-            <table>
-              <tbody>
-                <tr class="list-nodata">
-                  <td>  
-                    <div>프로젝트 일정을 등록해주세요</div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </v-else>
+          <table v-else>
+            <tbody>
+              <tr class="list-nodata">
+                <td>
+                  <div>프로젝트 일정을 등록해주세요</div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </Card>
     </div>
@@ -96,9 +96,10 @@
     </template>
 
     <!-- 모달 푸터 -->
-    <template v-slot:footer>      
+    <template v-slot:footer>
       <button type="button" class="btn btn-secondary btn-fill" @click="modalClose">닫기</button>
-      <button type="button" class="btn btn-fill" :class="isUpdated ? 'btn-success' : 'btn-primary'" @click="btnProjectPlanAdd">{{isUpdated ? '저장' : '등록'}}</button>
+      <button type="button" class="btn btn-fill" :class="isUpdated ? 'btn-success' : 'btn-primary'"
+        @click="btnProjectPlanAdd">{{ isUpdated ? '저장' : '등록' }}</button>
     </template>
   </Modal>
   <!--일정등록 모달[e]-->
@@ -118,7 +119,6 @@ import Modal from '../../components/Modal.vue';
 //============================= js =============================
 import { dateFormat } from '../../assets/js/common'
 import { dateTermCalc, dateGetDay, dateFormatDay } from '../../assets/js/project'
-
 
 //========================= 데이터 초기화 =========================
 
@@ -193,7 +193,7 @@ const btnProjectPlanRemove = (code) => {
     },
     cancelButtonText: "삭제",
     confirmButtonText: "닫기",
-  }).then(async(result) => {
+  }).then(async (result) => {
     if (result.dismiss == Swal.DismissReason.cancel) {
       projectPlanRemove(code);
     }
@@ -267,7 +267,6 @@ const projectPlanGetList = async (prCd) => {
       startDt: dateFormat(item.startDt),
       endDt: dateFormat(item.endDt),
     }));
-
   } catch (err) {
     planList.value = [];
   }
@@ -336,7 +335,7 @@ const projectPlanAdd = async () => {
         title: "등록완료",
         text: "등록한 일정은 목록에서 확인할 수 있습니다",
       })
-
+      formReset();
       projectPlanGetList(prCd.value);
     }
   } catch (err) {

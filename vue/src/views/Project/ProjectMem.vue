@@ -73,7 +73,14 @@
                                         </tr>
                                     </thead>
 
-                                    <VueDraggableNext v-if="members.length > 0" :list="members" tag="tbody"
+                                    <VueDraggableNext 
+                                        v-if="members.length > 0" 
+                                        tag="tbody"
+                                        :list="members"  
+                                        :multiDrag="true"
+                                        :selected-class="'selected'"                                      
+                                        @start="onDragStart"
+                                        @end="onDrop"
                                         :animation="300">
                                         <tr v-for="(member, i) in members" :key="i">
                                             <td>{{ i + 1 }}</td>
@@ -86,7 +93,7 @@
                                                         }})</span>
                                                 </div>
                                             </td>
-                                            <td>{{ member.gradeNm }}</td>
+                                            <td>{{ member.gradeNm || '-' }}</td>
                                             <td>{{ member.projectCnt }}건</td>
                                         </tr>
                                     </VueDraggableNext>
@@ -111,9 +118,8 @@
                             <div class="project treeview">
                                 <!-- 프로젝트 트리 -->
                                 <ul class="list-unstyled" v-for="project in projectList" :key="project"
-                                    @click="project.memberArr.length > 0 ? toggleMemMenu(project) : ''"
                                     style="cursor: pointer;">
-                                    <span>
+                                    <span @click="project.memberArr.length > 0 ? toggleMemMenu(project) : ''">
                                         <i :class="['folder', project.isHidden ? 'bi bi-folder-minus' : 'bi bi-folder-plus',
                                             project.memberArr.length < 1 ? 'bi bi-folder' : '']"></i>
                                         {{ project.prNm }} ({{ project.memberArr.length }})
@@ -121,15 +127,20 @@
 
                                     <li v-for="member in project.memberArr" :key="member" class="ms-3"
                                         v-show="project.isHidden">
-                                        <span>
-                                            <i class="bi bi-dot"></i>
-                                            {{ member.deptNm != null ? '[' + member.deptNm + ']' : '' }}
-                                            {{ member.mberNm || '' }}
-                                            {{ member.gradeNm || '' }}
+
+                                        <div class="form-check form-switch d-flex"
+                                            style="justify-content: start; align-items: center;">
+                                            <input class="form-check-input" type="checkbox" role="switch"
+                                                id="flexSwitchCheckChecked" checked>
+                                            <span>
+                                                {{ member.deptNm != null ? '[' + member.deptNm + ']' : '' }}
+                                                {{ member.mberNm || '' }}
+                                                {{ member.gradeNm || '' }}</span>
                                             <i class="bi bi-x" @click="btnProjectMemRemove(member)"></i>
                                             <i class="fa-solid fa-crown master mlp5" aria-hidden="true"
                                                 v-show="member.mgrSt == 'A01'"></i>
-                                        </span>
+                                        </div>
+
                                     </li>
                                 </ul>
                             </div>
@@ -163,6 +174,21 @@ const toggleMemMenu = (memberMenu) => {
     memberMenu.isHidden = !memberMenu.isHidden;
 };
 
+const draggedEmployee = ref([]);
+const onDragStart = (event) => {
+    draggedEmployee.value = members.value[event.oldIndex];
+};
+
+const onDrop = (event) => {
+  if (!draggedEmployee.value) return;
+
+  const projectIndex = event.newIndex; // 드롭된 위치의 인덱스
+  const project = projectList.value[projectIndex];
+
+  // 프로젝트 코드 출력
+  console.log("드롭된 프로젝트 코드:", project.value);
+
+};
 //======================= axios =======================
 
 //구성원 전체조회

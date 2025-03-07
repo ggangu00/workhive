@@ -43,6 +43,7 @@
     "html2canvas": "^1.4.1",
     "jspdf": "^3.0.0",
     "pinia": "^3.0.1",
+    "sortablejs": "^1.15.6",
     "primeicons": "^7.0.0",
     "primevue": "^3.34.1",
     "tui-grid": "^4.21.22",
