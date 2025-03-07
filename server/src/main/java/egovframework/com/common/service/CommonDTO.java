@@ -46,7 +46,7 @@ public class CommonDTO extends CommonPaging {
 	private String bbsId;		// 게시판 코드
 	private String nttId;		// 게시글 코드
 	private String nttSj;		// 게시글 제목
-	private String anoAt;		// 공지여부
+	private String noticeAt;		// 공지여부
 	
 	// 홈 일정 조회
 	private String schDt;		// 검색 일자

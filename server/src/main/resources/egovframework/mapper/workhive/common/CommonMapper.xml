@@ -166,12 +166,12 @@
 		        FRST_REGIST_PNTTM AS create_dt, -- 게시글 등록일
 		        FRST_REGISTER_ID AS create_id, -- 게시글 작성자
 		        fn_get_memnm(FRST_REGISTER_ID) AS mber_nm,
-		        ANO_AT -- 공지여부
+		        NOTICE_AT -- 공지여부
 		    FROM (
 		        SELECT * FROM comtnbbs 
-		        ORDER BY ANO_AT ASC, FRST_REGIST_PNTTM DESC
+		        ORDER BY NOTICE_AT DESC, FRST_REGIST_PNTTM DESC
 		    )
-		) <![CDATA[ WHERE RNUM <= 4 ]]>
+		) <![CDATA[ WHERE RNUM <= 5 ]]>
 	</select>
 	
 	<select id="companyInfo" resultType="CommonDTO">

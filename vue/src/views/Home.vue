@@ -105,7 +105,7 @@
         <div class="home-container">
           <div class="home-container-header">게시글</div>
           <div class="board-item" v-for="(bbs, i) in bbsList" :key="i" @click="goToBulletinInfo(bbs);">
-            <span class="badge badge-danger mrp10" v-show="bbs.anoAt == 'Y'">공지</span>
+            <span class="badge badge-danger mrp10" v-show="bbs.noticeAt == 'Y'">공지</span>
             <span class="board-title">{{ bbs.nttSj }}</span>
             <span class="board-meta">{{ bbs.mberNm }}</span>
             <span class="board-meta">{{ bbs.createDt }}</span>
