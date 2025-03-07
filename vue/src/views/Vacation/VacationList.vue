@@ -12,36 +12,35 @@
       </div>
 
       <!-- 조회 조건 -->
-      <div class="row search align-items-center justify-content-end">
-        <div class="col-auto">
-          <select class="input-custom" v-model="searchData.vcType">
-            <option value="" selected>휴가종류</option>
-            <option value="E01">연차</option>
-            <option value="E02">오전반차</option>
-            <option value="E03">오후반차</option>
-            <option value="E04">공가</option>
-          </select>
-        </div>
+      <div class="button-collection d-flex justify-content-end align-items-center flex-wrap" style="padding-bottom: 15px;">
+        <div class="selectbox search d-flex">
 
-        <div class="col-auto">
-          <select class="input-custom" v-model="searchData.signState">
-            <option value="" selected>결재상태</option>
-            <option value="D01">대기</option>
-            <option value="D02">승인</option>
-            <option value="D03">보완</option>
-            <option value="D04">반려</option>
-          </select>
-        </div>
+          <div class="d-flex align-items-center">
+            <select class="form-control form-select w50" v-model="searchData.vcType">
+              <option value="" selected>휴가종류</option>
+              <option value="E01">연차</option>
+              <option value="E02">오전반차</option>
+              <option value="E03">오후반차</option>
+              <option value="E04">공가</option>
+            </select>
 
-        <div class="col-auto">
-          <input type="date" id="startDate" class="input-custom" v-model="searchData.startDate">
-          <a class="align-middle"> ~ </a>
-          <input type="date" id="endDate" class="input-custom" v-model="searchData.endDate">
+            <div class="input-group">
+              <span class="input-group-text fw-bold">근무일(시작)</span>
+              <input type="date" class="form-control w50" v-model="searchData.startDate">
+            </div>
+            <span class="fw-bold">~</span>
+            <div class="input-group">
+              <span class="input-group-text fw-bold">근무일(종료)</span>
+              <input type="date" class="form-control w50" v-model="searchData.endDate">
+            </div>
+          </div>
+
+          <button class="btn btn-secondary btn-fill" @click="resetBtn" style="margin: 6px 0;">초기화</button>
         </div>
       </div>
 
       <!-- 휴가 신청 목록 -->
-      <div class="row mt-3">
+      <div class="row">
         <div class="col" style="height: 300px; width: 800px;">
           <div id="vcGrid"></div>
         </div>
@@ -72,6 +71,14 @@ const searchData = ref({
   startDate: '',
   endDate: '',
 });
+const resetBtn = () => {
+  searchData.value = {
+    vcType: '',
+    signState: '',
+    startDate: '',
+    endDate: '',
+  }
+}
 
 const vcGetList = () => {
   gridInstance.value.readData(1, searchData.value);

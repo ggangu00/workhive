@@ -16,40 +16,36 @@
           <div class="row">
             <div class="col">
               <!-- 조회 조건 -->
-              <div class="row search align-items-center justify-content-end">
-                <div class="col-auto">
-                  <select class="input-custom" v-model="searchData.searchState">
-                    <option value="" selected>결재상태</option>
-                    <option value="D01">결재대기</option>
-                    <option value="D02">승인</option>
-                    <option value="D03">보완</option>
-                    <option value="D04">반려</option>
-                  </select>
-                </div>
-              </div>
-              
               <div class="button-collection d-flex justify-content-end align-items-center flex-wrap" style="padding-bottom: 15px;">
-                <div class="selectbox d-flex">
-                  
+                <div class="selectbox search d-flex">
+
                   <div class="d-flex align-items-center">
+                    <select class="form-control form-select w50" v-model="searchData.searchState">
+                      <option value="" selected>결재상태</option>
+                      <option value="D01">결재대기</option>
+                      <option value="D02">승인</option>
+                      <option value="D03">보완</option>
+                      <option value="D04">반려</option>
+                    </select>
+
                     <div class="input-group">
-                      <span class="input-group-text fw-bold">근무일(시작)</span>
-                      <input type="date" class="form-control" v-model="searchData.startDate">
+                      <span class="input-group-text fw-bold">신청일(시작)</span>
+                      <input type="date" class="form-control w50" v-model="searchData.startDate">
                     </div>
                     <span class="fw-bold">~</span>
                     <div class="input-group">
-                      <span class="input-group-text fw-bold">근무일(종료)</span>
-                      <input type="date" class="form-control" v-model="searchData.endDate">
+                      <span class="input-group-text fw-bold">신청일(종료)</span>
+                      <input type="date" class="form-control w50" v-model="searchData.endDate">
                     </div>
                   </div>
 
-                  <button class="btn btn-sm btn-secondary btn-fill" @click="resetBtn" style="margin: 6px 0;">초기화</button>
+                  <button class="btn btn-secondary btn-fill" @click="resetBtn" style="margin: 6px 0;">초기화</button>
                 </div>
               </div>
 
 
               <!-- 목록 -->
-              <div class="row mt-3">
+              <div class="row">
                 <div class="col">
                   <div id="crctGrid"></div>
 
@@ -85,6 +81,13 @@ const searchData = ref({
   endDate: '',
   searchState: ''
 });
+const resetBtn = () => {
+  searchData.value = {
+    startDate: '',
+    endDate: '',
+    searchState: ''
+  }
+}
 
 const crctGetList = () => {
   gridInstance.value.readData(1, searchData.value);

@@ -120,12 +120,12 @@
 		</if>
 		<if test='!startDate.isEmpty()'>
 			<![CDATA[
-			and cmt.commute_dt >= to_date(#{startDate}, 'yyyy-mm-dd')
+			and crct.create_dt >= to_date(#{startDate}, 'yyyy-mm-dd')
 			]]>
 		</if>
 		<if test='!endDate.isEmpty()'>
 			<![CDATA[
-			and cmt.commute_dt < to_date(#{endDate}, 'yyyy-mm-dd') + 1
+			and crct.create_dt < to_date(#{endDate}, 'yyyy-mm-dd') + 1
 			]]>
 		</if>
 		order by create_dt desc
@@ -192,12 +192,12 @@
 		and del_yn = 'N'
 		<if test='!startDate.isEmpty()'>
 			<![CDATA[
-			and cmt.create_id >= to_date(#{startDate}, 'yyyy-mm-dd')
+			and crct.create_dt >= to_date(#{startDate}, 'yyyy-mm-dd')
 			]]>
 		</if>
 		<if test='!endDate.isEmpty()'>
 			<![CDATA[
-			and cmt.create_id < to_date(#{endDate}, 'yyyy-mm-dd') + 1
+			and crct.create_dt < to_date(#{endDate}, 'yyyy-mm-dd') + 1
 			]]>
 		</if>
 		order by create_dt
@@ -215,12 +215,12 @@
 		and del_yn = 'N'
 		<if test='!startDate.isEmpty()'>
 			<![CDATA[
-			and cmt.create_id >= to_date(#{startDate}, 'yyyy-mm-dd')
+			and crct.create_dt >= to_date(#{startDate}, 'yyyy-mm-dd')
 			]]>
 		</if>
 		<if test='!endDate.isEmpty()'>
 			<![CDATA[
-			and cmt.create_id < to_date(#{endDate}, 'yyyy-mm-dd') + 1
+			and crct.create_dt < to_date(#{endDate}, 'yyyy-mm-dd') + 1
 			]]>
 		</if>
 		order by create_dt
@@ -260,12 +260,12 @@
 		and del_yn = 'N'
 		<if test='!startDate.isEmpty()'>
 			<![CDATA[
-			and cmt.create_id >= to_date(#{startDate}, 'yyyy-mm-dd')
+			and crct.sign_dt >= to_date(#{startDate}, 'yyyy-mm-dd')
 			]]>
 		</if>
 		<if test='!endDate.isEmpty()'>
 			<![CDATA[
-			and cmt.create_id < to_date(#{endDate}, 'yyyy-mm-dd') + 1
+			and crct.sign_dt < to_date(#{endDate}, 'yyyy-mm-dd') + 1
 			]]>
 		</if>
 		order by create_dt desc
@@ -283,12 +283,12 @@
 		and del_yn = 'N'
 		<if test='!startDate.isEmpty()'>
 			<![CDATA[
-			and cmt.create_id >= to_date(#{startDate}, 'yyyy-mm-dd')
+			and crct.sign_dt >= to_date(#{startDate}, 'yyyy-mm-dd')
 			]]>
 		</if>
 		<if test='!endDate.isEmpty()'>
 			<![CDATA[
-			and cmt.create_id < to_date(#{endDate}, 'yyyy-mm-dd') + 1
+			and crct.sign_dt < to_date(#{endDate}, 'yyyy-mm-dd') + 1
 			]]>
 		</if>
 		order by create_dt desc

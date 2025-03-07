@@ -16,17 +16,27 @@
       <!-- 결재 요청 목록 -->
       <div class="card">
         <div class="card-body">
-
           <!-- 조회 조건 -->
-          <div class="row search align-items-center justify-content-end">
-            <div class="col-auto">
-              <input type="date" id="startDate" class="input-custom" v-model="crctSrchData.startDate">
-              <a class="align-middle"> ~ </a>
-              <input type="date" id="endDate" class="input-custom" v-model="crctSrchData.endDate">
+          <div class="button-collection d-flex justify-content-end align-items-center flex-wrap" style="padding-bottom: 15px;">
+            <div class="selectbox search d-flex">
+
+              <div class="d-flex align-items-center">
+                <div class="input-group">
+                  <span class="input-group-text fw-bold">신청일(시작)</span>
+                  <input type="date" class="form-control w50" v-model="crctSrchData.startDate">
+                </div>
+                <span class="fw-bold">~</span>
+                <div class="input-group">
+                  <span class="input-group-text fw-bold">신청일(종료)</span>
+                  <input type="date" class="form-control w50" v-model="crctSrchData.endDate">
+                </div>
+              </div>
+              
+              <button class="btn btn-secondary btn-fill" @click="crctResetBtn" style="margin: 6px 0;">초기화</button>
             </div>
           </div>
 
-          <div class="row mt-3">
+          <div class="row">
             <div class="col">
               <!-- grid -->
               <div id="crctGrid"></div>
@@ -49,17 +59,27 @@
       <!-- 결재 내역 -->
       <div class="card">
         <div class="card-body">
-
           <!-- 조회 조건 -->
-          <div class="row search align-items-center justify-content-end">
-            <div class="col-auto">
-              <input type="date" id="startDate" class="input-custom" v-model="signSrchData.startDate">
-              <a class="align-middle"> ~ </a>
-              <input type="date" id="endDate" class="input-custom" v-model="signSrchData.endDate">
+          <div class="button-collection d-flex justify-content-end align-items-center flex-wrap" style="padding-bottom: 15px;">
+            <div class="selectbox search d-flex">
+
+              <div class="d-flex align-items-center">
+                <div class="input-group">
+                  <span class="input-group-text fw-bold">결재일(시작)</span>
+                  <input type="date" class="form-control w50" v-model="signSrchData.startDate">
+                </div>
+                <span class="fw-bold">~</span>
+                <div class="input-group">
+                  <span class="input-group-text fw-bold">결재일(종료)</span>
+                  <input type="date" class="form-control w50" v-model="signSrchData.endDate">
+                </div>
+              </div>
+              
+              <button class="btn btn-secondary btn-fill" @click="signResetBtn" style="margin: 6px 0;">초기화</button>
             </div>
           </div>
 
-          <div class="row mt-3">
+          <div class="row">
             <div class="col">
               <!-- grid -->
               <div id="signGrid"></div>
@@ -96,6 +116,18 @@ const signSrchData = ref({
   startDate: '',
   endDate: '',
 })
+const crctResetBtn = () => {
+  crctSrchData.value = {
+    startDate: '',
+    endDate: '',
+  }
+}
+const signResetBtn = () => {
+  signSrchData.value = {
+    startDate: '',
+    endDate: '',
+  }
+}
 
 // 그리드 인스턴스
 let crctGridInstance = ref();

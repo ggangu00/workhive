@@ -17,21 +17,21 @@
             <div class="col">
               <!-- 조회 조건 -->
               <div class="button-collection d-flex justify-content-end align-items-center flex-wrap" style="padding-bottom: 15px;">
-                <div class="selectbox d-flex">
-                  
+                <div class="selectbox search d-flex">
+
                   <div class="d-flex align-items-center">
                     <div class="input-group">
                       <span class="input-group-text fw-bold">근무일(시작)</span>
-                      <input type="date" class="form-control" v-model="startDate">
+                      <input type="date" class="form-control w50" v-model="startDate">
                     </div>
                     <span class="fw-bold">~</span>
                     <div class="input-group">
                       <span class="input-group-text fw-bold">근무일(종료)</span>
-                      <input type="date" class="form-control" v-model="endDate">
+                      <input type="date" class="form-control w50" v-model="endDate">
                     </div>
                   </div>
 
-                  <button class="btn btn-sm btn-secondary btn-fill" @click="resetBtn" style="margin: 6px 0;">초기화</button>
+                  <button class="btn btn-secondary btn-fill" @click="resetBtn" style="margin: 6px 0;">초기화</button>
                 </div>
               </div>
       
@@ -76,6 +76,12 @@ let params = {
   startDate: '',
   endDate: ''
 };
+const resetBtn = () => {
+  params.value = {
+    startDate: '',
+    endDate: '',
+  }
+}
 
 const startDate = computed({
   get() {
@@ -200,9 +206,6 @@ const btnCrctAdd = (rowKey) => {
 
 
 <style scoped>
-.input-group {
-  /* display: inline-block; */
-}
 </style>
 
   
