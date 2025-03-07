@@ -4,7 +4,6 @@ import java.util.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import egovframework.com.authority.service.AuthorityDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -33,6 +32,5 @@ public class DepartmentDTO {
 	   private Date updateDt;		// 수정일
 	   private String updateId;		// 수정자
 	   
-	   
-
+	   private int level;
 }

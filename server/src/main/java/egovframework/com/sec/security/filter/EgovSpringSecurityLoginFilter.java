@@ -70,9 +70,6 @@ public class EgovSpringSecurityLoginFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
 		LOGGER.info("EgovSpringSecurityLoginFilter called..."); // 필터가 실행될 때 로그 출력
-		System.out.println("doFilter 실행 request " + request);
-		System.out.println("doFilter 실행 response " + response);
-		System.out.println("doFilter 실행 chain " + chain);
 
 		// 로그인 URL을 가져와 개행 문자 제거
 		String loginURL = config.getInitParameter("loginURL");
@@ -104,8 +101,6 @@ public class EgovSpringSecurityLoginFilter implements Filter {
 					LoginVO loginVO = (LoginVO) session.getAttribute("loginVOForDBAuthentication");
 					loginVO = loginService.actionLoginByEsntlId(loginVO);
 					
-					System.out.println("시큐리티 인증 VO => " + loginVO);
-
 					if (loginVO != null && loginVO.getId() != null && !loginVO.getId().equals("")) {
 						// 클라이언트 IP 설정
 						String userIp = EgovClntInfo.getClntIP(httpRequest);
@@ -116,8 +111,6 @@ public class EgovSpringSecurityLoginFilter implements Filter {
 						
 						//로컬 인증결과 세션에 저장
 						session.setAttribute("isLocallyAuthenticated", "true");
-						
-						System.out.println("세션에 로그인 정보 저장 => " + loginVO);
 						
 						// 스프링 시큐리티 로그인 처리
 						UsernamePasswordAuthenticationFilter springSecurity = null;
@@ -150,8 +143,6 @@ public class EgovSpringSecurityLoginFilter implements Filter {
 					String password = httpRequest.getParameter("password");
 					String id = httpRequest.getParameter("id");
 					
-					System.out.println("들어온 id값은? => " + id);
-					
 					// 보안점검 후속 조치(Password 검증)
 					if ((id == null || "".equals(id)) && (password == null || "".equals(password))) {
 						RequestDispatcher dispatcher = httpRequest.getRequestDispatcher(loginURL);
@@ -181,7 +172,6 @@ public class EgovSpringSecurityLoginFilter implements Filter {
 				    if(egovLoginConfig.isLock()){
 				        try{
 				             Map<?,?> mapLockUserInfo = (EgovMap)loginService.selectLoginIncorrect(loginVO);
-				             System.out.println("mapLockUserInfo => " + mapLockUserInfo);
 				             
 				             if(mapLockUserInfo != null){
 				                //로그인인증제한 처리

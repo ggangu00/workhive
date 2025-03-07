@@ -55,7 +55,6 @@ import Home from '../views/Home.vue'
 
 
 // ksy
-import KsyTest from '../views/DeptStore/Test.vue';
 import DeptjobInfo from '../views/DeptStore/DeptJobInfo.vue';
 import Vacation from '../views/Vacation/Vacation.vue';
 import VcList from "../views/Vacation/VacationList.vue";
@@ -249,11 +248,6 @@ const routes = [
 
 
    //ksy
-   { // 테스트
-      path: '/deptstore/test',
-      name: 'KsyTest',
-      component: KsyTest,
-   },
    { // 부서 업무 관리
       path: '/deptstore/list',
       name: 'DeptjobInfo',

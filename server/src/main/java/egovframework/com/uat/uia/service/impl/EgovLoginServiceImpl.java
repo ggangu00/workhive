@@ -61,7 +61,6 @@ public class EgovLoginServiceImpl extends EgovAbstractServiceImpl implements Ego
 	public LoginVO actionLoginByEsntlId(LoginVO vo) throws Exception {
 
     	LoginVO loginVO = loginDAO.actionLoginByEsntlId(vo);
-    	System.out.println("actionLoginByEsntlId => " + loginVO);
     	// 3. 결과를 리턴한다.
     	if (loginVO != null && !loginVO.getId().equals("") && !loginVO.getPassword().equals("")) {
     		return loginVO;
@@ -202,7 +201,6 @@ public class EgovLoginServiceImpl extends EgovAbstractServiceImpl implements Ego
 	 */
     public Map<?,?> selectLoginIncorrect(LoginVO vo) throws Exception{
     	
-    	System.out.println("selectLoginIncorrect => " + vo);
     	return loginDAO.selectLoginIncorrect(vo);
     }
     
@@ -216,7 +214,6 @@ public class EgovLoginServiceImpl extends EgovAbstractServiceImpl implements Ego
     public String processLoginIncorrect(LoginVO vo, Map<?,?> mapLockUserInfo) throws Exception{    	
     	String sRtnCode = "C";
     	//KISA 보안약점 조치 (2018-10-29, 윤창원)
-    	System.out.println("processLoginIncorrect Vo => " + vo.toString());
     	String enpassword = EgovFileScrty.encryptPassword(vo.getPassword(), EgovStringUtil.isNullToString(vo.getId()));
     	Map<String,String> mapParam = new HashMap<String,String>();
     	mapParam.put("USER_SE", vo.getUserSe());

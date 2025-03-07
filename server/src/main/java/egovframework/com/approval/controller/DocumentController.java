@@ -123,9 +123,6 @@ public class DocumentController {
 		// 페이징처리
 		searchDTO.setTotalRecord(documentService.getCount(searchDTO));
 		
-		System.out.println("request DATA => " +  status + " page => " +  page + "총 문서개수=>" + documentService.getCount(searchDTO));
-		
-	    
 	    String str = """
 						{
 						  "result": true,
@@ -171,9 +168,6 @@ public class DocumentController {
 		// 페이징처리
 		searchDTO.setTotalRecord(documentService.pendingDocCount(searchDTO));
 		
-		System.out.println("request DATA => " +  status + " page => " +  page);
-		
-	    
 	    String str = """
 						{
 						  "result": true,
@@ -196,7 +190,6 @@ public class DocumentController {
 		// 페이징처리
 		pagination.put("page", searchDTO.getPage());
 		pagination.put("totalCount", documentService.pendingDocCount(searchDTO));
-		System.out.println("totalPage => " + documentService.pendingDocCount(searchDTO));
 		
 		data.put("contents", documentService.pendingDocumentSelectAll(searchDTO));
 		

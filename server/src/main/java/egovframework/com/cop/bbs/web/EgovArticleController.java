@@ -51,6 +51,7 @@ import egovframework.com.cop.tpl.service.EgovTemplateManageService;
 import egovframework.com.cop.tpl.service.TemplateInfVO;
 import egovframework.com.securing.service.CustomerUser;
 import egovframework.com.utl.fcc.service.EgovStringUtil;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 게시물 관리를 위한 컨트롤러 클래스
@@ -77,6 +78,7 @@ import egovframework.com.utl.fcc.service.EgovStringUtil;
  * </pre>
  */
 
+@Slf4j
 @RestController
 @RequestMapping("/bulletin")
 public class EgovArticleController {
@@ -240,7 +242,7 @@ public class EgovArticleController {
         } else if (principal instanceof CustomerUser) {
             sessionUniqId = ((CustomerUser) principal).getUserDTO().getMberId();
         } else {
-            System.out.println("알 수 없는 사용자 타입: " + (principal != null ? principal.getClass().getName() : "NULL"));
+        	log.info("알 수 없는 사용자 타입: " + (principal != null ? principal.getClass().getName() : "NULL"));
         }
 
         // 게시글 상세 정보 조회
