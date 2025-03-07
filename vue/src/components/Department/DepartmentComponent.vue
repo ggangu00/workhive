@@ -3,6 +3,17 @@
       <template #togglericon="{ expanded }">
          <i :class="expanded ? 'fa-solid fa-angle-down' : 'fa-solid fa-angle-right'"></i>
       </template>
+
+      <template #default="slotProps">
+
+         <div class="node-buttons d-flex justify-content-between align-items-center">
+            <span class="p-treenode-label">{{ slotProps.node.label }}</span>
+            <button class="btn-toggle" @click.stop="btnDepartmentAdd(slotProps.node)">
+               <i class="fa-solid fa-ellipsis-vertical"></i>
+            </button>
+         </div>
+      </template>
+
    </Tree>
 </template>
 
@@ -61,5 +72,14 @@ const props = defineProps({
    /* 자식 없는 노드의 토글버튼 강제 숨김 */
    .custom-tree .p-treenode-leaf .p-tree-toggler {
       display: none !important;
+   }
+
+   .btn-toggle {
+      all: unset;
+   }
+
+   .p-treenode-label {
+      width: 100%;
+      font-size: 10px;
    }
 </style>
