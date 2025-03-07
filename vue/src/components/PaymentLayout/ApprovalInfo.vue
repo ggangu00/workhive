@@ -121,7 +121,8 @@
                   <div v-for="(receiver, index) in receivers" :key="index" class="approval-item">
                     <span v-if="receiver.receptYn == 'A01'" class="text-success ms-2">✔️</span>
                     <span class="badge bg-warning text-dark">수신</span>
-                    <span v-if="receiver.mberNm">[{{ receiver.gradeNm }}] {{ receiver.mberNm }}</span> <!-- 사원 -->
+                    <span v-if="receiver.mberNm&& receiver.gradeNm">[{{ receiver.gradeNm }}] {{ receiver.mberNm }}</span> <!-- 사원 -->
+                    <span v-else-if="receiver.mberNm&& !receiver.gradeNm"> {{ receiver.mberNm }}</span> <!-- 사원 -->
                     <span v-else>[{{ receiver.deptNm }}]</span> <!-- 부서 -->
                   </div>
                 </div>

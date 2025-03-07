@@ -18,10 +18,12 @@
   import { useRoute } from 'vue-router';
   import { useUserInfoStore } from '../../store/userStore.js';
   import Swal from 'sweetalert2';
+  import { useRouter } from 'vue-router';
   import { generatePDF } from '@/assets/js/pdfDownload.js'; // 다운로드
 
-const userInfoStore = useUserInfoStore();
-let loginUser = userInfoStore.user ? userInfoStore.user.mberId : ""; // 로그인한 사용자 정보 가져오기
+  const router = useRouter();
+  const userInfoStore = useUserInfoStore();
+  let loginUser = userInfoStore.user ? userInfoStore.user.mberId : ""; // 로그인한 사용자 정보 가져오기
 
 
   const route = useRoute();
@@ -103,8 +105,8 @@ const approvalBtn = () => {
           signOpn: result.value,
           docCd : docCd.value,
           mberId : loginUser
-
         })
+        router.push({path:'/approval/proceedList'}); 
       }
     } catch (err) {
       Swal.fire({
@@ -114,6 +116,7 @@ const approvalBtn = () => {
       });
     }
   });
+
 }
 
 const downloadBtn = async () => {

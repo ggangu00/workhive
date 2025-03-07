@@ -52,7 +52,8 @@
             <div class="recept-box">
               <div v-for="(receiver, index) in receivers" :key="index" class="approval-item">
                 <span class="badge bg-warning text-dark">수신</span>
-                <span v-if="receiver.mberNm">[{{ receiver.gradeNm }}] {{ receiver.mberNm }}<button @click="removeReceiver(index)" class="btn btn-sm btn-danger">삭제</button></span> <!-- [직책]사원 -->
+                <span v-if="receiver.mberNm && receiver.gradeNm">[{{ receiver.gradeNm }}] {{ receiver.mberNm }}<button @click="removeReceiver(index)" class="btn btn-sm btn-danger">삭제</button></span> <!-- [직책]사원 -->
+                <span v-else-if="receiver.mberNm && !receiver.gradeNm">{{ receiver.mberNm }}<button @click="removeReceiver(index)" class="btn btn-sm btn-danger">삭제</button></span> <!-- [직책]사원 -->
                 <span v-else>[{{ receiver.deptNm }}]<button @click="removeReceiver(index)" class="btn btn-sm btn-danger">삭제</button></span> <!-- 부서 -->
               </div>
             </div>

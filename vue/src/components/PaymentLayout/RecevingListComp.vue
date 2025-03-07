@@ -43,12 +43,12 @@
                 </select>                
                   <div class="input-group">
                     <span class="input-group-text fw-bold">기안일(시작)</span>
-                    <input type="date" class="form-control w50" v-model="startDate">
+                    <input type="date" class="form-control w50" :max="endDate" v-model="startDate">
                   </div>
                   <span class="fw-bold">~</span>
                   <div class="input-group">
                     <span class="input-group-text fw-bold">기안일(종료)</span>
-                    <input type="date" class="form-control w50" v-model="endDate">
+                    <input type="date" class="form-control w50" :min="startDate" v-model="endDate">
                   </div>           
                 <button class="btn btn-secondary btn-fill w20" @click="resetBtn">초기화</button>
               </div>
@@ -220,11 +220,11 @@ const TueGrid = () => {
     scrollX: true,
     scrollY: true,
     columns: props.columnDefs,
-    bodyHeight: 40 * 13,
+    bodyHeight: 40 * 10,
     rowHeaders: ["checkbox"],
     pageOptions: {
       useClient: false, // 서버 사이드 페이지네이션 사용
-      perPage: 13,
+      perPage: 10,
     },
     data: dataSource,
   });

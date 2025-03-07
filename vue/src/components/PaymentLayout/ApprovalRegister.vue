@@ -114,7 +114,8 @@
                   <div class="approval-box">
                   <div v-for="(receiver, index) in receivers" :key="index" class="approval-item">
                     <span class="badge bg-warning text-dark">수신</span>
-                    <span v-if="receiver.mberNm">[{{ receiver.gradeNm }}] {{ receiver.mberNm }}</span> <!-- 사원 -->
+                    <span v-if="receiver.mberNm && receiver.gradeNm">[{{ receiver.gradeNm }}] {{ receiver.mberNm }}</span> <!-- 사원 -->
+                    <span v-else-if="receiver.mberNm&& !receiver.gradeNm"> {{ receiver.mberNm }}</span> <!-- 사원 -->
                     <span v-else>[{{ receiver.deptNm }}]</span> <!-- 부서 -->
                   </div>
                 </div>
@@ -249,6 +250,7 @@ onMounted(() => {
   if (modalElement) {
     modalElement.addEventListener('shown.bs.modal', handleModalOpen);
   }
+
   // 앞전 페이지에서 정보 받아옴
   docCd.value = route.query.docCd || "";
   docKind.value = route.query.docKind || "일반결재";
