@@ -79,15 +79,6 @@
 		<if test="searchEndDt != null and searchEndDt != ''">
 		    <![CDATA[ AND start_dt <= TO_DATE(#{searchEndDt}, 'YYYY-MM-DD') ]]>
 		</if>
-	    
-	    <!-- 프로젝트 금액범위 검색 -->  
-	    <if test="searchStartPrice > 0">AND
-	        <![CDATA[price >= #{searchStartPrice}]]>
-	    </if>
-	    
-	    <if test="searchEndPrice > 0">AND
-	       	<![CDATA[price <= #{searchEndPrice}]]>
-	    </if>
     </sql>
 	
 	<!-- 프로젝트 단건조회 -->
