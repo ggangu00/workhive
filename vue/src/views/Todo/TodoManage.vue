@@ -34,7 +34,7 @@
         <div class="card-body">
           <div class="row">
             <div class="col-2">
-              <select class="form-select float-right" :name="typeCd" v-model="typeCd">
+              <select class="form-select float-right" v-model="typeCd">
                 <option :key="type" v-for="type in typeCdArr" :value="type.commDtlCd">{{ type.commDtlNm }}</option>
               </select>
             </div>
@@ -66,13 +66,13 @@
 
         <div class="mb-3">
           <label class="form-label">업무일 <em class="point-red">*</em></label>
-          <input type="date" class="form-control w30" :name="todoDt" v-model="todoDt">
+          <input type="date" class="form-control w30" v-model="todoDt">
         </div>
         <div class="mb-3">
           <label class="form-label">업무분류 <em class="point-red">*</em></label>
           <div class="row">
             <div class="col-auto">
-              <select class="form-select float-right" :name="typeCd" v-model="typeCd">
+              <select class="form-select float-right" v-model="typeCd">
                 <option :key="type" v-for="type in typeCdArr" :value="type.commDtlCd">{{ type.commDtlNm }}</option>
               </select>
             </div>
@@ -82,20 +82,20 @@
           <div class="form-group has-label">
             <label>업무내용 <em class="point-red">*</em></label>
           </div>
-          <input type="text" class="form-control" placeholder="일지제목을 입력해주세요" :name="title" v-model="title">
+          <input type="text" class="form-control" placeholder="일지제목을 입력해주세요" v-model="title">
         </div>
         <div class="mb-3">
           <div class="form-group has-label">
             <label>업무상세</label>
           </div>
           <textarea type="text" class="form-control" placeholder="업무내용을 입력해주세요" style="min-height: 150px;"
-            :name="content" v-model="content"></textarea>
+            v-model="content"></textarea>
         </div>
         <div class="mb-3">
           <label class="form-label">상태 <em class="point-red">*</em></label>
           <div class="row">
             <div class="col-auto">
-              <select class="form-select" :name="state" v-model="state">
+              <select class="form-select" v-model="state">
                 <option value="A02">미완료</option>
                 <option value="A01">완료</option>
               </select>
@@ -108,7 +108,7 @@
     <!-- 모달 푸터 -->
     <template v-slot:footer>
       <button type="button" class="btn btn-secondary btn-fill" @click="closeModal">닫기</button>
-      <button type="button" class="btn btn-fill" :class="isUpdated ? 'btn-success' : 'btn-primary'" @click="todoAdd; closeModal">{{isUpdated ? '저장' : '등록'}}</button>
+      <button type="button" class="btn btn-fill" :class="isUpdated ? 'btn-success' : 'btn-primary'" @click="todoAdd">{{isUpdated ? '저장' : '등록'}}</button>
     </template>
   </Modal>
   <!--업무등록 모달[e]-->
@@ -140,7 +140,6 @@ const typeCdArr = ref([]);        //업무구분 공통코드 목록
 const title = ref('');            //업무제목
 const content = ref('');          //업무내용
 const state = ref('A02');         //업무 완료여부
-const mberId = ref('admin');      //등록자 아이디
 const todoDt = ref(dateFormat()); // 현재 선택된 날짜 (디폴트 : 오늘)
 const nowDt = ref(dateFormat()); // 현재 캘린더 뿌리는 날짜 (디폴트 : 오늘)
 
@@ -355,9 +354,7 @@ const btnTodoRemove = (code) => {
         });
       }
     }
-  });
-
-  
+  });  
 };
 
 //업무일지 다중 상태변경/삭제 처리 (버튼)
@@ -378,7 +375,7 @@ const btnTodoListChange = (mode) => {
       showCancelButton: true,
       customClass: {
         confirmButton: "btn btn-secondary btn-fill",
-        cancelButton: "btn btn-fill" + mode == 'del' ? "btn-danger" : "btn-primary"
+        cancelButton: `btn btn-fill ${mode == 'del' ? 'btn-danger' : 'btn-primary'}`
       },
       confirmButtonText: "아니요",
       cancelButtonText: "네",
@@ -466,7 +463,7 @@ const todoGetList = async (todoCd) => {
 
 //해당 일자 건수조회
 const todoListCnt = ref([]);
-watch(month, async () => {
+watch([month, todoList], async () => {
   try {
     const result = await axios.get(`/api/todo/list/cnt?year=${year.value}&month=${month.value}`);
 
@@ -486,7 +483,7 @@ watch(month, async () => {
 
 //업무일지 등록
 const todoAdd = async () => {
-
+  
   if (!title.value) {
     Swal.fire({
       icon: "info",
@@ -495,33 +492,40 @@ const todoAdd = async () => {
     return;
   }
 
-  const formData = new FormData();
-  formData.append("typeCd", typeCd.value);
-  formData.append("mberId", mberId.value);
-  formData.append("title", title.value);
-  formData.append("content", content.value);
-  formData.append("state", state.value);
-  formData.append("todoDt", todoDt.value);
-
+  let txt = '';
+  if(isUpdated.value) txt = "수정";
+  else txt = "등록";
+  
+  const requestData = {
+    todoCd: todoInfo.value.todoCd,
+    typeCd: typeCd.value,
+    title: title.value,
+    content: content.value,
+    state: state.value,
+    todoDt: todoDt.value
+  };
+  
   try {
-    const response = await axios.post('/api/todo', formData);
+    const response = ref([]);
+    if (isUpdated.value) response.value = await axios.put(`/api/todo`, requestData); //수정
+    else response.value = await axios.post("/api/todo", requestData); //등록
 
-    if (response.data.result === true) {
+    if (response.value.data === true) {
+        Swal.fire({
+          icon: "success",
+          title: txt + "완료",
+          text: "일지"+txt + "을 완료하였습니다.",
+        })
+        todoGetListAll(); //업무일지 리스트 리로드
+        closeModal(); //모달 닫힐 때 등록폼 초기화
+      }
+    } catch (err) {
       Swal.fire({
-        icon: "success",
-        title: "등록완료",
-        text: "일지등록을 완료하였습니다",
+        icon: "error",
+        title: txt + "실패",
+        text: "일지 " + txt + " 실패",
       })
-      todoGetListAll(); //업무일지 리스트 리로드
-      formReset(); //모달 닫힐 때 등록폼 초기화
     }
-  } catch (err) {
-    Swal.fire({
-      icon: "error",
-      title: "등록실패",
-      text: "일지 등록 실패",
-    })
-  }
 }
 
 //업무일지 다중 상태변경/삭제 처리
@@ -536,7 +540,7 @@ const todoListUpdate = async (mode) => {
   try {
     const response = ref([]);
     if (mode == 'del') { //삭제
-      response.value = await axios.delete(`/api/todo/delete`, {
+      response.value = await axios.delete(`/api/todo/deleteArr`, {
         data: { todoArr: checkedData.map(row => row.todoCd) }
       });
 

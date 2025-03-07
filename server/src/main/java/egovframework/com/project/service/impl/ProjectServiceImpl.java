@@ -89,7 +89,9 @@ public class ProjectServiceImpl implements ProjectService{
 		        
 		        String prCd = project.getPrCd();
 		        
-		        projectMapper.projectWorkDelete(prCd); //과업 전체 삭제
+		        if(project.getMode() == "edit") {
+		        	projectMapper.projectWorkDelete(prCd); //과업 전체 삭제
+		        }
 
 		        // 작업 리스트가 존재할 경우
 		        if (project.getWorkArr() != null && !project.getWorkArr().isEmpty()) {
@@ -174,6 +176,12 @@ public class ProjectServiceImpl implements ProjectService{
 	public boolean projectPlanInsert(ProjectDTO project) {
 		return projectMapper.projectPlanInsert(project) == 1 ? true : false;
 	}	
+	
+	//프로젝트 일정수정
+	@Override
+    public boolean projectPlanUpdate(ProjectDTO project) {
+		return projectMapper.projectPlanUpdate(project) == 1 ? true : false;
+    }
 	
 	//프로젝트 일정삭제
 	@Override

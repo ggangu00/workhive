@@ -300,6 +300,7 @@ const exportToExcel = () => {
       useFormattedValue: true,
       onlySelected: false,
       includeHiddenColumns: false,
+      columnNames: ['state', 'prNm', 'startDt', 'price', 'createDt'] 
     });
   }
 };
@@ -330,9 +331,10 @@ class subjectRenderer {
       <div class="subject">
         <a href="#" class="mrp5">${rowData.prNm}</a>
         <span class="badge ${termClass.value}">
-          D${term > 0 ? "-" + term
-        : term < 0 ? "+" + term * (-1)
-          : "-day"}</span>
+          ${rowData.state == 'A04' ? '완료'
+          : term > 0 ? "D-" + term
+          : term < 0 ? "D+" + term * (-1)
+          : "D-day"}</span>
       </div>
     `;
 

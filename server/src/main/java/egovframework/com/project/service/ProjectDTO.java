@@ -21,6 +21,8 @@ public class ProjectDTO extends CommonPaging {
 	
 	//======================프로젝트=====================
 	
+	private String mode;		// 작업수행 구분
+	
 	private String prCd;		// 프로젝트 코드
 	
 	@NotBlank

@@ -68,34 +68,25 @@ public class TodoController {
         return todoService.todoSelectCnt(response);
 	}	
 	
-	//일지 등록
+	//일지 등록	
 	@PostMapping("")
-	public Map<String, Object> todoAdd(@Validated TodoDTO todo) {
-		
-	  boolean result = todoService.todoInsert(todo);
-	  
-	  String todoDt = todo.getTodoDt().replaceAll("-", ""); //하이픈 제거
+	public boolean todoAdd(@RequestBody @Validated TodoDTO todo) {
+	  boolean result = todoService.todoInsert(todo);	  
 	  	  
 	  Map<String, Object> map = new HashMap<>();
-	  map.put("result", result);
-	  map.put("list", todoService.todoSelectAll(todoDt));
 		
-	  return map;
+	  return result;
 	}
 	
 	//일지 수정
 	@PutMapping("")
-	public Map<String, Object> todoModify(@RequestBody TodoDTO todo) {
+	public boolean todoModify(@RequestBody TodoDTO todo) {
 		
 		Map<String, Object> map = new HashMap<>();
 		
 		boolean result = todoService.todoUpdate(todo);
-		String todoDt = todo.getTodoDt();
 		
-		map.put("result", result);
-		map.put("list", todoService.todoSelectAll(todoDt));
-		
-		return map;
+		return result;
 	}
 	
 	//일지 상태변경
@@ -107,14 +98,24 @@ public class TodoController {
 	    return todoService.todoStateUpdate(todoArr,state);
 	}
 	
-	//일지 삭제
+	//일지 단건 삭제
 	@DeleteMapping("/delete/{todoCd}")
 	public boolean todoRemove(@PathVariable(name="todoCd") String todoCd) {
-		log.info("삭제코드 ======>" + todoCd);
-
 		boolean result = todoService.todoDelete(todoCd);
 		
 		return result;
-	}		
+	}	
+	
+	//일지 다중 삭제
+	@DeleteMapping("/deleteArr")
+	public boolean todoListRemove(@RequestBody Map<String, List<String>> requestBody) {
+	    List<String> todoArr = requestBody.get("todoArr");
+	    
+	    if (todoArr == null || todoArr.isEmpty()) {
+	        return false;
+	    }
+
+	    return todoService.todoListDelete(todoArr);
+	}
 		
 }

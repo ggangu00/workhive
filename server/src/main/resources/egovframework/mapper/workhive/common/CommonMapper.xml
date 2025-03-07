@@ -135,18 +135,22 @@
 	<!-- 홈 대시보드 건수 조회 (진행중인 프로젝트, 금일 예정 일정, 미완료 일지) -->
 	<select id="homeInfo" parameterType="String">
 	<![CDATA[
-	select
-	        NVL(TO_CHAR(go_time, 'HH24:MI'),'--:--') AS go_time, --오늘 출근시간
-	        NVL(TO_CHAR(leave_time, 'HH24:MI'),'--:--') AS leave_time,	--오늘 퇴근시간
-		    NVL((select count(*) from project project join project_mem pm on project.pr_cd=pm.pr_cd where project.state='A02' and pm.mber_id=m.mber_id),0) as project_cnt, --참여자로 등록된 프로젝트 갯수
-		    NVL((select count(*) from todo todo where todo.state='A02' and mber_id=m.mber_id),0) as todo_cnt,	--금일 예정 일지 갯수
-		    NVL((select count(*) from COMTNSCHDULINFO sch WHERE TRUNC(TO_DATE(SCHDUL_BGNDE, 'YYYYMMDDHH24MI')) <= TRUNC(SYSDATE) and TRUNC(TO_DATE(SCHDUL_ENDDE, 'YYYYMMDDHH24MI')) >= TRUNC(SYSDATE)),0) as sch_cnt --금일 일정 갯수
-		from 
-	    COMTNGNRLMBER m 
-	left join
-	    commute cmt
-	on m.mber_id=cmt.mber_id
-	where m.mber_id=#{mberId} and TO_DATE(commute_dt, 'YYYY-MM-DD') = TO_DATE(SYSDATE, 'YYYY-MM-DD')
+	SELECT * FROM (
+		select
+				ROWNUM RNUM, 	
+		        NVL(TO_CHAR(go_time, 'HH24:MI'),'--:--') AS go_time, --오늘 출근시간
+		        NVL(TO_CHAR(leave_time, 'HH24:MI'),'--:--') AS leave_time,	--오늘 퇴근시간
+			    NVL((select count(*) from project project join project_mem pm on project.pr_cd=pm.pr_cd where project.state='A02' and pm.mber_id=m.mber_id),0) as project_cnt, --참여자로 등록된 프로젝트 갯수
+			    NVL((select count(*) from todo todo where todo.state='A02' and mber_id=m.mber_id),0) as todo_cnt,	--금일 예정 일지 갯수
+			    NVL((select count(*) from COMTNSCHDULINFO sch WHERE TRUNC(TO_DATE(SCHDUL_BGNDE, 'YYYYMMDDHH24MI')) <= TRUNC(SYSDATE) and TRUNC(TO_DATE(SCHDUL_ENDDE, 'YYYYMMDDHH24MI')) >= TRUNC(SYSDATE)),0) as sch_cnt --금일 일정 갯수
+			from 
+		    COMTNGNRLMBER m 
+		left join
+		    commute cmt
+		on m.mber_id=cmt.mber_id
+		where m.mber_id=#{mberId} and TO_DATE(commute_dt, 'YYYY-MM-DD') = TO_DATE(SYSDATE, 'YYYY-MM-DD')
+		order by go_time desc
+	) WHERE RNUM <= 1
 	]]>
 	
 	</select>

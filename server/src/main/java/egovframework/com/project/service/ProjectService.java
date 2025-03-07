@@ -48,6 +48,9 @@ public interface ProjectService {
 	//프로젝트 일정 등록
 	public boolean projectPlanInsert(ProjectDTO project);
 	
+	//프로젝트 일정 수정
+	public boolean projectPlanUpdate(ProjectDTO project);
+	
 	//프로젝트 일정 삭제
 	public boolean projectPlanDelete(String prPlanCd);
 	

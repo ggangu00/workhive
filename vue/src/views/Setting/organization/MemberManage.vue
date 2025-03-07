@@ -11,8 +11,12 @@
             <div class="card-body">
                <div class="row m-0">
                   <!-- 트리 뷰 (왼쪽) -->
-                  <div class="col-3 depth treeview">
-                     <button @click="modalOpen">모달 오픈</button>
+                  <div class="col-3 m-group">
+                     <div class="bottom-line">
+                        <div class="d-flex justify-content-start align-items-center p-2">
+                           <button class="btn btn-primary btn-fill " @click="modalOpen">부서 등록</button>
+                        </div>
+                     </div>
                      <!-- 데이터 로딩 끝난 후에만 자식 렌더링 -->
                      <DepartmentComponent
                         v-if="isTreeLoaded"
@@ -147,9 +151,11 @@
    const isTreeLoaded = ref(false)
    const departmentGetList = async () => {
       try {
-         const response = await axios.get('/api/department')
-         const tree = buildPrimeVueTree(response.data)
-         departmentTree.value = tree
+         const response = await axios.get('/api/department');
+         const tree = buildPrimeVueTree(response.data);
+         departmentTree.value = tree;
+
+         console.log("tree => ", tree);
       } catch (err) {
          departmentTree.value = []
          Swal.fire({
@@ -159,7 +165,6 @@
          })
       }
    }
-
 
    const buildPrimeVueTree = (flatList) => {
       const map = new Map()
@@ -186,8 +191,6 @@
 
       return tree
    }
-
-
 
    const members = ref([
       { id: "2025001", name: "김민진", rank: "부장" },

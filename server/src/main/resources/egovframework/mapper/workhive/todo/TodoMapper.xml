@@ -77,7 +77,7 @@
 	<update id="todoUpdate" parameterType="todoDTO">
 		update todo
 		set	
-			<if test="category != null and !category.equals('')">
+			<if test="typeCd != null and !typeCd.equals('')">
 			type_cd = #{typeCd}, 
 			</if>
 			<if test="title != null and !title.equals('')">
@@ -116,4 +116,13 @@
 	    WHERE todo_cd = #{todoCd}
 	</delete>
 
+	<!-- 일지 다중 삭제 -->
+	<delete id="todoListDelete" parameterType="java.util.List">
+	    DELETE FROM todo 
+	    WHERE todo_cd IN
+	    <foreach collection="list" item="todoCd" separator="," open="(" close=")">
+	        #{todoCd}
+	    </foreach>
+	</delete>
+	
 </mapper>

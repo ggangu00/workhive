@@ -46,7 +46,7 @@
 
                             <!-- 구성원 테이블 (오른쪽) -->
                             <div class="col-9 m-group">
-                                <div class="d-flex p-2 mb-1">
+                                <div class="d-flex p-2 mb-1" style="justify-content: end;">
                                     <div class="d-flex" style="align-items: center;">
                                         <select name="searchSel" id="searchSel" class="form-select w50">
                                             <option value="name">이름</option>

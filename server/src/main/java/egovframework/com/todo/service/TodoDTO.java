@@ -21,7 +21,6 @@ public class TodoDTO {
 	private String todoCd;		// 업무 코드
 	private String mberId;		// 구성원 코드
 	
-	@NotBlank
 	private String typeCd;		// 업무 구분
 	private String typeNm;		// 업무 구분명
 	

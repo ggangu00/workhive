@@ -5,8 +5,11 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import egovframework.com.securing.service.CustomerUser;
 import egovframework.com.todo.mapper.TodoMapper;
 import egovframework.com.todo.service.TodoDTO;
 import egovframework.com.todo.service.TodoService;
@@ -40,12 +43,23 @@ public class TodoServiceImpl implements TodoService{
 	//일지 등록
 	@Override
 	public boolean todoInsert(TodoDTO todo) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUser user = (CustomerUser) auth.getPrincipal();
+        String userId = user.getUserDTO().getMberId();
+        todo.setMberId(userId);
+        
 		return todoMapper.todoInsert(todo) == 1 ? true : false;
 	}	
 
 	//일지 수정
 	@Override
 	public boolean todoUpdate(TodoDTO todo) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUser user = (CustomerUser) auth.getPrincipal();
+        String userId = user.getUserDTO().getMberId();
+        
+        todo.setMberId(userId);
+        
 		return todoMapper.todoUpdate(todo) == 1 ? true : false;
 	}
 	
@@ -65,5 +79,10 @@ public class TodoServiceImpl implements TodoService{
 	public boolean todoDelete(String todoCd) {
 
         return todoMapper.todoDelete(todoCd) == 1 ? true : false;
+    }
+
+	//일지 다중 삭제
+	public boolean todoListDelete(List<String> todoArr) {
+        return todoMapper.todoListDelete(todoArr) == 1 ? true : false;
     }
 }
