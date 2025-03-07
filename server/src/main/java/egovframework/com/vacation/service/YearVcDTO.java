@@ -15,4 +15,7 @@ public class YearVcDTO {
 	private String targetYear;
 	private int giveDays;
 	private double useDays;
+	
+
+	private String mberNm;
 }

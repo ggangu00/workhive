@@ -39,13 +39,7 @@ public class YearVcController {
 	// 연차 수정 - 결재
 	@PostMapping("/yearVcModify")
 	public void yearVcModify(@RequestBody List<YearVcDTO> yearVcList) {
-
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        CustomerUser user = (CustomerUser) auth.getPrincipal();
-        String userId = user.getUserDTO().getMberId();
-        
 		yearVcList.forEach(yearVcDTO -> {
-			yearVcDTO.setMberId(userId);
 			service.yearVcUpdate(yearVcDTO);
 		});
 		return;

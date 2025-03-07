@@ -140,7 +140,7 @@
       }
     },
     { header: '신청일', name: 'createDt', align: 'center', formatter: vcFormat.dateFormatter },
-    { header: '신청자', name: 'createId', align: 'center'},
+    { header: '신청자', name: 'createNm', align: 'center'},
     { header: '결재상태', name: 'signState', align: 'center', formatter: vcFormat.signFormatter },
   ];
   let signCol = [
@@ -154,7 +154,7 @@
       }
     },
     { header: '신청일', name: 'createDt', align: 'center', formatter: vcFormat.dateFormatter },
-    { header: '신청자', name: 'createId', align: 'center'},
+    { header: '신청자', name: 'createNm', align: 'center'},
     { header: '결재일', name: 'signDt', align: 'center', formatter: vcFormat.dateFormatter },
     { header: '결재상태', name: 'signState', align: 'center', formatter: vcFormat.signFormatter },
   ];
@@ -175,6 +175,10 @@
       scrollX: false,
       scrollY: false,
       rowHeaders: ['checkbox'],
+      pageOptions: {
+        useClient: false,
+        perPage: 5,
+      },
       columns: colData,
     });
   };

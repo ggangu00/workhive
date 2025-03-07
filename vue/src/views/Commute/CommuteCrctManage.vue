@@ -32,11 +32,22 @@
                   <tbody>
                     <tr>
                       <th>근무 일자</th>
-                      <td><input type="date" id="wordDate" class="form-control" v-model="crctData.commuteDt" :readonly="isUpdate || isDetail"></td>
+                      <td colspan="5">
+                        <input type="date" id="wordDate" class="form-control" style="width: 18.6%;" 
+                               v-model="crctData.commuteDt" :readonly="isUpdate || isDetail">
+                      </td>
+                    </tr>
+                    <tr>
                       <th>출근 시간</th>
-                      <td><input type="datetime-local" class="form-control" v-model="crctData.goTime" readonly></td>
+                      <td colspan="2">
+                        <input type="datetime-local" class="form-control" style="width: 47.5%;" 
+                               v-model="crctData.goTime" readonly>
+                      </td>
                       <th>퇴근 시간</th>
-                      <td><input type="datetime-local" class="form-control" v-model="crctData.leaveTime" readonly></td>
+                      <td colspan="2">
+                        <input type="datetime-local" class="form-control" style="width: 47.5%;" 
+                               v-model="crctData.leaveTime" readonly>
+                      </td>
                     </tr>
                     <tr>
                       <th>정정 출근 시간</th>
@@ -52,7 +63,12 @@
                     </tr>
                     <tr>
                       <th>정정 사유</th>
-                      <td colspan="5"><textarea id="crctReason" class="form-control" v-model="crctData.crctReason" :readonly="isDetail"></textarea></td>
+                      <td colspan="5">
+                        <textarea id="crctReason" class="form-control" 
+                                  v-model="crctData.crctReason" :readonly="isDetail"
+                                  style="height: 135px;">
+                        </textarea>
+                      </td>
                     </tr>
                     <tr>
                       <th>파일 첨부</th>

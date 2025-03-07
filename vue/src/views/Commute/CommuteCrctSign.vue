@@ -142,7 +142,7 @@ let crctCol = [
   { header: '정정출근시간', name: 'crctGoTime', align: 'center', formatter: crctFormat.timeFormatter },
   { header: '정정퇴근시간', name: 'crctLeaveTime', align: 'center', formatter: crctFormat.timeFormatter },
   { header: '신청일', name: 'createDt', align: 'center', formatter: crctFormat.dateFormatter },
-  { header: '신청자', name: 'createId', align: 'center'},
+  { header: '신청자', name: 'createNm', align: 'center'},
   { header: '결재상태', name: 'signState', align: 'center', formatter: crctFormat.signFormatter },
 ];
 let signCol = [
@@ -152,7 +152,7 @@ let signCol = [
   { header: '정정출근시간', name: 'crctGoTime', align: 'center', formatter: crctFormat.timeFormatter },
   { header: '정정퇴근시간', name: 'crctLeaveTime', align: 'center', formatter: crctFormat.timeFormatter },
   { header: '신청일', name: 'createDt', align: 'center', formatter: crctFormat.dateFormatter },
-  { header: '신청자', name: 'createId', align: 'center'},
+  { header: '신청자', name: 'createNm', align: 'center'},
   { header: '결재일', name: 'signDt', align: 'center'},
   { header: '결재상태', name: 'signState', align: 'center', formatter: crctFormat.signFormatter },
 ];

@@ -39,6 +39,8 @@ public class CommuteCrctDTO extends CommonPaging {
 	private String preGoTime;
 	private String preLeaveTime;
 	
+	private String createNm;
+	private String updateNm;
 	private String signNm;
 	
 }

@@ -53,6 +53,7 @@
 	<select id="cmtSelect" parameterType="String">
 		select commute_cd
 			 , mber_id
+			 , fn_get_memnm(mber_id) mber_nm
 			 , commute_dt
 			 , go_time
 			 , go_state
@@ -74,6 +75,7 @@
 		
 		select commute_cd
 			 , mber_id
+			 , fn_get_memnm(mber_id) mber_nm
 			 , commute_dt
 			 , TO_CHAR(go_time, 'YYYY-MM-DD HH24:MI:SS') go_time
 			 , go_state
@@ -123,6 +125,7 @@
 		from (
 			select commute_cd
 				 , mber_id
+			 	 , fn_get_memnm(mber_id) mber_nm
 				 , commute_dt
 				 , TO_CHAR(go_time, 'YYYY-MM-DD HH24:MI:SS') go_time
 				 , go_state
@@ -144,6 +147,7 @@
 		from (
 			select commute_cd
 				 , mber_id
+			 	 , fn_get_memnm(mber_id) mber_nm
 				 , commute_dt
 				 , go_time
 				 , go_state

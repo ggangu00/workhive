@@ -114,7 +114,7 @@ onMounted(() => {
         }
       },
       { header: '신청일', name: 'createDt', align: 'center', formatter: vcFormat.dateFormatter },
-      { header: '결재자', name: 'signId', align: 'center'},
+      { header: '결재자', name: 'signNm', align: 'center'},
       { header: '결재상태', name: 'signState', align: 'center', renderer: BtnRenderer }
     ]
   })

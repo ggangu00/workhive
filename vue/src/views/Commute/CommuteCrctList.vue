@@ -26,13 +26,27 @@
                     <option value="D04">반려</option>
                   </select>
                 </div>
+              </div>
+              
+              <div class="button-collection d-flex justify-content-end align-items-center flex-wrap" style="padding-bottom: 15px;">
+                <div class="selectbox d-flex">
+                  
+                  <div class="d-flex align-items-center">
+                    <div class="input-group">
+                      <span class="input-group-text fw-bold">근무일(시작)</span>
+                      <input type="date" class="form-control" v-model="searchData.startDate">
+                    </div>
+                    <span class="fw-bold">~</span>
+                    <div class="input-group">
+                      <span class="input-group-text fw-bold">근무일(종료)</span>
+                      <input type="date" class="form-control" v-model="searchData.endDate">
+                    </div>
+                  </div>
 
-                <div class="col-auto">
-                  <input type="date" id="startDate" class="input-custom" v-model="searchData.startDate">
-                  <a class="align-middle"> ~ </a>
-                  <input type="date" id="endDate" class="input-custom" v-model="searchData.endDate">
+                  <button class="btn btn-sm btn-secondary btn-fill" @click="resetBtn" style="margin: 6px 0;">초기화</button>
                 </div>
               </div>
+
 
               <!-- 목록 -->
               <div class="row mt-3">
@@ -108,7 +122,7 @@ onMounted(() => {
       { header: '정정출근시간', name: 'crctGoTime', align: 'center', formatter: timeFormatter },
       { header: '정정퇴근시간', name: 'crctLeaveTime', align: 'center', formatter: timeFormatter },
       { header: '신청일', name: 'createDt', align: 'center', formatter: dateFormatter },
-      { header: '결재자', name: 'signId', align: 'center'},
+      { header: '결재자', name: 'signNm', align: 'center'},
       { header: '결재상태', name: 'signState', align: 'center', renderer: BtnRenderer }
     ]
   })
