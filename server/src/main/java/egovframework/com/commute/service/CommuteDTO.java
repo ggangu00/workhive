@@ -28,4 +28,6 @@ public class CommuteDTO extends CommonPaging {
 	// 출퇴근 시간
 	private String startTime;
 	private String endTime;
+
+	private String mberNm;
 }

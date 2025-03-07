@@ -1,4 +1,5 @@
 import axios from "../../assets/js/customAxios";
+import Swal from 'sweetalert2';
 
 // 휴식 시간 계산
 const restTime = (go, leave, time) => {
@@ -29,7 +30,12 @@ export async function cmtCheck(goTimeInput, leaveTimeInput) {
   };
 
   // 회사 출퇴근 시간 정보 가져오기
-  let compData = await axios('/api/commute/cmtTimeInfo');
+  let compData;
+  try {
+    compData = await axios('/api/commute/cmtTimeInfo');
+  } catch (err) {
+    Swal.fire({ icon: "error", title: "출퇴근 기준 시간 조회 실패", text: "Error : " + err });
+  }
   let startTime = new Date(compData.data.startTime).getHours(); // 출근 기준 시간
   let endTime = new Date(compData.data.endTime).getHours(); // 퇴근 기준 시간
 

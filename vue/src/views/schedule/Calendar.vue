@@ -291,8 +291,12 @@ getEventColor(asdf) {
     const endDate = e.event.end ? e.event.end.toISOString().slice(0, 10) : startDate;
 
     // 시간 변환
-    const startTime = e.event.start ? e.event.start.toISOString().slice(11, 16) : "";
-    const endTime = e.event.end ? e.event.end.toISOString().slice(11, 16) : startTime;
+    // const startTime = e.event.start ? e.event.start.toISOString().slice(11, 16) : "";
+    // const endTime = e.event.end ? e.event.end.toISOString().slice(11, 16) : startTime;
+    const startTime = e.event.start ? new Date(new Date(e.event.start).getTime() + 9 * 60 * 60 * 1000).toISOString().slice(11, 16) : ""; //시간에서 +9를 해줘야함
+    const endTime = e.event.end ? new Date(new Date(e.event.end).getTime() + 9 * 60 * 60 * 1000).toISOString().slice(11, 16) : startTime;
+
+
 
     //모달에 정보담기
     this.schedule.title = e.event.title;

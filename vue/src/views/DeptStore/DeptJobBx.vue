@@ -1,8 +1,8 @@
 <template>
-  <li>
+  <li class="ms-3">
     <div class="flex-container">
       <!-- 부서 열기/닫기 아이콘 -->
-      <i :class="isOpen ? 'fa-regular fa-folder-open' : 'fa-solid fa-folder'" @click="toggle"></i>
+      <i :class="isOpen ? 'fa-solid fa-angle-down' : 'fa-solid fa-angle-right'" @click="toggle"></i>
       <div @click="deptClicked(dept)"><span @click="toggle">{{ dept.deptNm }}</span></div>
       <i class="fa-solid fa-plus" @click.stop="jobBxManage('add', dept)"></i>
     </div>
@@ -19,11 +19,13 @@
       </li>
 
       <!-- 업무함 렌더링 -->
-      <li v-for="job in deptJobBoxes" :key="job.deptJobBxId" class="job-box">
-        <i class="fa-solid fa-file" @click="jobBoxClicked(job)"></i>
-        <span @click="jobBoxClicked(job)">{{ job.deptJobBxNm }}</span>
-        <i class="fa-solid fa-pen" @click.stop="jobBxManage('modify', job)"></i>
-        <i class="fa-solid fa-x" @click.stop="jobBxManage('remove', job)"></i>
+      <li v-for="job in deptJobBoxes" :key="job.deptJobBxId" class="job-box ms-3">
+        <div class="flex-container">
+          <i class="folder bi bi-folder-plus bi bi-folder" @click="jobBoxClicked(job)"></i>
+          <span @click="jobBoxClicked(job)">{{ job.deptJobBxNm }}</span>
+          <i class="fa-solid fa-pen" @click.stop="jobBxManage('modify', job)"></i>
+          <i class="fa-solid fa-x" @click.stop="jobBxManage('remove', job)"></i>
+        </div>
       </li>
     </ul>
   </li>
@@ -107,30 +109,16 @@ const jobBoxClicked = (job) => {
 .flex-container {
   display: flex;
   align-items: center;
-  gap: 8px;
 }
 
 span {
   font-weight: bold;
   cursor: pointer;
+  margin-right: 8px;
 }
 
 i {
   margin-right: 8px;
 }
 
-/* 아이콘 스타일 */
-.job-box {
-  color: blue;
-  font-style: italic;
-}
-
-ul {
-  list-style-type: none;
-  padding-left: 15px;
-}
-
-li {
-  margin: 5px 0;
-}
 </style>

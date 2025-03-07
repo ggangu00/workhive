@@ -4,7 +4,7 @@
       <div>
         <div class="card">
           <div class="card-body">
-            <h4 class="card-title float-left mt-1 font-weight-bold"> 공지사항 목록</h4>
+            <h4 v-if="bbsNm" class="card-title float-left mt-1 font-weight-bold">{{ bbsNm }}</h4>   
             <button class="btn btn-primary btn-sm btn-fill float-right" @click="goToBulletinAdd">등록</button>
           </div>
         </div>
@@ -51,6 +51,8 @@ const BulletinList = ref([]);
 const searchColumn = ref('');
 const searchKeyword = ref('');
 
+const bbsNm = ref(''); // 기본값 설정
+
 // 등록 버튼 클릭 시 이동
 const goToBulletinAdd = () => {
   router.push({
@@ -63,21 +65,30 @@ const goToBulletinAdd = () => {
 const BulletinGetList = async () => {
   try {
     const { data } = await axios.get(`/api/bulletin/bulletinList?bbsId=${bbsId.value}`);
+    console.log("API 응답 데이터:", data); 
 
-    let noticeCount = 0; // 공지사항 개수
+    // ✅ bbsNm을 올바른 경로에서 가져오기
+    if (data.master && data.master.bbsNm) {
+      bbsNm.value = data.master.bbsNm; // API에서 받은 게시판 이름으로 설정
+      console.log("bbsNm 값:", bbsNm.value); 
+    } else {
+      console.warn("bbsNm 값이 없습니다.");
+    }
+
+    let noticeCount = 0;
     BulletinList.value = (data.resultList || []).map((item, index) => {
       const isNotice = item.noticeAt?.trim().toUpperCase() === 'Y';
       if (isNotice) noticeCount += 1;
 
       return {
-        rowNum: isNotice ? '📢' : index + 1 - noticeCount, // 공지글이면 📢, 아니면 번호
-        noticeAt: isNotice ? 'Y' : 'N', // 공지여부
+        rowNum: isNotice ? '📢' : index + 1 - noticeCount,
+        noticeAt: isNotice ? 'Y' : 'N',
         ...item,
       };
     }).sort((a, b) => {
-      if (a.noticeAt === 'Y' && b.noticeAt !== 'Y') return -1; // 공지글 상단 배치
+      if (a.noticeAt === 'Y' && b.noticeAt !== 'Y') return -1;
       if (a.noticeAt !== 'Y' && b.noticeAt === 'Y') return 1;
-      return new Date(b.frstRegistPnttm) - new Date(a.frstRegistPnttm); // 최신글 순 정렬
+      return new Date(b.frstRegistPnttm) - new Date(a.frstRegistPnttm);
     });
 
     if (gridInstance.value) {
@@ -88,6 +99,7 @@ const BulletinGetList = async () => {
     BulletinList.value = [];
   }
 };
+
 
 // 📌 그리드 초기화
 const initializeGrid = () => {
@@ -148,7 +160,7 @@ const initializeGrid = () => {
       {
         header: '조회수',
         name: 'inqireCo',
-        align: 'right',
+        align: 'center',
         width: 100,
         sortable: true,
         className: 'bold-text'

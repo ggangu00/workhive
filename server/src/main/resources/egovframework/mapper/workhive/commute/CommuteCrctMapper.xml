@@ -66,8 +66,10 @@
 			 , crct_reason
 			 , atch_file_id
 			 , create_id
+     		 , fn_get_memnm(create_id) as create_nm
 			 , create_dt
 			 , update_id
+     		 , fn_get_memnm(update_id) as update_nm
 			 , update_dt
 			 , sign_id
      		 , fn_get_memnm(sign_id) as sign_nm
@@ -97,10 +99,13 @@
 			 , crct_reason
 			 , atch_file_id
 			 , create_id
+     		 , fn_get_memnm(create_id) as create_nm
 			 , create_dt
 			 , update_id
+     		 , fn_get_memnm(update_id) as update_nm
 			 , update_dt
 			 , sign_id
+     		 , fn_get_memnm(sign_id) as sign_nm
 			 , sign_dt
 			 , sign_state
 			 , pre_go_time
@@ -170,10 +175,13 @@
 			 , crct_reason
 			 , atch_file_id
 			 , create_id
+     		 , fn_get_memnm(create_id) as create_nm
 			 , create_dt
 			 , update_id
+     		 , fn_get_memnm(update_id) as update_nm
 			 , update_dt
 			 , sign_id
+     		 , fn_get_memnm(sign_id) as sign_nm
 			 , sign_dt
 			 , sign_state
 			 , pre_go_time
@@ -235,10 +243,13 @@
 			 , crct_reason
 			 , atch_file_id
 			 , create_id
+     		 , fn_get_memnm(create_id) as create_nm
 			 , create_dt
 			 , update_id
+     		 , fn_get_memnm(update_id) as update_nm
 			 , update_dt
 			 , sign_id
+     		 , fn_get_memnm(sign_id) as sign_nm
 			 , sign_dt
 			 , sign_state
 			 , pre_go_time

@@ -1,5 +1,5 @@
 <template>
-   <div class="login-container-fluid mx-auto" style="background-color: #fff;">
+   <div class="login-container-fluid mx-auto">
 
       <div class="d-flex justify-content-center align-items-center mb30">
          <img src="../../assets/img/vue-logo.png" alt="WorkHive Logo" class="me-3" style="width: 100px; height: auto;">

@@ -50,14 +50,14 @@
                 </div>
               </div>
               <!-- 에디터 -->
-              <div class='col-12'>
+              <div class="col-12 html-container">
                 <div v-html="$route.query.docCnEditor" class="htmlBx"></div>
-                <!-- <div id="editor"></div> -->
               </div>
+
               <div class="d-flex" style='margin-top: 20px;'>
                 <!-- 왼쪽 -->
                 <div class="col-5" >
-                  <div class="mb-1">
+                  <div class="mb-1">F
                     <span>첨부파일</span>
                   </div>
                   <div>
@@ -161,6 +161,9 @@ const handleModalOpen = () => {
 
 //  Bootstrap 모달 이벤트 리스너 추가
 onMounted(() => {
+if (htmlBox.value) {
+    htmlBox.value.innerHTML = route.query.docCnEditor; // HTML 직접 삽입
+  }
   const modalElement = document.getElementById('approvalRegiModal');
   if (modalElement) {
     modalElement.addEventListener('shown.bs.modal', handleModalOpen);
@@ -268,6 +271,8 @@ const showFileInfo = async(file) => {
 
   };
 
+  const htmlBox = ref(null);
+
 // 결재선 포멧
 const approvalStatusMap = {
   "K01": "기안",
@@ -282,6 +287,83 @@ const getApprovalStatusName = (code) => {
 };
 </script>
 <style scoped>
+/* 공통 문서 스타일 */
+:deep(.htmlBx) {
+  margin-top: 30px;
+  border: 2px solid #ddd;
+  padding: 30px;
+  background-color: #fff;
+  font-family: 'Arial', sans-serif;
+  color: #333;
+  border-radius: 8px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 테이블 스타일 */
+:deep(.htmlBx table) {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  border: 1.5px solid #bbb;
+}
+
+/* 테이블 헤더 스타일 */
+:deep(.htmlBx thead td) {
+  background-color: #575757; /* 파란색 */
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  padding: 12px;
+  border: 1.5px solid #bbb;
+}
+
+/* 테이블 본문 스타일 */
+:deep(.htmlBx td) {
+  border: 1.5px solid #bbb;
+  padding: 12px;
+  text-align: left;
+  font-size: 14px;
+}
+
+/* 강조 표시 */
+:deep(.htmlBx strong) {
+  font-weight: bold;
+  font-size: 18px;
+  color: #222;
+  display: block;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* 본문 텍스트 */
+:deep(.htmlBx p) {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+/* 배경색 구분 */
+:deep(.htmlBx tbody tr:nth-child(even)) {
+  background-color: #f8f9fa;
+}
+
+:deep(.htmlBx tbody tr:hover) {
+  background-color: #ddd;
+}
+
+/* 줄 높이 조정 */
+:deep(.htmlBx td), :deep(.htmlBx th) {
+  line-height: 1.5;
+}
+
+/* 섹션 구분 헤더 스타일 */
+:deep(.htmlBx .section-header) {
+  background-color: #f1f1f1;
+  font-weight: bold;
+  text-align: center;
+  padding: 12px;
+  border: 1.5px solid #bbb;
+}
+
 .modal-xl {
   max-width: 70vw !important;
   /* 모달 가로 크기 확장 */
@@ -338,11 +420,7 @@ const getApprovalStatusName = (code) => {
   padding: 10px;
 }
 
-.htmlBx {
-  margin-top: 30px;
-  border: 2px solid #eee;
-  padding: 30px;
-}
+
 
 .badge {
   font-weight: 400 !important;
@@ -390,4 +468,13 @@ const getApprovalStatusName = (code) => {
 .file-list{
   cursor: pointer;
 }
+
+/* 표부분 */
+.htmlBx {
+  margin-top: 30px;
+  border: 2px solid #eee;
+  padding: 30px;
+}
+
+
 </style>

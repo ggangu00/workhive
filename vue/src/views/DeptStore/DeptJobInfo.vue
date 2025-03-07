@@ -15,7 +15,7 @@
           <div class="row">
             <!-- 업무함 사이드바 -->
             <div class="col-3">
-              <div class="jobBx">
+              <!-- <div class="jobBx">
                 <ul>
                   <DeptJobBx
                     v-for="dept in rootDepartments"
@@ -25,7 +25,17 @@
                     :jobBoxes="jobBoxes"
                   />
                 </ul>
-
+              </div> -->
+              <div class="depth treeview">
+                <ul class="list-unstyled">
+                  <DeptJobBx
+                    v-for="dept in rootDepartments"
+                    :key="dept.deptCd"
+                    :dept="dept"
+                    :departments="departments"
+                    :jobBoxes="jobBoxes"
+                  />
+                </ul>
               </div>
 
               <!-- 업무함 관리(등록/수정) -->
@@ -141,6 +151,7 @@ import DeptJobBx from "./DeptJobBx.vue";
 import JobManage from "./JobManage.vue";
 import Modal from '../../components/Modal.vue';
 import { swalCheck } from '../../assets/js/common.js';
+import { priortFormatter, dateFormatter } from '../../assets/js/formatter.js';
 
 const token = localStorage.getItem("token");
 
@@ -338,10 +349,11 @@ onMounted(() => {
       useClient: false,
       perPage: 13,
     },
-    columns: [ // 체크박스 / 번호 / 제목 / 담당자 / 작성일 / 버튼
+    columns: [
+      { header: '우선순위', name: 'priort', align: 'center', formatter: priortFormatter },
       { header: '업무명', name: 'deptJobNm', sortable: true},
-      { header: '담당자', name: 'chargerNm', sortable: true},
-      { header: '작성일', name: 'frstRegisterPnttm', sortable: true},
+      { header: '담당자', name: 'chargerNm', align: 'center', sortable: true},
+      { header: '작성일', name: 'frstRegisterPnttm', align: 'center', sortable: true, formatter: dateFormatter },
       {
         header: '관리', name: 'action', align: 'center',
         renderer: BtnRenderer,

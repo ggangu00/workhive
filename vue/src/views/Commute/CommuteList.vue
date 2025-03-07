@@ -16,16 +16,27 @@
           <div class="row">
             <div class="col">
               <!-- 조회 조건 -->
-              <div class="row search align-items-center justify-content-end">
-                <div class="col-auto">
-                  <input type="date" id="startDate" class="input-custom" v-model="startDate">
-                  <a class="align-middle"> ~ </a>
-                  <input type="date" id="endDate" class="input-custom" v-model="endDate">
+              <div class="button-collection d-flex justify-content-end align-items-center flex-wrap" style="padding-bottom: 15px;">
+                <div class="selectbox d-flex">
+                  
+                  <div class="d-flex align-items-center">
+                    <div class="input-group">
+                      <span class="input-group-text fw-bold">근무일(시작)</span>
+                      <input type="date" class="form-control" v-model="startDate">
+                    </div>
+                    <span class="fw-bold">~</span>
+                    <div class="input-group">
+                      <span class="input-group-text fw-bold">근무일(종료)</span>
+                      <input type="date" class="form-control" v-model="endDate">
+                    </div>
+                  </div>
+
+                  <button class="btn btn-sm btn-secondary btn-fill" @click="resetBtn" style="margin: 6px 0;">초기화</button>
                 </div>
               </div>
       
               <!-- 목록 -->
-              <div class="row mt-3">
+              <div class="row">
                 <div class="col">
                   <div id="commuteGrid"></div>
 
@@ -34,6 +45,7 @@
       
             </div>
           </div>
+
         </div>
       </div>
       
@@ -120,7 +132,7 @@ const initGrid = () => {
     },
     columns: [
       { header: '근무일자', name: 'commuteDt', align: 'center', formatter: cmtFormat.dateFormatter },
-      { header: '사원정보', name: 'mberId', align: 'center' },
+      { header: '사원정보', name: 'mberNm', align: 'center' },
       { header: '출근시간', name: 'goTime', align: 'center', formatter: cmtFormat.timeFormatter },
       { header: '출근상태', name: 'goState', align: 'center', formatter: cmtFormat.goFormatter },
       { header: '퇴근시간', name: 'leaveTime', align: 'center', formatter: cmtFormat.timeFormatter },
@@ -188,7 +200,9 @@ const btnCrctAdd = (rowKey) => {
 
 
 <style scoped>
-
+.input-group {
+  /* display: inline-block; */
+}
 </style>
 
   

@@ -32,6 +32,7 @@
 	<select id="yearVcSelect" parameterType="yearVcDTO">
 		select year_vc_cd
 			 , mber_id
+			 , fn_get_memnm(mber_id) mber_nm
 			 , target_year
 			 , give_days
 			 , use_days

@@ -194,7 +194,8 @@ public class EgovArticleController {
 
         Map<String, Object> map = egovArticleService.selectArticleList(boardVO);
         int totCnt = Integer.parseInt((String) map.get("resultCnt"));
-
+        map.put("master",master);
+        
         // 공지사항 추출
         List<BoardVO> noticeList = egovArticleService.selectNoticeArticleList(boardVO);
         paginationInfo.setTotalRecordCount(totCnt);

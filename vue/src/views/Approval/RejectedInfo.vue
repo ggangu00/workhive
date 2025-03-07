@@ -45,7 +45,7 @@
   })
   //버튼명
   const headButtons = ref([
-    { label: '회수', class: 'btn-primary' },
+    { label: '회수', class: 'btn-secondary ' },
     { label: '재기안', class: 'btn-warning' },
     { label: '삭제', class: 'btn-success' }
   ]);

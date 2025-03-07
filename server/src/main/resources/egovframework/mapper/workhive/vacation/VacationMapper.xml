@@ -63,6 +63,7 @@
 			 , vc_reason
 			 , atch_file_id
 			 , create_id
+			 , fn_get_memnm(create_id) create_nm
 			 , create_dt
 			 , sign_id
      		 , fn_get_memnm(sign_id) as sign_nm
@@ -88,8 +89,10 @@
 			 , vc_reason
 			 , atch_file_id
 			 , create_id
+			 , fn_get_memnm(create_id) create_nm
 			 , create_dt
 			 , sign_id
+			 , fn_get_memnm(sign_id) sign_nm
 			 , sign_dt
 			 , sign_state
 		from vacation
@@ -172,8 +175,10 @@
 			 , vc_reason
 			 , atch_file_id
 			 , create_id
+			 , fn_get_memnm(create_id) create_nm
 			 , create_dt
 			 , sign_id
+			 , fn_get_memnm(sign_id) sign_nm
 			 , sign_dt
 			 , sign_state
 		from vacation
@@ -231,8 +236,10 @@
 			 , vc_reason
 			 , atch_file_id
 			 , create_id
+			 , fn_get_memnm(create_id) create_nm
 			 , create_dt
 			 , sign_id
+			 , fn_get_memnm(sign_id) sign_nm
 			 , sign_dt
 			 , sign_state
 		from vacation
