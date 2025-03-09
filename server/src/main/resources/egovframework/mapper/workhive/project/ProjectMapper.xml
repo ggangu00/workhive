@@ -22,7 +22,10 @@
 						   create_dt,
 						   entrprs_mber_id,	--거래처id
 						   state, 		--진행상태
-			               fn_get_comnm(entrprs_mber_id) as com_nm	--거래처명
+			               fn_get_comnm(entrprs_mber_id) as com_nm,	--거래처명
+			               (SELECT LISTAGG(fn_get_memnm(mber_id), ', ') WITHIN GROUP (ORDER BY mber_id)
+								FROM project_mem
+							WHERE pr_cd = project.pr_cd) as mem_arr
 					from project
 					where 
 						UPPER(del_yn) = UPPER('N')
@@ -312,37 +315,56 @@
 		   pr_plan_cd = #{prPlanCd}
 	</delete>
 	
+	<!-- ======================프로젝트 참여자=====================  -->
+	
+	<!-- 프로젝트별 참여자 목록 -->
+	<select id="projectSelectMember" parameterType="String" resultType="egovMap">
+		select pr_cd, 
+	       mber_id, 
+	       fn_get_memnm(mber_id) as mem_nm,
+	       fn_get_memnm(mber_id) AS mber_nm,
+	       fn_get_deptnm(mber_id) AS dept_nm,
+	       fn_get_grademberid(mber_id) AS grade_nm,
+	       fn_get_gradeseq(mber_id) AS grade_seq
+		from project_mem where pr_cd= #{prCd}
+	</select>
 	
 	<!-- 프로젝트 참여자 조회 트리 -->
 	<select id="projectTree" parameterType="projectDTO" resultType="projectDTO">
-		SELECT pr_cd, pr_nm, mber_id, mber_nm, dept_nm, grade_nm, mgr_st, CONNECT_BY_ISCYCLE as "parent"
+		SELECT *
 			FROM (
-			    SELECT 
-			        p.pr_cd,
-			        p.pr_nm,
-			        NULL AS mber_id,
-			        NULL AS mber_nm,
-	                NULL AS dept_nm,
-	                NULL AS grade_nm,
-	                NULL AS mgr_st
-			    FROM PROJECT p
-			    where UPPER(del_yn) = UPPER('N') and state!='A04' 
+			    SELECT pr_cd, pr_nm, mber_id, mber_nm, dept_nm, grade_nm, grade_seq, mgr_st, CONNECT_BY_ISCYCLE as "parent"
+			    FROM (
+			        SELECT 
+			            p.pr_cd,
+			            p.pr_nm,
+			            NULL AS mber_id,
+			            NULL AS mber_nm,
+			            NULL AS dept_nm,
+			            NULL AS grade_nm,
+			            NULL AS grade_seq,
+			            NULL AS mgr_st
+			        FROM PROJECT p
+			        WHERE UPPER(del_yn) = UPPER('N') AND state!='A04' 
+			        <include refid="searchCriteria"/>
+			        
+			        UNION ALL
 			
-			    UNION ALL
-			
-			    SELECT 
-			        m.pr_cd,
-			        NULL AS pr_nm,
-			        m.mber_id,
-			        fn_get_memnm(m.mber_id) AS mber_nm,
-	                fn_get_deptnm(m.mber_id) AS dept_nm,
-	                fn_get_grademberid(m.mber_id) AS grade_nm,
-	                m.mgr_st
-			    FROM PROJECT_MEM m
-			    order by mgr_st asc
-			)
-			START WITH pr_nm IS NOT NULL
-			CONNECT BY NOCYCLE PRIOR pr_cd = pr_cd AND PRIOR pr_nm IS NOT NULL	      
+			        SELECT 
+			            m.pr_cd,
+			            NULL AS pr_nm,
+			            m.mber_id,
+			            fn_get_memnm(m.mber_id) AS mber_nm,
+			            fn_get_deptnm(m.mber_id) AS dept_nm,
+			            fn_get_grademberid(m.mber_id) AS grade_nm,
+			            fn_get_gradeseq(m.mber_id) AS grade_seq,
+			            m.mgr_st
+			        FROM PROJECT_MEM m
+			    )
+			    START WITH pr_nm IS NOT NULL
+			    CONNECT BY NOCYCLE PRIOR pr_cd = pr_cd AND PRIOR pr_nm IS NOT NULL
+			) 
+			ORDER BY pr_cd, mgr_st ASC, grade_seq DESC, mber_nm ASC
 	</select>
 	
 	<!-- 프로젝트 참여자추가 -->
@@ -362,6 +384,16 @@
 			sysdate
 		)
 	</insert>
+	
+	<!-- 프로젝트 팀장 변경 -->
+	<update id="projectManagerUpdate" parameterType="projectDTO">
+	    UPDATE project_mem
+		SET mgr_st = CASE 
+             WHEN pr_cd = #{prCd} AND mber_id = #{mberId} THEN #{mgrSt} 
+               <![CDATA[ WHEN pr_cd = #{prCd} AND mber_id <> #{mberId} THEN 'A02' ]]> 
+             END
+		WHERE pr_cd = #{prCd}
+	</update>
 	
 	<!-- 프로젝트 참여자삭제 -->
 	<delete id="projectMemDelete" parameterType="ProjectDTO">

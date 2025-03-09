@@ -85,7 +85,7 @@
 
                 <div class="meeting-item" :key="i" v-for="(cal, i) in calList">
                   <div class="meeting-category">{{cal.typeNm}}</div>
-                  <div class="meeting-title">{{cal.schdulNm}}</div>
+                  <div class="meeting-title">({{ cal.deptNm }}) {{cal.schdulNm}}</div>
                 </div>
 
                 <!-- 등록된 일정이 3건 미만일 경우 부족한 개수만큼 빈 회의 행을 추가 -->
@@ -126,6 +126,7 @@
 
 <script setup>
 import axios from "../assets/js/customAxios.js";
+import { useStore } from "vuex";
 import { useRouter } from 'vue-router';
 import { onBeforeMount, ref, computed, watch } from 'vue';
 import { useUserInfoStore } from '../store/userStore';
@@ -137,6 +138,15 @@ import Calendar from './components/Calendar.vue';
 //============================= js =============================
 import { numberFormat, dateFormat } from '../assets/js/common.js'
 import { dateGetDay, dateTermCalc } from '../assets/js/project.js'
+
+//============================= 데이터 =============================
+
+const store = useStore();
+const isCmt = computed(() => store.state.isCmt);
+watch(isCmt, () => {
+  homeGetInfo();
+})
+
 
 const router = useRouter();
 const userInfoStore = useUserInfoStore();
@@ -202,7 +212,7 @@ const calCount = ref(0);
 const calGetList = async () => { //일정 최신 3건 조회
   try {
     const result = await axios.get(`/api/comm/calList/${selectedDate.value}`);
-
+console.log(result.data);
     calList.value = result.data;
     calCount.value = result.data.length;
 

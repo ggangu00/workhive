@@ -1,6 +1,7 @@
 package egovframework.com.project.service;
 
 import java.util.List;
+import java.util.Map;
 
 import egovframework.com.cmm.ComDefaultVO;
 
@@ -15,7 +16,7 @@ public interface ProjectService {
 	public int projectSelectAllCnt(ComDefaultVO searchVO);
 	
 	//프로젝트 단건조회
-	public ProjectDTO projectSelect(String prCd);	
+	public Map<String, Object> projectSelect(String prCd);	
 	
 	//프로젝트 헤더/디테일 등록
 	public boolean projectSave(ProjectDTO project);
@@ -57,10 +58,13 @@ public interface ProjectService {
 	//====================프로젝트 참여자 관리===================
 	
 	//프로젝트별 참여자 조회 트리
-	public List<ProjectDTO> projectTree();
+	public List<ProjectDTO> projectTree(ComDefaultVO searchVO);
 	
 	//프로젝트 참여자 추가
 	public boolean projectMemInsert(ProjectDTO projectDTO);
+	
+	//프로젝트 팀장 변경
+	public boolean projectManagerUpdate(ProjectDTO projectDTO);
 	
 	//프로젝트 참여자 삭제
 	public boolean projectMemDelete(ProjectDTO projectDTO);

@@ -50,24 +50,18 @@
                                         </tr>
                                     </thead>
 
-                                    <VueDraggableNext 
-                                        v-if="members.length > 0" 
-                                        tag="tbody" 
-                                        :list="members"
-                                        :multiDrag="true" 
-                                        :selected-class="'selected'" 
-                                        @start="onDragStart"
-                                        @end="onDrop" 
-                                        animation="300">
+                                    <!--사원목록-->
+                                    <VueDraggableNext v-if="members.length > 0" tag="tbody" :list="members"
+                                        :group="{ name: 'project', pull: 'clone', put: false }" :sort="false"
+                                        @start="onDragStart">
                                         <tr v-for="(member, i) in members" :key="i">
                                             <td>{{ i + 1 }}</td>
                                             <td>
                                                 <div class="profile-text" align="left">
-                                                    <span class="team-label" style="text-align:left">{{
-                                                        member.deptNm
+                                                    <span class="team-label" style="text-align:left">{{ member.deptNm
                                                         }}</span>
-                                                    <span class="user-name">{{ member.mberNm }} ({{ member.mberId
-                                                        }})</span>
+                                                    <span class="user-name">{{ member.mberNm }} ({{
+                                                        member.mberId}})</span>
                                                 </div>
                                             </td>
                                             <td>{{ member.gradeNm || '-' }}</td>
@@ -86,46 +80,43 @@
                         <div class="m-0">
                             <div class="d-flex mb-1" style="justify-content: end;">
                                 <div class="d-flex" style="align-items: center;">
-                                    <input type="text" class="form-control" placeholder="프로젝트명 입력" />
+                                    <input type="text" class="form-control" placeholder="프로젝트명 입력"
+                                        v-model="searchData.searchKeyword" />
                                     <button class="btn btn-info btn-fill mlp10 w30">검색</button>
                                 </div>
                             </div>
 
                             <div class="project treeview">
                                 <!-- 프로젝트 트리 -->
-                                <draggable
-                                    :list="projectList"
-                                    group="project"
-                                    @add="onDrop"
-                                >
-                                    <ul class="list-unstyled" v-for="project in projectList" :key="project"
-                                        style="cursor: pointer;">
-                                        <span @click="project.memberArr.length > 0 ? toggleMemMenu(project) : ''">
-                                            <i :class="['folder', project.isHidden ? 'bi bi-folder-minus' : 'bi bi-folder-plus',
-                                                project.memberArr.length < 1 ? 'bi bi-folder' : '']"></i>
-                                            {{ project.prNm }} ({{ project.memberArr.length }})
-                                        </span>
+                                <VueDraggableNext :list="projectList" :group="'project'">
+                                    <VueDraggableNext v-for="project in projectList" :key="project.prCd"
+                                        :list="project.memberArr" :group="'project'" :data-project-id="project.prCd"
+                                        @add="onDrop">
+                                        <ul class="list-unstyled" style="cursor: pointer;">
+                                            <span @click="project.memberArr.length > 0 ? toggleMemMenu(project) : ''">
+                                                <i :class="['folder', project.isHidden ? 'bi bi-folder-minus' : 'bi bi-folder-plus',
+                                                    project.memberArr.length < 1 ? 'bi bi-folder' : '']"></i>
+                                                {{ project.prNm }} ({{ project.memberArr.length }})
+                                            </span>
 
-                                        <li v-for="member in project.memberArr" :key="member" class="ms-3"
-                                            v-show="project.isHidden">
-
-                                            <div class="form-check form-switch d-flex"
-                                                style="justify-content: start; align-items: center;">
-                                                <input class="form-check-input" type="checkbox" role="switch"
-                                                    id="flexSwitchCheckChecked" checked
-                                                    v-model="member.isChecked"
-                                                    @change="toggleManager(member)">
-                                                <span>
-                                                    {{ member.deptNm != null ? '[' + member.deptNm + ']' : '' }}
-                                                    {{ member.mberNm || '' }}
-                                                    {{ member.gradeNm || '' }}</span>
-                                                <i class="bi bi-x" @click="btnProjectMemRemove(member)"></i>
-                                                <i class="fa-solid fa-crown master mlp5" aria-hidden="true"
-                                                v-show="member.mgrSt === 'A01'"></i>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </draggable>
+                                            <li v-for="member in project.memberArr" :key="member" class="ms-3"
+                                                v-show="!project.isHidden">
+                                                <div class="form-check form-switch d-flex"
+                                                    style="justify-content: start; align-items: center;">
+                                                    <input class="form-check-input" type="checkbox" role="switch"
+                                                        v-model="member.isChecked" @change="btnToggleManager(member)">
+                                                    <span>
+                                                        {{ member.deptNm != null ? '[' + member.deptNm + ']' : '' }}
+                                                        {{ member.mberNm || '' }}
+                                                        {{ member.gradeNm || '' }}</span>
+                                                    <i class="bi bi-x" @click="btnProjectMemRemove(member)"></i>
+                                                    <i class="fa-solid fa-crown master mlp5" aria-hidden="true"
+                                                        v-show="member.mgrSt === 'A01'"></i>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </VueDraggableNext>
+                                </VueDraggableNext>
                             </div>
                         </div>
                     </card>
@@ -136,7 +127,7 @@
 </template>
 
 <script setup>
-import { onBeforeMount, ref, defineComponent } from 'vue';
+import { onBeforeMount, ref, defineComponent, watch } from 'vue';
 import axios from "../../assets/js/customAxios.js";
 
 //========================== 컴포넌트 ==========================
@@ -148,6 +139,7 @@ import DepartmentComponent from "../../components/Department/DepartmentComponent
 //========================== 데이터 ==========================
 const isTreeLoaded = ref(false);
 const departmentTree = ref([]);
+const dragInfo = ref([]);
 
 defineComponent({
     components: { VueDraggableNext }
@@ -160,30 +152,94 @@ onBeforeMount(async () => {
     isTreeLoaded.value = true;
 });
 
-const toggleMemMenu = (memberMenu) => {
-    memberMenu.isHidden = !memberMenu.isHidden;
-};
-
+//드래그 시작 시 호출
 const draggedMem = ref([]);
 const onDragStart = (event) => {
-    draggedMem.value = members.value[event.oldIndex];
-    console.log(draggedMem.value);
+    draggedMem.value = members.value[event.oldIndex]; //선택한 사원 정보 담기
 };
 
+//드래그 드롭 시 호출
 const onDrop = (event) => {
-    const projectIndex = event.newIndex; // 드롭된 위치의 인덱스
-    const project = projectList.value[projectIndex];
 
-    project.memberArr.push(draggedMem);
-    ProjectMemInsert(draggedMem.value.mberId);
-    project.memberArr.value = project.memberArr.filter(emp => emp.mberId !== draggedMem.value.mberId);
+    //드롭한 프로젝트 정보 담기
+    const droppedElement = event.to.closest("[data-project-id]");
+    const projectId = droppedElement.dataset.projectId;
+    const project = projectList.value.find(p => p.prCd === projectId);
 
+    if (!project) { //프로젝트 정보 못 담았을 경우 에러
+        Swal.fire({
+            icon: "error",
+            title: "추가 실패",
+            text: "해당 프로젝트 정보를 찾을 수 없습니다."
+        });
+        return;
+    }
+
+    dragInfo.value = { //추가할 정보 객체에 담기
+        prCd: project.prCd,
+        mberId: draggedMem.value.mberId,
+        mgrSt: 'A02'
+    };
+
+    ProjectMemInsert();
 };
 
-const toggleManager = (member) => {
-  member.mgrSt = member.isChecked ? "A01" : ""; // 체크되면 A01, 아니면 빈 값
-};
+//프로젝트 검색조건
+const searchData = ref({
+    searchCondition: '0',
+    searchKeyword: '',
+});
+
+watch(searchData, () => {
+    projectGetList();
+}, { deep: true });
+
+
 //======================= axios =======================
+
+//부서정보 호출
+const departmentGetList = async () => {
+    try {
+        const response = await axios.get('/api/department');
+        const tree = buildPrimeVueTree(response.data);
+        departmentTree.value = tree;
+
+    } catch (err) {
+        departmentTree.value = []
+        Swal.fire({
+            icon: "error",
+            title: "API 조회 실패",
+            text: `Error: ${err.response?.data?.error || err.message}`
+        })
+    }
+}
+
+//부서 트리 생성
+const buildPrimeVueTree = (flatList) => {
+    const map = new Map()
+
+    // 전체 데이터 Map에 먼저 등록
+    flatList.forEach(item => {
+        map.set(item.deptCd, {
+            key: item.deptCd,
+            label: item.deptNm,
+            children: []
+        })
+    })
+
+    const tree = []
+
+    // 부모-자식 연결
+    flatList.forEach(item => {
+        if (item.parentCd) {
+            map.get(item.parentCd).children.push(map.get(item.deptCd))
+        } else {
+            tree.push(map.get(item.deptCd))
+        }
+    })
+
+    return tree
+}
 
 //구성원 전체조회
 const members = ref([]);
@@ -209,7 +265,9 @@ const projectList = ref([]);
 const projectGetList = async () => {
 
     try {
-        const result = await axios.get('/api/project/tree');
+        const result = await axios.get('/api/project/tree', {
+            params: searchData.value
+        });
         projectList.value = result.data;
 
         menuBuildTree(projectList);
@@ -242,7 +300,6 @@ const menuBuildTree = (projectList) => {
         }
     });
 
-
     projectList.value.forEach(project => {
 
         if (project.parent == 0 && project.mberId) {
@@ -258,6 +315,7 @@ const menuBuildTree = (projectList) => {
                     deptNm: project.deptNm,
                     gradeNm: project.gradeNm,
                     mgrSt: project.mgrSt,
+                    isChecked: project.mgrSt == 'A01' ? true : false,
                     iconClass: 'fa-solid fa-angle-right'
                 });
                 memberArr.set(project.prCd, parentMenu.memberArr[parentMenu.memberArr.length - 1]); // 저장
@@ -271,7 +329,81 @@ const menuBuildTree = (projectList) => {
     }));
 }
 
-// 프로젝트 참여자 삭제 버튼
+// 프로젝트 참여자목록 열고 닫기
+const toggleMemMenu = (memberMenu) => {
+    memberMenu.isHidden = !memberMenu.isHidden;
+};
+
+//팀장변경 토글 버튼이벤트
+const btnToggleManager = (member) => {
+
+    if (member.isChecked) {
+        Swal.fire({
+            title: "팀장을 변경하시겠습니까?",
+            text: "팀 내 팀장은 최대 한명까지 설정할 수 있습니다.",
+            icon: "question",
+            showCancelButton: true,
+            customClass: {
+                confirmButton: "btn btn-secondary btn-fill",
+                cancelButton: "btn btn-danger btn-fill"
+            },
+            confirmButtonText: "닫기",
+            cancelButtonText: "예",
+        }).then(async (result) => {
+            if (result.dismiss == Swal.DismissReason.cancel) {
+                managerChange(member);
+            }
+        });
+    } else {
+        managerChange(member);
+    }
+}
+
+// 팀장변경
+const managerChange = async (member) => {
+
+    if (member.isChecked) {
+        member.mgrSt = 'A01';
+    } else {
+        member.mgrSt = 'A02';
+    }
+
+    try {
+        const response = await axios.put(`/api/project/tree/manager`, member);
+        if (response.data === true) {
+            projectGetList();
+        }
+
+    } catch (err) {
+        members.value = [];
+
+        Swal.fire({
+            icon: "error",
+            title: "API 조회 오류",
+            text: "Error : " + err
+        });
+    }
+}
+
+//프로젝트 참여자 등록
+const ProjectMemInsert = async () => {
+
+    try {
+        const response = await axios.post("/api/project/tree/add", dragInfo.value);
+        if (response.data === true) {
+            projectGetList();
+        }
+    } catch (err) {
+        Swal.fire({
+            icon: "error",
+            title: "추가실패",
+            text: "이미 등록된 참여자입니다.",
+        })
+        projectGetList();
+    }
+}
+
+// 프로젝트 참여자 삭제 버튼이벤트
 const btnProjectMemRemove = (param) => {
     Swal.fire({
         title: "해당 참여자를 프로젝트에서 제외하시겠습니까?",
@@ -287,60 +419,6 @@ const btnProjectMemRemove = (param) => {
         if (result.dismiss == Swal.DismissReason.cancel) {
             ProjectMemRemove(param); //삭제처리 함수
         }
-    });
-}
-
-const departmentGetList = async () => {
-    try {
-        const response = await axios.get('/api/department');
-        const tree = buildPrimeVueTree(response.data);
-        departmentTree.value = tree;
-
-    } catch (err) {
-        departmentTree.value = []
-        Swal.fire({
-            icon: "error",
-            title: "API 조회 실패",
-            text: `Error: ${err.response?.data?.error || err.message}`
-        })
-    }
-}
-
-const buildPrimeVueTree = (flatList) => {
-    const map = new Map()
-
-    // 전체 데이터 Map에 먼저 등록
-    flatList.forEach(item => {
-        map.set(item.deptCd, {
-            key: item.deptCd,
-            label: item.deptNm,
-            children: []
-        })
-    })
-
-    const tree = []
-
-    // 부모-자식 연결
-    flatList.forEach(item => {
-        if (item.parentCd) {
-            map.get(item.parentCd).children.push(map.get(item.deptCd))
-        } else {
-            tree.push(map.get(item.deptCd))
-        }
-    })
-
-    return tree
-}
-
-
-//프로젝트 참여자 등록
-const prCd = ref('');
-const mberId = ref('');
-const ProjectMemInsert = async () => {
-
-    await axios.post("/api/project", {
-        prCd: prCd.value,
-        mberId: mberId.value
     });
 }
 
@@ -361,6 +439,7 @@ const ProjectMemRemove = async (param) => {
                 title: "삭제완료",
                 text: "선택한 참여자를 삭제하였습니다",
             })
+            projectGetList();
         }
     } catch (err) {
         Swal.fire({
