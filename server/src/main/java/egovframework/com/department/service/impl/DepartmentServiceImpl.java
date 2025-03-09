@@ -15,9 +15,7 @@ import egovframework.com.department.mapper.DepartmentMapper;
 import egovframework.com.department.service.DepartmantService;
 import egovframework.com.department.service.DepartmentDTO;
 import egovframework.com.securing.service.CustomerUser;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Service
 public class DepartmentServiceImpl implements DepartmantService {
 	
@@ -42,7 +40,7 @@ public class DepartmentServiceImpl implements DepartmantService {
 		 // 같은 부모를 가진 부서 중 마지막 `SEQ` 값 가져오기
 	    int maxSeq = dMapper.getMaxSeq(dto.getParentCd(), dto.getDepth());
 	    dto.setSeq(maxSeq + 1); // 마지막 순서 다음으로 설정
-	    log.info("마지막 순서 => ", (maxSeq + 1));
+
 	    // 이력히스토리 관리를 위한 객체
 		CommonDTO commDto = new CommonDTO();
 
