@@ -5,8 +5,10 @@
       <div class="card">
         <div class="card-body">
           <h4 class="card-title float-left mt-1">게시글 등록</h4>
-          <button @click="submitForm" class="btn btn-primary btn-fill float-right">등록</button>
-          <button @click="goToBulletinList" class="btn btn-secondary btn-fill float-right">목록</button>
+          <!-- 등록 버튼 -->
+          <button @click="submitForm" class="btn btn-primary btn-fill float-right">등록</button>        
+          <!-- 초기화 버튼 -->
+          <button @click="resetForm" class="btn btn-secondary btn-fill float-right">초기화</button>
         </div>
       </div>
 
@@ -21,7 +23,6 @@
             <!-- 에디터 영역 -->
             <div class="col-12">
               <div id="editor"></div>
-              <!-- 에디터의 HTML 내용을 내부적으로 관리 (DB 컬럼과 매핑) -->
               <input type="hidden" v-model="nttCn"/>
             </div>
 
@@ -32,49 +33,9 @@
                   class="form-check-input"
                   type="checkbox"
                   v-model="noticeAt"
-                  :disabled="isDisabled('notice')"
-                  @change="handleCheckChange('notice')"
                 />
               </div>
             </div>
-
-            <!-- <div class="mb-3">
-              <label>익명여부</label>
-              <div class="form-check form-check-inline" style="margin-left: 10px;">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  v-model="anoAt"
-                  :disabled="isDisabled('anonymous')"
-                  @change="handleCheckChange('anonymous')"
-                />
-              </div>
-            </div> -->
-
-            <!-- <div class="mb-3">
-              <label>비밀여부</label>
-              <div class="form-check form-check-inline" style="margin-left: 10px;">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  v-model="secretAt"
-                  :disabled="isDisabled('secret')"
-                  @change="handleCheckChange('secret')"
-                />
-              </div>
-            </div> -->
-
-            <!-- 비밀번호 입력 필드 -->
-            <!-- <div class="mb-3" v-show="secretAt">
-              <label>비밀번호 4자리를 입력해주세요</label>
-              <input
-                type="password"
-                class="form-control w30"
-                placeholder="비밀번호 입력"
-                maxlength="4"
-                v-model="password"
-              />
-            </div> -->
 
             <div class="mb-3">
               <label class="form-label">게시기간 <em class="point-red">*</em></label>
@@ -88,25 +49,12 @@
                 </div>
               </div>
             </div>
-
-            <!-- 파일첨부 (선택 사항) -->
-            <!-- <div class="mb-3">
-              <label>파일첨부</label>
-              <div class="input-group w30" style="border: 1px solid #ccc; border-radius: 3px; background-color: #fff;">
-                <input type="file" class="form-control" ref="fileInput" />
-              </div>
-            </div>-->
           </form>
         </div>
-      </div> 
+      </div>
 
       <!-- 응답 메시지 -->
-      <div
-        v-if="responseMessage"
-        class="alert"
-        :class="isSuccess ? 'alert-success' : 'alert-danger'"
-        style="margin-top: 15px;"
-      >
+      <div v-if="responseMessage" class="alert" :class="isSuccess ? 'alert-success' : 'alert-danger'" style="margin-top: 15px;">
         {{ responseMessage }}
       </div>
     </div>
@@ -118,7 +66,7 @@ import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor } from '@toast-ui/editor';
 import { ref, onMounted } from 'vue';
 import axios from '../../assets/js/customAxios';
-import { useRoute,useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import Swal from 'sweetalert2';
 
 const route = useRoute();
@@ -131,17 +79,11 @@ const bbsId = ref(route.query.bbsId);              // 게시판id
 const nttSj = ref('');             // 제목
 const nttCn = ref('');             // 에디터의 HTML 내용 (게시글 내용)
 const noticeAt = ref(false);       // 공지여부
-const secretAt = ref(false);       // 비밀여부
-const anoAt = ref(false);          // 익명여부
-const password = ref('');          // 비밀번호 (비밀글일 경우)
 const ntceBgnde = ref('');   // 게시 시작일
 const ntceEndde = ref('');    // 게시 종료일
-const showPasswordField = ref(false); // 비밀번호 입력 필드 노출 여부
 
 // TOAST UI Editor 인스턴스
 const editor = ref(null);
-// 파일 첨부용 ref
-const fileInput = ref(null);
 
 // 응답 메시지 및 성공 여부
 const responseMessage = ref('');
@@ -166,6 +108,15 @@ const formatDate = (date) => {
   return `${year}-${month}-${day}`;
 };
 
+// 현재 날짜를 'yyyy-mm-dd' 형식으로 가져오는 함수
+const getCurrentDate = () => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 // 폼 입력값 검증
 const validateForm = () => {
   if (!nttSj.value.trim()) {
@@ -181,14 +132,31 @@ const validateForm = () => {
     return false;
   }
 
-  if (secretAt.value && password.value.trim().length !== 4) {
-    responseMessage.value = "비밀글인 경우 4자리 비밀번호를 입력해주세요.";
+  // 게시 시작일과 종료일 유효성 검사
+  const currentDate = getCurrentDate(); // 현재 날짜
+
+  if (ntceBgnde.value < currentDate) {
+    responseMessage.value = "게시 시작일은 오늘 이후로 설정해야 합니다.";
     isSuccess.value = false;
     return false;
   }
+
+  if (ntceEndde.value < ntceBgnde.value) {
+    responseMessage.value = "게시 종료일은 시작일 이후로 설정해야 합니다.";
+    isSuccess.value = false;
+    return false;
+  }
+
+  if (ntceEndde.value < currentDate) {
+    responseMessage.value = "게시 종료일은 오늘 이후로 설정해야 합니다.";
+    isSuccess.value = false;
+    return false;
+  }
+
   return true;
 };
 
+// 게시글 등록
 const submitForm = async () => {
   if (!validateForm()) return;
 
@@ -197,17 +165,10 @@ const submitForm = async () => {
   formData.append('wrterNm', wrterNm.value);
   formData.append('nttSj', nttSj.value);
   formData.append('nttCn', nttCn.value);
-  formData.append('noticeAt', noticeAt.value ? 'Y' : 'N');
-  formData.append('secretAt', secretAt.value ? 'Y' : 'N');
-  formData.append('anoAt', anoAt.value ? 'Y' : 'N');
-  formData.append('password', password.value);
+  formData.append('noticeAt', noticeAt.value ? 'Y' : 'N');  // 공지 여부 처리
   formData.append('ntceBgnde', formatDate(ntceBgnde.value));
   formData.append('ntceEndde', formatDate(ntceEndde.value));
   formData.append('bbsId', bbsId.value);  // 게시판 ID 확인
-
-  if (fileInput.value.files.length > 0) {
-    formData.append('file_1', fileInput.value.files[0]);
-  }
 
   try {
     // 게시글 등록 요청
@@ -222,54 +183,41 @@ const submitForm = async () => {
         router.push({ path: '/bulletin/bulletinList/' + bbsId.value });
     });
 
-} catch (error) {   
+  } catch (error) {   
     Swal.fire({
         icon: "error",
         title: "게시글 등록에 실패하였습니다.",
         text: "Error : " + (error.response?.data?.message || error.message)
     });
-}
-
-
-
+  }
 };
 
-const goToBulletinList = () => {
-  router.push({ path: '/bulletin/bulletinList/'+ bbsId.value });
-};
+// 초기화 기능
+const resetForm = () => {
+  // Reset form fields
+  nttSj.value = '';
+  nttCn.value = '';
+  noticeAt.value = false;
+  ntceBgnde.value = '';
+  ntceEndde.value = '';
 
-// 체크박스를 클릭하면 나머지 두 개는 비활성화
-const isDisabled = (target) => {
-  if (target === 'notice' && (secretAt.value || anoAt.value)) return true;
-  if (target === 'anonymous' && (secretAt.value || noticeAt.value)) return true;
-  if (target === 'secret' && (noticeAt.value || anoAt.value)) return true;
-  return false;
-};
-
-// 체크박스 클릭 시 나머지 체크박스를 비활성화하는 함수
-const handleCheckChange = (target) => {
-  if (target === 'notice' && (secretAt.value || anoAt.value)) {
-    secretAt.value = false;
-    anoAt.value = false;
-  } else if (target === 'anonymous' && (secretAt.value || noticeAt.value)) {
-    secretAt.value = false;
-    noticeAt.value = false;
-  } else if (target === 'secret' && (noticeAt.value || anoAt.value)) {
-    noticeAt.value = false;
-    anoAt.value = false;
+  // Destroy the editor instance safely and then reinitialize
+  if (editor.value) {
+    editor.value.destroy();  // Destroy the editor to avoid transaction mismatches
+    editor.value = null;     // Clear the editor reference
   }
 
-  // 비밀여부가 체크되면 비밀번호 필드 표시
-  if (secretAt.value) {
-    showPasswordField.value = true;
-  } else {
-    showPasswordField.value = false;
-  }
+  // Reinitialize the editor
+  initEditor();
+
+  // Clear other states
+  responseMessage.value = '';
+  isSuccess.value = false;
 };
 
 // 컴포넌트 마운트 시 에디터 초기화
 onMounted(() => {
-  initEditor();
+  initEditor(); // Initialize the editor on component mount
 });
 </script>
 
