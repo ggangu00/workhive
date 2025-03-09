@@ -101,10 +101,6 @@
    const btnDepartmentDelete = (node) => {
       emit("btnDepartmentRemove", node); // 부모로 삭제 이벤트 전달
    };
-
-// ================================================== axios ==================================================
-
-
 </script>
 
 <style lang="scss">
