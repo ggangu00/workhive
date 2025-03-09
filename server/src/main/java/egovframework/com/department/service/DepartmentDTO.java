@@ -1,6 +1,7 @@
 package egovframework.com.department.service;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -33,4 +34,6 @@ public class DepartmentDTO {
 	   private String updateId;		// 수정자
 	   
 	   private int level;
+	   
+	   private List<String> deptCdList;
 }

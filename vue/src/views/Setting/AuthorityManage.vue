@@ -564,4 +564,12 @@
       font-weight: 500;
       border-radius: 3px;
    }
+
+   .form-control[readonly] {
+      background-color: #f5f5f5; /* 🔹 연한 회색 배경 */
+      border: 1px solid #dcdcdc; /* 🔹 흐린 테두리 */
+      color: #999; /* 🔹 글씨 색 연하게 */
+      cursor: not-allowed; /* 🔹 입력 불가 커서 */
+      pointer-events: auto; /* 🔹 클릭 가능하도록 변경 */
+   }
 </style>

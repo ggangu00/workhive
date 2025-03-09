@@ -1,6 +1,6 @@
 <template>
    <div>
-      <Tree :value="treeData" class="custom-tree" lazy>
+      <Tree :value="treeData" class="custom-tree" lazy draggable>
          <template #togglericon="{ expanded, node }">
             <!-- ✅ children이 없어도 무조건 공간 유지 -->
             <i
@@ -36,10 +36,7 @@
    import Tree from 'primevue/tree';
    import OverlayPanel from 'primevue/overlaypanel';
 
-   import Swal from 'sweetalert2';
-   import axios from "../../assets/js/customAxios";
-
-   import { ref, defineProps, watch } from 'vue'
+   import { ref, defineProps, defineEmits, watch } from 'vue';
 
    const op = ref(null) // OverlayPanel 참조
    const selectedNode = ref(null) // 클릭한 노드 저장
@@ -51,6 +48,12 @@
       }
    });
 
+   // 부모에게 등록, 수정, 삭제 이벤트 전달
+   const emit = defineEmits([
+         "btnDepartmentAdd",
+         "btnDepartmentModify",
+         "btnDepartmentRemove"
+      ]);
 
    const treeData = ref([]); // 초기화
    const treeKey = ref(0);   // 강제 리렌더링을 위한 key 값
@@ -85,51 +88,23 @@
 
    // 하위 부서 추가
    const btnDepartmentAdd = (node) => {
-      console.log("하위 부서 추가: ", node)
-      // 하위 부서 추가 로직 구현
+      emit("btnDepartmentAdd", node); // 부모로 수정 이벤트 전달
    };
+
+   // 부서 수정
+   const btnDepartmentModify = (node) => {
+      emit("btnDepartmentModify", node); // 부모로 수정 이벤트 전달
+   };
+
 
    // 부서 삭제
    const btnDepartmentDelete = (node) => {
-      console.log("부서 삭제: ", node)
-      Swal.fire({
-         title: `부서를 삭제하시겠습니까 ?`,
-         icon: "question",
-         showCancelButton: true,
-         reverseButtons: true,
-         customClass: {
-            cancelButton: "btn btn-secondary btn-fill",  // 아니오 버튼
-            confirmButton: "btn btn-danger btn-fill",   // 예 버튼
-         },
-         confirmButtonText: "예",
-         cancelButtonText: "아니오"
-      }).then((result) => {
-         console.log("삭제 완료");
-         departmentRemove();
-         if (result.isConfirmed) {
-            Swal.fire({
-               title: "삭제 완료",
-               icon: "success"
-            });
-         }
-      });
-      // 부서 삭제 로직 구현
+      emit("btnDepartmentRemove", node); // 부모로 삭제 이벤트 전달
    };
 
 // ================================================== axios ==================================================
-   const departmentRemove = async () => {
-      try {
-         const response = await axios.delete('/api/department');
-         console.log(response.data)
-      } catch (err) {
 
-         Swal.fire({
-            icon: "error",
-            title: "API 조회 실패",
-            text: `Error: ${err.response?.data?.error || err.message}`
-         })
-      }
-   }
+
 </script>
 
 <style lang="scss">

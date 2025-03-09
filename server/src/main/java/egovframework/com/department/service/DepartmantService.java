@@ -17,7 +17,7 @@ public interface DepartmantService {
 	public boolean departmentUpdate(DepartmentDTO dto);
 	
 	// 부서 삭제
-	public boolean departmentDelete(String deptCd);
+	public int departmentDelete(List<String> deptCdList);
 
 	// 부서 트리 조회
 	public List<DepartmentDTO> deptTreeSelectAll(String deptCd);

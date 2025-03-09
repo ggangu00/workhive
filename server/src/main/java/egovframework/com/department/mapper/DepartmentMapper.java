@@ -2,6 +2,8 @@ package egovframework.com.department.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import egovframework.com.department.service.DepartmentDTO;
 import egovframework.rte.psl.dataaccess.mapper.Mapper;
 
@@ -21,8 +23,11 @@ public interface DepartmentMapper {
 	int departmentUpdate(DepartmentDTO dto);
 
 	// 부서 삭제
-	int departmentDelete(String deptCd);
+	int departmentDelete(List<String> deptCdList);
 	
 	// 부서 트리 조회
 	List<DepartmentDTO> deptTreeSelectAll(String deptCd);
+
+	// 부서 등록 할 때 같은 계층의 마지막 순서 가져오기
+	int getMaxSeq(@Param("parentCd") String parentCd, @Param("depth") int depth);
 }

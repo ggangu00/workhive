@@ -88,13 +88,15 @@ public class DepartmentController {
 	}
 	
 	// 부서 삭제
-	@DeleteMapping("/{deptCd}")
-	public Map<String, Object> departmentRemove(@PathVariable(name="deptCd") String deptCd) {
-		log.info("부서삭제 정보 => ", deptCd);
+	@DeleteMapping("")
+	public Map<String, Object> departmentRemove(@RequestBody List<String> deptCdList) {
+		log.info("부서삭제 정보 => ", deptCdList);
 		
 		Map<String, Object> map = new HashMap<>();
 		
-		map.put("result", deptService.departmentDelete(deptCd));
+		int result = deptService.departmentDelete(deptCdList);
+		
+		map.put("result", result);
         map.put("deptList", deptService.departmentSelectAll());
         
 		return map;
