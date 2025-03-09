@@ -304,6 +304,8 @@ const handleRowClick = (e) => {
     routePath = "/approval/completedInfo";
   }else if (dataRow?.crntSignStat == "미결" && loginUser != dataRow?.mberId) {
     routePath = "/approval/proceedInfo"
+  }else if (dataRow?.crntSignStat == "미결" && loginUser == dataRow?.mberId) {
+    routePath = "/approval/proceedInfo"
   }else if (dataRow?.crntSignStat == "미결") {
     routePath = "/approval/pendingInfo"
   }else if (dataRow?.crntSignStat == "진행중") {
