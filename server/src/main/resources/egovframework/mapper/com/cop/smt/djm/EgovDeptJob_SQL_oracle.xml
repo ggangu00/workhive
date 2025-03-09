@@ -230,13 +230,6 @@
 		parameterType="egovframework.com.cop.smt.djm.service.DeptJobBxVO"
 		resultMap="DeptJobBxList">
 
-		SELECT *
-		FROM (
-		SELECT T0.*, ROWNUM RNUM
-		FROM (
-
-
-
 		SELECT
 		A.DEPT_CD,
 		B.DEPT_NM,
@@ -267,13 +260,6 @@
 		</if>
 
 		ORDER BY B.DEPT_NM, A.INDICT_ORDR ASC
-
-
-
-		) T0
-		)
-		WHERE RNUM BETWEEN #{firstIndex} + 1 AND #{firstIndex} +
-		#{recordCountPerPage}
 
 	</select>
 
@@ -421,9 +407,12 @@
 	<delete id="deleteDeptJobBx"
 		parameterType="egovframework.com.cop.smt.djm.service.DeptJobBx">
 
+		CALL PRC_DELETE_JOBBX(#{deptJobBxId})
+		
+		<!-- 
 		DELETE FROM COMTNDEPTJOBBX
 		WHERE DEPT_JOBBX_ID = #{deptJobBxId}
-
+ 		-->
 	</delete>
 
 	<!-- 부서업무함::입력 -->

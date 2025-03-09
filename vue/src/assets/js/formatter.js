@@ -28,16 +28,16 @@ export const signFormatter = ({ value }) => {
   let signState = '';
   switch(value) {
     case "D01":
-      signState = "미결재";
+      signState = `<span class="text-secondary fw-bold">미결재</span>`;
       break;
     case "D02":
-      signState = "승인";
+      signState = `<span class="text-success fw-bold">승인</span>`;
       break;
     case "D03":
-      signState = "보완";
+      signState = `<span class="text-warning fw-bold">보완</span>`;
       break;
     case "D04":
-      signState = `<a>반려</a>`;
+      signState = `<span class="text-danger fw-bold">반려</span>`;
       break;
   }
   return signState;
@@ -48,10 +48,10 @@ export const goFormatter = ({ value }) => {
   let goState = '';
   switch(value) {
     case "F01":
-      goState = "정상";
+      goState = `<span class="text-success fw-bold">정상</span>`;
       break;
     case "F02":
-      goState = "지각";
+      goState = `<span class="text-danger fw-bold">지각</span>`;
       break;
   }
   return goState;
@@ -62,19 +62,19 @@ export const leaveFormatter = ({ value }) => {
   let leaveState = '';
   switch(value) {
     case "G01":
-      leaveState = "정상";
+      leaveState = `<span class="text-success fw-bold">정상</span>`;
       break;
     case "G02":
-      leaveState = "연장";
+      leaveState = `<span class="text-warning fw-bold">연장</span>`;
       break;
     case "G03":
-      leaveState = "주말";
+      leaveState = `<span class="text-warning fw-bold">주말</span>`;
       break;
     case "G04":
-      leaveState = `야간`;
+      leaveState = `<span class="text-warning fw-bold">야간</span>`;
       break;
     case "G05":
-      leaveState = `조퇴`;
+      leaveState = `<span class="text-danger fw-bold">조퇴</span>`;
       break;
   }
   return leaveState;
@@ -85,16 +85,16 @@ export const vcTypeFormatter = ({ value }) => {
   let vcType = '';
   switch(value) {
     case "E01":
-      vcType = "연차";
+      vcType = `<span class="text-secondary fw-bold">연차</span>`;
       break;
     case "E02":
-      vcType = "오전반차";
+      vcType = `<span class="text-secondary fw-bold">오전반차</span>`;
       break;
     case "E03":
-      vcType = "오후반차";
+      vcType = `<span class="text-secondary fw-bold">오후반차</span>`;
       break;
     case "E04":
-      vcType = `공가`;
+      vcType = `<span class="text-secondary fw-bold">공가</span>`;
       break;
   }
   return vcType;

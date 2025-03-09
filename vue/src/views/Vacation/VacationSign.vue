@@ -165,31 +165,33 @@ const signList = {
 let vcCol = [
   { header: '시작일', name: 'vcStartDt', align: 'center', formatter: vcFormat.dateFormatter },
   { header: '종료일', name: 'vcEndDt', align: 'center', formatter: vcFormat.dateFormatter },
-  { header: '휴가종류', name: 'vcType', align: 'center', formatter: vcFormat.vcTypeFormatter },
+  { header: '휴가종류', name: 'vcType', align: 'center', formatter: vcFormat.vcTypeFormatter, width: 150 },
   { header: '휴가일수', name: 'useDays', align: 'center',
     formatter: ({ value }) => { // 소숫점 숫자 표시
       const num = Number(value);
       return num % 1 === 0 ? num : num.toFixed(1);
-    }
+    }, 
+    width: 120
   },
   { header: '신청일', name: 'createDt', align: 'center', formatter: vcFormat.dateFormatter },
-  { header: '신청자', name: 'createNm', align: 'center'},
-  { header: '결재상태', name: 'signState', align: 'center', formatter: vcFormat.signFormatter },
+  { header: '신청자', name: 'createNm', align: 'center', width: 120},
+  { header: '결재상태', name: 'signState', align: 'center', formatter: vcFormat.signFormatter, width: 120 },
 ];
 let signCol = [
   { header: '시작일', name: 'vcStartDt', align: 'center', formatter: vcFormat.dateFormatter },
   { header: '종료일', name: 'vcEndDt', align: 'center', formatter: vcFormat.dateFormatter },
-  { header: '휴가종류', name: 'vcType', align: 'center', formatter: vcFormat.vcTypeFormatter },
+  { header: '휴가종류', name: 'vcType', align: 'center', formatter: vcFormat.vcTypeFormatter, width: 150 },
   { header: '휴가일수', name: 'useDays', align: 'center',
     formatter: ({ value }) => { // 소숫점 숫자 표시
       const num = Number(value);
       return num % 1 === 0 ? num : num.toFixed(1);
-    }
+    }, 
+    width: 120
   },
   { header: '신청일', name: 'createDt', align: 'center', formatter: vcFormat.dateFormatter },
-  { header: '신청자', name: 'createNm', align: 'center'},
+  { header: '신청자', name: 'createNm', align: 'center', width: 120},
   { header: '결재일', name: 'signDt', align: 'center', formatter: vcFormat.dateFormatter },
-  { header: '결재상태', name: 'signState', align: 'center', formatter: vcFormat.signFormatter },
+  { header: '결재상태', name: 'signState', align: 'center', formatter: vcFormat.signFormatter, width: 120 },
 ];
 
 // 실시간 조회 조건

@@ -125,7 +125,7 @@ onMounted(() => {
       { header: '정정출근시간', name: 'crctGoTime', align: 'center', formatter: timeFormatter },
       { header: '정정퇴근시간', name: 'crctLeaveTime', align: 'center', formatter: timeFormatter },
       { header: '신청일', name: 'createDt', align: 'center', formatter: dateFormatter },
-      { header: '결재자', name: 'signNm', align: 'center'},
+      { header: '결재자', name: 'signNm', align: 'center', width: 100},
       { header: '결재상태', name: 'signState', align: 'center', renderer: BtnRenderer }
     ]
   })
@@ -166,7 +166,7 @@ class BtnRenderer {
         <button class="btn btn-danger btn-fill cell-btn-custom" data-type="delete">삭제</button>
       `;
     } else if (signState === "D04") {
-      el.innerHTML = `<span">반려</span>`;
+      el.innerHTML = `<span class="text-danger fw-bold">반려</span>`;
     }
 
     el.addEventListener("click", (event) => {

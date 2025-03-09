@@ -94,6 +94,7 @@
                     @modalConfirmJob="modalConfirmJob"
                     :jobBxSelected="jobBxSelected"
                     :selectedRowData="selectedRowData"
+                    :jobBoxes="jobBoxes"
                   />
                 </div>
                 <div class="col d-flex justify-content-end align-items-center">
@@ -161,6 +162,7 @@ let jobSearch = ref({
 // 선택한 업무함 변경시 업무 목록 갱신
 watch(jobBxSelected, () => {
   jobSearch.value.searchWrd = '';
+  jobSearch.value.searchCnd = 0;
   jobSearch.value = Object.assign(jobSearch.value, jobBxSelected.value);
 
   jobGetList();
@@ -212,12 +214,11 @@ let jobBxModalType = '';
 // 업무함 관리 동작
 const jobBxCheck = async (type, data) => {
   jobBxModalType = type;
+  //부서 정보
+  jobBxData.value.deptCd = data.deptCd;
+  jobBxData.value.deptNm = data.deptNm.trim();
   switch(type) {
     case 'add':
-      //부서 정보
-      jobBxData.value.deptCd = data.deptCd;
-      jobBxData.value.deptNm = data.deptNm.trim();
-
       //초기화
       jobBxData.value.indictOrdr = 0;
       jobBxData.value.deptJobBxNm = '';
@@ -225,8 +226,6 @@ const jobBxCheck = async (type, data) => {
       modalOpen();
       break;
     case 'modify':
-      jobBxData.value.deptCd = data.deptCd;
-      jobBxData.value.deptNm = data.deptNm.trim();
       jobBxData.value.indictOrdr = data.indictOrdr;
       jobBxData.value.deptJobBxId = data.deptJobBxId;
       jobBxData.value.deptJobBxNm = data.deptJobBxNm.trim();
@@ -234,16 +233,40 @@ const jobBxCheck = async (type, data) => {
       break;
     case 'remove':
       await jobBxRemove(data.deptJobBxId);
+
       deptGetList();
-      jobBxGetList();
+      await jobBxGetList();
+
+      jobListReset();
       break;
   }
 
 }
 provide('jobBxCheck', jobBxCheck);
 
+const jobListReset = () => {
+  const relatedJobBoxes = jobBoxes.value.filter(j => j.deptCd === jobBxData.value.deptCd);
+
+  store.dispatch('jobBxSelectedUpdate', { 
+    searchDeptCd: jobBxData.value.deptCd, 
+    searchDeptNm: jobBxData.value.deptNm,
+    searchDeptJobBxId: '',
+    searchDeptJobBxNm: '',
+  });
+
+  store.dispatch('jobBxListUpdate', relatedJobBoxes);
+}
+
 const jobBxRemove = async (deptJobBxId) => {
-  let check = await swalCheck('삭제');
+  let check = await Swal.fire({
+    icon: 'question',
+    title: '업무도 함께 삭제 하시겠습니까?',
+    showCancelButton: true,
+    cancelButtonText: '취소',
+    confirmButtonText: '확인',
+    reverseButtons:true
+  });
+
   if(check.isConfirmed) {
     try {
       await axios.delete('/api/deptstore/jobBxRemove', { params: { deptJobBxId: deptJobBxId } });
@@ -295,8 +318,10 @@ const modalConfirm = async () => {
     }
   }
   deptGetList();
-  jobBxGetList();
+  await jobBxGetList();
   modalClose();
+  
+  jobListReset();
 }
 
 // 업무함 유효성 체크
@@ -340,13 +365,14 @@ onMounted(() => {
       perPage: 13,
     },
     columns: [
-      { header: '우선순위', name: 'priort', align: 'center', formatter: priortFormatter },
-      { header: '업무명', name: 'deptJobNm', sortable: true},
-      { header: '담당자', name: 'chargerNm', align: 'center', sortable: true},
-      { header: '작성일', name: 'frstRegisterPnttm', align: 'center', sortable: true, formatter: dateFormatter },
+      { header: '우선순위', name: 'priort', align: 'center', formatter: priortFormatter, width: 80 },
+      { header: '업무명', name: 'deptJobNm', sortable: true },
+      { header: '담당자', name: 'chargerNm', align: 'center', sortable: true, width: 120 },
+      { header: '작성일', name: 'frstRegisterPnttm', align: 'center', sortable: true, formatter: dateFormatter, width: 120 },
       {
         header: '관리', name: 'action', align: 'center',
         renderer: BtnRenderer,
+        width: 150 
       }
     ]
   })
@@ -399,7 +425,6 @@ class BtnRenderer {
       const rowKey = props.row?.rowKey ?? props.grid.getRow(props.rowKey)?.rowKey;
 
       if (rowKey === undefined) {
-        console.error("BtnRenderer: rowKey를 가져올 수 없습니다.", props);
         return;
       }
 
@@ -471,7 +496,7 @@ let isShowJobModal = ref(false);
 let isUpdate = ref(false);
 
 // 업무 등록
-const modalAddJob = () => {
+const modalAddJob = async () => {
   isUpdate.value = false;
   isDetail.value = false;
   isShowJobModal.value = true;

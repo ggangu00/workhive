@@ -138,14 +138,14 @@ const initGrid = () => {
     },
     columns: [
       { header: '근무일자', name: 'commuteDt', align: 'center', formatter: cmtFormat.dateFormatter },
-      { header: '사원정보', name: 'mberNm', align: 'center' },
+      { header: '사원정보', name: 'mberNm', align: 'center', width: 100 },
       { header: '출근시간', name: 'goTime', align: 'center', formatter: cmtFormat.timeFormatter },
-      { header: '출근상태', name: 'goState', align: 'center', formatter: cmtFormat.goFormatter },
+      { header: '출근상태', name: 'goState', align: 'center', formatter: cmtFormat.goFormatter, width: 100 },
       { header: '퇴근시간', name: 'leaveTime', align: 'center', formatter: cmtFormat.timeFormatter },
-      { header: '퇴근상태', name: 'leaveState', align: 'center', formatter: cmtFormat.leaveFormatter },
-      { header: '근무시간', name: 'workTime', align: 'center' },
-      { header: '초과근무시간', name: 'overWorkTime', align: 'center' },
-      { header: '관리', name: 'action', align: 'center', renderer: BtnRenderer }
+      { header: '퇴근상태', name: 'leaveState', align: 'center', formatter: cmtFormat.leaveFormatter, width: 100 },
+      { header: '근무시간', name: 'workTime', align: 'center', width: 100 },
+      { header: '초과근무시간', name: 'overWorkTime', align: 'center', width: 100 },
+      { header: '관리', name: 'action', align: 'center', renderer: BtnRenderer, width: 120 }
     ]
   });
 };

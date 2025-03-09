@@ -25,12 +25,12 @@
             </select>
 
             <div class="input-group">
-              <span class="input-group-text fw-bold">근무일(시작)</span>
+              <span class="input-group-text fw-bold">신청일(시작)</span>
               <input type="date" class="form-control w50" v-model="searchData.startDate">
             </div>
             <span class="fw-bold">~</span>
             <div class="input-group">
-              <span class="input-group-text fw-bold">근무일(종료)</span>
+              <span class="input-group-text fw-bold">신청일(종료)</span>
               <input type="date" class="form-control w50" v-model="searchData.endDate">
             </div>
           </div>
@@ -113,16 +113,17 @@ onMounted(() => {
     columns: [ // 시작일 / 종료일 / 휴가종류 / 사용일수 / 신청일 / 결재자 / 결재상태
       { header: '시작일', name: 'vcStartDt', align: 'center', formatter: vcFormat.dateFormatter },
       { header: '종료일', name: 'vcEndDt', align: 'center', formatter: vcFormat.dateFormatter },
-      { header: '휴가종류', name: 'vcType', align: 'center', formatter: vcFormat.vcTypeFormatter },
+      { header: '휴가종류', name: 'vcType', align: 'center', formatter: vcFormat.vcTypeFormatter, width: 150 },
       { header: '사용일수', name: 'useDays', align: 'center',
         formatter: ({ value }) => { // 소숫점 숫자 표시
           const num = Number(value);
           return num % 1 === 0 ? num : num.toFixed(1);
-        }
+        }, 
+        width: 120
       },
       { header: '신청일', name: 'createDt', align: 'center', formatter: vcFormat.dateFormatter },
-      { header: '결재자', name: 'signNm', align: 'center'},
-      { header: '결재상태', name: 'signState', align: 'center', renderer: BtnRenderer }
+      { header: '결재자', name: 'signNm', align: 'center', width: 120 },
+      { header: '결재상태', name: 'signState', align: 'center', renderer: BtnRenderer, width: 150 }
     ]
   })
   
@@ -159,7 +160,7 @@ class BtnRenderer {
         <button class="btn btn-danger btn-fill cell-btn-custom" data-type="delete">삭제</button>
       `;
     } else if (signState === "D04") {
-      el.innerHTML = `<span">반려</span>`;
+      el.innerHTML = `<span class="text-danger fw-bold">반려</span>`;
     }
 
     el.addEventListener("click", (event) => {
