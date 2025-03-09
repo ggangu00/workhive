@@ -101,6 +101,7 @@
 	    </foreach>
 	</delete>
 	
+	<!-- 부서 등록 할 때 같은 계층의 마지막 순서 가져오기 -->
 	<select id="getMaxSeq" resultType="int">
 		SELECT
 		   NVL(MAX(seq)), 1) AS seq
