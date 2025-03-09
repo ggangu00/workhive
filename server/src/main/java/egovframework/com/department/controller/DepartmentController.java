@@ -62,6 +62,10 @@ public class DepartmentController {
 	public Map<String, Object> departmentAdd(@RequestBody DepartmentDTO dto) {
 		log.info("부서등록 정보 => ", dto.toString());
 		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUser user = (CustomerUser) auth.getPrincipal();
+        dto.setCreateId(user.getUserDTO().getMberId());
+		
 		Map<String, Object> map = new HashMap<>();
 		
 		map.put("result", deptService.departmentInsert(dto));

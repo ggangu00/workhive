@@ -1,32 +1,135 @@
 <template>
-   <Tree :value="props.departmentTree" class="custom-tree">
-      <template #togglericon="{ expanded }">
-         <i :class="expanded ? 'fa-solid fa-angle-down' : 'fa-solid fa-angle-right'"></i>
-      </template>
+   <div>
+      <Tree :value="treeData" class="custom-tree" lazy>
+         <template #togglericon="{ expanded, node }">
+            <!-- ✅ children이 없어도 무조건 공간 유지 -->
+            <i
+               :class="expanded ? 'fa-solid fa-angle-down me-2' : 'fa-solid fa-angle-right me-2'"
+               :style="{ opacity: node.children && node.children.length > 0 ? 1 : 0.3 }">
+            </i>
+         </template>
 
-      <template #default="slotProps">
+         <template #default="slotProps">
+            <div class="node-buttons d-flex justify-content-between align-items-center">
+               <span class="p-treenode-label">{{ slotProps.node.label }}</span>
+               <button class="btn-toggle" @click.stop="btnDepartmentMenuOpen($event, slotProps.node)">
+                  <i class="fa-solid fa-ellipsis-vertical"></i>
+               </button>
+            </div>
+         </template>
 
-         <div class="node-buttons d-flex justify-content-between align-items-center">
-            <span class="p-treenode-label">{{ slotProps.node.label }}</span>
-            <button class="btn-toggle" @click.stop="btnDepartmentAdd(slotProps.node)">
-               <i class="fa-solid fa-ellipsis-vertical"></i>
-            </button>
-         </div>
-      </template>
+      </Tree>
 
-   </Tree>
+      <!-- 드롭다운 메뉴 -->
+      <OverlayPanel ref="op">
+         <ul class="department-dropdown-menu"> <!-- ✅ 클래스명 변경 -->
+            <li @click="btnDepartmentModify(selectedNode)">부서 수정</li>
+            <li @click="btnDepartmentDelete(selectedNode)">부서 삭제</li>
+            <li @click="btnDepartmentAdd(selectedNode)">하위 부서 추가</li>
+         </ul>
+      </OverlayPanel>
+   </div>
+
 </template>
 
 <script setup>
-import Tree from 'primevue/tree'
-import { defineProps } from 'vue'
+   import Tree from 'primevue/tree';
+   import OverlayPanel from 'primevue/overlaypanel';
 
-const props = defineProps({
-   departmentTree: {
-      type: Array,
-      default: () => []
+   import Swal from 'sweetalert2';
+   import axios from "../../assets/js/customAxios";
+
+   import { ref, defineProps, watch } from 'vue'
+
+   const op = ref(null) // OverlayPanel 참조
+   const selectedNode = ref(null) // 클릭한 노드 저장
+
+   const props = defineProps({
+      departmentTree: {
+         type: Array,
+         default: () => []
+      }
+   });
+
+
+   const treeData = ref([]); // 초기화
+   const treeKey = ref(0);   // 강제 리렌더링을 위한 key 값
+
+   // 부모에서 전달된 데이터 변경 감지
+   watch(() => props.departmentTree, (newVal) => {
+      if (!newVal || newVal.length === 0) {
+         return;
+      }
+
+      treeData.value = JSON.parse(JSON.stringify(newVal)); // 반응형 적용
+      treeKey.value++; // ✅ 트리 강제 리렌더링
+   }, { deep: true, immediate: true });
+
+// ================================================== 버튼 이벤트 ==================================================
+   // 드롭다운 메뉴 열기
+   const btnDepartmentMenuOpen = (event, node) => {
+      selectedNode.value = node // 현재 클릭한 노드 저장
+      op.value.toggle(event, event.currentTarget); // 클릭한 버튼을 기준으로 정렬
+      setTimeout(() => {
+         // const panel = document.querySelector('.p-overlaypanel'); // OverlayPanel 요소 가져오기
+         // if (panel) {
+         //    panel.style.left = '555.219px'; // 강제 left 값 설정
+         // }
+
+         const panelContent = document.querySelector('.p-overlaypanel-content'); // ✅ 내부 컨텐츠 요소 가져오기
+         if (panelContent) {
+            panelContent.style.padding = '0.5rem'; // 내부 패딩 적용
+         }
+      }, 10); // OverlayPanel이 렌더링된 후 적용되도록 약간의 딜레이 추가
+   };
+
+   // 하위 부서 추가
+   const btnDepartmentAdd = (node) => {
+      console.log("하위 부서 추가: ", node)
+      // 하위 부서 추가 로직 구현
+   };
+
+   // 부서 삭제
+   const btnDepartmentDelete = (node) => {
+      console.log("부서 삭제: ", node)
+      Swal.fire({
+         title: `부서를 삭제하시겠습니까 ?`,
+         icon: "question",
+         showCancelButton: true,
+         reverseButtons: true,
+         customClass: {
+            cancelButton: "btn btn-secondary btn-fill",  // 아니오 버튼
+            confirmButton: "btn btn-danger btn-fill",   // 예 버튼
+         },
+         confirmButtonText: "예",
+         cancelButtonText: "아니오"
+      }).then((result) => {
+         console.log("삭제 완료");
+         departmentRemove();
+         if (result.isConfirmed) {
+            Swal.fire({
+               title: "삭제 완료",
+               icon: "success"
+            });
+         }
+      });
+      // 부서 삭제 로직 구현
+   };
+
+// ================================================== axios ==================================================
+   const departmentRemove = async () => {
+      try {
+         const response = await axios.delete('/api/department');
+         console.log(response.data)
+      } catch (err) {
+
+         Swal.fire({
+            icon: "error",
+            title: "API 조회 실패",
+            text: `Error: ${err.response?.data?.error || err.message}`
+         })
+      }
    }
-})
 </script>
 
 <style lang="scss">
@@ -34,16 +137,16 @@ const props = defineProps({
    /* 트리 전체 */
    .custom-tree {
       padding: 0;
-      border: none;
+      border: none !important;
+      padding: 0 !important;
    }
 
    .custom-tree .p-tree-container {
-      padding-left: 0px;
+      padding-bottom: 10px;
    }
 
    /* 각 노드 */
    .custom-tree .p-treenode {
-      margin: 4px 0;
       padding: 0;
    }
 
@@ -51,22 +154,63 @@ const props = defineProps({
    .custom-tree .p-treenode-content {
       display: flex;
       align-items: center;
-      height: 30px;
+      height: 35px;
       border-radius: 3px;
       transition: background-color 0.2s;
+      padding: 20px 0px;
    }
 
    /* 펼침/닫힘 아이콘 */
    .custom-tree .p-tree-toggler {
       font-size: 12px;
       color: #747474;
+      margin: 0px !important;
    }
+
+   .p-tree .p-treenode .p-treenode-content .p-tree-toggler {
+      visibility: visible !important; /* ✅ 숨기지 않음 */
+      opacity: 0.5; /* ✅ 연하게 표시 */
+      width: 1rem !important;
+      height: 1rem !important;
+
+      i {
+         font-size: 15px !important;
+      }
+   }
+
+   .p-tree-toggler:hover {
+      background: #BFDBFE !important;
+      border-radius: 3px !important;
+      color: #343a40 !important; /* ✅ hover 시 색상 변경 */
+   }
+
+   .p-tree-toggler:focus {
+      outline: 0 none;
+      outline-offset: 0;
+      box-shadow: 0 0 0 0.2rem #BFDBFE;
+      border-radius: 3px !important;
+   }
+
 
    /* 노드 텍스트 */
    .custom-tree .p-treenode-label {
       font-size: 14px;
       color: #747474;
       font-weight: 600;
+   }
+
+   .p-treenode-children {
+      padding-left: 1rem !important; /* ✅ 하위 노드의 들여쓰기 제거 */
+      margin-left: 0px !important; /* ✅ 혹시 모를 마진도 제거 */
+      font-size: 14px;
+
+      >span {
+         font-size: 12px !important;
+      }
+   }
+
+   .p-treenode-icon {
+      display: none;
    }
 
    /* 자식 없는 노드의 토글버튼 강제 숨김 */
@@ -82,4 +226,36 @@ const props = defineProps({
       width: 100%;
       font-size: 10px;
    }
+
+   .p-overlaypanel {
+      min-width: 150px !important;
+      background: #fff !important;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+   }
+
+   .department-dropdown-menu {
+      list-style: none;
+      margin: 0;
+      padding-left: 0px;
+      background: #fff;
+      min-width: 100px;
+   }
+
+   .department-dropdown-menu li {
+      padding: 15px 5px;
+      cursor: pointer;
+      font-size: 13px;
+      color: #747474; /* ✅ 글씨 색상 설정 */
+      font-weight: bold;
+      transition: background 0.2s;
+   }
+
+   .department-dropdown-menu li:hover {
+      background: #f5f5f5;
+   }
+   .p-treenode-leaf .p-tree-toggler {
+      display: inline-block !important; /* ✅ 리프 노드에도 토글 아이콘 표시 */
+      visibility: visible !important;
+   }
+
 </style>

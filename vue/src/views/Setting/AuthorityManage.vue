@@ -84,7 +84,7 @@
                            <div class="form-group has-label">
                               <label>권한에 대한 설명</label>
                            </div>
-                           <textarea type="text" v-model="description" class="form-control" placeholder="부서에 대한 설명을 입력하세요." style="height: 130px;"></textarea>
+                           <textarea type="text" v-model="description" class="form-control" placeholder="권한에 대한 설명을 입력하세요." style="height: 130px;"></textarea>
                         </div>
                      </card>
                   </template>
@@ -137,7 +137,7 @@
    const isShowModal = ref(false);
    const isEditMenu = ref(false);
    let modalTitle = ref("");
-   let isEditMode = ref(false);
+   let isEditMode = ref(false);  // 모달이 등록인지, 수정인지 판별
 
    // 모달 열기
    const modalOpen = (mode, title) => {

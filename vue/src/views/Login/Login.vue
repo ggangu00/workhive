@@ -145,11 +145,12 @@
       userInfoStore.saveUserId(userId.value, rememberMe.value); // 아이디 저장하기 체크 시 로그인 시도한 아이디 저장
 
       try {
-         const response = await axios.post('/api/loginProc', { // ✅ data 객체 직접 전달
+         const response = await axios.post('/api/loginProc', {
             username: userId.value,
             password: password.value
          }, {
-            headers: { 'Content-Type': 'application/json' } // ✅ 올바른 Content-Type
+            headers: { 'Content-Type': 'application/json' },
+            'Authorization': ''
          });
 
          // 성공 처리
@@ -171,27 +172,27 @@
          const { response } = err;
 
          if (response?.data) {
-               const { code, message } = response.data;
+            const { code, message } = response.data;
 
-               if (code === 423) {
-                  // 계정 잠금 (LOCKED)
-                  await Swal.fire({
-                     icon: "warning",
-                     title: "계정 잠김",
-                     text: message || "비밀번호 5회 실패로 계정이 잠겼습니다. 관리자에게 문의하세요."
-                  });
-                  return;
-               }
+            if (code === 423) {
+               // 계정 잠금 (LOCKED)
+               await Swal.fire({
+                  icon: "warning",
+                  title: "계정 잠김",
+                  text: message || "비밀번호 5회 실패로 계정이 잠겼습니다. 관리자에게 문의하세요."
+               });
+               return;
+            }
 
-               if (code === 401) {
-                  // 로그인 실패 (UNAUTHORIZED)
-                  await Swal.fire({
-                     icon: "error",
-                     title: "로그인 실패",
-                     text: message || "아이디 또는 비밀번호가 틀렸습니다."
-                  });
-                  return;
-               }
+            if (code === 401) {
+               // 로그인 실패 (UNAUTHORIZED)
+               await Swal.fire({
+                  icon: "error",
+                  title: "로그인 실패",
+                  text: message || "아이디 또는 비밀번호가 틀렸습니다."
+               });
+               return;
+            }
          }
 
          // 그 외 오류

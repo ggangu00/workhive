@@ -23,7 +23,8 @@
 		CONNECT BY PRIOR 
 		   TO_NUMBER(dept_cd) = TO_NUMBER(parent_cd)
 		ORDER SIBLINGS BY <!-- 형제 노드간의 정렬 -->
-		   seq ASC <!-- 정렬 기준 -->
+		   seq ASC, <!-- 정렬 기준 -->
+		   TO_NUMBER(dept_cd) ASC
    	</select>
    	
    	<!-- 부서 단건조회 -->
@@ -59,7 +60,7 @@
 		      create_id
 		   )
 		VALUES (
-		   #{deptCd},
+		   seq_dept_cd.NEXTVAL,
 		   #{depth},
 		   #{parentCd},
 		   #{seq},

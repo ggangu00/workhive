@@ -7,7 +7,7 @@
             </div>
          </div>
 
-         <div class="card">
+         <div class="card" @keydown.esc="modalClose">
             <div class="card-body">
                <div class="row m-0">
                   <!-- 트리 뷰 (왼쪽) -->
@@ -101,19 +101,23 @@
          </div>
 
          <!-- [s]-->
-         <Modal :isShowModal="isShowModal" :modalTitle="'부서 등록'" @click.self="modalClose">
+         <Modal :isShowModal="isShowModal" :modalTitle="modalTitle" @click.self="modalClose">
             <!-- 모달 바디 -->
             <template v-slot:body>
                <card class="mb-0">
+                  <div class="mb-3" v-show="isEditMode">
+                     <label class="form-label">부서코드 <i class="fa-solid fa-asterisk point-red"></i></label>
+                     <input type="text" v-model="deptCd" class="form-control w30">
+                  </div>
                   <div class="mb-3">
                      <label class="form-label">부서명 <i class="fa-solid fa-asterisk point-red"></i></label>
-                     <input type="text" name="dept_name" class="form-control w30">
+                     <input type="text" v-model="deptNm" class="form-control w30">
                   </div>
                   <div class="mb-3">
                      <div class="form-group has-label">
                         <label>부서 설명</label>
                      </div>
-                     <textarea type="text" name="project_nm" class="form-control" placeholder="부서에 대한 설명을 입력하세요." style="height: 130px;"></textarea>
+                     <textarea type="text" v-model="description" class="form-control" placeholder="부서에 대한 설명을 입력하세요." style="height: 130px;"></textarea>
                   </div>
                </card>
             </template>
@@ -121,7 +125,8 @@
             <!-- 모달 푸터 -->
             <template v-slot:footer>
                <button type="button" class="btn btn-secondary btn-fill" @click="modalClose">닫기</button>
-               <button type="button" class="btn btn-primary btn-fill" @click="confirm">등록</button>
+               <button v-if="isEditMode" type="button" class="btn btn-success btn-fill" @click="btnDeptModify">수정</button>
+               <button v-else type="button" class="btn btn-primary btn-fill" @click="btnDeptAdd">등록</button>
             </template>
          </Modal>
          <!--업무등록 모달[e]-->
@@ -130,7 +135,7 @@
 </template>
 
 <script setup>
-   import { ref, onBeforeMount } from "vue";
+   import { ref, onBeforeMount, computed } from "vue";
    import Swal from 'sweetalert2';
    import axios from "../../../assets/js/customAxios"; // 공통 Axios 설정 파일
    import Modal from '../../../components/Modal.vue';
@@ -138,12 +143,41 @@
    import DepartmentComponent from "../../../components/Department/DepartmentComponent.vue";
 
    const isShowModal = ref(false);
+   const isEditMode = ref(false);
+   const deptCd = ref("");
+   const deptNm = ref("");
+   const description = ref("");
 // ================================================== 생명주기 함수 ==================================================
    // 컴포넌트가 마운트되기 전에 권한 및 메뉴 목록 조회 실행
    onBeforeMount(async () => {
       await departmentGetList();
       isTreeLoaded.value = true;
    });
+
+// ================================================== 모달 이벤트 ==================================================
+   // 모달 타이틀 동적 변경
+   const modalTitle = computed(() => (isEditMode.value ? "부서 수정" : "부서 등록"));
+
+   const modalOpen = () => {
+      isShowModal.value = true;
+   }
+
+   const modalClose = (e) => {
+      if (!e) {
+         isShowModal.value = false;
+         return;
+      }
+      if (e.key === "Escape") {
+         if(isShowModal.value) {
+            isShowModal.value = !isShowModal.value
+         }
+      }
+   }
+// ================================================== 버튼 이벤트 ==================================================
+   const btnDeptAdd = () => {
+      departmentAdd();
+
+   }
 
 // ================================================== 부서관련 axios ==================================================
    const departmentTree = ref([]);
@@ -152,10 +186,10 @@
    const departmentGetList = async () => {
       try {
          const response = await axios.get('/api/department');
+
          const tree = buildPrimeVueTree(response.data);
          departmentTree.value = tree;
 
-         console.log("tree => ", tree);
       } catch (err) {
          departmentTree.value = []
          Swal.fire({
@@ -166,54 +200,83 @@
       }
    }
 
+   // 젤 상위 부서 추가
+   const departmentAdd = async () => {
+      const requestData = {
+         deptNm: deptNm.value,
+         description: description.value
+      }
+
+      try {
+         const response = await axios.post('/api/department', requestData);
+
+         if (response.data.result === true) {
+
+            const updatedTree = buildPrimeVueTree(response.data.deptList);
+            departmentTree.value = updatedTree; // ✅ UI 업데이트
+
+            modalClose(); // 모달 닫기
+         }
+      } catch (err) {
+         Swal.fire({
+            icon: "error",
+            title: "API 조회 실패",
+            text: `Error: ${err.response?.data?.error || err.message}`
+         });
+      }
+   }
+
    const buildPrimeVueTree = (flatList) => {
-      const map = new Map()
+      const map = new Map();
 
       // 전체 데이터 Map에 먼저 등록
       flatList.forEach(item => {
+         if (!item.deptCd) {
+            console.warn("🚨 deptCd가 없는 데이터 발견!", item);
+            return; // deptCd가 없으면 등록하지 않음
+         }
          map.set(item.deptCd, {
             key: item.deptCd,
             label: item.deptNm,
             children: []
-         })
-      })
+         });
+      });
 
-      const tree = []
+      const tree = [];
 
       // 부모-자식 연결
       flatList.forEach(item => {
-         if (item.parentCd) {
-            map.get(item.parentCd).children.push(map.get(item.deptCd))
-         } else {
-            tree.push(map.get(item.deptCd))
-         }
-      })
+         const parent = map.get(item.parentCd);
+         const child = map.get(item.deptCd);
 
-      return tree
-   }
+         if (!child) {
+            console.warn("🚨 deptCd가 없는 노드 발견!", item);
+            return;
+         }
+
+         if (parent) {
+            parent.children.push(child);
+         } else {
+            tree.push(child);
+         }
+      });
+
+      return tree;
+   };
+
+
 
    const members = ref([
       { id: "2025001", name: "김민진", rank: "부장" },
       { id: "2025002", name: "박주현", rank: "부장" },
    ]);
 
-   const modalClose = (e) => {
-      if (e.key === "Escape") {
-         if(isShowModal.value) {
-            isShowModal.value = !isShowModal.value
-         }
-      } else {
-         isShowModal.value = false;
-      }
-   }
-   const modalOpen = () => {
-      isShowModal.value = true;
-   }
+
 
 </script>
 
 <style scoped>
-   .menu-container {
+   /* .menu-container {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -224,8 +287,8 @@
       background: none;
       font-size: 16px;
       cursor: pointer;
-   }
-   .dropdown-menu {
+   } */
+   /* .dropdown-menu {
       position: absolute;
       background: white;
       box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
@@ -240,5 +303,5 @@
       background: none;
       padding: 5px;
       text-align: left;
-   }
+   } */
 </style>
