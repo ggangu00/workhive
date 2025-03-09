@@ -85,7 +85,7 @@
 
                            <div class="col-md-3">
                               <label>휴대폰</label>
-                              <input type="text" v-model="formData.mbtlnum" class="form-control editable" />
+                              <input type="text" v-model="formData.mbtlnum" class="form-control editable" @input="formatPhoneNumber" maxlength="13"/>
                            </div>
                         </div>
                      </div>
@@ -131,15 +131,21 @@
    // 📌 공통코드 목록 (지역번호)
    const commCodeList = ref([]);
 
-   // ============================================= Lifecycle =============================================
+// ============================================= Lifecycle =============================================
    // 컴포넌트 마운트 시 데이터 조회
    onBeforeMount(async () => {
       await memberGet();       // 회원 정보 조회
       await commonCodeList();  // 공통코드 조회
       setSelectedAreaNo();     // 지역번호 디폴트 세팅
    });
-
-   // ============================================= Btn Event =============================================
+// ============================================= Format Event =============================================
+   const formatPhoneNumber = () => {
+      formData.value.mbtlnum = formData.value.mbtlnum
+         .replace(/[^0-9]/g, "") // 숫자만 허용
+         .replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3") // 자동 하이픈 추가
+         .substring(0, 13); // 최대 길이 제한
+   };
+// ============================================= Btn Event =============================================
    // 초기화 버튼 이벤트
    const btnMemberReset = () => {
       formData.value = JSON.parse(JSON.stringify(originalData.value)); // 깊은 복사로 초기화
@@ -189,13 +195,13 @@
       });
    };
 
-   // ============================================= Axios Event =============================================
+// ============================================= Axios Event =============================================
    // 회원 정보 조회
    const memberGet = async () => {
       try {
          const result = await axios.get('/api/member/info');
          const data = result.data;
-         
+
          // 읽기전용 데이터
          viewData.value = {
             deptNm: data.deptNm || "",
@@ -269,6 +275,7 @@
       return modified;
    };
 
+   // 유효성 체크 함수
    const validateFormData = () => {
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;   // 이메일 형식 체크
       const phonePattern = /^[0-9]*$/;                     // 숫자만 허용 (전화번호)
