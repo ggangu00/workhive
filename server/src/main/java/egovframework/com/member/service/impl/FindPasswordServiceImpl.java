@@ -1,5 +1,6 @@
 package egovframework.com.member.service.impl;
 
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,9 +35,18 @@ public class FindPasswordServiceImpl implements FindPasswordService {
 		UserDTO user = memMapper.memberSelect(mberId);
 
 		// 2. 회원이 없거나 이메일이 등록 안되어 있으면 false 반환
-		if (user == null || user.getMberEmailAdres() == null) {
-			return false;
-		}
+//		if (user == null || user.getMberEmailAdres() == null) {
+//			return false;
+//		}
+		
+	    // 2. 회원이 없거나 이메일이 등록되지 않은 경우 예외 발생
+	    if (user == null) {
+	        throw new NoSuchElementException("입력하신 아이디로 등록된 회원이 없습니다.");
+	    }
+
+	    if (user.getMberEmailAdres() == null) {
+	        throw new IllegalArgumentException("이메일 정보가 등록되지 않은 회원입니다.");
+	    } 
 
 		// 3. 임시 비밀번호 생성
 		String tempPassword = generateTempPassword();

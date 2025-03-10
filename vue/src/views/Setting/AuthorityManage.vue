@@ -84,7 +84,7 @@
                            <div class="form-group has-label">
                               <label>권한에 대한 설명</label>
                            </div>
-                           <textarea type="text" v-model="description" class="form-control" placeholder="부서에 대한 설명을 입력하세요." style="height: 130px;"></textarea>
+                           <textarea type="text" v-model="description" class="form-control" placeholder="권한에 대한 설명을 입력하세요." style="height: 130px;"></textarea>
                         </div>
                      </card>
                   </template>
@@ -137,7 +137,7 @@
    const isShowModal = ref(false);
    const isEditMenu = ref(false);
    let modalTitle = ref("");
-   let isEditMode = ref(false);
+   let isEditMode = ref(false);  // 모달이 등록인지, 수정인지 판별
 
    // 모달 열기
    const modalOpen = (mode, title) => {
@@ -563,5 +563,13 @@
       background-color: #d0d9ee;
       font-weight: 500;
       border-radius: 3px;
+   }
+
+   .form-control[readonly] {
+      background-color: #f5f5f5; /* 🔹 연한 회색 배경 */
+      border: 1px solid #dcdcdc; /* 🔹 흐린 테두리 */
+      color: #999; /* 🔹 글씨 색 연하게 */
+      cursor: not-allowed; /* 🔹 입력 불가 커서 */
+      pointer-events: auto; /* 🔹 클릭 가능하도록 변경 */
    }
 </style>

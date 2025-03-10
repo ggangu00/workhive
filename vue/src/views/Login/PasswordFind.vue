@@ -115,8 +115,8 @@
       } catch (err) {
          Swal.fire({
             icon: "error",
-            title: "API 조회 오류",
-            text:  "Error : " + err.response.data.error
+            title: `${err.response.data.code}`,
+            text:  err.response.data.message
          });
       }
    };

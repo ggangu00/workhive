@@ -23,7 +23,8 @@
 		CONNECT BY PRIOR 
 		   TO_NUMBER(dept_cd) = TO_NUMBER(parent_cd)
 		ORDER SIBLINGS BY <!-- 형제 노드간의 정렬 -->
-		   seq ASC <!-- 정렬 기준 -->
+		   seq ASC, <!-- 정렬 기준 -->
+		   TO_NUMBER(dept_cd) DESC
    	</select>
    	
    	<!-- 부서 단건조회 -->
@@ -59,7 +60,7 @@
 		      create_id
 		   )
 		VALUES (
-		   #{deptCd},
+		   seq_dept_cd.NEXTVAL,
 		   #{depth},
 		   #{parentCd},
 		   #{seq},
@@ -86,6 +87,31 @@
 		WHERE
 		   dept_cd = #{deptCd}
 	</update>
+	
+	<!-- 부서 다중 삭제 -->
+	<delete id="departmentDelete" parameterType="java.util.List">
+		UPDATE
+		   department
+		SET
+		   del_yn = UPPER('Y')
+		WHERE
+		   dept_cd IN
+		<foreach collection="list" item="deptCdList" separator="," open="(" close=")">
+	        #{deptCdList}
+	    </foreach>
+	</delete>
+	
+	<!-- 부서 등록 할 때 같은 계층의 마지막 순서 가져오기 -->
+	<select id="getMaxSeq" resultType="int">
+		SELECT
+		   NVL(MAX(seq)), 1) AS seq
+		FROM
+		   department
+		WHERE
+		   parent_cd = #{parentCd}
+		AND 
+		   depth = #{depth}
+	</select>
 	
 	<!-- 부서 트리 조회 : 사용자의 부서 기준 관련 부서 검색 -->
 	<select id="deptTreeSelectAll" parameterType="String" resultType="departmentDTO">
