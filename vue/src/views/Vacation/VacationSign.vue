@@ -103,6 +103,7 @@ import { dateTimeFormat } from '../../assets/js/common';
 import * as vcFormat from '../../assets/js/formatter.js';
 import Swal from 'sweetalert2';
 import { swalCheck } from '../../assets/js/common.js';
+import { useRouter } from 'vue-router';
 
 const token = localStorage.getItem("token");
 
@@ -203,6 +204,7 @@ watch(() => signSrchData, () => {
 }, {deep:true});
 
 // Grid 초기화
+const router = useRouter();
 const initGrid = (gridInstance, gridDiv, rowData, colData) => {
   gridInstance.value = new Grid({
     el: document.getElementById(gridDiv),
@@ -216,6 +218,19 @@ const initGrid = (gridInstance, gridDiv, rowData, colData) => {
     },
     columns: colData,
   });
+  
+  // 행 클릭 이벤트 추가
+  gridInstance.value.on("click", (e) => handleRowClick(e, gridInstance.value));
+};
+
+const handleRowClick = (e, gridInstance) => {
+  if (!gridInstance || e.rowKey == null || e.rowKey == undefined ) return;
+  if (e.nativeEvent.target.type == "checkbox") {//행클릭무시 체크박스면
+    return;
+  }
+
+  let selectedRowData = gridInstance.getRow(e.rowKey);
+  router.push({ name: 'VcManage', query: { vcCd: selectedRowData.vcCd, isDetail: 'true' } });
 };
 
 // Toast Grid 초기화
@@ -236,6 +251,12 @@ onBeforeUnmount(() => {
 // 결재 - 휴가 신청자의 연차 정보, 신청일자의 대상 연도, -> 연차정보 없을시 생성, 
 const btnVcSign = async (e) => {
   let selectedRows = e.target.value === 'D01' ? signGridInstance.value.getCheckedRows() : vcGridInstance.value.getCheckedRows();
+
+  if(selectedRows.length == 0) {
+    if(e.target.value === 'D01') Swal.fire({ icon: "info", title: "결재 취소할 항목을 선택하세요." });
+    else Swal.fire({ icon: "info", title: "결재할 항목을 선택하세요." });
+    return;
+  }
 
   let signDataArray = [];
 

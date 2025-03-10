@@ -1,112 +1,11 @@
 <template>
   <!-- 휴가 신청 등록/수정 -->
-  <div class="row mt-5">
+  <div class="row mt-2">
     <div class="col">
-
-      <div class="row">
-        <div class="col">
-          <h4 v-if="!isUpdate && !isDetail">  [ 휴가 신청 등록 ]</h4>
-          <h4 v-if="isUpdate">  [ 휴가 신청 수정 ]</h4>
-          <h4 v-if="isDetail">  [ 휴가 신청 상세 조회 ]</h4>
-        </div>
-      </div>
-
-      <!-- 테이블 -->
-      <!-- <div class="table-responsive">
-        <table class="table" style="table-layout: fixed;">
-          <colgroup>
-            <col style="width: 16.6%;">
-            <col style="width: 16.6%;">
-            <col style="width: 16.6%;">
-            <col style="width: 16.6%;">
-            <col style="width: 16.6%;">
-            <col style="width: 16.6%;">
-          </colgroup>
-          <tbody>
-            <tr>
-              <th>휴가 종류</th>
-              <td colspan="5">
-                <select class="form-select" aria-label="Default select example" v-model="vcData.vcType" :disabled="isDetail" style="width: 18.6%;">
-                  <option value="E01" :disabled="props.vcInfo.requestDays < 1">연차</option>
-                  <option value="E02">오전반차</option>
-                  <option value="E03">오후반차</option>
-                  <option value="E04">공가</option>
-                </select>
-              </td>
-            </tr>
-            <tr>
-              <th>휴가 시작일</th>
-              <td colspan="2">
-                <input type="date" id="startDate" class="form-control" 
-                       :min="vcData.vcType === 'E01' 
-                            ? vacation.vcDateCalc(vcData.vcEndDt, props.vcInfo.requestDays, vcData.vcType, false)
-                            : dateFormat()" 
-                       :max="vcData.vcType === 'E01' || vcData.vcType === 'E04' ? vcData.vcEndDt : ''" 
-                       v-model="vcData.vcStartDt" :readonly="isDetail" 
-                       style="width: 47.5%;">
-              </td>
-              <th>휴가 종료일</th>
-              <td colspan="2">
-                <input type="date" id="startDate" class="form-control" 
-                       :min="vcData.vcStartDt" 
-                       :max="vcData.vcType === 'E01' 
-                            ? vacation.vcDateCalc(vcData.vcStartDt, props.vcInfo.requestDays, vcData.vcType, true)
-                            : ''" 
-                       v-model="vcData.vcEndDt" :readonly="vcData.vcType === 'E02' || vcData.vcType === 'E03' || isDetail" 
-                       style="width: 47.5%;">
-              </td>
-            </tr>
-            <tr>
-              <th>사용 일수</th>
-              <td colspan="2"><input type="text" class="form-control" v-model="vcData.useDays" style="width: 47.5%;" readonly></td>
-              <th>예상 잔여 일수</th>
-              <td colspan="2"><input type="text" class="form-control" v-model="vcData.remainDays" style="width: 47.5%;" readonly></td>
-            </tr>
-            <tr>
-              <th>휴가 사유</th>
-              <td colspan="5"><textarea id="vcReason" class="form-control" v-model="vcData.vcReason" :readonly="isDetail"></textarea></td>
-            </tr>
-            <tr>
-              <th>파일 첨부</th>
-              <td colspan="5">
-                <div class="form-control custom-file-div">
-                  <div v-if="!isDetail">
-                    <label class="btn btn-sm btn-fill cell-btn-custom" for="inputFile">파일선택</label>
-                    <a>{{ (fileList.length == 0) ? "선택된 파일 없음" : `파일 ${fileList.length}개` }}</a>
-                    <p class="file-info">개별 파일 기준 최대 30MB까지 첨부할 수 있습니다.</p>
-                    <input type="file" id="inputFile" style="display: none;" @change="addFileList($event.target)" multiple>
-                    <hr>
-                  </div>
-
-                  <div class="row file-list">
-                    <div class="col-4" v-for="(file, index) in fileList" :key="index">
-                      {{ file.name }}
-                      <button class="btn btn-sm btn-danger cell-btn-custom" @click="removeFile(index)" v-if="!isDetail">삭제</button>
-                      <button class="btn btn-sm cell-btn-custom" @click="downloadFile(file)" v-if="isDetail">다운</button>
-                    </div>
-                    <div class="col" v-if="fileList.length == 0">첨부된 파일이 없습니다.</div>
-                  </div>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <th>결재자</th>
-              <td colspan="5"><input type="text" class="form-control" v-model="vcData.signNm" @click="modalOpen" readonly></td>
-
-              <SignerModal
-                :isShowModal="isShowModal"
-                @modalClose="modalClose"
-                @modalConfirm="modalConfirm"
-              />
-            </tr>
-
-          </tbody>
-        </table>
-      </div> -->
 
       <div class="card">
         <div class="card-body">
-          <div class="mb-3">
+          <div >
             <label class="form-label">휴가 종류 <em class="point-red">*</em></label>
             <select class="form-select w30" aria-label="Default select example" v-model="vcData.vcType" :disabled="isDetail">
               <option value="E01" :disabled="props.vcInfo.requestDays < 1">연차</option>
@@ -165,20 +64,34 @@
                 <hr>
               </div>
 
-              <div class="row file-list">
+              <div class="row file-list" v-if="!isDetail">
                 <div class="col-4" v-for="(file, index) in fileList" :key="index">
                   {{ file.name }}
-                  <button class="btn btn-sm btn-danger cell-btn-custom" @click="removeFile(index)" v-if="!isDetail">삭제</button>
-                  <button class="btn btn-sm cell-btn-custom" @click="downloadFile(file)" v-if="isDetail">다운</button>
+                  <button class="btn btn-sm btn-danger cell-btn-custom" @click="removeFile(index)">삭제</button>
                 </div>
                 <div class="col" v-if="fileList.length == 0">첨부된 파일이 없습니다.</div>
               </div>
+              <div class="row file-list" v-if="isDetail">
+                <div class="col-4" v-for="(file, index) in fileList" :key="index" @click="downloadFile(file)">
+                  {{ file.name }}
+                  <button class="btn btn-sm btn-danger cell-btn-custom" @click="removeFile(index)" v-if="!isDetail">삭제</button>
+                </div>
+                <div class="col" v-if="fileList.length == 0">첨부된 파일이 없습니다.</div>
+              </div>
+
             </div>
           </div>
 
           <div class="mb-3">
             <label class="form-label">결재자</label>
-            <input type="text" class="form-control w30" v-model="vcData.signNm" @click="modalOpen" readonly>
+            <div class="row align-items-center">
+              <div class="col-auto" style="padding-right: 0;">
+                <input type="text" class="form-control" v-model="vcData.signNm" @click="modalOpen" readonly>
+              </div>
+              <div class="col-auto" style="padding-left: 5px;">
+                <i class="fa-solid fa-magnifying-glass" @click="modalOpen"></i>
+              </div>
+            </div>
           </div>
           <SignerModal
             :isShowModal="isShowModal"
@@ -522,5 +435,8 @@ th {
   font-size: 16px;
 }
 
+i {
+  cursor: pointer;
+}
 </style>
 

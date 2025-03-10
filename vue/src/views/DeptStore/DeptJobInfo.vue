@@ -199,7 +199,7 @@ const jobBxGetList  = async () => {
 
 // 최상위 부서 찾기 (depth === 0)
 const rootDepartments = computed(() =>
-  departments.value.filter(dept => dept.depth === 0)
+  departments.value.filter(dept => dept.depth === 1)
 );
 
 // 업무함 모달 데이터

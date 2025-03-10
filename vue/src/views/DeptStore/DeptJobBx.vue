@@ -1,6 +1,7 @@
 <template>
   <!-- <li class="ms-3"> -->
-  <li :class="['ms-3', 'my-1', `depth-${dept.depth}`]" :style="{ fontSize: `${18 - dept.depth}px`, width: `${100 - dept.depth * 5}%` }">
+  <li :class="['ms-3', 'my-1', `depth-${dept.depth}`]" 
+      :style="{ fontSize: `${18 - dept.depth}px`, width: `${100 - dept.depth * 5}%` }">
     <div class="flex-container">
       <!-- 부서 열기/닫기 아이콘 -->
       <i :class="isOpen ? 'fa-solid fa-angle-down' : 'fa-solid fa-angle-right'" @click="toggle"></i>

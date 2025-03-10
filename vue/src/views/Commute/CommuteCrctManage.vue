@@ -15,114 +15,123 @@
       <div class="card">
         <div class="card-body">
 
-          <div class="row">
-            <div class="col">
+          <!-- 테이블 -->
+          <div class="table">
+            <table class="table" style="table-layout: fixed; margin: 0;">
+              <colgroup>
+                <col style="width: 16.6%;">
+                <col style="width: 16.6%;">
+                <col style="width: 16.6%;">
+                <col style="width: 16.6%;">
+                <col style="width: 16.6%;">
+                <col style="width: 16.6%;">
+              </colgroup>
+              <tbody>
+                <tr>
+                  <th>근무 일자</th>
+                  <td colspan="5">
+                    <input type="date" id="wordDate" class="form-control" style="width: 18.6%;" 
+                           v-model="crctData.commuteDt" :readonly="isUpdate || isDetail">
+                  </td>
+                </tr>
+                <tr>
+                  <th>출퇴근 시간</th>
+                  <td colspan="5">
+                    <div class="row align-items-center">
+                      <div class="col-auto">
+                        <input type="datetime-local" class="form-control" 
+                               v-model="crctData.goTime" readonly>
+                      </div>
+                      <div class="col-auto p-none"> ~ </div>
+                      <div class="col-auto">
+                        <input type="datetime-local" class="form-control" 
+                               v-model="crctData.leaveTime" readonly>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <th>정정 출퇴근 시간</th>
+                  <td colspan="5">
+                    <div class="row align-items-center">
+                      <div class="col-auto">
+                        <input type="datetime-local" class="form-control" @change="timeCheck" 
+                               v-model="crctData.crctGoTime" :max="crctData.crctLeaveTime" :readonly="isDetail">
+                      </div>
+                      <div class="col-auto p-none"> ~ </div>
+                      <div class="col-auto">
+                        <input type="datetime-local" class="form-control" @change="timeCheck" 
+                               v-model="crctData.crctLeaveTime" :min="crctData.crctGoTime" :readonly="isDetail">
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <th>정정 사유</th>
+                  <td colspan="5">
+                    <textarea id="crctReason" class="form-control" 
+                              v-model="crctData.crctReason" :readonly="isDetail"
+                              style="height: 135px;">
+                    </textarea>
+                  </td>
+                </tr>
+                <tr>
+                  <th>파일 첨부</th>
+                  <td colspan="5">
+                    <div class="form-control custom-file-div">
+                      <div v-if="!isDetail">
+                        <label class="btn btn-sm btn-fill cell-btn-custom" for="inputFile">파일선택</label>
+                        <a>{{ (fileList.length == 0) ? "선택된 파일 없음" : `파일 ${fileList.length}개` }}</a>
+                        <p class="file-info">개별 파일 기준 최대 30MB까지 첨부할 수 있습니다.</p>
+                        <input type="file" id="inputFile" style="display: none;" @change="addFileList($event)" multiple>
+                        <hr>
+                      </div>
 
-              <!-- 테이블 -->
-              <div class="table-responsive">
-                <table class="table" style="table-layout: fixed;">
-                  <colgroup>
-                    <col style="width: 16.6%;">
-                    <col style="width: 16.6%;">
-                    <col style="width: 16.6%;">
-                    <col style="width: 16.6%;">
-                    <col style="width: 16.6%;">
-                    <col style="width: 16.6%;">
-                  </colgroup>
-                  <tbody>
-                    <tr>
-                      <th>근무 일자</th>
-                      <td colspan="5">
-                        <input type="date" id="wordDate" class="form-control" style="width: 18.6%;" 
-                               v-model="crctData.commuteDt" :readonly="isUpdate || isDetail">
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>출퇴근 시간</th>
-                      <td colspan="5">
-                        <div class="row align-items-center">
-                          <div class="col-auto">
-                            <input type="datetime-local" class="form-control" 
-                                   v-model="crctData.goTime" readonly>
-                          </div>
-                          <div class="col-auto p-none"> ~ </div>
-                          <div class="col-auto">
-                            <input type="datetime-local" class="form-control" 
-                                   v-model="crctData.leaveTime" readonly>
-                          </div>
+                      <div class="row file-list" v-if="!isDetail">
+                        <div class="col-4" v-for="(file, index) in fileList" :key="index">
+                          {{ file.name }}
+                          <button class="btn btn-sm btn-danger cell-btn-custom" @click="removeFile(index)">삭제</button>
                         </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>정정 출퇴근 시간</th>
-                      <td colspan="5">
-                        <div class="row align-items-center">
-                          <div class="col-auto">
-                            <input type="datetime-local" class="form-control" @change="timeCheck" 
-                                   v-model="crctData.crctGoTime" :max="crctData.crctLeaveTime" :readonly="isDetail">
-                          </div>
-                          <div class="col-auto p-none"> ~ </div>
-                          <div class="col-auto">
-                            <input type="datetime-local" class="form-control" @change="timeCheck" 
-                                   v-model="crctData.crctLeaveTime" :min="crctData.crctGoTime" :readonly="isDetail">
-                          </div>
+                      </div>
+                      <div class="row file-list" v-if="isDetail">
+                        <div class="col-4" v-for="(file, index) in fileList" :key="index" @click="downloadFile(file)">
+                          {{ file.name }}
                         </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>정정 사유</th>
-                      <td colspan="5">
-                        <textarea id="crctReason" class="form-control" 
-                                  v-model="crctData.crctReason" :readonly="isDetail"
-                                  style="height: 135px;">
-                        </textarea>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>파일 첨부</th>
-                      <td colspan="5">
-                        <div class="form-control custom-file-div">
-                          <div v-if="!isDetail">
-                            <label class="btn btn-sm btn-fill cell-btn-custom" for="inputFile">파일선택</label>
-                            <a>{{ (fileList.length == 0) ? "선택된 파일 없음" : `파일 ${fileList.length}개` }}</a>
-                            <p class="file-info">개별 파일 기준 최대 30MB까지 첨부할 수 있습니다.</p>
-                            <input type="file" id="inputFile" style="display: none;" @change="addFileList($event)" multiple>
-                            <hr>
-                          </div>
+                        <div class="col" v-if="fileList.length == 0">첨부된 파일이 없습니다.</div>
+                      </div>
 
-                          <div class="row file-list">
-                            <div class="col-4" v-for="(file, index) in fileList" :key="index">
-                              {{ file.name }}
-                              <button class="btn btn-sm btn-danger cell-btn-custom" @click="removeFile(index)" v-if="!isDetail">삭제</button>
-                              <button class="btn btn-sm cell-btn-custom" @click="downloadFile(file)" v-if="isDetail">다운</button>
-                            </div>
-                            <div class="col" v-if="fileList.length == 0">첨부된 파일이 없습니다.</div>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>결재자</th>
-                      <td colspan="5"><input type="text" class="form-control" v-model="crctData.signNm" @click="modalOpen" readonly></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <SignerModal
-                :isShowModal="isShowModal"
-                @modalClose="modalClose"
-                @modalConfirm="modalConfirm"
-              />
-              <div class="text-center">
-                  <button class="btn btn-secondary btn-fill mx-2" @click="btnCrctCancle">취소</button>
-                  <button class="btn btn-success btn-fill" @click="btnCrctManage" v-if="!isDetail">저장</button>
-              </div>
-            </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <th>결재자</th>
+                  <td colspan="5">
+                    <div class="row align-items-center">
+                      <div class="col-auto" style="padding-right: 0;">
+                        <input type="text" class="form-control" v-model="crctData.signNm" @click="modalOpen" readonly>
+                      </div>
+                      <div class="col-auto" style="padding-left: 5px;">
+                        <i class="fa-solid fa-magnifying-glass" @click="modalOpen"></i>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <SignerModal
+            :isShowModal="isShowModal"
+            @modalClose="modalClose"
+            @modalConfirm="modalConfirm"
+          />
+          <div class="text-center">
+              <button class="btn btn-secondary btn-fill mx-2" @click="btnCrctCancle">취소</button>
+              <button class="btn btn-success btn-fill" @click="btnCrctManage" v-if="!isDetail">저장</button>
           </div>
 
+          
         </div>
       </div>
-
 
     </div>
   </div>
@@ -427,5 +436,8 @@ th {
   font-size: 16px;
 }
 
+i {
+  cursor: pointer;
+}
 </style>
 

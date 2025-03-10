@@ -104,6 +104,7 @@ import { cmtCheck } from '../../assets/js/commute';
 import * as crctFormat from '../../assets/js/formatter.js';
 import Swal from 'sweetalert2';
 import { swalCheck } from '../../assets/js/common.js';
+import { useRouter } from 'vue-router';
 
 const token = localStorage.getItem("token");
 
@@ -185,7 +186,7 @@ let signCol = [
   { header: '정정퇴근시간', name: 'crctLeaveTime', align: 'center', formatter: crctFormat.timeFormatter },
   { header: '신청일', name: 'createDt', align: 'center', formatter: crctFormat.dateFormatter },
   { header: '신청자', name: 'createNm', align: 'center', width: 100},
-  { header: '결재일', name: 'signDt', align: 'center'},
+  { header: '결재일', name: 'signDt', align: 'center', formatter: crctFormat.dateFormatter },
   { header: '결재상태', name: 'signState', align: 'center', formatter: crctFormat.signFormatter, width: 100 },
 ];
 
@@ -198,6 +199,8 @@ watch(() => signSrchData, () => {
 }, {deep:true});
 
 // Grid 초기화
+let isDetail = ref(false);
+const router = useRouter();
 const initGrid = (gridInstance, gridDiv, rowData, colData) => {
   gridInstance.value = new Grid({
     el: document.getElementById(gridDiv),
@@ -211,6 +214,21 @@ const initGrid = (gridInstance, gridDiv, rowData, colData) => {
     },
     columns: colData,
   });
+  
+  // 행 클릭 이벤트 추가
+  gridInstance.value.on("click", (e) => handleRowClick(e, gridInstance.value));
+  
+};
+
+const handleRowClick = (e, gridInstance) => {
+  if (!gridInstance || e.rowKey == null || e.rowKey == undefined ) return;
+  if (e.nativeEvent.target.type == "checkbox") {//행클릭무시 체크박스면
+    return;
+  }
+
+  isDetail.value = true;
+  let selectedRowData = gridInstance.getRow(e.rowKey);
+  router.push({ name: 'CrctManage', query: { crctCd: selectedRowData.crctCd, isDetail: 'true' } });
 };
 
 // Toast Grid 초기화
@@ -231,6 +249,12 @@ onBeforeUnmount(() => {
 // 정정 요청 결재 기능
 const btnCrctSign = async (e) => {
   let selectedRows = e.target.value === 'D01' ? signGridInstance.value.getCheckedRows() : crctGridInstance.value.getCheckedRows();
+
+  if(selectedRows.length == 0) {
+    if(e.target.value === 'D01') Swal.fire({ icon: "info", title: "결재 취소할 항목을 선택하세요." });
+    else Swal.fire({ icon: "info", title: "결재할 항목을 선택하세요." });
+    return;
+  }
 
   let signDataArray = [];
 
@@ -256,7 +280,9 @@ const btnCrctSign = async (e) => {
     signDataArray.push({ signData, cmtData });
   }
 
-  let  check = await swalCheck('결재');
+  let checkStr = e.target.value === 'D01' ? '결재 취소' : '결재';
+  let check = await swalCheck(checkStr);
+
   if(check.isConfirmed) {
     // 해당 데이터들을 서버에 보내도록 수정
     if (signDataArray.length) {
