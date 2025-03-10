@@ -22,8 +22,17 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  */
 @SuppressWarnings("serial")
 public class BoardMasterVO extends BoardMaster implements Serializable {
-    
-    /** 검색시작일 */
+	 /** 게시판 소개 */
+    private String bbsIntrcn = "";
+    public String getBbsIntrcn() {
+		return bbsIntrcn;
+	}
+
+	public void setBbsIntrcn(String bbsIntrcn) {
+		this.bbsIntrcn = bbsIntrcn;
+	}
+
+	/** 검색시작일 */
     private String searchBgnDe = "";
     
     /** 검색조건 */

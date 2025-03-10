@@ -19,6 +19,12 @@
               <label>게시판명 <em class="point-red">*</em></label>
               <input v-model="formValues.bbsNm" type="text" class="form-control" placeholder="게시판명을 입력해주세요">
             </div>
+
+            <div class="mb-3">
+              <label>게시판소개 <em class="point-red">*</em></label>
+              <textarea v-model="formValues.bbsIntrcn" class="form-control textarea-style"
+              placeholder="게시판 소개를 입력해주세요"></textarea>
+            </div>
 <!-- 
             <div class="mb-3">
               <label class="form-label">게시판 유형</label>
@@ -80,6 +86,7 @@ const router = useRouter();
 const formValues = ref({
   bbsId: 'abc',
   bbsNm: '',
+  bbsIntrcn:'',
   bbsAttrbCode: 'abc',
   bbsTyCode: '',
   fileAtchPosblAt: '',
@@ -96,8 +103,8 @@ const isSuccess = ref(false);
 // 쿼리 파라미터에서 값을 받아와 formValues에 적용
 const setFormValuesFromQuery = () => {
   const query = route.query;
-
   formValues.value.bbsNm = query.bbsNm ?? '';
+  formValues.value.bbsIntrcn = query.bbsIntrcn ?? '';
   formValues.value.bbsTyCode = query.bbsTyCode ?? '';
   formValues.value.fileAtchPosblAt = query.fileAtchPosblAt ?? '';
   formValues.value.answerAt = query.answerAt ?? '';
@@ -151,6 +158,7 @@ const resetForm = () => {
   formValues.value = {
     bbsId: '',
     bbsNm: '',
+    bbsIntrcn:'',
     bbsAttrbCode: '',
     bbsTyCode: '',
     fileAtchPosblAt: '',
@@ -170,5 +178,11 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 필요한 스타일을 여기에 추가하세요 */
+.textarea-style {
+  min-height: 600px; /* 기본 높이 설정 */
+  max-height: 500px; /* 최대 높이 제한 */
+  resize: vertical; /* 사용자가 크기 조정 가능 */
+  white-space: pre-wrap; /* 줄바꿈 유지 */
+  word-wrap: break-word; /* 긴 단어 자동 줄바꿈 */
+}
 </style>

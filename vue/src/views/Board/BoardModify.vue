@@ -16,45 +16,15 @@
         <div class="card-body">
           <form>
             <div class="mb-3">
-              <label>게시판명 <em class="point-red">*</em></label>
+              <label>게시판명 </label>
               <input v-model="formValues.bbsNm" type="text" class="form-control" placeholder="게시판명을 입력해주세요">
             </div>
 
-            <!-- <div class="mb-3">
-              <label class="form-label">게시판 유형</label>
-              <select v-model="formValues.bbsTyCode" class="form-select w30">
-                <option value="" disabled selected>선택하세요</option>
-                <option value="A01">공지사항</option>
-                <option value="A02">사내게시판</option>
-              </select>
-            </div> -->
-
-            <!-- <div class="mb-3">
-              <label class="form-label">파일첨부 가능여부</label>
-              <select v-model="formValues.fileAtchPosblAt" class="form-select w30">
-                <option value="" disabled selected>선택하세요</option>
-                <option value="A01">예</option>
-                <option value="A02">아니오</option>
-              </select>
-            </div> -->
-
-            <!-- <div class="mb-3">
-              <label class="form-label">댓글 가능여부</label>
-              <select v-model="formValues.answerAt" class="form-select w30">
-                <option value="" disabled selected>선택하세요</option>
-                <option value="A01">예</option>
-                <option value="A02">아니오</option>
-              </select>
-            </div> -->
-
-            <!-- <div class="mb-3">
-              <label class="form-label">사용여부</label>
-              <select v-model="formValues.useAt" class="form-select w30">
-                <option value="" disabled selected>선택하세요</option>
-                <option value="A01">예</option>
-                <option value="A02">아니오</option>
-              </select>
-            </div>-->
+            <div class="mb-3">
+              <label>게시판소개 </label>
+              <textarea v-model="formValues.bbsIntrcn" class="form-control textarea-style" 
+                placeholder="게시판 소개를 입력해주세요" rows="5"></textarea>
+            </div>
           </form>
         </div>
       </div> 
@@ -78,66 +48,41 @@ const route = useRoute(); // 쿼리 추출 시 useRoute 사용
 
 // 게시판 데이터 변수
 const formValues = ref({
-  bbsId: 'abc',
+  bbsId: '',
   bbsNm: '',
-  bbsAttrbCode: 'abc',
-  bbsTyCode: '',
-  fileAtchPosblAt: '',
-  useAt: '',
-  frstRegisterId: 'abbc',
-  frstRegisterPnttm: 'abc',
-  answerAt: '',
+  bbsIntrcn: '',
 });
 
-// 응답 메시지와 성공 여부 변수
 const responseMessage = ref('');
 const isSuccess = ref(false);
 
 const setFormValuesFromQuery = () => {
-  const query = route.query;
-  formValues.value.bbsId = query.bbsId ?? '';
-  formValues.value.bbsNm = query.bbsNm ?? '';
-  formValues.value.bbsTyCode = query.bbsTyCode ?? '';
-  formValues.value.fileAtchPosblAt = query.fileAtchPosblAt ?? '';
-  formValues.value.answerAt = query.answerAt ?? '';
-  formValues.value.useAt = query.useAt ?? '';
-};
-
-// 폼 입력값 검증
-const validateForm = () => {
-  if (!formValues.value.bbsNm || !formValues.value.bbsTyCode || !formValues.value.fileAtchPosblAt || !formValues.value.answerAt) {
-    responseMessage.value = "모든 필수 항목을 입력해주세요.";
-    isSuccess.value = false;
-    return false;
-  }
-  return true;
+  console.log("route.query 데이터:", route.query);
+  formValues.value.bbsId = route.query.bbsId ?? '';
+  formValues.value.bbsNm = route.query.bbsNm ?? '';
+  formValues.value.bbsIntrcn = route.query.bbsIntrcn ?? '';
+  console.log("업데이트된 formValues:", formValues.value);
 };
 
 // 게시판 수정 (FormData 방식)
 const BoardSave = async () => {
-  if (!validateForm()) return;
-
   const addData = new FormData();
   Object.entries(formValues.value).forEach(([key, value]) => {
     addData.append(key, value);
   });
 
   try {
-    // 게시판 수정 요청 (POST)
     await axios.post('/api/board/boardModify', addData);
 
-    // 성공 시 SweetAlert2 알림 표시
     Swal.fire({
         icon: "success",
         title: "수정 완료",
         text: "게시판이 성공적으로 수정되었습니다!"
     }).then(() => {
-        // 팝업 닫은 후 게시판 목록 페이지로 이동
         router.push('/board/boardList');
     });
 
   } catch (error) {
-    // 오류 발생 시 SweetAlert2 알림 표시
     Swal.fire({
         icon: "error",
         title: "게시판 수정 실패",
@@ -151,27 +96,25 @@ const resetForm = () => {
   formValues.value = {
     bbsId: '',
     bbsNm: '',
-    bbsAttrbCode: '',
-    bbsTyCode: '',
-    fileAtchPosblAt: '',
-    useAt: '',
-    frstRegisterId: '',
-    frstRegisterPnttm: '',
-    answerAt: '',
+    bbsIntrcn: '',
   };
 };
 
 // ✅ 페이지 로드 시 초기화 및 쿼리 데이터 적용
 onMounted(() => {
-  resetForm();
   setFormValuesFromQuery();
 });
 
-onBeforeMount(() => {
-  // onBeforeMount에서는 사용되지 않는 'cd' 변수 삭제
-});
+onBeforeMount(() => {});
 </script>
 
 <style scoped>
-/* 필요한 스타일을 여기에 추가하세요 */
+/* 🔹 게시판 소개 입력 칸 스타일 (Enter 적용 및 높이 증가) */
+.textarea-style {
+  min-height: 600px; /* 기본 높이를 100px로 설정 */
+  max-height: 300px; /* 최대 높이를 300px로 제한 */
+  resize: vertical; /* 사용자가 크기를 조절할 수 있도록 설정 */
+  white-space: pre-wrap; /* 줄바꿈 유지 */
+  word-wrap: break-word; /* 긴 단어 자동 줄바꿈 */
+}
 </style>
