@@ -1,7 +1,7 @@
 <template>
    <div class="w-auto h-auto collapse navbar-collapse max-height-vh-100 h-100" id="sidenav-collapse-main">
       <ul class="navbar-nav">
-         <li class="nav-item">
+        <!-- <li class="nav-item">
             <sidenav-collapse url="#" :aria-controls="''" v-bind:collapse="false" collapseRef="/guide" navText="레이아웃">
                <template v-slot:icon>
                   <i class="material-icons-round opacity-10 fs-5">dashboard</i>
@@ -15,7 +15,7 @@
                   <i class="material-icons-round opacity-10 fs-5">dashboard</i>
                </template>
             </sidenav-collapse>
-         </li>
+         </li>-->
 
          <li class="nav-item" v-for="(item, i) in menus" :key="i">
             <sidenav-collapse

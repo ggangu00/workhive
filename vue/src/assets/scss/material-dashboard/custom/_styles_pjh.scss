@@ -662,7 +662,7 @@ td {
 }
 
 i.master{
-   font-size: 20px !important;
+   font-size: 13px !important;
    color: #ffd300 !important;
 }
 
@@ -685,6 +685,11 @@ i.master{
       li {
          font-weight: 500;
       }
+   }
+   
+   i.master{
+      font-size: 20px !important;
+      color: #ffd300 !important;
    }
 }
 

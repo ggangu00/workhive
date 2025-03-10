@@ -87,6 +87,8 @@
                             </div>
 
                             <div class="project treeview">
+
+
                                 <!-- 프로젝트 트리 -->
                                 <VueDraggableNext :list="projectList" :group="'project'">
                                     <VueDraggableNext v-for="project in projectList" :key="project.prCd"
@@ -117,6 +119,8 @@
                                         </ul>
                                     </VueDraggableNext>
                                 </VueDraggableNext>
+
+                                
                             </div>
                         </div>
                     </card>

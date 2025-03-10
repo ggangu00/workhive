@@ -336,7 +336,7 @@ const projectInfo = ref([]);
 const projectGetInfo = async () => { // 수정 시 쓰임
   try {
     const result = await axios.get(`/api/project/info/${prCd.value}`);
-    projectInfo.value = result.data.info;
+    projectInfo.value = result.data.result[0];
 
     prNm.value = projectInfo.value.prNm;
     typeCd.value = projectInfo.value.typeCd;
