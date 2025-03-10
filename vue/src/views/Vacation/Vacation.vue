@@ -51,46 +51,6 @@
                 </div>
               </div>
               <!--박주현 레이아웃 수정[E]-->
-              
-              <!-- 
-              <div class="row">
-                <div class="col vc-card">
-                  <div class="vc-header">대상연도</div>
-                  <div class="vc-body">{{ vcInfo.targetYear }}</div>
-                  <hr>
-                </div>
-                
-                <div class="col vc-card">
-                  <div class="vc-header">부여일수</div>
-                  <div class="vc-body">{{ vcInfo.giveDays }}</div>
-                  <hr>
-                </div>
-                
-                <div class="col vc-card">
-                  <div class="vc-header">잔여일수</div>
-                  <div class="vc-body">{{ vcInfo.remainDays }}</div>
-                  <hr>
-                </div>
-                
-                <div class="col vc-card">
-                  <div class="vc-header">신청가능일수</div>
-                  <div class="vc-body">{{ vcInfo.requestDays }}</div>
-                  <hr>
-                </div>
-                
-                <div class="col vc-card">
-                  <div class="vc-header">결재대기</div>
-                  <div class="vc-body">{{ vcInfo.signWait }}</div>
-                  <hr>
-                </div>
-                
-                <div class="col vc-card">
-                  <div class="vc-header">보완요청</div>
-                  <div class="vc-body">{{ vcInfo.signSup }}</div>
-                  <hr>
-                </div>
-              </div>
-              -->
 
             </div>
           </div>

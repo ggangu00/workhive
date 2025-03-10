@@ -85,7 +85,7 @@
                     <label class="btn btn-sm btn-fill cell-btn-custom" for="inputFile">파일선택</label>
                     <a>{{ (fileList.length == 0) ? "선택된 파일 없음" : `파일 ${fileList.length}개` }}</a>
                     <p class="file-info">개별 파일 기준 최대 30MB까지 첨부할 수 있습니다.</p>
-                    <input type="file" id="inputFile" style="display: none;" @change="addFileList($event.target)" multiple>
+                    <input type="file" id="inputFile" style="display: none;" @change="addFileList($event)" multiple>
                     <hr>
                   </div>
 
@@ -153,16 +153,39 @@ let formValues = ref({
 });
 // 첨부파일
 const fileList = ref([]);
-const addFileList = (target) => {
-  fileList.value = [];
-  const newFile = Array.from(target.files);
-  fileList.value.push(...newFile);
-}
+let updateFileCheck = 0;
+const addFileList = (event) => {
+  if(updateFileCheck == 0 && props.isUpdate) {
+    fileList.value = [];
+    updateFileCheck++;
+  }
+
+  // 이벤트가 없거나 files가 없으면 return
+  if (!event || !event.target || !event.target.files) {
+    console.error("파일 선택 오류: event 또는 files가 존재하지 않습니다.");
+    return;
+  }
+
+  const newFiles = Array.from(event.target.files); //배열로
+
+  newFiles.forEach((newFile) => { //중복체크
+    const isDuplicate = fileList.value.some(
+      (file) => file.name == newFile.name && file.size == newFile.size
+    );
+    if (!isDuplicate) {
+      fileList.value.push(newFile);
+    }
+  });
+
+  // input 필드 초기화 (같은 파일 다시 추가 가능)
+  event.target.value = "";
+};
 const removeFile = (index) => {
   fileList.value.splice(index, 1);
 };
 
 watch(() => props.isShowJobModal, () => {
+  updateFileCheck = 0;
   if(props.isShowJobModal && !props.isUpdate) {
     formValues.value.priort = '';
     formValues.value.deptJobNm = '';
@@ -323,6 +346,7 @@ const jobUpdate = async () => {
 
 // 유효성 체크
 const validCheck = () => {
+  console.log("업무함명 선택 : ",formValues.value.deptJobBxId);
   if(!formValues.value.deptCd?.trim()) {
     Swal.fire({
       icon: "info",

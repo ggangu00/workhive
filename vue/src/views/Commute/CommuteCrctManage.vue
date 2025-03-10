@@ -38,27 +38,35 @@
                       </td>
                     </tr>
                     <tr>
-                      <th>출근 시간</th>
-                      <td colspan="2">
-                        <input type="datetime-local" class="form-control" style="width: 47.5%;" 
-                               v-model="crctData.goTime" readonly>
-                      </td>
-                      <th>퇴근 시간</th>
-                      <td colspan="2">
-                        <input type="datetime-local" class="form-control" style="width: 47.5%;" 
-                               v-model="crctData.leaveTime" readonly>
+                      <th>출퇴근 시간</th>
+                      <td colspan="5">
+                        <div class="row align-items-center">
+                          <div class="col-auto">
+                            <input type="datetime-local" class="form-control" 
+                                   v-model="crctData.goTime" readonly>
+                          </div>
+                          <div class="col-auto p-none"> ~ </div>
+                          <div class="col-auto">
+                            <input type="datetime-local" class="form-control" 
+                                   v-model="crctData.leaveTime" readonly>
+                          </div>
+                        </div>
                       </td>
                     </tr>
                     <tr>
-                      <th>정정 출근 시간</th>
-                      <td colspan="2">
-                        <input type="datetime-local" class="form-control" style="width: 47.5%;" 
-                               v-model="crctData.crctGoTime" :max="crctData.crctLeaveTime" :readonly="isDetail">
-                      </td>
-                      <th>정정 퇴근 시간</th>
-                      <td colspan="2">
-                        <input type="datetime-local" class="form-control" style="width: 47.5%;" 
-                               v-model="crctData.crctLeaveTime" :min="crctData.crctGoTime" :readonly="isDetail">
+                      <th>정정 출퇴근 시간</th>
+                      <td colspan="5">
+                        <div class="row align-items-center">
+                          <div class="col-auto">
+                            <input type="datetime-local" class="form-control" @change="timeCheck" 
+                                   v-model="crctData.crctGoTime" :max="crctData.crctLeaveTime" :readonly="isDetail">
+                          </div>
+                          <div class="col-auto p-none"> ~ </div>
+                          <div class="col-auto">
+                            <input type="datetime-local" class="form-control" @change="timeCheck" 
+                                   v-model="crctData.crctLeaveTime" :min="crctData.crctGoTime" :readonly="isDetail">
+                          </div>
+                        </div>
                       </td>
                     </tr>
                     <tr>
@@ -78,7 +86,7 @@
                             <label class="btn btn-sm btn-fill cell-btn-custom" for="inputFile">파일선택</label>
                             <a>{{ (fileList.length == 0) ? "선택된 파일 없음" : `파일 ${fileList.length}개` }}</a>
                             <p class="file-info">개별 파일 기준 최대 30MB까지 첨부할 수 있습니다.</p>
-                            <input type="file" id="inputFile" style="display: none;" @change="addFileList($event.target)" multiple>
+                            <input type="file" id="inputFile" style="display: none;" @change="addFileList($event)" multiple>
                             <hr>
                           </div>
 
@@ -135,17 +143,6 @@ let isUpdate = ref(route.query.isUpdate === 'true');
 let isDetail = ref(route.query.isDetail === 'true');
 let cmtCd;
 let crctCd;
-
-// 첨부파일
-const fileList = ref([]);
-const addFileList = (target) => {
-  fileList.value = [];
-  const newFile = Array.from(target.files);
-  fileList.value.push(...newFile);
-}
-const removeFile = (index) => {
-  fileList.value.splice(index, 1);
-};
 
 let crctData = ref({
   commuteCd: '',
@@ -204,10 +201,46 @@ const crctGetInfo = async () => {
   }
   crctData.value = result.data;
   crctData.value.commuteDt = dateTimeFormat(result.data.commuteDt, 'yyyy-MM-dd');
+
   files();
 }
 
-/////////////////////첨부파일 가져오기/////////////////////
+///////////////////// 첨부파일 /////////////////////
+const fileList = ref([]);
+// 파일 저장
+let updateFileCheck = 0;
+const addFileList = (event) => {
+  if(updateFileCheck == 0 && isUpdate.value) {
+    fileList.value = [];
+    updateFileCheck++;
+  }
+
+  // 이벤트가 없거나 files가 없으면 return
+  if (!event || !event.target || !event.target.files) {
+    console.error("파일 선택 오류: event 또는 files가 존재하지 않습니다.");
+    return;
+  }
+
+  const newFiles = Array.from(event.target.files); //배열로
+
+  newFiles.forEach((newFile) => { //중복체크
+    const isDuplicate = fileList.value.some(
+      (file) => file.name == newFile.name && file.size == newFile.size
+    );
+    if (!isDuplicate) {
+      fileList.value.push(newFile);
+    }
+  });
+
+  // input 필드 초기화 (같은 파일 다시 추가 가능)
+  event.target.value = "";
+};
+
+// 파일 삭제
+const removeFile = (index) => {
+  fileList.value.splice(index, 1);
+};
+// 파일 가져오기
 const files = async () => {
   if (!crctData.value.atchFileId) return;
 
@@ -226,8 +259,7 @@ const files = async () => {
     Swal.fire({ icon: "error", title: "파일 목록 조회 실패", text: "Error : " + err });
   }
 }
-
-// 파일 다운로드 기능
+// 파일 다운로드
 const downloadFile = async (file) => {
   try {
     // 파일 다운로드 API 호출
@@ -361,6 +393,28 @@ const validCheck = () => {
   }
 
   return true;
+}
+const timeCheck = () => {
+  const goTime = new Date(crctData.value.crctGoTime);
+  const leaveTime = new Date(crctData.value.crctLeaveTime);
+
+  // 출근 시간이 퇴근 시간보다 늦지 않도록 체크
+  if (goTime >= leaveTime) {
+    Swal.fire({
+      icon: "info",
+      title: "출근 시간은 퇴근 시간보다 빠른 시간이어야 합니다.",
+    });
+    crctData.value.crctGoTime = ''; // 잘못된 값은 초기화
+  }
+
+  // 퇴근 시간이 출근 시간보다 일찍 선택되지 않도록 체크
+  if (leaveTime <= goTime) {
+    Swal.fire({
+      icon: "info",
+      title: "퇴근 시간은 출근 시간보다 늦은 시간이어야 합니다.",
+    });
+    crctData.value.crctLeaveTime = ''; // 잘못된 값은 초기화
+  }
 }
 
 </script>
