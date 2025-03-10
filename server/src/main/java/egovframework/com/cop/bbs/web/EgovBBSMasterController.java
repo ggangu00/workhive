@@ -377,8 +377,9 @@ public class EgovBBSMasterController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/cop/bbs/selectBBSMasterDetail.do")
-    public String selectBBSMasterDetail(@ModelAttribute("searchVO") BoardMasterVO searchVO, ModelMap model) throws Exception {
+    //@RequestMapping("/cop/bbs/selectBBSMasterDetail.do")
+    @GetMapping("boardInfo")
+    public BoardMasterVO selectBBSMasterDetail(@ModelAttribute("searchVO") BoardMasterVO searchVO, ModelMap model) throws Exception {
 		BoardMasterVO vo = egovBBSMasterService.selectBBSMasterInf(searchVO);
 		model.addAttribute("result", vo);
 	
@@ -386,14 +387,14 @@ public class EgovBBSMasterController {
 		// 2011.09.15 : 2단계 기능 추가 반영 방법 변경
 		//---------------------------------
 		
-		if(EgovComponentChecker.hasComponent("EgovArticleCommentService")){
-			model.addAttribute("useComment", "true");
-		}
-		if(EgovComponentChecker.hasComponent("EgovBBSSatisfactionService")){
-			model.addAttribute("useSatisfaction", "true");
-		}
+//		if(EgovComponentChecker.hasComponent("EgovArticleCommentService")){
+//			model.addAttribute("useComment", "true");
+//		}
+//		if(EgovComponentChecker.hasComponent("EgovBBSSatisfactionService")){
+//			model.addAttribute("useSatisfaction", "true");
+//		}
 		
-		return "egovframework/com/cop/bbs/EgovBBSMasterDetail";
+		return vo;
     }
     
     /**

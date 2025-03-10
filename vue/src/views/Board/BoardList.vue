@@ -25,7 +25,7 @@
           />
         </div>
 
-        <!-- 업무 목록 -->
+        <!-- 게시판 목록 -->
         <div class="row mt-2">
           <div class="col" style="height: 550px;">
             <div id="boardGrid"></div>
@@ -42,92 +42,79 @@ import { onMounted, onBeforeUnmount, ref } from 'vue';
 import axios from '../../assets/js/customAxios';
 import { useRouter } from 'vue-router';
 
-const searchKeyword = ref(''); // 검색어 상태
-const searchColumn = ref('');  // 검색할 컬럼 선택
+const searchKeyword = ref('');
+const searchColumn = ref('');
 const router = useRouter();
 const gridInstance = ref(null);
 const BoardList = ref([]);
 
-// 조회
+// 📌 게시판 목록 조회 API
 const BoardGetList = async () => {
   try {
     const { data } = await axios.get('/api/board/boardList');
     BoardList.value = (data.resultList || []).map((item, index) => ({
-      rowNum: index + 1, // 1부터 시작하는 행번호 추가
+      rowNum: index + 1,
       ...item
     }));
-    gridInstance.value?.resetData(BoardList.value); // Grid에 데이터 업데이트
+    gridInstance.value?.resetData(BoardList.value);
   } catch (error) {
     console.error('게시글 목록 불러오는 중 오류 발생:', error);
     BoardList.value = [];
   }
 };
 
-// 조건 검색 필터링 함수
-const filterGrid = () => {
-  const keyword = searchKeyword.value.trim().toLowerCase();
-  const column = searchColumn.value;
 
-  if (!keyword) {
-    gridInstance.value.resetData(BoardList.value); // 검색어 없으면 전체 데이터 표시
+// 📌 게시판 상세 페이지 이동 (bbsNm, bbsIntrcn 추가)
+const goToBoardInfo = (bbsId, bbsNm, bbsIntrcn) => {
+  console.log("📌 이동할 게시판 정보:", { bbsId, bbsNm, bbsIntrcn });
+
+  if (!bbsId) {
+    alert("게시판 정보를 찾을 수 없습니다.");
     return;
   }
 
-  const filteredData = BoardList.value.filter((item) => {
-    if (column) {
-      // 특정 컬럼만 검색
-      return String(item[column] ?? '').toLowerCase().includes(keyword);
-    } else {
-      // 전체 컬럼 검색
-      return Object.values(item).some((value) =>
-        String(value).toLowerCase().includes(keyword)
-      );
+  router.push({
+    path: "/board/boardInfo",
+    query: {
+      bbsId,
+      bbsNm: bbsNm ?? '',
+      bbsIntrcn: bbsIntrcn ?? '',
     }
   });
-
-  gridInstance.value.resetData(filteredData); // 필터링된 데이터로 Grid 갱신
 };
 
-// Grid 제거 함수
-const destroyGrid = () => {
-  if (gridInstance.value) {
-    gridInstance.value.destroy(); // 기존 Grid 제거
-    gridInstance.value = null; // 참조 초기화
-  }
-};
 
+// 📌 Grid 초기화
 const initializeGrid = () => {
-  destroyGrid(); // 중복 방지 위해 기존 인스턴스 제거
+  destroyGrid();
 
   gridInstance.value = new window.tui.Grid({
     el: document.getElementById('boardGrid'),
     data: BoardList.value,
-    scrollX: false, // 수평 스크롤 제거 (열이 전체 너비 사용)
+    scrollX: false,
     scrollY: true,
-    bodyHeight: 480, // 표 높이 지정
+    bodyHeight: 480,
     pageOptions: {
-      useClient: true, // 클라이언트 사이드 페이지네이션
+      useClient: true,
       perPage: 10,
     },
     columnOptions: {
-      resizable: true, // 사용자 열 너비 조정 가능
+      resizable: true,
     },
     columns: [
       { header: '번호', name: 'rowNum', align: 'center', width: 60, sortable: true },
       {
         header: '게시판명',
-        name: 'bbsNm',
-        sortable: true,
-        align: 'left',
-        minWidth: 200, // 최소 너비 설정
+  name: 'bbsNm',
+  sortable: true,
+  align: 'left',
+  minWidth: 200,
+  formatter: ({ row }) => {
+    const bbsId = row.bbsId ? row.bbsId : '';  // ✅ `undefined` 방지
+    const bbsNm = row.bbsNm ? row.bbsNm : '제목 없음';  // ✅ `bbsNm` 기본값 설정
+    return `<a href="javascript:void(0);" class="bbs-link" data-id="${bbsId}">${bbsNm}</a>`;
+        },
       },
-      // {
-      //   header: '작성자',
-      //   name: 'frstRegisterNm',
-      //   sortable: true,
-      //   align: 'center',
-      //   width: 120,
-      // },
       {
         header: '작성일',
         name: 'frstRegisterPnttm',
@@ -135,57 +122,60 @@ const initializeGrid = () => {
         align: 'center',
         width: 140,
       },
-      // {
-      //   header: '사용여부',
-      //   name: 'useAt',
-      //   sortable: true,
-      //   align: 'center',
-      //   width: 140,
-      //   formatter: ({ value }) => value === 'A01' ? 'Y' : value === 'A02' ? 'N' : value
-      // },
       {
         header: '관리',
         name: 'action',
         align: 'center',
-        width: 150, // 버튼 공간 확보
+        width: 150,
         renderer: BtnRenderer,
       },
     ],
   });
 
-  // 열 너비 자동 맞춤
+  // 📌 게시판명 클릭 이벤트 리스너 추가
+  gridInstance.value.on('click', (event) => {
+
+
+  if (event.columnName === "bbsNm") {
+    const rowKey = event.rowKey;
+    const selectedRow = gridInstance.value.getRow(rowKey);
+
+    if (!selectedRow || !selectedRow.bbsId) {
+      console.error("⚠️ bbsId를 찾을 수 없음!", selectedRow);
+      return;
+    }
+
+    // 📌 `bbsNm`, `bbsIntrcn` 추가하여 상세 페이지로 이동
+    goToBoardInfo(selectedRow.bbsId, selectedRow.bbsNm, selectedRow.bbsIntrcn);
+  }
+});
+
+
+
   gridInstance.value.refreshLayout();
 };
 
-// 컴포넌트 마운트 시 초기화
-onMounted(async () => {
-  await BoardGetList(); // 데이터 가져오기
-  initializeGrid(); // Grid 생성
-});
+// 📌 Grid 제거 함수
+const destroyGrid = () => {
+  if (gridInstance.value) {
+    gridInstance.value.destroy();
+    gridInstance.value = null;
+  }
+};
 
-// 페이지 이동 시 Grid 제거
-onBeforeUnmount(() => {
-  destroyGrid(); // 중복 방지 및 메모리 해제
-});
-
-// 버튼 렌더러 클래스
+// 📌 버튼 렌더러 클래스
 class BtnRenderer {
   constructor(props) {
     const el = document.createElement('div');
     el.className = 'btn-group';
-    el.innerHTML = `
-      <button class="btn btn-success btn-fill me-2" data-type="edit">수정</button>
-    `;
+    el.innerHTML = `<button class="btn btn-success btn-fill me-2" data-type="edit">수정</button>`;
 
-    // 버튼 클릭 시 오직 수정 이벤트만 호출    
-    el.addEventListener('click', () => {     
+    el.addEventListener('click', () => {
       const rowKey = props.rowKey;
-
       if (rowKey === undefined) {
         console.error('BtnRenderer: rowKey를 가져올 수 없습니다.', props);
         return;
       }
-
       udtEvent(rowKey);
     });
 
@@ -197,27 +187,36 @@ class BtnRenderer {
   }
 }
 
-// 수정 버튼 클릭 시 페이지 이동 (쿼리 파라미터로 값 전달)
+// 📌 게시판 수정 페이지 이동
 const udtEvent = (rowKey) => {
-  const selectedRow = gridInstance.value?.getRow(rowKey); // 선택된 행 데이터 가져오기
+  const selectedRow = gridInstance.value?.getRow(rowKey);
 
   if (!selectedRow) {
     alert('선택된 게시글을 찾을 수 없습니다.');
     return;
   }
 
-  router.push({  
+  router.push({
     path: '/board/boardModify',
     query: {
       bbsId: selectedRow.bbsId,
       bbsNm: selectedRow.bbsNm,
+      bbsIntrcn: selectedRow.bbsIntrcn,
       bbsTyCode: selectedRow.bbsTyCode,
-      fileAtchPosblAt: selectedRow.fileAtchPosblAt,
-      answerAt: selectedRow.answerAt,
-      useAt: selectedRow.useAt
-    }    
+    }
   });
 };
+
+// 📌 컴포넌트 마운트 시 초기화
+onMounted(async () => {
+  await BoardGetList();
+  initializeGrid();
+});
+
+// 📌 페이지 이동 시 Grid 제거
+onBeforeUnmount(() => {
+  destroyGrid();
+});
 </script>
 
 <style>

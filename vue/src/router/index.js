@@ -69,6 +69,7 @@ import CrctSignManage from '../views/Commute/CommuteCrctSign.vue';
 import BoardList from '../views/Board/BoardList.vue';
 import BoardAdd from '../views/Board/BoardAdd.vue';
 import BoardModify from "../views/Board/BoardModify.vue";
+import BoardInfo from "../views/Board/BoardInfo.vue";
 import BulletinList from "../views/Bulletin/BulletinList.vue";
 import BulletinAdd from "../views/Bulletin/BulletinAdd.vue";
 import BulletinInfo from "../views/Bulletin/BulletinInfo.vue";
@@ -301,6 +302,11 @@ const routes = [
       path:'/board/boardList',
       name: 'BoardList',
       component : BoardList,
+   },
+   {//게시판 상세화면
+      path:'/board/boardInfo',
+      name: 'BoardInfo',
+      component : BoardInfo,
    },
    {//게시판 등록
       path:'/board/boardAdd',
