@@ -93,7 +93,7 @@
                     <th class="table-secondary">참여자</th>
                     <td colspan="3" class="text-start">
                       <span v-html="memArr.map(mem => mem.mgrSt == 'A01' 
-                        ? `${mem.mberNm}<i class='fa-solid fa-crown master mlp5'></i>` 
+                        ? `<i class='fa-solid fa-crown master'></i> ${mem.mberNm}` 
                         : mem.mberNm).join(', ') || '-'"></span>
                     </td>
                   </tr>
