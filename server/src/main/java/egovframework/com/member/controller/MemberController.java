@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -70,5 +71,13 @@ public class MemberController {
 		map.put("result", result);
 
 		return map;
+	}
+	
+	// 부서별 사원 조회
+	@GetMapping("/deptToMem/{deptCd}")
+	public List<UserDTO> memberToDepartmentList(@PathVariable("deptCd") String deptCd) {
+		log.info("✅ 회원정보 수정 => {}", deptCd);
+		
+		return memberService.memberToDepartmentSelect(deptCd);
 	}
 }

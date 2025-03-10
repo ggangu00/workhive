@@ -43,6 +43,9 @@ public interface MemberMapper {
 	// 비밀번호 업데이트 메서드 추가
 	void userPasswordUpdate(@Param("mberId") String mberId, @Param("password") String password);
 
+	// 부서별 사원조회
+	List<UserDTO> memberToDepartmentSelect(String deptCd);
+
 
 	
 }
