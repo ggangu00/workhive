@@ -95,7 +95,7 @@ const approvalBtn = () => {
         signStat: newSignStat
       });
 
-      if (response.statusText == "OK") {
+      if (response.status == "200") {
         Swal.fire({
           icon: "success",
           title: modeText + " 완료",

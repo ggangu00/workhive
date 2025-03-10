@@ -10,9 +10,9 @@ module.exports = defineConfig({
 
    // cors => prosy setting
    devServer : {
-      // client: {
-      //    overlay: false
-      // }, //에디터 빨간오류 안보이게
+      client: {
+         overlay: false
+      }, //에디터 빨간오류 안보이게
       port : 8077,    //원래 8081 변경되서 8099
       proxy : {
          '^/api' : {
