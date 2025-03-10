@@ -64,4 +64,10 @@ public class MemberServiceImpl implements MemberService {
 	    memberMapper.memberLockUpdate(mberId, lockAt);
 	}
 
+	// 부서별 사원조회
+	@Override
+	public List<UserDTO> memberToDepartmentSelect(String deptCd) {
+		return memberMapper.memberToDepartmentSelect(deptCd);
+	}
+
 }

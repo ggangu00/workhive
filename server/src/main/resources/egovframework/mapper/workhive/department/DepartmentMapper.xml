@@ -104,7 +104,7 @@
 	<!-- 부서 등록 할 때 같은 계층의 마지막 순서 가져오기 -->
 	<select id="getMaxSeq" resultType="int">
 		SELECT
-		   NVL(MAX(seq)), 1) AS seq
+		   NVL(MAX(seq), 1) AS seq
 		FROM
 		   department
 		WHERE
@@ -141,8 +141,5 @@
 		ORDER SIBLINGS BY <!-- 형제 노드간의 정렬 -->
 		   seq ASC <!-- 정렬 기준 -->
 	</select>
-
-
-
 	
 </mapper>

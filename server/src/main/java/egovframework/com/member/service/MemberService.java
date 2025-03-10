@@ -38,4 +38,7 @@ public interface MemberService {
 	 * @param lockAt 잠금 여부 (Y: 잠금, N: 잠금 해제)
 	 */
 	public void memberLockUpdate(@Param("mberId") String mberId, @Param("lockAt") String lockAt);
+
+	// 부서별 사원조회
+	public List<UserDTO> memberToDepartmentSelect(String deptCd);
 }

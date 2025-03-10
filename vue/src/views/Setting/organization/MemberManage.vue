@@ -24,10 +24,11 @@
                         @btnDepartmentRemove="btnDepartmentRemove"
                         @btnDepartmentModify="btnDepartmentModify"
                         @btnDepartmentAdd="btnDepartmentAdd"
+                        @btnDepartmentToMemList="btnDepartmentToMemList"
                      />
                   </div>
 
-                  <!-- 구성원 테이블 (오른쪽) -->
+                  <!-- [S] 구성원 테이블 (오른쪽) -->
                   <div class="col-9 m-group">
                      <div class="bottom-line">
                         <div class="d-flex justify-content-between align-items-center p-2">
@@ -99,6 +100,7 @@
                      </table>
 
                   </div>
+                  <!-- [E] 구성원 테이블 (오른쪽) -->
                </div>
             </div>
          </div>
@@ -226,10 +228,10 @@
       deptCd.value = ""; // 신규 부서 코드 (자동 생성될 것이므로 빈 값)
       deptNm.value = "";
       description.value = "";
-      parentCd.value = node.key; // ✅ 부모 부서 코드 지정
-      depth.value = node.depth + 1; // ✅ 부모 DEPTH + 1 (같은 계층 유지)
+      parentCd.value = node.key; // 부모 부서 코드 지정
+      depth.value = node.depth + 1; // 부모 DEPTH + 1 (같은 계층 유지)
 
-      isShowModal.value = true; // ✅ 모달 열기
+      isShowModal.value = true; // 모달 열기
    };
 
    // 모달 저장 버튼
@@ -267,6 +269,11 @@
             modalClose();
          }
       });
+   };
+
+   const btnDepartmentToMemList = (node) => {
+      console.log("btnDepartmentToMemList => ", node);
+      departmentToMemGetList(node);
    }
 
    // 자식 컴포넌트한테서 값을 받아서 모달 열기
@@ -329,6 +336,23 @@
 
          const tree = buildPrimeVueTree(response.data);
          departmentTree.value = tree;
+
+      } catch (err) {
+         departmentTree.value = []
+         Swal.fire({
+            icon: "error",
+            title: "API 조회 실패",
+            text: `Error: ${err.response?.data?.error || err.message}`
+         })
+      }
+   }
+
+   const departmentToMemGetList = async (deptCd) => {
+      console.log("departmentToMemGetList => ", deptCd)
+      try {
+         const response = await axios.get(`/api/member/deptToMem/${deptCd}`);
+
+         console.log("부서별 멤버 결과값 => ", response.data)
 
       } catch (err) {
          departmentTree.value = []

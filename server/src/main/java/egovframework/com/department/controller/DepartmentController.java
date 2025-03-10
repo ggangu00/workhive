@@ -65,6 +65,13 @@ public class DepartmentController {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomerUser user = (CustomerUser) auth.getPrincipal();
         dto.setCreateId(user.getUserDTO().getMberId());
+        
+        if(dto.getParentCd() == null) {
+        	dto.setParentCd("0");
+        	log.info("부모코드가 null이 들어옴 => ", dto.getParentCd());
+        }
+        
+		log.info("로그인 한 아이디 => ", user.getUserDTO().getMberId());
 		
 		Map<String, Object> map = new HashMap<>();
 		

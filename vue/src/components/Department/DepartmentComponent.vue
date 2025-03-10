@@ -11,10 +11,15 @@
 
          <template #default="slotProps">
             <div class="node-buttons d-flex justify-content-between align-items-center">
-               <span class="p-treenode-label">{{ slotProps.node.label }}</span>
+
+               <span class="p-treenode-label" @click="btnDepartmentToMemList(slotProps.node)">
+                  {{ slotProps.node.label }}
+               </span>
+
                <button class="btn-toggle" @click.stop="btnDepartmentMenuOpen($event, slotProps.node)">
                   <i class="fa-solid fa-ellipsis-vertical"></i>
                </button>
+
             </div>
          </template>
 
@@ -50,9 +55,10 @@
 
    // 부모에게 등록, 수정, 삭제 이벤트 전달
    const emit = defineEmits([
+         "btnDepartmentToMemList",
          "btnDepartmentAdd",
          "btnDepartmentModify",
-         "btnDepartmentRemove"
+         "btnDepartmentRemove",
       ]);
 
    const treeData = ref([]); // 초기화
@@ -86,6 +92,11 @@
       }, 10); // OverlayPanel이 렌더링된 후 적용되도록 약간의 딜레이 추가
    };
 
+   // 부서 선택 시 부서코드 부모에게 전달
+   const btnDepartmentToMemList = (node) => {
+      emit("btnDepartmentToMemList", node.deptId);
+   };
+
    // 하위 부서 추가
    const btnDepartmentAdd = (node) => {
       emit("btnDepartmentAdd", node); // 부모로 수정 이벤트 전달
@@ -95,7 +106,6 @@
    const btnDepartmentModify = (node) => {
       emit("btnDepartmentModify", node); // 부모로 수정 이벤트 전달
    };
-
 
    // 부서 삭제
    const btnDepartmentDelete = (node) => {
@@ -161,7 +171,6 @@
       box-shadow: 0 0 0 0.2rem #BFDBFE;
       border-radius: 3px !important;
    }
-
 
    /* 노드 텍스트 */
    .custom-tree .p-treenode-label {
