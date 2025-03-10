@@ -12,7 +12,7 @@
          <template #default="slotProps">
             <div class="node-buttons d-flex justify-content-between align-items-center">
 
-               <span class="p-treenode-label" @click="btnDepartmentToMemList(slotProps.node)">
+               <span class="p-treenode-label" @click="departmentToMemList(slotProps.node)">
                   {{ slotProps.node.label }}
                </span>
 
@@ -29,7 +29,7 @@
       <OverlayPanel ref="op">
          <ul class="department-dropdown-menu"> <!-- ✅ 클래스명 변경 -->
             <li @click="btnDepartmentModify(selectedNode)">부서 수정</li>
-            <li @click="btnDepartmentDelete(selectedNode)">부서 삭제</li>
+            <li @click="btnDepartmentRemove(selectedNode)">부서 삭제</li>
             <li @click="btnDepartmentAdd(selectedNode)">하위 부서 추가</li>
          </ul>
       </OverlayPanel>
@@ -55,7 +55,7 @@
 
    // 부모에게 등록, 수정, 삭제 이벤트 전달
    const emit = defineEmits([
-         "btnDepartmentToMemList",
+         "departmentToMemList",
          "btnDepartmentAdd",
          "btnDepartmentModify",
          "btnDepartmentRemove",
@@ -93,9 +93,10 @@
    };
 
    // 부서 선택 시 부서코드 부모에게 전달
-   const btnDepartmentToMemList = (node) => {
-      emit("btnDepartmentToMemList", node.deptId);
+   const departmentToMemList = (node) => {
+      emit("departmentToMemList", node);
    };
+
 
    // 하위 부서 추가
    const btnDepartmentAdd = (node) => {
@@ -108,7 +109,7 @@
    };
 
    // 부서 삭제
-   const btnDepartmentDelete = (node) => {
+   const btnDepartmentRemove = (node) => {
       emit("btnDepartmentRemove", node); // 부모로 삭제 이벤트 전달
    };
 </script>
