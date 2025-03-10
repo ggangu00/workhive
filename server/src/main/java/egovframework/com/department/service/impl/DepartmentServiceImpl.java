@@ -1,6 +1,8 @@
 package egovframework.com.department.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -14,13 +16,17 @@ import egovframework.com.common.service.CommonDTO;
 import egovframework.com.department.mapper.DepartmentMapper;
 import egovframework.com.department.service.DepartmantService;
 import egovframework.com.department.service.DepartmentDTO;
+import egovframework.com.member.mapper.MemberMapper;
 import egovframework.com.securing.service.CustomerUser;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class DepartmentServiceImpl implements DepartmantService {
 	
 	@Resource private DepartmentMapper dMapper;
 	@Resource private CommonMapper commMapper;
+	@Resource private MemberMapper memMapper;
 
 	// 부서 전체조회
 	@Override
@@ -90,5 +96,25 @@ public class DepartmentServiceImpl implements DepartmantService {
 	public List<DepartmentDTO> deptTreeSelectAll(String deptCd) {
 		return dMapper.deptTreeSelectAll(deptCd);
 	}
-	
+
+	@Override
+	public int departmentToMemberUpdate(DepartmentDTO dto) {
+	    if (dto.getDeptUserList() == null || dto.getDeptUserList().isEmpty()) {
+	        return 0;
+	    }
+
+	    log.info("✅ 부서 이동 요청 - deptCd: {}, updateId: {}, 이동 대상 수: {}", 
+	              dto.getDeptCd(), dto.getUpdateId(), dto.getDeptUserList().size());
+
+	    // MyBatis에 넘길 파라미터 맵 생성
+	    Map<String, Object> paramMap = new HashMap<>();
+	    paramMap.put("deptCd", dto.getDeptCd());
+	    paramMap.put("updateId", dto.getUpdateId());
+	    paramMap.put("deptUserList", dto.getDeptUserList());
+
+	    int updatedRows = dMapper.departmentToMemberUpdate(paramMap);
+
+	    return updatedRows;
+	}
+
 }

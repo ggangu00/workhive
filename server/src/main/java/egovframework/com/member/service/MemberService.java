@@ -1,6 +1,7 @@
 package egovframework.com.member.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -40,5 +41,5 @@ public interface MemberService {
 	public void memberLockUpdate(@Param("mberId") String mberId, @Param("lockAt") String lockAt);
 
 	// 부서별 사원조회
-	public List<UserDTO> memberToDepartmentSelect(String deptCd);
+	public Map<String, Object> memberToDepartmentSelectAll(String deptCd);
 }

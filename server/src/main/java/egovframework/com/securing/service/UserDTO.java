@@ -21,6 +21,7 @@ import lombok.NoArgsConstructor;
 public class UserDTO {
 	
 	private List<String> roles;
+	private String currentLoginId; // 현재 로그인한 아이디
 	
 	private String mberId;			// 회원ID	
 	
@@ -111,6 +112,10 @@ public class UserDTO {
 	private String deptCd;			// 부서코드
 	private String deptNm;     		// 부서명
 	
+	private String manager;			// 부서장
+	
+	private int isManager;
+	
 	private String projectCnt;     	// 진행중인 프로젝트 개수
 	
 	// 직급정보
@@ -125,8 +130,6 @@ public class UserDTO {
 	}
 
 	public Object getEmail() {
-		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

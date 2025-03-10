@@ -142,4 +142,29 @@
 		   seq ASC <!-- 정렬 기준 -->
 	</select>
 	
+	<!-- 부서장 조회 -->
+	<select id="departmentManagerSelect" parameterType="String" resultType="UserDTO">
+	    SELECT 
+	        m.mber_id,
+	        m.mber_nm,
+	        m.grade_cd,
+	        FN_GET_GRADENM(m.grade_cd) AS grade_nm,
+	        m.dept_cd
+	    FROM comtngnrlmber m
+	    INNER JOIN department d ON m.mber_id = d.manager
+	    WHERE d.dept_cd = #{deptCd}
+	</select>
+	
+	<!-- 회원 부서 수정  -->
+	<update id="departmentToMemberUpdate" parameterType="map">
+	    UPDATE comtngnrlmber
+	    SET dept_cd = #{paramMap.deptCd},
+	        update_dt = SYSDATE,
+	        update_id = #{paramMap.updateId}
+	    WHERE MBER_ID IN 
+	    <foreach collection="paramMap.deptUserList" item="user" separator="," open="(" close=")">
+	        #{user.mberId}
+	    </foreach>
+	</update>
+
 </mapper>

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import egovframework.com.securing.service.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -35,5 +36,6 @@ public class DepartmentDTO {
 	   
 	   private int level;
 	   
-	   private List<String> deptCdList;
+	   private List<String> deptCdList;	// 부서 코드 배열
+	   private List<UserDTO> deptUserList;	// 사용자 정보배열
 }
