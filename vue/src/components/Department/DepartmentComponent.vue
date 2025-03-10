@@ -8,21 +8,24 @@
                :style="{ opacity: node.children && node.children.length > 0 ? 1 : 0.3 }">
             </i>
          </template>
-
+         
          <template #default="slotProps">
-            <div class="node-buttons d-flex justify-content-between align-items-center">
+            <VueDraggableNext :list="departmentTree.children || []" 
+               :group="'department'"
+               :componentData="{ tag: 'div' }"
+               @add="onDrop" 
+               :data-department-id="slotProps.node.key" >
+               <div class="node-buttons d-flex justify-content-between align-items-center">
+                     <span class="p-treenode-label" @click="departmentToMemList(slotProps.node)"  :data-department-cd="slotProps.node.key">
+                        {{ slotProps.node.label }}
+                     </span>
 
-               <span class="p-treenode-label" @click="departmentToMemList(slotProps.node)">
-                  {{ slotProps.node.label }}
-               </span>
-
-               <button class="btn-toggle" @click.stop="btnDepartmentMenuOpen($event, slotProps.node)">
-                  <i class="fa-solid fa-ellipsis-vertical"></i>
-               </button>
-
-            </div>
+                     <button class="btn-toggle" @click.stop="btnDepartmentMenuOpen($event, slotProps.node)">
+                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                     </button>
+               </div>
+            </VueDraggableNext>
          </template>
-
       </Tree>
 
       <!-- 드롭다운 메뉴 -->
@@ -40,8 +43,9 @@
 <script setup>
    import Tree from 'primevue/tree';
    import OverlayPanel from 'primevue/overlaypanel';
+   import { VueDraggableNext } from 'vue-draggable-next'
 
-   import { ref, defineProps, defineEmits, watch } from 'vue';
+   import { ref, defineProps, defineEmits, watch, defineComponent } from 'vue';
 
    const op = ref(null) // OverlayPanel 참조
    const selectedNode = ref(null) // 클릭한 노드 저장
@@ -52,6 +56,25 @@
          default: () => []
       }
    });
+
+   defineComponent({
+      components: { VueDraggableNext }
+   });
+
+   const onDrop = (event) => {
+      const droppedElement = event.to.querySelector("[data-department-cd]");
+
+      if (!droppedElement) {
+         console.error("data-department-cd 값을 가진 요소를 찾을 수 없습니다.");
+         return;
+      }
+
+      const deptCd = droppedElement.getAttribute("data-department-cd");
+
+      console.log("드롭된 프로젝트 ID: ", deptCd);
+   };
+
+
 
    // 부모에게 등록, 수정, 삭제 이벤트 전달
    const emit = defineEmits([

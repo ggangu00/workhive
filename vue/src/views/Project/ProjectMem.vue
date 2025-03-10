@@ -119,8 +119,6 @@
                                         </ul>
                                     </VueDraggableNext>
                                 </VueDraggableNext>
-
-                                
                             </div>
                         </div>
                     </card>

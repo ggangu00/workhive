@@ -25,6 +25,7 @@
                         @btnDepartmentModify="btnDepartmentModify"
                         @btnDepartmentAdd="btnDepartmentAdd"
                         @departmentToMemList="departmentToMemList"
+                        @memberDropped="handleMemberDropped"
                      />
                   </div>
 
@@ -64,12 +65,21 @@
                               <th>메뉴 권한</th>
                            </tr>
                         </thead>
-
-                        <tbody>
+                        <!--사원목록-->
+                        <VueDraggableNext 
+                           v-if="members.length > 0"
+                           tag="tbody"
+                           :list="members"
+                           :group="{ name: 'department', pull: 'clone', put: false }"
+                           :sort="false"
+                           :clone="(member) => ({ ...member })"
+                           @start="onDragStart"
+                           :componentData="{ tag: 'tbody' }"
+                        >
                            <tr v-for="member in members" :key="member.id">
                               <td>
                                  <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" >
+                                    <input class="form-check-input" type="checkbox">
                                  </div>
                               </td>
                               <td>{{ member.id }}</td>
@@ -96,7 +106,7 @@
                                  </select>
                               </td>
                            </tr>
-                        </tbody>
+                        </VueDraggableNext>
                      </table>
 
                   </div>
@@ -157,11 +167,12 @@
 </template>
 
 <script setup>
-   import { ref, onBeforeMount, onMounted, onBeforeUnmount, computed } from "vue";
+   import { ref, onBeforeMount, onMounted, onBeforeUnmount, computed, defineComponent } from "vue";
    import Swal from 'sweetalert2';
    import axios from "../../../assets/js/customAxios"; // 공통 Axios 설정 파일
    import Modal from '../../../components/Modal.vue';
    import Card from '../../../components/Cards/Card.vue';
+   import { VueDraggableNext } from 'vue-draggable-next'
    import DepartmentComponent from "../../../components/Department/DepartmentComponent.vue";
 
    const isShowModal = ref(false);  // 모달 체크
@@ -172,6 +183,22 @@
    const isSubDeptMode = ref(false); // 하위 부서 추가 모드 여부
    const parentCd = ref(""); // 부모 부서 코드 저장
    const depth = ref(0); // DEPTH 저장 (기본값 0)
+
+   // ================================================== 드래그 드롭 관련 함수 ==================================================
+   defineComponent({
+      components: { VueDraggableNext }
+   });
+
+   //드래그 시작 시 호출
+   const draggedMem = ref([]);
+   const onDragStart = (event) => {
+      draggedMem.value = members.value[event.oldIndex]; //선택한 사원 정보 담기
+   };
+
+   const handleMemberDropped = (member) => {
+      console.log("부서에 추가된 멤버:", member);
+   }
+
 // ================================================== 생명주기 함수 ==================================================
    // 컴포넌트가 마운트되기 전에 권한 및 메뉴 목록 조회 실행
    onBeforeMount(async () => {
@@ -215,7 +242,6 @@
       if (!validationCheck()) {
          return;
       }
-
       departmentAdd(); // ✅ 부서 추가 실행
    };
 
