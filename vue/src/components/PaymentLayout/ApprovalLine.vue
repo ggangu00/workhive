@@ -335,7 +335,7 @@ const initGrid = () => {
     el: document.getElementById('employeeGrid'),
     data: employees.value,
     scrollX: false,
-    scrollY: true,
+    scrollY: false,
     rowHeaders: ['checkbox'],
     columns: [
       { header: '이름', name: 'mberNm', align:'center' },
@@ -442,7 +442,8 @@ defineExpose({onModalOpen,addApproval,removeApproval,addReceiver,removeReceiver,
 /* Toast UI Grid 스타일 */
 #employeeGrid {
   width: 100%;
-  height: 100%;
+  height: 85%;
+  overflow-y: auto;
 }
 
 .approval-item {
