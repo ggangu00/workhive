@@ -30,34 +30,34 @@
         </card>
       </form>
       <card>
-          <div class="row justify-content-between align-items-end mb-2">
-            <div class="col-4">
-              <button class="btn btn-danger btn-fill btn-sm" @click="projectListRemove">다중삭제</button>
-              <button class="btn btn-excel btn-sm" @click="exportToExcel">
-                <img class="me-1" src="../../assets/img/icon/excel.svg" alt="xls">엑셀다운로드
-              </button>
-            </div>
-            <div class="selectbox col d-flex align-items-center">
-              <select class="form-select w50" v-model="searchData.searchCondition">
-                <option value="0">프로젝트명</option>
-                <option value="1">거래처</option>
-                <option value="2">담당자</option>
-              </select>
+        <div class="row justify-content-between align-items-end mb-2">
+          <div class="col-4">
+            <button class="btn btn-danger btn-fill btn-sm" @click="projectListRemove">다중삭제</button>
+            <button class="btn btn-excel btn-sm" @click="exportToExcel">
+              <img class="me-1" src="../../assets/img/icon/excel.svg" alt="xls">엑셀다운로드
+            </button>
+          </div>
+          <div class="selectbox col d-flex align-items-center">
+            <select class="form-select w50" v-model="searchData.searchCondition">
+              <option value="0">프로젝트명</option>
+              <option value="1">거래처</option>
+              <option value="2">담당자</option>
+            </select>
 
-              <input type="text" class="form-control mlp10" placeholder="검색어를 입력해주세요" v-model="searchData.searchKeyword">
-              <div class="input-group">
-                <span class="input-group-text fw-bold">시작일</span>
-                <input type="date" class="form-control w50" v-model="searchData.searchStartDt">
-              </div>
-              <span class="fw-bold">~</span>
-              <div class="input-group">
-                <span class="input-group-text fw-bold">종료일</span>
-                <input type="date" class="form-control w50" v-model="searchData.searchEndDt">
-              </div>
+            <input type="text" class="form-control mlp10" placeholder="검색어를 입력해주세요" v-model="searchData.searchKeyword">
+            <div class="input-group">
+              <span class="input-group-text fw-bold">시작일</span>
+              <input type="date" class="form-control w50" v-model="searchData.searchStartDt">
+            </div>
+            <span class="fw-bold">~</span>
+            <div class="input-group">
+              <span class="input-group-text fw-bold">종료일</span>
+              <input type="date" class="form-control w50" v-model="searchData.searchEndDt">
             </div>
           </div>
+        </div>
 
-          <div id="tableGrid" class="toastui project"></div>
+        <div id="tableGrid" class="toastui project"></div>
       </card>
 
       <!--프로젝트 상세보기 모달[s]-->
@@ -91,7 +91,7 @@
                   </tr>
                   <tr>
                     <th class="table-secondary">참여자</th>
-                    <td colspan="3" class="text-start">김민진, 박주현, 신강현</td>
+                    <td colspan="3" class="text-start"> {{ memArr.join(", ") || '-' }}</td>
                   </tr>
                   <tr>
                     <th class="table-secondary">진행상태</th>
@@ -553,13 +553,22 @@ const projectGetList = async () => {
 
 //프로젝트 단건조회
 const projectInfo = ref([]);
+const memList = ref([]);
+const memArr = ref([]);
 const projectGetInfo = async (prCd) => {
   try {
     const result = await axios.get(`/api/project/info/${prCd}`);
-    projectInfo.value = result.data.info;
+    projectInfo.value = result.data.result[0];
+    memList.value = result.data.list;
+    memArr.value = [];
+    memList.value.forEach((data) => {
+        memArr.value.push(data.memNm);
+    })
+
     projectWorkGetList(prCd); //프로젝트 과업리스트 조회
   } catch (err) {
     projectInfo.value = [];
+    memList.value = [];
 
     Swal.fire({
       icon: "error",
@@ -596,26 +605,35 @@ const projectRemove = async (prCd) => {
 const projectListRemove = async () => {
   const checkedData = grid.value.getCheckedRows();
 
-  try {
-    const response = ref([]);
-    response.value = await axios.put(`/api/project/delete`, {
-      projectArr: checkedData.map(row => row.prCd)
-    });
-
-    if (response.value.statusText == "OK") {
-      Swal.fire({
-        icon: "success",
-        title: "삭제완료",
-        text: "선택한 프로젝트를 삭제하였습니다",
-      })
-      projectGetList(); //삭제완료 후 리스트 리로드
-    }
-  } catch (err) {
+  if (checkedData.length < 1) {
     Swal.fire({
       icon: "error",
       title: "삭제 실패",
-      text: "Error : " + err
-    });
+      text: "삭제할 프로젝트를 선택해주세요"
+    })
+  }else{
+
+    try {
+      const response = ref([]);
+      response.value = await axios.put(`/api/project/delete`, {
+        projectArr: checkedData.map(row => row.prCd)
+      });
+
+      if (response.value.statusText == "OK") {
+        Swal.fire({
+          icon: "success",
+          title: "삭제완료",
+          text: "선택한 프로젝트를 삭제하였습니다",
+        })
+        projectGetList(); //삭제완료 후 리스트 리로드
+      }
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "삭제 실패",
+        text: "Error : " + err
+      });
+    }
   }
 }
 

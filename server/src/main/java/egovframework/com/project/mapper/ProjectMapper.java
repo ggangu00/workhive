@@ -2,6 +2,8 @@ package egovframework.com.project.mapper;
 
 import java.util.List;
 
+import org.egovframe.rte.psl.dataaccess.util.EgovMap;
+
 import egovframework.com.cmm.ComDefaultVO;
 import egovframework.com.project.service.ProjectDTO;
 import egovframework.com.project.service.ProjectWorkDTO;
@@ -19,7 +21,7 @@ public interface ProjectMapper {
 	int projectSelectAllCnt(ComDefaultVO searchVO);
 	
 	// 프로젝트 단건조회
-	public ProjectDTO projectSelect(String prCd);
+	public List<EgovMap> projectSelect(String prCd);
 	
 	// 프로젝트 등록
 	public int projectInsert(ProjectDTO projectDTO);
@@ -67,12 +69,18 @@ public interface ProjectMapper {
 	public String getLastInsertedPrCd();
 	
 	//====================프로젝트 참여자 관리===================
+	
+	//프로젝트별 참여자 조회
+	public List<EgovMap> projectSelectMember(String prCd);
 
-	//프로젝트별 참여자 조회 트리
-	public List<ProjectDTO> projectTree();
+	//프로젝트별/참여자 조회 트리
+	public List<ProjectDTO> projectTree(ComDefaultVO searchVO);
 	
 	//프로젝트 참여자 추가
 	public int projectMemInsert(ProjectDTO projectDTO);
+	
+	//프로젝트 팀장 변경
+	public int projectManagerUpdate(ProjectDTO projectDTO);
 	
 	//프로젝트 참여자 삭제
 	public int projectMemDelete(ProjectDTO projectDTO);

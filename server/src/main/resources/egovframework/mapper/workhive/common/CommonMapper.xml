@@ -169,7 +169,13 @@
 		        NOTICE_AT -- 공지여부
 		    FROM (
 		        SELECT * FROM comtnbbs 
-		        ORDER BY NOTICE_AT DESC, FRST_REGIST_PNTTM DESC
+		        ORDER BY 
+		            CASE 
+		                WHEN NOTICE_AT = 'Y' THEN 1 
+		                WHEN NOTICE_AT = 'N' THEN 2 
+		                ELSE 3 
+		            END, 
+		            FRST_REGIST_PNTTM DESC
 		    )
 		) <![CDATA[ WHERE RNUM <= 5 ]]>
 	</select>
@@ -196,7 +202,8 @@
 		SELECT * FROM (
 		    (SELECT 
 		        SCHDUL_NM,
-		        '일정' AS type_nm
+		        fn_get_codename(schdul_se) as type_nm,
+		        fn_get_deptnmdeptcd(dept_cd) as dept_nm
 		     FROM COMTNSCHDULINFO
 		     WHERE 
 		        <![CDATA[
@@ -207,7 +214,8 @@
 		    UNION
 		    (SELECT 
 		        MTG_NM AS SCHDUL_NM,
-		        '회의' AS type_nm
+		        null as "schdul_se",
+		        null as "dept_nm"
 		     FROM COMTNMTGINFO
 		     WHERE TO_CHAR(MTG_DE, 'YYYY-MM-DD') = #{schDt}
 		    )

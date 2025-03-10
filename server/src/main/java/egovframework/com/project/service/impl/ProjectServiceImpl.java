@@ -1,9 +1,12 @@
 package egovframework.com.project.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.egovframe.rte.psl.dataaccess.util.EgovMap;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -44,9 +47,19 @@ public class ProjectServiceImpl implements ProjectService{
 	}
 	
 	//프로젝트 단건조회
-	@Override
-	public ProjectDTO projectSelect(String prCd) {
-		return projectMapper.projectSelect(prCd);
+	@Override	
+	public Map<String, Object> projectSelect(String prCd) {
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		// 프로젝트 정보 조회
+	    List<EgovMap> projectInfo = projectMapper.projectSelect(prCd);
+	    resultMap.put("result", projectInfo);
+	    
+	    // 프로젝트 참여자 명단 조회
+	    List<EgovMap> attendeeList = projectMapper.projectSelectMember(prCd);
+	    resultMap.put("list", attendeeList);
+		
+		return resultMap;
 	}
 
 	//프로젝트 등록	
@@ -193,8 +206,8 @@ public class ProjectServiceImpl implements ProjectService{
 
 	//프로젝트별 참여자 조회 트리
 	@Override
-	public List<ProjectDTO> projectTree() {
-		return projectMapper.projectTree();
+	public List<ProjectDTO> projectTree(ComDefaultVO searchVO) {
+		return projectMapper.projectTree(searchVO);
 	}
 	
 	//프로젝트 참여자 추가
@@ -207,6 +220,12 @@ public class ProjectServiceImpl implements ProjectService{
         projectDTO.setCreateId(userId);
         
 		return projectMapper.projectMemInsert(projectDTO) == 1 ? true : false;
+	}
+		
+	//프로젝트 팀장 변경
+	@Override
+	public boolean projectManagerUpdate(ProjectDTO projectDTO) {
+        return projectMapper.projectManagerUpdate(projectDTO) > 0 ? true : false;
 	}
 	
 	//프로젝트 참여자 삭제

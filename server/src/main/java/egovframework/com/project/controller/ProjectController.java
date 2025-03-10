@@ -69,18 +69,8 @@ public class ProjectController {
 	@GetMapping("/info/{prCd}")
 	public Map<String, Object> projectinfo(@PathVariable("prCd") String prCd) {
 		
-		Map<String, Object> map = new HashMap<>();
-		
 		//프로젝트 정보조회
-		ProjectDTO infoDto = projectService.projectSelect(prCd);
-		
-		if (infoDto != null) {
-	        map.put("result", true);
-	        map.put("info", infoDto);
-	    } else {
-	    	map.put("result", false);
-	    	map.put("info", "해당 권한이 없습니다.");
-	    }
+		Map<String, Object> map = projectService.projectSelect(prCd);
 		
 		return map;
 	}
@@ -232,16 +222,21 @@ public class ProjectController {
 	
 	//프로젝트별 참여자 조회 트리
 	@GetMapping("/tree")
-	public List<ProjectDTO> projectTree() {	  
-	  return projectService.projectTree();
+	public List<ProjectDTO> projectTree(@ModelAttribute ComDefaultVO searchVO){
+	  return projectService.projectTree(searchVO);
 	}
 	
 	//프로젝트 참여자 추가
 	@PostMapping("/tree/add")
-	public boolean projectTreeAdd(@RequestBody ProjectDTO dto) {
-		
-		boolean result = projectService.projectMemInsert(dto);
-		
+	public boolean projectTreeAdd(@RequestBody ProjectDTO dto) {	
+		boolean result = projectService.projectMemInsert(dto);		
+		return result;
+	}
+	
+	//프로젝트 팀장 변경
+	@PutMapping("/tree/manager")
+	public boolean projectManagerModify(@RequestBody ProjectDTO dto) {	
+		boolean result = projectService.projectManagerUpdate(dto);		
 		return result;
 	}
 

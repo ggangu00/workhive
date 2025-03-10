@@ -17,7 +17,7 @@
           </h5>
           <p class="card-sub"><b>기간 : </b> {{ projectInfo.startDt }} ~ {{ projectInfo.endDt }}
           </p>
-          <p class="card-sub"><b>참여자 : </b> 박주현, 박지훈, 정수민, 박명식</p>
+          <p class="card-sub"><b>참여자 : </b>  {{ memArr.join(", ") || '-' }}</p>
         </div>
       </div>
       <Card>
@@ -227,14 +227,21 @@ const formReset = () => {
 
 //프로젝트 단건조회
 const projectInfo = ref([]);
+const memList = ref([]);
+const memArr = ref([]);
 const projectGetInfo = async (prCd) => {
   try {
     const result = await axios.get(`/api/project/info/${prCd}`);
-
-    projectInfo.value = result.data.info;
+    projectInfo.value = result.data.result[0];
     projectInfo.value.startDt = dateFormat(projectInfo.value.startDt);
     projectInfo.value.endDt = dateFormat(projectInfo.value.endDt);
     projectInfo.value.term = dateTermCalc(dateFormat(projectInfo.value.endDt), dateFormat());
+
+    memList.value = result.data.list;
+    memArr.value = [];
+    memList.value.forEach((data) => {
+        memArr.value.push(data.memNm);
+    })
 
     term.value = projectInfo.value.term;
 
@@ -246,6 +253,7 @@ const projectGetInfo = async (prCd) => {
     projectDateTerm(projectInfo.value.startDt, projectInfo.value.endDt); //프로젝트 시작일~종료일까지 모든 일자 배열에 담음
   } catch (err) {
     projectInfo.value = [];
+    memList.value = [];
 
     Swal.fire({
       icon: "error",
