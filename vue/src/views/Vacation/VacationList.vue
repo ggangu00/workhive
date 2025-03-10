@@ -1,15 +1,8 @@
 <template>
 
   <!-- 휴가 신청 등록/수정 -->
-  <div class="row mt-5">
+  <div class="row mt-4">
     <div class="col">
-        
-      <div class="row">
-        <div class="col header">
-          <h4>  [ 휴가 신청 목록 ]</h4>
-          <hr>
-        </div>
-      </div>
 
       <!-- 조회 조건 -->
       <div class="button-collection d-flex justify-content-end align-items-center flex-wrap" style="padding-bottom: 15px;">
@@ -41,7 +34,7 @@
 
       <!-- 휴가 신청 목록 -->
       <div class="row">
-        <div class="col" style="height: 300px; width: 800px;">
+        <div class="col">
           <div id="vcGrid"></div>
         </div>
       </div>
@@ -108,7 +101,7 @@ onMounted(() => {
     scrollY: false,
     pageOptions: {
       useClient: false,
-      perPage: 5,
+      perPage: 10,
     },
     columns: [ // 시작일 / 종료일 / 휴가종류 / 사용일수 / 신청일 / 결재자 / 결재상태
       { header: '시작일', name: 'vcStartDt', align: 'center', formatter: vcFormat.dateFormatter },

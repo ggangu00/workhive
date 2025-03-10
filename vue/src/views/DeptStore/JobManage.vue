@@ -69,7 +69,14 @@
 
               <div class="mb-3">
                 <label>업무담당자<em class="point-red">*</em></label>
-                <input type="text" class="form-control" placeholder="담당자명을 입력해주세요" v-model="formValues.chargerNm" @click="modalOpen" readonly>
+                <div class="row align-items-center">
+                  <div class="col-auto" style="padding-right: 0;">
+                    <input type="text" class="form-control" placeholder="담당자명을 입력해주세요" v-model="formValues.chargerNm" @click="modalOpen" readonly>
+                  </div>
+                  <div class="col-auto" style="padding-left: 5px;">
+                    <i class="fa-solid fa-magnifying-glass" @click="modalOpen"></i>
+                  </div>
+                </div>
                 
                 <SignerModal
                   :isShowModal="isShowModal"
@@ -89,14 +96,21 @@
                     <hr>
                   </div>
 
-                  <div class="row file-list">
+                  <div class="row file-list" v-if="!props.isDetail">
                     <div class="col-4" v-for="(file, index) in fileList" :key="index">
                     {{ file.name }}
-                    <button class="btn btn-sm btn-danger cell-btn-custom" @click="removeFile(index)" v-if="!props.isDetail">삭제</button>
-                    <button class="btn btn-sm cell-btn-custom" @click="downloadFile(file)" v-if="props.isDetail">다운</button>
+                    <button class="btn btn-sm btn-danger cell-btn-custom" @click="removeFile(index)">삭제</button>
                     </div>
                     <div class="col" v-if="fileList.length == 0">첨부된 파일이 없습니다.</div>
                   </div>
+                  <div class="row file-list" v-if="props.isDetail">
+                    <div class="col-4" v-for="(file, index) in fileList" :key="index" @click="downloadFile(file)">
+                    {{ file.name }}
+                    <button class="btn btn-sm btn-danger cell-btn-custom" @click="removeFile(index)" v-if="!props.isDetail">삭제</button>
+                    </div>
+                    <div class="col" v-if="fileList.length == 0">첨부된 파일이 없습니다.</div>
+                  </div>
+
                 </div>
               </div>
 
@@ -346,7 +360,6 @@ const jobUpdate = async () => {
 
 // 유효성 체크
 const validCheck = () => {
-  console.log("업무함명 선택 : ",formValues.value.deptJobBxId);
   if(!formValues.value.deptCd?.trim()) {
     Swal.fire({
       icon: "info",
@@ -418,5 +431,9 @@ const modalConfirm = (row) => {
   display: flex;
   align-items: center;
   height: 100%;
+}
+
+i {
+  cursor: pointer;
 }
 </style>

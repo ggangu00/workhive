@@ -29,6 +29,7 @@
 				    )
 				    CONNECT BY PRIOR dept_cd = parent_cd
 				)
+				order by grade_cd desc
 				
             ) T0
         )

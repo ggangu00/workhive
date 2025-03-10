@@ -85,16 +85,16 @@ export const vcTypeFormatter = ({ value }) => {
   let vcType = '';
   switch(value) {
     case "E01":
-      vcType = `<span class="text-secondary fw-bold">연차</span>`;
+      vcType = `<span class="text-success fw-bold">연차</span>`;
       break;
     case "E02":
-      vcType = `<span class="text-secondary fw-bold">오전반차</span>`;
+      vcType = `<span class="text-warning fw-bold">오전반차</span>`;
       break;
     case "E03":
-      vcType = `<span class="text-secondary fw-bold">오후반차</span>`;
+      vcType = `<span class="text-warning fw-bold">오후반차</span>`;
       break;
     case "E04":
-      vcType = `<span class="text-secondary fw-bold">공가</span>`;
+      vcType = `<span class="text-primary fw-bold">공가</span>`;
       break;
   }
   return vcType;
