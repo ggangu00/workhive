@@ -33,7 +33,7 @@
 					 <include refid="searchCriteria"/>
 			            
 					order by 
-						create_dt desc
+						start_dt desc, state desc, create_dt desc
 						
 			) T0
 		)
@@ -325,8 +325,10 @@
 	       fn_get_memnm(mber_id) AS mber_nm,
 	       fn_get_deptnm(mber_id) AS dept_nm,
 	       fn_get_grademberid(mber_id) AS grade_nm,
-	       fn_get_gradeseq(mber_id) AS grade_seq
+	       fn_get_gradeseq(mber_id) AS grade_seq,
+	       mgr_st
 		from project_mem where pr_cd= #{prCd}
+		ORDER BY mgr_st ASC, grade_seq DESC, mber_nm ASC
 	</select>
 	
 	<!-- 프로젝트 참여자 조회 트리 -->

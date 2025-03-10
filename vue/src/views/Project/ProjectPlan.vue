@@ -17,7 +17,9 @@
           </h5>
           <p class="card-sub"><b>기간 : </b> {{ projectInfo.startDt }} ~ {{ projectInfo.endDt }}
           </p>
-          <p class="card-sub"><b>참여자 : </b>  {{ memArr.join(", ") || '-' }}</p>
+          <p class="card-sub"><b>참여자 : </b>  <span v-html="memArr.map(mem => mem.mgrSt == 'A01' 
+                        ? `${mem.mberNm}<i class='fa-solid fa-crown master'></i>` 
+                        : mem.mberNm).join(', ') || '-'"></span></p>
         </div>
       </div>
       <Card>
@@ -239,10 +241,12 @@ const projectGetInfo = async (prCd) => {
 
     memList.value = result.data.list;
     memArr.value = [];
-    memList.value.forEach((data) => {
-        memArr.value.push(data.memNm);
-    })
 
+    memList.value.forEach((data) => {
+      memArr.value.push(
+        { mberNm: data.memNm, mgrSt: data.mgrSt }
+      );
+    });
     term.value = projectInfo.value.term;
 
     term.value > 0 ? term.value = "+" + term.value  //종료일 전일 때

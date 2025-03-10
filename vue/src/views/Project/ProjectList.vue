@@ -91,7 +91,11 @@
                   </tr>
                   <tr>
                     <th class="table-secondary">참여자</th>
-                    <td colspan="3" class="text-start"> {{ memArr.join(", ") || '-' }}</td>
+                    <td colspan="3" class="text-start">
+                      <span v-html="memArr.map(mem => mem.mgrSt == 'A01' 
+                        ? `${mem.mberNm}<i class='fa-solid fa-crown master mlp5'></i>` 
+                        : mem.mberNm).join(', ') || '-'"></span>
+                    </td>
                   </tr>
                   <tr>
                     <th class="table-secondary">진행상태</th>
@@ -561,9 +565,12 @@ const projectGetInfo = async (prCd) => {
     projectInfo.value = result.data.result[0];
     memList.value = result.data.list;
     memArr.value = [];
+
     memList.value.forEach((data) => {
-        memArr.value.push(data.memNm);
-    })
+      memArr.value.push(
+        { mberNm: data.memNm, mgrSt: data.mgrSt }
+      );
+    });
 
     projectWorkGetList(prCd); //프로젝트 과업리스트 조회
   } catch (err) {
@@ -611,7 +618,7 @@ const projectListRemove = async () => {
       title: "삭제 실패",
       text: "삭제할 프로젝트를 선택해주세요"
     })
-  }else{
+  } else {
 
     try {
       const response = ref([]);
@@ -692,6 +699,7 @@ const projectWorkGetList = async (prCd) => {
     workList.value = [];
   }
 }
+
 </script>
 
 <style scoped>

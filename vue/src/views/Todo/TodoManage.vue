@@ -3,7 +3,7 @@
     <div class="container-fluid">
       <div class="card">
         <div class="card-body">
-          <h4 class="card-title float-left">업무일지 관리</h4>
+          <h4 class="card-title float-left">나의 할 일</h4>
         </div>
       </div>
 
@@ -157,8 +157,8 @@ onMounted(() => {
 
   grid.value = new Grid({
     el: document.getElementById("tableGrid"),
-    scrollX: true,
-    scrollY: true,
+    scrollX: false,
+    scrollY: false,
     columns: [
       { header: "업무구분", name: "state", align: "center", width: 80, formatter: ({ row }) => row.state == 'A01' ? '완료' : '미완료' },
       { header: "완료여부", name: "typeNm", align: "center", width: 100 },

@@ -212,7 +212,7 @@ const calCount = ref(0);
 const calGetList = async () => { //일정 최신 3건 조회
   try {
     const result = await axios.get(`/api/comm/calList/${selectedDate.value}`);
-console.log(result.data);
+    
     calList.value = result.data;
     calCount.value = result.data.length;
 
