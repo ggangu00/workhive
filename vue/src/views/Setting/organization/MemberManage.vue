@@ -24,7 +24,7 @@
                         @btnDepartmentRemove="btnDepartmentRemove"
                         @btnDepartmentModify="btnDepartmentModify"
                         @btnDepartmentAdd="btnDepartmentAdd"
-                        @btnDepartmentToMemList="btnDepartmentToMemList"
+                        @departmentToMemList="departmentToMemList"
                      />
                   </div>
 
@@ -271,11 +271,6 @@
       });
    };
 
-   const btnDepartmentToMemList = (node) => {
-      console.log("btnDepartmentToMemList => ", node);
-      departmentToMemGetList(node);
-   }
-
    // 자식 컴포넌트한테서 값을 받아서 모달 열기
    const btnDepartmentModify = (node) => {
       // 수정 모드 활성화
@@ -347,10 +342,10 @@
       }
    }
 
-   const departmentToMemGetList = async (deptCd) => {
-      console.log("departmentToMemGetList => ", deptCd)
+   // 부서별 멤버조회
+   const departmentToMemList = async (node) => {
       try {
-         const response = await axios.get(`/api/member/deptToMem/${deptCd}`);
+         const response = await axios.get(`/api/member/deptToMem/${node.key}`);
 
          console.log("부서별 멤버 결과값 => ", response.data)
 

@@ -134,12 +134,15 @@
     </update>
     
     <select id="memberToDepartmentSelect" resultType="userDTO">
-    	SELECT 
-		   * 
-		FROM 
-		   comtngnrlmber
-		WHERE
-		   dept_cd = #{deptCd}
+   	   SELECT 
+          * 
+       FROM 
+          comtngnrlmber
+	   <where>
+	      <if test="deptCd != 0">
+	         AND dept_cd = #{deptCd}
+	      </if>
+	   </where>
     </select>
     
 </mapper>
