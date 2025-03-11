@@ -21,6 +21,7 @@
                      <DepartmentComponent
                         v-if="isTreeLoaded"
                         :departmentTree="departmentTree"
+                        :isMenuToggle="true"
                         @btnDepartmentRemove="btnDepartmentRemove"
                         @btnDepartmentModify="btnDepartmentModify"
                         @btnDepartmentAdd="btnDepartmentAdd"
@@ -227,8 +228,6 @@
          // 선택된 멤버가 없으면, 드래그한 멤버 한 명만 추가
          selectedMembers.value = [members.value[event.oldIndex]];
       }
-
-      console.log("드래그 시작! 선택된 멤버:", selectedMembers.value);
    };
 
    const memberDropped = async (event) => {
@@ -242,9 +241,6 @@
          });
          return;
       }
-
-      console.log("✅ 멤버 이동 처리:", { deptCd, deptNm, selectedMembers: selectedMembers.value });
-
       // ✅ 선택된 멤버들만 부서 이동 처리
       await departmentToMemModify(deptCd, selectedMembers.value); // ✅ 체크된 멤버들 한꺼번에 이동
    };
@@ -430,9 +426,6 @@
             checked: false // 개별 선택 상태 기본 false
          }));
          allChecked.value = false; // 부서 변경 시 초기화
-
-         console.log("부서별 멤버 결과값 => ", response.data)
-
       } catch (err) {
          members.value = []
          Swal.fire({
@@ -455,7 +448,6 @@
             deptUserList: userList // ✅ 선택된 사용자 리스트 추가
          });
 
-         console.log(response.data);
          if (response.data.result > 0) {
             await Swal.fire({
                icon: 'success',

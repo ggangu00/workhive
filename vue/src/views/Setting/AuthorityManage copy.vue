@@ -350,7 +350,7 @@
    const authorityMenuGetList = async (code) => {
       try {
          const response = await axios.get(`/api/menu/${code}`);
-         console.log("authorityMenuGetList => ", response.data);
+         
          menuData.value = menuGetListCallbackTreeBuild(response.data);
       } catch (err) {
          Swal.fire({

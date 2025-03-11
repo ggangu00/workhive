@@ -244,7 +244,7 @@
             confirmButtonText: "예",
             cancelButtonText: "아니오"
       }).then((result) => {
-         console.log(authorityMenuModify());
+         console.log(authorityMenuModify);
 
          if (result.isConfirmed) {
             Swal.fire({
