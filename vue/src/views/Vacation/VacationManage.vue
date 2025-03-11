@@ -49,7 +49,7 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label">휴가 사유</label>
+            <label class="form-label">휴가 사유 <em class="point-red">*</em></label>
             <textarea id="vcReason" class="form-control" v-model="vcData.vcReason" :readonly="isDetail"></textarea>
           </div>
           
@@ -83,7 +83,7 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label">결재자</label>
+            <label class="form-label">결재자 <em class="point-red">*</em></label>
             <div class="row align-items-center">
               <div class="col-auto" style="padding-right: 0;">
                 <input type="text" class="form-control" v-model="vcData.signNm" @click="modalOpen" readonly>

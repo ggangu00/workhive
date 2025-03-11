@@ -28,7 +28,7 @@
               </colgroup>
               <tbody>
                 <tr>
-                  <th>근무 일자</th>
+                  <th>근무 일자 <em class="point-red">*</em></th>
                   <td colspan="5">
                     <input type="date" id="wordDate" class="form-control" style="width: 18.6%;" 
                            v-model="crctData.commuteDt" :readonly="isUpdate || isDetail">
@@ -51,7 +51,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <th>정정 출퇴근 시간</th>
+                  <th>정정 출퇴근 시간 <em class="point-red">*</em></th>
                   <td colspan="5">
                     <div class="row align-items-center">
                       <div class="col-auto">
@@ -67,7 +67,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <th>정정 사유</th>
+                  <th>정정 사유 <em class="point-red">*</em></th>
                   <td colspan="5">
                     <textarea id="crctReason" class="form-control" 
                               v-model="crctData.crctReason" :readonly="isDetail"
@@ -104,7 +104,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <th>결재자</th>
+                  <th>결재자 <em class="point-red">*</em></th>
                   <td colspan="5">
                     <div class="row align-items-center">
                       <div class="col-auto" style="padding-right: 0;">
