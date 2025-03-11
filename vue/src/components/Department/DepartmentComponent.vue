@@ -8,14 +8,17 @@
                :style="{ opacity: node.children && node.children.length > 0 ? 1 : 0.3 }">
             </i>
          </template>
-         
+
          <template #default="slotProps">
-            <VueDraggableNext :list="departmentTree.children || []" 
-               :group="'department'"
-               :componentData="{ tag: 'div' }"
-               @add="onDrop" 
-               :data-department-id="slotProps.node.key" >
-               <div class="node-buttons d-flex justify-content-between align-items-center">
+            <div :data-department-cd="slotProps.node.key">
+               <VueDraggableNext
+                  :list="departmentTree.children || []"
+                  :group="'department'"
+                  :componentData="{ tag: 'div' }"
+                  :data-department-id="slotProps.node.key"
+                  @add="onDrop"
+               >
+                  <div class="node-buttons d-flex justify-content-between align-items-center">
                      <span class="p-treenode-label" @click="departmentToMemList(slotProps.node)"  :data-department-cd="slotProps.node.key">
                         {{ slotProps.node.label }}
                      </span>
@@ -23,8 +26,9 @@
                      <button class="btn-toggle" @click.stop="btnDepartmentMenuOpen($event, slotProps.node)">
                         <i class="fa-solid fa-ellipsis-vertical"></i>
                      </button>
-               </div>
-            </VueDraggableNext>
+                  </div>
+               </VueDraggableNext>
+            </div>
          </template>
       </Tree>
 
@@ -61,20 +65,17 @@
       components: { VueDraggableNext }
    });
 
-   const onDrop = (event) => {
-      const droppedElement = event.to.querySelector("[data-department-cd]");
+   // const onDrop = (event) => {
+   //    const droppedElement = event.to.querySelector("[data-department-cd]");
 
-      if (!droppedElement) {
-         console.error("data-department-cd 값을 가진 요소를 찾을 수 없습니다.");
-         return;
-      }
+   //    if (!droppedElement) {
+   //       console.error("data-department-cd 값을 가진 요소를 찾을 수 없습니다.");
+   //       return;
+   //    }
 
-      const deptCd = droppedElement.getAttribute("data-department-cd");
-
-      console.log("드롭된 프로젝트 ID: ", deptCd);
-   };
-
-
+   //    const deptCd = droppedElement.getAttribute("data-department-cd");
+   //    console.log("드롭된 프로젝트 ID: ", deptCd);
+   // };
 
    // 부모에게 등록, 수정, 삭제 이벤트 전달
    const emit = defineEmits([
@@ -82,7 +83,33 @@
          "btnDepartmentAdd",
          "btnDepartmentModify",
          "btnDepartmentRemove",
+         "memberDropped"
       ]);
+
+   const onDrop = (event) => {
+      const memberData = event.item._underlying_vm_;
+
+      // 가장 가까운 data-department-cd 가진 상위 div 찾기
+      const droppedElement = event.to.closest('div[data-department-cd]');
+
+      if (!droppedElement) {
+         console.error("🚨 부서 코드를 찾을 수 없습니다.");
+         return;
+      }
+
+      const deptCd = droppedElement.getAttribute("data-department-cd");
+      const deptNm = droppedElement.querySelector(".p-treenode-label")?.innerText.trim() || '';
+
+      emit("memberDropped", {
+         dept: { deptCd, deptNm },
+         member: {
+            esntlId: memberData.esntlId,
+            mberNm: memberData.mberNm,
+            mberId: memberData.mberId,
+         }
+      });
+   };
+
 
    const treeData = ref([]); // 초기화
    const treeKey = ref(0);   // 강제 리렌더링을 위한 key 값
@@ -229,6 +256,7 @@
    .p-treenode-label {
       width: 100%;
       font-size: 10px;
+      cursor: pointer;
    }
 
    .p-overlaypanel {

@@ -57,7 +57,7 @@ public class MemberController {
 
 		return map;
 	}
-	
+	// 회원 정보 수정
 	@PutMapping("")
 	public Map<String, Object> memberModify(@RequestBody UserDTO dto) {
 		log.info("✅ 회원정보 수정 => {}", dto.toString());
@@ -75,9 +75,9 @@ public class MemberController {
 	
 	// 부서별 사원 조회
 	@GetMapping("/deptToMem/{deptCd}")
-	public List<UserDTO> memberToDepartmentList(@PathVariable("deptCd") String deptCd) {
+	public Map<String, Object> memberToDepartmentList(@PathVariable("deptCd") String deptCd) {
 		log.info("✅ 회원정보 수정 => {}", deptCd);
 		
-		return memberService.memberToDepartmentSelect(deptCd);
+		return memberService.memberToDepartmentSelectAll(deptCd);
 	}
 }

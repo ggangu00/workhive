@@ -25,7 +25,7 @@
                         @btnDepartmentModify="btnDepartmentModify"
                         @btnDepartmentAdd="btnDepartmentAdd"
                         @departmentToMemList="departmentToMemList"
-                        @memberDropped="handleMemberDropped"
+                        @memberDropped="memberDropped"
                      />
                   </div>
 
@@ -55,41 +55,69 @@
                            <tr>
                               <th>
                                  <div class="form-check">
-                                    <input class="form-check-input" type="checkbox">
+                                    <input
+                                       class="form-check-input"
+                                       type="checkbox"
+                                       :checked="allChecked"
+                                       @change="memberAllCheckToggle"
+                                    />
                                  </div>
                               </th>
                               <th>사번</th>
                               <th>이름</th>
+                              <th>부서장</th>
                               <th>직급</th>
                               <th>접근 권한</th>
                               <th>메뉴 권한</th>
                            </tr>
                         </thead>
                         <!--사원목록-->
-                        <VueDraggableNext 
+                        <VueDraggableNext
                            v-if="members.length > 0"
                            tag="tbody"
                            :list="members"
                            :group="{ name: 'department', pull: 'clone', put: false }"
                            :sort="false"
                            :clone="(member) => ({ ...member })"
-                           @start="onDragStart"
+                           ghost-class="ghost-drag"
+                           @start="memberDragStart"
                            :componentData="{ tag: 'tbody' }"
                         >
                            <tr v-for="member in members" :key="member.id">
+                              <!-- 체크여부 -->
                               <td>
                                  <div class="form-check">
-                                    <input class="form-check-input" type="checkbox">
+                                    <input
+                                       class="form-check-input"
+                                       type="checkbox"
+                                       v-model="member.checked"
+                                       @change="memberSingleCheckToggle"
+                                    />
                                  </div>
                               </td>
-                              <td>{{ member.id }}</td>
+                              <!-- 사번코드 -->
+                              <td>{{ member.esntlId }}</td>
+                              <!-- 회원 정보 -->
                               <td>
-                                 <div class="profile-text">
-                                    <span class="team-label">개발팀</span>
-                                    <span class="user-name">{{ member.name }}</span>
+                                 <div class="profile-text" align="left">
+                                    <span class="team-label" style="text-align:left">{{ member.deptNm }}</span>
+                                    <span class="user-name">{{ member.mberNm }} ({{ member.mberId}})</span>
                                  </div>
                               </td>
-                              <td>{{ member.rank }}</td>
+                              <!-- 부서장 -->
+                              <td class="text-center">
+                                 <div class="form-check form-switch d-flex justify-content-center">
+                                    <input
+                                       class="form-check-input"
+                                       type="checkbox"
+                                       :checked="member.isManager === 1"
+                                       @change="toggleManager(member)"
+                                    >
+                                    <i v-if="member.isManager === 1" class="fa-solid fa-crown master mlp5"></i>
+                                 </div>
+                              </td>
+                              <!-- 직급 -->
+                              <td>{{ member.gradeNm || '-' }}</td>
                               <td>
                                  <select class="form-select w-70">
                                     <option value="">선택하세요</option>
@@ -184,20 +212,42 @@
    const parentCd = ref(""); // 부모 부서 코드 저장
    const depth = ref(0); // DEPTH 저장 (기본값 0)
 
-   // ================================================== 드래그 드롭 관련 함수 ==================================================
+// ================================================== 드래그 드롭 관련 함수 ==================================================
    defineComponent({
       components: { VueDraggableNext }
    });
 
-   //드래그 시작 시 호출
-   const draggedMem = ref([]);
-   const onDragStart = (event) => {
-      draggedMem.value = members.value[event.oldIndex]; //선택한 사원 정보 담기
+   const selectedMembers = ref([]);
+
+   // ✅ 드래그 시작 시 실행 → `selectedMembers`에 현재 체크된 멤버들 저장
+   const memberDragStart = (event) => {
+      selectedMembers.value = members.value.filter(member => member.checked === true); // ✅ 체크된 멤버만 저장
+
+      if (selectedMembers.value.length === 0) {
+         // 선택된 멤버가 없으면, 드래그한 멤버 한 명만 추가
+         selectedMembers.value = [members.value[event.oldIndex]];
+      }
+
+      console.log("드래그 시작! 선택된 멤버:", selectedMembers.value);
    };
 
-   const handleMemberDropped = (member) => {
-      console.log("부서에 추가된 멤버:", member);
-   }
+   const memberDropped = async (event) => {
+      const { dept } = event; // ✅ 올바르게 구조 분해 할당
+      const { deptCd, deptNm } = dept; // ✅ 부서 정보 가져오기
+
+      if (!deptCd || !deptNm) {
+         Swal.fire({
+            icon: 'error',
+            title: "부서 정보가 없습니다!",
+         });
+         return;
+      }
+
+      console.log("✅ 멤버 이동 처리:", { deptCd, deptNm, selectedMembers: selectedMembers.value });
+
+      // ✅ 선택된 멤버들만 부서 이동 처리
+      await departmentToMemModify(deptCd, selectedMembers.value); // ✅ 체크된 멤버들 한꺼번에 이동
+   };
 
 // ================================================== 생명주기 함수 ==================================================
    // 컴포넌트가 마운트되기 전에 권한 및 메뉴 목록 조회 실행
@@ -208,6 +258,7 @@
 
       // 컴포넌트 마운트 시 이벤트 리스너 등록
    onMounted(() => {
+      departmentToMemList({ key: 0 });
       document.addEventListener('keydown', modalClose);        // ESC 키 감지 이벤트 등록
    });
 
@@ -215,6 +266,27 @@
    onBeforeUnmount(() => {
       document.removeEventListener('keydown', modalClose);     // ESC 이벤트 해제
    });
+
+// ==================================================  체크박스 이벤트 함수 ==================================================
+   const allChecked = ref(false);
+
+   // ✅ 전체 체크박스 클릭 시 모든 멤버 선택/해제
+   const memberAllCheckToggle = () => {
+      allChecked.value = !allChecked.value; // ✅ 전체 선택 여부 변경
+      members.value.forEach(member => (member.checked = allChecked.value));
+   };
+
+   // ✅ 개별 체크박스 상태 변경 시 전체 체크박스 상태 갱신
+   const memberSingleCheckToggle = () => {
+      const checkedCount = members.value.filter(member => member.checked).length;
+
+      // ✅ 하나라도 체크 해제되면 전체 체크 해제
+      if (checkedCount === members.value.length) {
+         allChecked.value = true; // ✅ 모두 체크되었을 때 전체 선택
+      } else {
+         allChecked.value = false; // ✅ 하나라도 해제되면 전체 체크 해제
+      }
+   };
 
 // ================================================== 모달 이벤트 ==================================================
    // 모달 타이틀 동적 변경
@@ -346,6 +418,64 @@
       });
       // 부서 삭제 로직 구현
    };
+// ================================================== 부서별 유저 정보 ==================================================
+   const members = ref([]);
+   // 부서별 멤버조회
+   const departmentToMemList = async (node) => {
+      try {
+         const response = await axios.get(`/api/member/deptToMem/${node.key}`);
+
+         members.value = response.data.members.map(member => ({
+            ...member,
+            checked: false // 개별 선택 상태 기본 false
+         }));
+         allChecked.value = false; // 부서 변경 시 초기화
+
+         console.log("부서별 멤버 결과값 => ", response.data)
+
+      } catch (err) {
+         members.value = []
+         Swal.fire({
+            icon: "error",
+            title: "API 조회 실패",
+            text: `Error: ${err.response?.data?.error || err.message}`
+         })
+      }
+   }
+
+   const departmentToMemModify = async (deptCd, selectedUsers) => {
+      const userList = selectedUsers.map(user => ({
+         mberId: user.mberId,
+         deptCd: deptCd
+      }));
+
+      try {
+         const response = await axios.put('/api/department/member', {
+            deptCd: deptCd,        // 이동할 부서 코드
+            deptUserList: userList // ✅ 선택된 사용자 리스트 추가
+         });
+
+         console.log(response.data);
+         if (response.data.result > 0) {
+            await Swal.fire({
+               icon: 'success',
+               text: `"${selectedUsers.map(user => user.mberId).join(', ')}"님의 부서가 이동되었습니다.`,
+            });
+
+            // ✅ 변경된 부서와 멤버 목록 즉시 재조회
+            await departmentGetList();
+            await departmentToMemList({ key: deptCd });
+         }
+
+      } catch (error) {
+         Swal.fire({
+            icon: 'error',
+            title: '부서 이동 실패',
+            text: error.response?.data?.error || error.message
+         });
+      }
+   };
+
 
 // ================================================== 부서관련 axios ==================================================
    const departmentTree = ref([]);
@@ -357,23 +487,6 @@
 
          const tree = buildPrimeVueTree(response.data);
          departmentTree.value = tree;
-
-      } catch (err) {
-         departmentTree.value = []
-         Swal.fire({
-            icon: "error",
-            title: "API 조회 실패",
-            text: `Error: ${err.response?.data?.error || err.message}`
-         })
-      }
-   }
-
-   // 부서별 멤버조회
-   const departmentToMemList = async (node) => {
-      try {
-         const response = await axios.get(`/api/member/deptToMem/${node.key}`);
-
-         console.log("부서별 멤버 결과값 => ", response.data)
 
       } catch (err) {
          departmentTree.value = []
@@ -520,12 +633,6 @@
       return tree;
    };
 
-
-   const members = ref([
-      { id: "2025001", name: "김민진", rank: "부장" },
-      { id: "2025002", name: "박주현", rank: "부장" },
-   ]);
-
 </script>
 
 <style lang="scss" scoped>
@@ -536,6 +643,7 @@
       cursor: not-allowed !important; /* 🔹 입력 불가 커서 */
       pointer-events: auto !important; /* 🔹 클릭 가능하도록 변경 */
    }
+
    /* .menu-container {
       display: flex;
       justify-content: space-between;
