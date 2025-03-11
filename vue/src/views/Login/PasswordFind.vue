@@ -115,7 +115,7 @@
       } catch (err) {
          Swal.fire({
             icon: "error",
-            title: `${err.response.data.code}`,
+            title: `로그인 실패`,
             text:  err.response.data.message
          });
       }

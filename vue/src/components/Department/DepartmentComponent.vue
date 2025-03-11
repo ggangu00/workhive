@@ -23,7 +23,7 @@
                         {{ slotProps.node.label }}
                      </span>
 
-                     <button class="btn-toggle" @click.stop="btnDepartmentMenuOpen($event, slotProps.node)">
+                     <button v-show="isMenuToggle" class="btn-toggle" @click.stop="btnDepartmentMenuOpen($event, slotProps.node)">
                         <i class="fa-solid fa-ellipsis-vertical"></i>
                      </button>
                   </div>
@@ -58,24 +58,15 @@
       departmentTree: {
          type: Array,
          default: () => []
+      },
+      isMenuToggle : {
+         type: Boolean
       }
    });
 
    defineComponent({
       components: { VueDraggableNext }
    });
-
-   // const onDrop = (event) => {
-   //    const droppedElement = event.to.querySelector("[data-department-cd]");
-
-   //    if (!droppedElement) {
-   //       console.error("data-department-cd 값을 가진 요소를 찾을 수 없습니다.");
-   //       return;
-   //    }
-
-   //    const deptCd = droppedElement.getAttribute("data-department-cd");
-   //    console.log("드롭된 프로젝트 ID: ", deptCd);
-   // };
 
    // 부모에게 등록, 수정, 삭제 이벤트 전달
    const emit = defineEmits([
@@ -93,7 +84,6 @@
       const droppedElement = event.to.closest('div[data-department-cd]');
 
       if (!droppedElement) {
-         console.error("🚨 부서 코드를 찾을 수 없습니다.");
          return;
       }
 

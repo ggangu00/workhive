@@ -18,7 +18,7 @@
                                 </span>
                             </div>
                             <div class="col-4 m-group"><!-- 조직 트리 -->
-                                <DepartmentComponent v-if="isTreeLoaded" :departmentTree="departmentTree" />
+                                <DepartmentComponent v-if="isTreeLoaded" :departmentTree="departmentTree" :isMenuToggle="false" />
                             </div>
 
                             <!-- 리스트(사원목록) -->
