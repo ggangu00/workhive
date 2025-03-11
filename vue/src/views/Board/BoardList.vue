@@ -48,7 +48,7 @@ const router = useRouter();
 const gridInstance = ref(null);
 const BoardList = ref([]);
 
-// 📌 게시판 목록 조회 API
+//  게시판 목록 조회 API
 const BoardGetList = async () => {
   try {
     const { data } = await axios.get('/api/board/boardList');
@@ -58,15 +58,15 @@ const BoardGetList = async () => {
     }));
     gridInstance.value?.resetData(BoardList.value);
   } catch (error) {
-    console.error('게시글 목록 불러오는 중 오류 발생:', error);
+    alert("게시글 목록을 불러오는 데 실패했습니다. 다시 시도해주세요.");
     BoardList.value = [];
   }
 };
 
 
-// 📌 게시판 상세 페이지 이동 (bbsNm, bbsIntrcn 추가)
-const goToBoardInfo = (bbsId, bbsNm, bbsIntrcn) => {
-  console.log("📌 이동할 게시판 정보:", { bbsId, bbsNm, bbsIntrcn });
+
+//  게시판 상세 페이지 이동 (bbsNm, bbsIntrcn 추가)
+const goToBoardInfo = (bbsId, bbsNm, bbsIntrcn) => { 
 
   if (!bbsId) {
     alert("게시판 정보를 찾을 수 없습니다.");
@@ -84,7 +84,7 @@ const goToBoardInfo = (bbsId, bbsNm, bbsIntrcn) => {
 };
 
 
-// 📌 Grid 초기화
+//  Grid 초기화
 const initializeGrid = () => {
   destroyGrid();
 
@@ -110,8 +110,8 @@ const initializeGrid = () => {
   align: 'left',
   minWidth: 200,
   formatter: ({ row }) => {
-    const bbsId = row.bbsId ? row.bbsId : '';  // ✅ `undefined` 방지
-    const bbsNm = row.bbsNm ? row.bbsNm : '제목 없음';  // ✅ `bbsNm` 기본값 설정
+    const bbsId = row.bbsId ? row.bbsId : '';  //  `undefined` 방지
+    const bbsNm = row.bbsNm ? row.bbsNm : '제목 없음';  //  `bbsNm` 기본값 설정
     return `<a href="javascript:void(0);" class="bbs-link" data-id="${bbsId}">${bbsNm}</a>`;
         },
       },
@@ -132,20 +132,20 @@ const initializeGrid = () => {
     ],
   });
 
-  // 📌 게시판명 클릭 이벤트 리스너 추가
+  //  게시판명 클릭 이벤트 리스너 추가
   gridInstance.value.on('click', (event) => {
 
 
-  if (event.columnName === "bbsNm") {
-    const rowKey = event.rowKey;
-    const selectedRow = gridInstance.value.getRow(rowKey);
+    if (event.columnName === "bbsNm") {
+  const rowKey = event.rowKey;
+  const selectedRow = gridInstance.value.getRow(rowKey);
 
-    if (!selectedRow || !selectedRow.bbsId) {
-      console.error("⚠️ bbsId를 찾을 수 없음!", selectedRow);
-      return;
-    }
+  if (!selectedRow || !selectedRow.bbsId) {
+    alert("게시판 정보를 찾을 수 없습니다.");
+    return;
+  }
 
-    // 📌 `bbsNm`, `bbsIntrcn` 추가하여 상세 페이지로 이동
+    //  `bbsNm`, `bbsIntrcn` 추가하여 상세 페이지로 이동
     goToBoardInfo(selectedRow.bbsId, selectedRow.bbsNm, selectedRow.bbsIntrcn);
   }
 });
@@ -155,7 +155,7 @@ const initializeGrid = () => {
   gridInstance.value.refreshLayout();
 };
 
-// 📌 Grid 제거 함수
+//  Grid 제거 함수
 const destroyGrid = () => {
   if (gridInstance.value) {
     gridInstance.value.destroy();
@@ -163,7 +163,7 @@ const destroyGrid = () => {
   }
 };
 
-// 📌 버튼 렌더러 클래스
+//  버튼 렌더러 클래스
 class BtnRenderer {
   constructor(props) {
     const el = document.createElement('div');
@@ -173,7 +173,7 @@ class BtnRenderer {
     el.addEventListener('click', () => {
       const rowKey = props.rowKey;
       if (rowKey === undefined) {
-        console.error('BtnRenderer: rowKey를 가져올 수 없습니다.', props);
+        alert("선택된 게시글을 찾을 수 없습니다.");
         return;
       }
       udtEvent(rowKey);
@@ -187,7 +187,8 @@ class BtnRenderer {
   }
 }
 
-// 📌 게시판 수정 페이지 이동
+
+//  게시판 수정 페이지 이동
 const udtEvent = (rowKey) => {
   const selectedRow = gridInstance.value?.getRow(rowKey);
 
@@ -207,13 +208,13 @@ const udtEvent = (rowKey) => {
   });
 };
 
-// 📌 컴포넌트 마운트 시 초기화
+//  컴포넌트 마운트 시 초기화
 onMounted(async () => {
   await BoardGetList();
   initializeGrid();
 });
 
-// 📌 페이지 이동 시 Grid 제거
+//  페이지 이동 시 Grid 제거
 onBeforeUnmount(() => {
   destroyGrid();
 });

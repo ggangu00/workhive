@@ -4,8 +4,7 @@
       <div>
         <div class="card">
           <div class="card-body">
-            <h4 class="card-title float-left mt-1">게시판 상세화면</h4>
-            <button class="btn btn-secondary btn-fill float-right" @click="resetForm">초기화</button>
+            <h4 class="card-title float-left mt-1">게시판 상세화면</h4>           
           </div>
         </div>
       </div>
@@ -44,18 +43,18 @@ import { useRoute } from 'vue-router';
 
 const route = useRoute();
 
-// 📌 게시판 데이터 변수
+//  게시판 데이터 변수
 const formValues = ref({
 bbsId: '',
 bbsNm: '',
 bbsIntrcn: '',
 });
 
-// 📌 응답 메시지 변수
+//  응답 메시지 변수
 const responseMessage = ref('');
 const isSuccess = ref(false);
 
-// 📌 쿼리에서 데이터 적용
+//  쿼리에서 데이터 적용
 const setFormValuesFromQuery = () => {
 formValues.value.bbsId = route.query.bbsId ?? '';
 formValues.value.bbsNm = route.query.bbsNm && route.query.bbsNm.trim() !== '' ? route.query.bbsNm : '';
@@ -66,36 +65,32 @@ if (!formValues.value.bbsNm || !formValues.value.bbsIntrcn) {
 }
 };
 
-// 📌 게시판 상세 API 요청
+//  게시판 상세 API 요청
 const fetchBoardDetail = async () => {
-if (!formValues.value.bbsId) {
-  return;
-}
-
-try {
-  const { data } = await axios.get(`/api/board/boardDetail`, {
-    params: { bbsId: formValues.value.bbsId },
-  });
-
-  if (data) {
-    formValues.value.bbsNm = data.bbsNm ?? '제목 없음';
-    formValues.value.bbsIntrcn = data.bbsIntrcn ?? '내용 없음';
+  if (!formValues.value.bbsId) {
+    return;
   }
-} catch (error) {
-  console.error("❌ 게시판 상세 불러오기 실패:", error);
-}
+
+  try {
+    const { data } = await axios.get(`/api/board/boardDetail`, {
+      params: { bbsId: formValues.value.bbsId },
+    });
+
+    if (data) {
+      formValues.value.bbsNm = data.bbsNm ?? '제목 없음';
+      formValues.value.bbsIntrcn = data.bbsIntrcn ?? '내용 없음';
+    }
+  } catch (error) {
+    responseMessage.value = ""; // 오류 메시지 변수에 저장
+    isSuccess.value = false; // 실패 상태 설정
+  }
 };
 
-// 📌 폼 초기화
-const resetForm = () => {
-formValues.value = {
-  bbsId: '',
-  bbsNm: '',
-  bbsIntrcn: '',
-};
-};
 
-// ✅ 페이지 로드 시 쿼리 데이터 적용 후 API 요청
+
+
+
+//  페이지 로드 시 쿼리 데이터 적용 후 API 요청
 onMounted(() => {
 setFormValuesFromQuery();
 fetchBoardDetail();
@@ -103,7 +98,7 @@ fetchBoardDetail();
 </script>
 
 <style scoped>
-/* 🔹 조회 화면 스타일 */
+/*  조회 화면 스타일 */
 .form-control-plaintext {
 padding: 10px;
 border: 1px solid #ddd;
@@ -112,7 +107,7 @@ background-color: #f8f9fa;
 min-height: 40px;
 }
 
-/* 🔹 게시판 소개를 위한 스타일 (높이 조정) */
+/*  게시판 소개를 위한 스타일 (높이 조정) */
 .textarea-style {
 min-height: 600px; /* 기본 높이 */
 max-height: 300px; /* 최대 높이 제한 */

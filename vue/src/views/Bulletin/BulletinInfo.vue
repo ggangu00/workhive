@@ -162,7 +162,7 @@ const router = useRouter();
 const nttId = route.params.nttId
 const bbsId = route.params.bbsId
 
-const bbsNm = ref(''); // ✅ bbsNm을 ref로 선언
+const bbsNm = ref(''); //  bbsNm을 ref로 선언
 
 const formatDate = (date) => {
   if (!date) return '-'; // 날짜가 없으면 대체 텍스트 출력
@@ -200,53 +200,48 @@ const fetchBulletinInfo = async () => {
   try {
     const response = await axios.get(`/api/bulletin/bulletinInfo?nttId=${nttId}&bbsId=${bbsId}`);
 
-    console.log("게시글 상세 정보:", response.data);
-
     // 게시글 정보 저장
     if (response.data.result) {
       bulletinInfo.value = response.data.result;
     }
 
-    // ✅ boardMasterVO 객체에서 bbsNm 값 가져오기
+    //  boardMasterVO 객체에서 bbsNm 값 가져오기
     if (response.data.boardMasterVO && response.data.boardMasterVO.bbsNm) {
       bbsNm.value = response.data.boardMasterVO.bbsNm; // ref로 선언된 bbsNm에 값 저장
-      console.log("bbsNm 값:", bbsNm.value);
     } else {
-      console.warn("bbsNm 값이 없습니다.");
+      alert("게시판 이름을 찾을 수 없습니다.");
     }
 
   } catch (error) {
-    console.error('게시글 상세 조회 오류:', error.response || error);
+    alert("게시글 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.");
   }
 };
+
 
 
 
 
 // 댓글 조회
-const fetchComments = async () => {
-  console.log(`GET 요청: /api/comment/commentList?bbsId=${bbsId}&nttId=${nttId}`);
-  try {
-    const response = await axios.get(`/api/comment/commentList?bbsId=${bbsId}&nttId=${nttId}`);
+// const fetchComments = async () => {
+//   try {
+//     const response = await axios.get(`/api/comment/commentList?bbsId=${bbsId}&nttId=${nttId}`);
 
-    // 응답 데이터 구조 확인
-    console.log('API 응답:', response.data);
+//     // `resultList`가 존재하고 배열인지 확인
+//     if (response.data && Array.isArray(response.data.resultList)) {
+//       comments.value = response.data.resultList;  // 댓글 목록을 배열로 저장
+//     } else {
+//       alert("댓글 목록을 불러오는 데 문제가 발생했습니다.");
+//       comments.value = [];  // 만약 배열이 아니면 빈 배열로 초기화
+//     }
+//   } catch (error) {
+//     alert("댓글을 불러오는 데 실패했습니다. 다시 시도해주세요.");
+//   }
+// };
 
-    // `resultList`가 존재하고 배열인지 확인
-    if (response.data && Array.isArray(response.data.resultList)) {
-      comments.value = response.data.resultList;  // 댓글 목록을 배열로 저장
-    } else {
-      console.error('댓글 목록이 배열이 아닙니다:', response.data);
-      comments.value = [];  // 만약 배열이 아니면 빈 배열로 초기화
-    }
-  } catch (error) {
-    console.error('댓글 조회 오류:', error);
-  }
-};
 
 
 // 댓글 목록
-const comments = ref([]);
+// const comments = ref([]);
 
 
 // 댓글 추가
@@ -264,7 +259,7 @@ const comments = ref([]);
 //       wrterNm: newComment.value.wrterNm,
 //     });
 
-//     console.log("✅ 댓글 추가 응답:", response.data);
+//     console.log(" 댓글 추가 응답:", response.data);
 
 //     if (response.data.status === "success") {
 //       // 댓글 목록에 최신 댓글을 맨 앞에 추가
@@ -330,7 +325,7 @@ const comments = ref([]);
 //   }
 // };
 
-// 📌 게시글 삭제
+//  게시글 삭제
 // const deleteBulletin = async () => {
 //   if (!confirm('게시글을 삭제하시겠습니까?')) return;
 
@@ -339,7 +334,7 @@ const comments = ref([]);
 
 //     alert('게시글이 삭제되었습니다.');
 
-//     // 📌 삭제 후, 해당 게시판 목록으로 이동
+//     //  삭제 후, 해당 게시판 목록으로 이동
 //     router.push({ path: `/bulletin/bulletinList/${bbsId}` });
 //   } catch (error) {
 //     console.error('게시글 삭제 오류:', error.response || error);
@@ -365,7 +360,7 @@ const goToBulletinList = () => {
 // 페이지 로드 시 데이터 가져오기
 onMounted(() => {
   fetchBulletinInfo();
-  fetchComments();
+  //fetchComments();
 });
 </script>
 
