@@ -68,7 +68,7 @@
 			#{title},
 			#{content},
 			#{state},
-			#{todoDt}
+			TO_DATE(#{todoDt}, 'YYYY-MM-DD')
 		)
 		
 	</insert>
