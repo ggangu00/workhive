@@ -2,7 +2,7 @@
   <!-- 모달 컴포넌트 -->
   <Modal
     :isShowModal="props.isShowModal"
-    :modalTitle="'결재자 선택'"
+    :modalTitle="'사원 선택'"
     @click.self="modalClose"
   >
     <template v-slot:body>
