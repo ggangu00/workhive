@@ -101,6 +101,7 @@ const initEditor = () => {
 const fetchBulletinInfo = async () => {
   try {
     const response = await axios.get(`/api/bulletin/bulletinInfo?nttId=${nttId.value}&bbsId=${bbsId.value}`);
+    
     if (response.data && response.data.result) {
       const postData = response.data.result;
 
@@ -112,15 +113,16 @@ const fetchBulletinInfo = async () => {
       noticeAt.value = postData.noticeAt === 'Y';
 
       if (editor) {
-        editor.setHTML(nttCn.value); // Set the editor content
+        editor.setHTML(nttCn.value); // 에디터 내용 설정
       }
 
     } else {
+      alert("게시글을 찾을 수 없습니다.");
       responseMessage.value = "게시글을 찾을 수 없습니다.";
       isSuccess.value = false;
     }
   } catch (error) {
-    console.error('게시글 데이터 불러오기 오류:', error);
+    alert("게시글을 불러오는 데 오류가 발생했습니다. 다시 시도해주세요.");
     responseMessage.value = "게시글을 불러오는 데 오류가 발생했습니다.";
     isSuccess.value = false;
   }
