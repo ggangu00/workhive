@@ -2,7 +2,7 @@
   <div class="content">
     <div class="container-fluid">
       <card>
-        <h4 class="card-title float-left">프로젝트 등록</h4>
+        <h4 class="card-title float-left mt-1">프로젝트 등록</h4>
         <button class="btn btn-sm btn-fill float-right" :class="isUpdated ? 'btn-success' : 'btn-primary'"
           @click="projectAdd">{{ txt }}</button>
         <button class="btn btn-secondary btn-sm btn-fill float-right" @click="formReset">초기화</button>

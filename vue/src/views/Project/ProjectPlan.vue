@@ -2,7 +2,7 @@
   <div class="content" @keydown.esc="modalClose">
     <div class="container-fluid schedule-container">
       <Card>
-        <h4 class="card-title float-left">프로젝트 일정관리</h4>
+        <h4 class="card-title float-left mt-1">프로젝트 일정관리</h4>
       </Card>
 
       <div class="card border-primary">

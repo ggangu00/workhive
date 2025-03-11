@@ -3,7 +3,7 @@
         <div class="container-fluid">
             <card>
                 <h4 class="card-title float-left mt-1">회의 조회</h4>
-                <button class="btn btn-primary btn-sm btn-fill float-right" onclick="location.href ='/meet/add'">회의
+                <button class="btn btn-primary btn-sm btn-fill float-right" @click="btnPageAdd()">회의
                     등록</button>
             </card>
             <card>
@@ -203,7 +203,7 @@ let allCol = [
     { header: "회의주제", name: "mtgNm", align: "center", renderer: BtnRendererModal, sortable: true },
     { header: "회의일시", name: "mtgDe", align: "center", formatter: ({ row }) => `${dateFormat(row.mtgDe)} (${dateGetDay(row.mtgDe)}) ${row.mtgBeginTm} ~ ${row.mtgEndTm}` },
     { header: "회의실", name: "mtgPlaceNm", align: "center" },
-    { header: "참여자", name: "memArr", align: "left", renderer: BtnRendererMember },
+    { header: "참여자", name: "memArr", align: "center", renderer: BtnRendererMember },
     { header: "관리", align: "center", renderer: BtnRendererSetting },
 ];
 
@@ -261,6 +261,10 @@ const modalClose = (e) => { //회의 정보 모달 닫기
 const router = useRouter();
 const btnPageMove = (code) => { //수정/일정관리 페이지로
     router.push({ path: `/meet/add`, query: { mtgId: code } });
+}
+
+const btnPageAdd = () => {
+  router.push({ path: `/meet/add`, query: { menuCd: 19 } });
 }
 
 // 회의 삭제 버튼

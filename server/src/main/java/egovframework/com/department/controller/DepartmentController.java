@@ -119,4 +119,21 @@ public class DepartmentController {
         
         return deptService.deptTreeSelectAll(mberDeptCd);
 	}
+	
+	// 부서 사원 수정
+	@PutMapping("/member")
+	public Map<String, Object> departmentToMemberModify(@RequestBody DepartmentDTO dto) {
+	    log.info("✅ 부서 회원 수정 => {}", dto.toString());
+
+	    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    CustomerUser user = (CustomerUser) auth.getPrincipal();
+	    dto.setUpdateId(user.getUserDTO().getMberId()); // ✅ 현재 로그인한 사용자 ID 설정
+
+	    int result = deptService.departmentToMemberUpdate(dto);
+
+	    Map<String, Object> map = new HashMap<>();
+	    map.put("result", result);
+
+	    return map;
+	}
 }

@@ -2,6 +2,7 @@ package egovframework.com.department.service;
 
 import java.util.List;
 
+
 public interface DepartmantService {
 	
 	// 부서 전체조회
@@ -21,4 +22,6 @@ public interface DepartmantService {
 
 	// 부서 트리 조회
 	public List<DepartmentDTO> deptTreeSelectAll(String deptCd);
+
+	public int departmentToMemberUpdate(DepartmentDTO dto);
 }

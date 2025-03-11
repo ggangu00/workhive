@@ -62,7 +62,7 @@
 		     FN_GET_GRADENM(grade_cd) AS grade_nm,
 			 fn_get_deptNm(mber_id) AS dept_nm,
 		     dept_cd,
-		     (select count(*) from PROJECT p join project_mem pm on p.pr_cd=pm.pr_cd where pm.mber_id=comtngnrlmber.mber_id and del_yn='N' and p.state='A03') as project_cnt
+		     fn_get_memprojectcnt(mber_id) as project_cnt
       	FROM   
 	         comtngnrlmber
       	WHERE
@@ -85,6 +85,7 @@
 	        middle_telno = #{middleTelno},
 	        end_telno = #{endTelno},
 	        mbtlnum = #{mbtlnum},
+	        dept_cd = #{deptCd},
 	        update_dt = SYSDATE,
 	        update_id = #{mberId}
 		WHERE 
@@ -133,9 +134,22 @@
 	    	mber_id = #{mberId}
     </update>
     
-    <select id="memberToDepartmentSelect" resultType="userDTO">
+    <select id="memberToDepartmentSelectAll" resultType="userDTO">
    	   SELECT 
-          * 
+          mber_id,
+ 	      ihidnum,
+	      mber_nm,
+	      mber_sttus,
+	      group_id, 
+	      sexdstn_code, 
+	      esntl_id,
+	      resp_cd,
+	      fn_get_respnm(resp_cd) AS resp_nm,
+	      grade_cd,
+	      FN_GET_GRADENM(grade_cd) AS grade_nm,
+		  fn_get_deptNm(mber_id) AS dept_nm,
+	      dept_cd,
+	      fn_get_memprojectcnt(mber_id) as project_cnt
        FROM 
           comtngnrlmber
 	   <where>
@@ -145,5 +159,13 @@
 	   </where>
     </select>
     
+    <update id="updateMemberDepartment">
+	    UPDATE comtngnrlmber
+	    SET dept_cd = #{deptCd}, update_id = #{updateId}, update_dt = SYSDATE
+	    WHERE mber_id IN
+	    <foreach item="user" collection="deptUserList" open="(" separator="," close=")">
+	        #{user.mberId}
+	    </foreach>
+	</update>
 </mapper>
 
