@@ -62,7 +62,7 @@
 		     FN_GET_GRADENM(grade_cd) AS grade_nm,
 			 fn_get_deptNm(mber_id) AS dept_nm,
 		     dept_cd,
-		     (select count(*) from PROJECT p join project_mem pm on p.pr_cd=pm.pr_cd where pm.mber_id=comtngnrlmber.mber_id and del_yn='N' and p.state='A03') as project_cnt
+		     fn_get_memprojectcnt(mber_id) as project_cnt
       	FROM   
 	         comtngnrlmber
       	WHERE
@@ -148,7 +148,8 @@
 	      grade_cd,
 	      FN_GET_GRADENM(grade_cd) AS grade_nm,
 		  fn_get_deptNm(mber_id) AS dept_nm,
-	      dept_cd
+	      dept_cd,
+	      fn_get_memprojectcnt(mber_id) as project_cnt
        FROM 
           comtngnrlmber
 	   <where>

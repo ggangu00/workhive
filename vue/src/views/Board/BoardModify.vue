@@ -57,11 +57,9 @@ const responseMessage = ref('');
 const isSuccess = ref(false);
 
 const setFormValuesFromQuery = () => {
-  console.log("route.query 데이터:", route.query);
   formValues.value.bbsId = route.query.bbsId ?? '';
   formValues.value.bbsNm = route.query.bbsNm ?? '';
-  formValues.value.bbsIntrcn = route.query.bbsIntrcn ?? '';
-  console.log("업데이트된 formValues:", formValues.value);
+  formValues.value.bbsIntrcn = route.query.bbsIntrcn ?? ''; 
 };
 
 // 게시판 수정 (FormData 방식)

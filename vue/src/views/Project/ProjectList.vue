@@ -2,9 +2,8 @@
   <div class="content" @keydown.esc="modalClose">
     <div class="container-fluid">
       <card>
-        <h4 class="card-title float-left">프로젝트 조회</h4>
-        <button class="btn btn-primary btn-sm btn-fill float-right"
-          onclick="location.href ='/project/add?menuCd=15'">프로젝트
+        <h4 class="card-title float-left mt-1">프로젝트 조회</h4>
+        <button class="btn btn-primary btn-sm btn-fill float-right" @click="btnPageAdd()">프로젝트
           등록</button>
       </card>
       <form @submit.prevent="projectGetList">
@@ -457,6 +456,10 @@ const router = useRouter();
 //수정/일정관리 페이지로 이동
 const btnPageMove = (mode, code) => {
   router.push({ path: `/project/${mode}`, query: { prCd: code } });
+}
+
+const btnPageAdd = () => {
+  router.push({ path: `/project/add`, query: { menuCd: 15 } });
 }
 
 // 프로젝트 삭제 버튼

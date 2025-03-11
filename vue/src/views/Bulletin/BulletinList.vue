@@ -61,18 +61,16 @@ const goToBulletinAdd = () => {
   });
 };
 
-// 📌 게시글 목록 조회 + 공지사항 정렬
+//  게시글 목록 조회 + 공지사항 정렬
 const BulletinGetList = async () => {
   try {
     const { data } = await axios.get(`/api/bulletin/bulletinList?bbsId=${bbsId.value}`);
-    console.log("API 응답 데이터:", data); 
 
     // ✅ bbsNm을 올바른 경로에서 가져오기
     if (data.master && data.master.bbsNm) {
       bbsNm.value = data.master.bbsNm; // API에서 받은 게시판 이름으로 설정
-      console.log("bbsNm 값:", bbsNm.value); 
     } else {
-      console.warn("bbsNm 값이 없습니다.");
+      alert("게시판 이름을 찾을 수 없습니다.");
     }
 
     let noticeCount = 0;
@@ -95,13 +93,14 @@ const BulletinGetList = async () => {
       gridInstance.value.resetData(BulletinList.value);
     }
   } catch (error) {
-    console.error('게시글 목록 불러오기 오류:', error);
+    alert("게시글 목록을 불러오는 데 실패했습니다. 다시 시도해주세요.");
     BulletinList.value = [];
   }
 };
 
 
-// 📌 그리드 초기화
+
+//  그리드 초기화
 const initializeGrid = () => {
   destroyGrid();
 
