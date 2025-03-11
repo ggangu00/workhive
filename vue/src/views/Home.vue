@@ -84,8 +84,8 @@
                 <div class="home-container-header">{{ selectedDate }}</div>
 
                 <div class="meeting-item" :key="i" v-for="(cal, i) in calList">
-                  <div class="meeting-category">{{cal.typeNm}}</div>
-                  <div class="meeting-title">({{ cal.deptNm }}) {{cal.schdulNm}}</div>
+                  <div class="meeting-category">{{cal.typeNm || '-'}}</div>
+                  <div class="meeting-title">{{ cal.deptNm ? '['+cal.deptNm+']' : ''}} {{cal.schdulNm}}</div>
                 </div>
 
                 <!-- 등록된 일정이 3건 미만일 경우 부족한 개수만큼 빈 회의 행을 추가 -->

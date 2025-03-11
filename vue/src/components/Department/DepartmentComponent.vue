@@ -175,6 +175,7 @@
 
    .custom-tree .p-tree-container {
       padding-bottom: 10px;
+      padding-left: 1rem !important;
    }
 
    /* 각 노드 */
@@ -251,6 +252,7 @@
 
    .btn-toggle {
       all: unset;
+      padding-right: 1rem;
    }
 
    .p-treenode-label {

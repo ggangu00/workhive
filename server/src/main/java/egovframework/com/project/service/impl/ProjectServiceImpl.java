@@ -65,28 +65,34 @@ public class ProjectServiceImpl implements ProjectService{
 	//프로젝트 등록	
 	@Transactional
     public boolean projectSave(ProjectDTO project) {
+		
 		 try {
+			 	//프로젝트 insert
 		        projectMapper.projectInsert(project);
 		        
+		        //insert된 프로젝트 코드 추출
 		        String prCd = projectMapper.getLastInsertedPrCd();
 		        project.setPrCd(prCd);  // DTO에 prCd 설정
 
-		        // 작업 리스트가 존재할 경우
+		        // 과업목록이 존재할 경우
 		        if (project.getWorkArr() != null && !project.getWorkArr().isEmpty()) {
 		            
 		            for (ProjectWorkDTO work : project.getWorkArr()) {
 		                work.setPrCd(prCd);  // 각 작업 항목에 prCd 설정
-		                projectMapper.projectWorkInsert(work);  // 개별 INSERT 실행
+		                projectMapper.projectWorkInsert(work);  // 과업목록 INSERT 실행
 		            }
 		        }
 		        
+		        
+		        //히스토리 테이블에 담을 정보 입력
 		        CommonDTO dto = new CommonDTO();
 
-		        dto.setTypeCd("T01");
-		        dto.setTblNm("PROJECT");
-		        dto.setCreateId(project.getCreateId());
+		        dto.setTypeCd("T01"); //등록
+		        dto.setTblNm("PROJECT"); //프로젝트 파트
+		        dto.setCreateId(project.getCreateId()); //등록자
 		        
-		        commonMapper.historyInsert(dto);
+		        commonMapper.historyInsert(dto); //히스토리 테이블 입력
+		        
 		        return true; 
 		    } catch (Exception e) {
 		        e.printStackTrace();
@@ -118,7 +124,7 @@ public class ProjectServiceImpl implements ProjectService{
 		        CommonDTO dto = new CommonDTO();
 
 		        dto.setTypeCd("T02");
-		        dto.setTblNm("project");
+		        dto.setTblNm("PROJECT");
 		        dto.setCreateId(project.getUpdateId());
 		        
 		        commonMapper.historyInsert(dto);
@@ -142,7 +148,7 @@ public class ProjectServiceImpl implements ProjectService{
 	        CommonDTO dto = new CommonDTO();
 	
 	        dto.setTypeCd("T03");
-	        dto.setTblNm("project");
+	        dto.setTblNm("PROJECT");
 	        dto.setCreateId(userId);
 	        
 	        commonMapper.historyInsert(dto);

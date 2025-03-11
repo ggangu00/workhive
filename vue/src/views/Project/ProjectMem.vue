@@ -18,7 +18,10 @@
                                 </span>
                             </div>
                             <div class="col-4 m-group"><!-- 조직 트리 -->
-                                <DepartmentComponent v-if="isTreeLoaded" :departmentTree="departmentTree" />
+                                <DepartmentComponent v-if="isTreeLoaded" 
+                                :isMenuToggle="false"
+                                :departmentTree="departmentTree"
+                                @departmentToMemList="departmentToMemList" />
                             </div>
 
                             <!-- 리스트(사원목록) -->
@@ -35,12 +38,6 @@
                                 </div>
 
                                 <table class="table m-table">
-                                    <colgroup>
-                                        <col width="10%">
-                                        <col width="20%">
-                                        <col width="20%">
-                                        <col width="30%">
-                                    </colgroup>
                                     <thead class="table-light">
                                         <tr>
                                             <th>번호</th>
@@ -61,13 +58,20 @@
                                                     <span class="team-label" style="text-align:left">{{ member.deptNm
                                                         }}</span>
                                                     <span class="user-name">{{ member.mberNm }} ({{
-                                                        member.mberId}})</span>
+                                                        member.mberId }})</span>
                                                 </div>
                                             </td>
                                             <td>{{ member.gradeNm || '-' }}</td>
                                             <td>{{ member.projectCnt }}건</td>
                                         </tr>
                                     </VueDraggableNext>
+                                    <tbody v-else>
+                                        <tr class="list-nodata">
+                                            <td colspan="4">
+                                                <div>해당하는 구성원이 없습니다</div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -129,7 +133,7 @@
 </template>
 
 <script setup>
-import { onBeforeMount, ref, defineComponent, watch } from 'vue';
+import { onBeforeMount, ref, defineComponent, watch, onMounted } from 'vue';
 import axios from "../../assets/js/customAxios.js";
 
 //========================== 컴포넌트 ==========================
@@ -147,8 +151,11 @@ defineComponent({
     components: { VueDraggableNext }
 });
 
+onMounted(() => {
+    departmentToMemList({ key: 0 });
+});
+
 onBeforeMount(async () => {
-    memberGetList();
     projectGetList();
     await departmentGetList();
     isTreeLoaded.value = true;
@@ -245,20 +252,27 @@ const buildPrimeVueTree = (flatList) => {
 
 //구성원 전체조회
 const members = ref([]);
-const memberGetList = async () => {
-
+const allChecked = ref(false);
+// 부서별 멤버조회
+const departmentToMemList = async (node) => {
     try {
-        const result = await axios.get(`/api/member`);
-        members.value = result.data;
+        const response = await axios.get(`/api/member/deptToMem/${node.key}`);
+
+        members.value = response.data.members.map(member => ({
+            ...member,
+            checked: false // 개별 선택 상태 기본 false
+        }));
+        allChecked.value = false; // 부서 변경 시 초기화
+
+        console.log("부서별 멤버 결과값 => ", response.data)
 
     } catch (err) {
-        members.value = [];
-
+        members.value = []
         Swal.fire({
             icon: "error",
-            title: "API 조회 오류",
-            text: "Error : " + err
-        });
+            title: "API 조회 실패",
+            text: `Error: ${err.response?.data?.error || err.message}`
+        })
     }
 }
 
