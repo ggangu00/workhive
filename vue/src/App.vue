@@ -26,7 +26,7 @@ Coded by www.creative-tim.com
          :minNav="navbarMinimize"
          v-if="showNavbar"
       />
-      <router-view :key="$route.fullPath" />
+      <router-view />
       <configurator
          :toggle="toggleConfigurator"
          :class="[showConfig ? 'show' : '', hideConfigButton ? 'd-none' : '']"
