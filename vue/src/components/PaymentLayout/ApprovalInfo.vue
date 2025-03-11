@@ -264,7 +264,6 @@ const showFileInfo = async(file) => {
   // 다운로드(서버에서 전달 받은 데이터) 받은 바이너리 데이터를 blob으로 변환합니다.
   const blob = new Blob([response.data]);
   // 특정 타입을 정의해야 경우에는 옵션을 사용해 MIME 유형을 정의 할 수 있습니다.
-  // const blob = new Blob([this.content], {type: 'text/plain'})
 
   // blob을 사용해 객체 URL을 생성합니다.
   FileSaver.saveAs(blob, file.orignlFileNm);

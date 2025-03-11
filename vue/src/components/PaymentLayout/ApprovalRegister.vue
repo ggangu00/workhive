@@ -432,8 +432,6 @@ const formSelect = (params) => {
   editor.setHTML(formFile.value);
   isShowModal.value = false;
 
-  console.log(editor.getHTML(formFile.value));
-
 }
 
 ////////////////////리셋버튼/////////////////////////
@@ -534,7 +532,7 @@ const approvalInfo = async() => {
     }
   });
 
-  console.log(editor.getHTML());
+
   try {
     const response = await axios.post('/api/document/register', formData,
       {headers: { "Content-Type": "multipart/form-data" }});

@@ -110,7 +110,7 @@
 
     <if test='deptCd != null and deptCd != ""'>
         <![CDATA[
-        AND (A.DEPT_CD IS NULL OR A.DEPT_CD = #{deptCd})
+        and (A.DEPT_CD IS NULL OR A.DEPT_CD = #{deptCd})
         ]]>
     </if>
 
@@ -173,7 +173,7 @@
 
     <if test='deptCd != null and deptCd != ""'>
         <![CDATA[
-        AND C.DEPT_CD = #{deptCd}
+        OR C.DEPT_CD = #{deptCd}
         ]]>
     </if>
 

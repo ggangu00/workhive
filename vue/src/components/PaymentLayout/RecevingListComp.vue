@@ -220,11 +220,11 @@ const TueGrid = () => {
     scrollX: true,
     scrollY: true,
     columns: props.columnDefs,
-    bodyHeight: 40 * 10,
+    bodyHeight: 40 * 9,
     rowHeaders: ["checkbox"],
     pageOptions: {
       useClient: false, // 서버 사이드 페이지네이션 사용
-      perPage: 10,
+      perPage: 9,
     },
     data: dataSource,
   });
