@@ -108,12 +108,7 @@
     FROM COMTNSCHDULINFO A
     WHERE 1=1 
 
-    <if test='deptCd != null and deptCd != ""'>
-        <![CDATA[
-        and (A.DEPT_CD IS NULL OR A.DEPT_CD = #{deptCd})
-        ]]>
-    </if>
-
+	
     <if test='mberId != null and mberId != ""'>
         <![CDATA[
         AND (
@@ -121,6 +116,13 @@
         OR (A.SCHDUL_SE != 'L07'))
         ]]>
     </if>
+
+    <if test='deptCd != null and deptCd != ""'>
+        <![CDATA[
+        and (A.DEPT_CD IS NULL OR A.DEPT_CD = #{deptCd})
+        ]]>
+    </if>
+
 
     <if test='searchMode == "MONTH" and searchMonth != null and searchMonth != ""'>
         <![CDATA[
@@ -173,7 +175,7 @@
 
     <if test='deptCd != null and deptCd != ""'>
         <![CDATA[
-        OR C.DEPT_CD = #{deptCd}
+        OR C.DEPT_CD = #{deptCd} 
         ]]>
     </if>
 

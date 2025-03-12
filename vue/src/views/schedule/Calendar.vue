@@ -89,18 +89,7 @@
                   <input type="time" class="form-control w-auto" v-model="schedule.endtm">
                 </div>
               </div>
-            <div class="mb-3" v-if="this.schedule.type !== 'L07 '">
-              <label class="form-label">부서</label>
-              <div class="row">
-                <div class="col-auto">
-                  <select class="form-select" v-model="schedule.deptCd">
-                    <option v-for="(dept, idx) in departments" :key="idx" :value="dept.deptCd">
-                      {{ dept.deptNm }}
-                    </option>
-                  </select>
-                </div>
-              </div>
-            </div>
+
             <div class="mb-3">
               <label class="form-label">담당자</label>
               <div class="row">
