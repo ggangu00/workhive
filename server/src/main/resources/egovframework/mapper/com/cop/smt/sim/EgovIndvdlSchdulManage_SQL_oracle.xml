@@ -152,9 +152,9 @@
         C.DEPT_CD,                        
         fn_get_deptnmDeptCd(C.DEPT_CD) AS DEPT_NM,
         NULL AS SCHDUL_KND_CODE,          
-        TO_CHAR(TO_DATE(B.MTG_DE, 'RRRR/MM/DD'), 'YYYYMMDD') || 
+        TO_CHAR(B.MTG_DE, 'YYYYMMDD') || 
         LPAD(REPLACE(B.MTG_BEGIN_TM, ':', ''), 4, '0') AS SCHDUL_BGNDE,  
-        TO_CHAR(TO_DATE(B.MTG_DE, 'RRRR/MM/DD'), 'YYYYMMDD') || 
+        TO_CHAR(B.MTG_DE, 'YYYYMMDD') || 
         LPAD(REPLACE(B.MTG_END_TM, ':', ''), 4, '0') AS SCHDUL_ENDDE,    
         B.MTG_NM AS SCHDUL_NM,            
         B.MTG_MTR_CN AS SCHDUL_CN,        
