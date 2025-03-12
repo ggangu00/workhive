@@ -105,7 +105,6 @@
    const boardList = ref([]);
    const BoardGetList = async () => {
       try {
-         console.log("token => ", localStorage.getItem('token'))
          if(localStorage.getItem('token') == null){
             return;
          }
@@ -140,10 +139,7 @@
 
    const menus = ref([]);
    const menuGetList = async () => {
-      console.log("token => ", localStorage.getItem('token'))
-      if(localStorage.getItem('token') == null){
-         return;
-      }
+      if(localStorage.getItem('token') == null) return;
       try {
          const response = await axios.get('/api/menu/authList');
 
