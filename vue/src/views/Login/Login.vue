@@ -49,7 +49,7 @@
          </div>
 
          <ul class="find_wrap ps-0">
-            <li><a href="/findPw" class="find_text" @click="goToFindPw">비밀번호 찾기</a></li>
+            <li style="cursor:pointer;"><a class="find_text" @click="goToFindPw">비밀번호 찾기</a></li>
          </ul>
       </div>
 
@@ -121,7 +121,8 @@
 
    // 비밀번호 찾기 페이지로 이동
    const goToFindPw = () => {
-      router.push({ path : '/findPw' });
+      router.push('/findPw')
+      //router.push({ name : 'FindPw' });
    }
 
 // ============================================= Btn Event =============================================
@@ -162,7 +163,7 @@
 
             Swal.fire({
                icon: "success",
-               title: "Login 성공 !!!",
+               title: `${userInfoStore.user.mberNm} ${userInfoStore.user.gradeNm}님 환영합니다.`,
             }).then(() => {
                router.push('/home');
             });

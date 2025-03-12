@@ -22,7 +22,8 @@ public class JwtUtil {
     private EgovPropertyService propService;
 
 	private static final long ACCESS_TOKEN_VALIDITY = 1000L * 60 * 60 * 24; // 24시간
-
+//	private static final long ACCESS_TOKEN_VALIDITY = 1000L * 30; // 30초
+	
     private Key getSigningKey() {
         String secretKey = propService.getString("jwt.secret");
 
@@ -31,7 +32,6 @@ public class JwtUtil {
 
     // JWT 생성
     public String generateToken(String username) {
-
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())

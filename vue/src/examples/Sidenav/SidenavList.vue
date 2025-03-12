@@ -60,7 +60,7 @@
             url="#"
             :aria-controls="''"
             v-bind:collapse="false"
-            collapseRef="/bulletin/bulletinList/BBSMSTR_000000000587sISEaJOxsY"
+            collapseRef="/bulletin/bulletinList/BBSMSTR_000000000494lJtzdpsLyG"
             navText="게시글 관리"
             >
                <template v-slot:icon>
@@ -96,7 +96,8 @@
    import SidenavCollapse from "./SidenavCollapse.vue";
    import axios from "../../assets/js/customAxios";
    import Swal from 'sweetalert2';
-   import { useUserInfoStore } from '../../store/userStore.js';
+   // import { useUserInfoStore } from '../../store/userStore.js';
+
 
    const router = useRouter();
 //================================= 조회 ===========================
@@ -104,8 +105,11 @@
    const boardList = ref([]);
    const BoardGetList = async () => {
       try {
-         const response = await axios.get('/api/board/boardList');
+         if(localStorage.getItem('token') == null){
+            return;
+         }
 
+         const response = await axios.get('/api/board/boardList');
          boardList.value = response.data.resultList; // 받은 데이터를 boardList에 저장
 
       } catch (error) {
@@ -130,17 +134,13 @@
    };
 
 // ============================================= Axios Event =============================================
-   const userInfoStore = useUserInfoStore();
-   let loginUser = userInfoStore.user; //
+   // const userInfoStore = useUserInfoStore();
+   // let loginUser = userInfoStore.user; //
 
    const menus = ref([]);
    const menuGetList = async () => {
+      if(localStorage.getItem('token') == null) return;
       try {
-
-         if(loginUser == null) {
-            return;
-         }
-
          const response = await axios.get('/api/menu/authList');
 
          menuBuildTree(response.data);

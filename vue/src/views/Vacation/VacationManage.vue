@@ -268,21 +268,19 @@ watch(() => [vcData.value.vcStartDt, vcData.value.vcEndDt, vcData.value.vcType],
     if(startCheck == '') await vacation.yearVcAdd(vcData.value.createId, startYear);
   }
 
-  if(vcData.value.vcStartDt != '' && vcData.value.vcEndDt != '') {
-    switch(newVal[2]) { // 연차 종류에 따른 동작
-      case 'E01': // 연차
-        vcData.value.useDays = vcDateCalc(newVal[0], newVal[1]);
-        break;
-      case 'E04': // 공가
-        vcData.value.useDays = 0;
-        break;
-      default:
-        vcData.value.useDays = 0.5;
-        vcData.value.vcEndDt = vcData.value.vcStartDt;
-    }
-  } else {
+  switch(newVal[2]) { // 연차 종류에 따른 동작
+    case 'E01': // 연차
+      vcData.value.useDays = vcDateCalc(newVal[0], newVal[1]);
+      break;
+    case 'E04': // 공가
+      vcData.value.useDays = 0;
+      break;
+    default:
+      vcData.value.useDays = 0.5;
+      vcData.value.vcEndDt = vcData.value.vcStartDt;
+  }
+  if(vcData.value.vcStartDt == '' || vcData.value.vcEndDt == '') {
     vcData.value.useDays = '';
-    
   }
 })
 
