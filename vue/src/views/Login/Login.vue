@@ -121,7 +121,7 @@
 
    // 비밀번호 찾기 페이지로 이동
    const goToFindPw = () => {
-      router.push({ path : '/findPw' });
+      router.push({ name : 'FindPw' });
    }
 
 // ============================================= Btn Event =============================================
@@ -162,7 +162,7 @@
 
             Swal.fire({
                icon: "success",
-               title: "Login 성공 !!!",
+               title: `${userInfoStore.user.mberNm} ${userInfoStore.user.gradeNm}님 환영합니다.`,
             }).then(() => {
                router.push('/home');
             });
