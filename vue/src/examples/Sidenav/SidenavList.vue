@@ -60,7 +60,7 @@
             url="#"
             :aria-controls="''"
             v-bind:collapse="false"
-            collapseRef="/bulletin/bulletinList/BBSMSTR_000000000587sISEaJOxsY"
+            collapseRef="/bulletin/bulletinList/BBSMSTR_000000000494lJtzdpsLyG"
             navText="게시글 관리"
             >
                <template v-slot:icon>

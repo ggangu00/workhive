@@ -12,7 +12,7 @@
         aria-hidden="true"
         id="iconSidenav"
       ></i>
-      <a class="m-0 navbar-brand" href="/">
+      <a class="m-0 navbar-brand" @click="movePage('/home', 1)">
         <img
           :src="logo"
           class="navbar-brand-img h-100"
@@ -29,8 +29,10 @@
 </template>
 <script>
 import SidenavList from "./SidenavList.vue";
+import { useRouter } from "vue-router";
 import logo from "@/assets/img/vue-logo.png";
 import { mapState } from "vuex";
+const router = useRouter();
 
 export default {
   name: "index",
@@ -45,5 +47,12 @@ export default {
   computed: {
     ...mapState(["isRTL", "sidebarType", "isDarkMode"]),
   },
+
+  movePage(page, menuCd){
+      router.push({
+         path: page,
+         query: { menuCd }
+      });
+   }
 };
 </script>
