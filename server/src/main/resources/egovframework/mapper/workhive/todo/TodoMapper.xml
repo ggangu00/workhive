@@ -87,11 +87,9 @@
 			state = #{state},
 			</if>
 			<if test="todoDt != null and !todoDt.equals('')">
-			todo_dt = #{todoDt},
+			todo_dt = TO_DATE(#{todoDt}, 'YYYY-MM-DD'),
 			</if>
-			<if test="content != null and !content.equals('')">
 			content = #{content},
-			</if>
 			mber_id = #{mberId}
 		where 
 			todo_cd = ${todoCd}				

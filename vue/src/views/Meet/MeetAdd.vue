@@ -232,6 +232,33 @@ const memberGetList = async () => {
 //회의 등록
 const meetAdd = async () => {
 
+
+    if (!mtgNm.value) {
+        Swal.fire({
+        icon: "info",
+        title: "회의주제를 입력하세요"
+        });
+        return;
+    } else if (!mtgDe.value) {
+        Swal.fire({
+        icon: "info",
+        title: "회의일시를 입력하세요"
+        });
+        return;
+    } else if (selected.value.length < 1) {
+        Swal.fire({
+        icon: "info",
+        title: "회의 참여자를 등록하세요"
+        });
+        return;
+    } else if (!mtgMtrCn.value) {
+        Swal.fire({
+        icon: "info",
+        title: "회의안건을 등록하세요"
+        });
+        return;
+    }
+
     const requestData = {
         memberArr: selected.value.map(row => ({
             mberId: row.value.mberId,

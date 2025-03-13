@@ -223,7 +223,6 @@ const initGrid = (gridInstance, gridDiv, rowData, colData) => {
         data: rowData.value,
         scrollX: false,
         scrollY: false,
-        rowHeaders: ['checkbox'],
         columns: colData,
         pageOptions: {
             useClient: false,
