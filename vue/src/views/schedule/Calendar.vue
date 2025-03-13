@@ -333,7 +333,7 @@ getEventColor(asdf) {
 
     const addList = new FormData();
     addList.append("cmd", "save");
-    addList.append("deptCd", this.schedule.deptCd || '');
+    addList.append("schdulDeptId", this.schedule.deptCd || '');
     addList.append("schdulSe", this.schedule.type);
     addList.append("schdulNm", this.schedule.title);
     addList.append("schdulCn", this.schedule.content);
