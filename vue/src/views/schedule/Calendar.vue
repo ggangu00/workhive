@@ -89,7 +89,18 @@
                   <input type="time" class="form-control w-auto" v-model="schedule.endtm">
                 </div>
               </div>
-
+              <div class="mb-3" v-if="this.schedule.type !== 'L07 '">
+               <label class="form-label">부서</label>
+               <div class="row">
+                 <div class="col-auto">
+                   <select class="form-select" v-model="schedule.deptCd">
+                     <option v-for="(dept, idx) in departments" :key="idx" :value="dept.deptCd">
+                       {{ dept.deptNm }}
+                     </option>
+                   </select>
+                 </div>
+               </div>
+             </div>
             <div class="mb-3">
               <label class="form-label">담당자</label>
               <div class="row">
@@ -286,7 +297,7 @@ getEventColor(asdf) {
     const endTime = e.event.end ? new Date(new Date(e.event.end).getTime() + 9 * 60 * 60 * 1000).toISOString().slice(11, 16) : startTime;
 
 
-
+    console.log(e.event)
     //모달에 정보담기
     this.schedule.title = e.event.title;
     this.schedule.content = e.event.extendedProps.schdulCn;
@@ -322,7 +333,7 @@ getEventColor(asdf) {
 
     const addList = new FormData();
     addList.append("cmd", "save");
-    addList.append("schdulDeptId", this.schedule.deptCd || '');
+    addList.append("deptCd", this.schedule.deptCd || '');
     addList.append("schdulSe", this.schedule.type);
     addList.append("schdulNm", this.schedule.title);
     addList.append("schdulCn", this.schedule.content);
