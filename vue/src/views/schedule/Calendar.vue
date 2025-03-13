@@ -405,7 +405,7 @@ getEventColor(asdf) {
   }
 });
 
-this.selectedEventId = null;
+this.selectedEventId = "";
 
   //필드초기화
   this.schedule = {
