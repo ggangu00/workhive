@@ -183,15 +183,17 @@ public class ProjectController {
 	
 	//프로젝트 일정등록
 	@PostMapping("/plan")
-	public Map<String, Object> projectPlanAdd(@Validated ProjectDTO project) {
+	public boolean projectPlanAdd(@RequestBody ProjectDTO project) {
+		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    CustomerUser user = (CustomerUser) auth.getPrincipal();
+	    String userId = user.getUserDTO().getMberId();
+	    
+	    project.setCreateId(user == null ? "" : EgovStringUtil.isNullToString(userId));
+        
 		
 	  boolean result = projectService.projectPlanInsert(project);	  
-	  	  
-	  Map<String, Object> map = new HashMap<>();
-	  map.put("result", result);
-	  map.put("list", projectService.projectPlanSelectAll(project.getPrCd()));
-		
-	  return map;
+	  return result;
 	}
 	
 	//프로젝트 일정수정
