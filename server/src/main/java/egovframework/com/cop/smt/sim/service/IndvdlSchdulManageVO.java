@@ -92,6 +92,7 @@ public class IndvdlSchdulManageVO implements Serializable {
 
 	/** 담당부서 */
 	private String schdulDeptName = "";
+	
 
 	/** 담당자명 */
 	private String schdulChargerName = "";
