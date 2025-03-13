@@ -7,7 +7,7 @@
         <button class="btn btn-primary btn-fill btn-sm" data-bs-toggle="modal" data-bs-target="#scheduleModal" id='openModalButton'>
           일정 등록
         </button>
-      </div>  
+      </div>
     </card>
 
     <div class="card" style="padding: 10px;">
@@ -15,7 +15,7 @@
         <FullCalendar
         :options="calendarOptions"
         />
-      </div> 
+      </div>
   </div>
 </div>
 </div>
@@ -101,7 +101,7 @@
           </div>
 
         </div>
-      <!-- 모달 푸터 -->   
+      <!-- 모달 푸터 -->
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary btn-fill" data-bs-dismiss="modal">닫기</button>
         <button v-if="isNewSchedule" type="button" class="btn btn-primary btn-fill" data-bs-dismiss="modal" @click="scheduleAdd">저장</button>
@@ -144,9 +144,9 @@ data() {
       },
       events: [],
       eventDisplay: 'block',
-      selectedData:[], //일정종류 
+      selectedData:[], //일정종류
       dateClick: this.handleDateClick, //연결해줘야함 이벤트
-      eventClick: this.handleEventClick,  
+      eventClick: this.handleEventClick,
       datesSet: this.handleDateChange
     },
     isNewSchedule: true, //등록(true)인지 수정인지
@@ -164,7 +164,7 @@ data() {
     deptNm:"",
     name: ""
   },
-  loginUser: "" 
+  loginUser: ""
   }
 },
 computed: {
@@ -232,7 +232,7 @@ getEventColor(asdf) {
     try {
       const response = await axios.get('/api/department'); // API 호출
       this.departments = [...response.data]; // 부서 목록 저장
-      
+
     } catch (error) {
       console.error("부서 목록을 불러오는 중 오류 발생:", error);
     }
@@ -254,7 +254,7 @@ getEventColor(asdf) {
         deptCd:"",
         deptNm:"",
         name: this.loginUser,
-        mberNm:"", 
+        mberNm:"",
       }
     })
   },
@@ -299,7 +299,7 @@ getEventColor(asdf) {
     this.schedule.type = e.event.extendedProps.type;
     this.schedule.deptNm = e.event.extendedProps.deptNm;
     this.schedule.deptCd = e.event.extendedProps.deptCd;  // 부서 코드 추가
-    
+
     this.selectedEventId = e.event.id;//수정용 스케쥴아이디
   },
 
