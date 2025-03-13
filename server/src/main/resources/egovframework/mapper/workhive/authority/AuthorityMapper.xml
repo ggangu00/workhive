@@ -73,7 +73,7 @@
 		   		description = #{description},
 		   </if>
 		   UPDATE_DT = SYSDATE,
-		   UPDATE_ID = #{updateId}
+		   UPDATE_ID = #{mberId}
 		WHERE
 		   authority_cd = #{authorityCd}
 	</update>
@@ -85,7 +85,7 @@
 		SET
 		   del_yn = UPPER('Y'),
 		   UPDATE_DT = SYSDATE,
-		   UPDATE_ID = #{updateId}
+		   UPDATE_ID = #{mberId}
 		WHERE
 		   authority_cd = #{authorityCd}
 	</update>
