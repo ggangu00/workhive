@@ -230,6 +230,14 @@ const btnSelectChange = () => {
 const reteriveBtn = () => {
   const checkedData = grid.value.getCheckedRows();
 
+  if (checkedData.length == 0) {
+    Swal.fire({
+      icon: "warning",
+      title: "문서를 선택해주세요.",
+      text: "결재할 문서를 선택한 후 다시 시도해주세요."
+    });
+    return;
+  }
   Swal.fire({
     title: "회수 진행",
     text: "회수 하시겠습니까?",
