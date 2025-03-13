@@ -59,7 +59,7 @@
 	<!-- 오류 페이지 설정: 404 에러 발생 시 지정된 페이지로 이동 사용자가 존재하지 않는 URL을 요청하면 /code404.jsp 페이지가 표시됨 -->
 	<error-page>
 		<error-code>404</error-code>
-		<location>/code404.jsp</location> <!-- 404 에러 발생 시 이동할 페이지 -->
+		<location>/index.html</location> <!-- 404 에러 발생 시 이동할 페이지 -->
 	</error-page>
 
 	<!-- 500 내부 서버 오류 발생 시 /code500.jsp 페이지로 이동 -->
