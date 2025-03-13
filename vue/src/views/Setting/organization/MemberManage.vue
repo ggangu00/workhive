@@ -10,6 +10,13 @@
          <div class="card" @keydown.esc="modalClose">
             <div class="card-body">
                <div class="row m-0">
+                  <!-- 트리뷰(부서목록) -->
+                  <div class="alert alert-primary">
+                     <span>
+                        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                        추가할 사원을 선택하여 이동할 부서로 드래그해주세요
+                     </span>
+                  </div>
                   <!-- 트리 뷰 (왼쪽) -->
                   <div class="col-3 m-group">
                      <div class="bottom-line">
@@ -33,7 +40,7 @@
                   <!-- [S] 구성원 테이블 (오른쪽) -->
                   <div class="col-9 m-group">
                      <div class="bottom-line">
-                        <div class="d-flex justify-content-between align-items-center p-2">
+                        <!-- <div class="d-flex justify-content-between align-items-center p-2">
                            <div class="button-group justify-content-between">
                               <button class="btn btn-secondary btn-fill">이동</button>
                               <button class="btn btn-primary btn-fill">저장</button>
@@ -48,7 +55,7 @@
                               <input type="text" class="form-control w50" placeholder="검색어 입력"/>
                               <button class="btn btn-info btn-fill w20">검색</button>
                            </div>
-                        </div>
+                        </div> -->
                      </div>
 
                      <table class="table m-table">
@@ -167,6 +174,18 @@
                      <input type="text" v-model="depth" readonly class="form-control w30">
                   </div>
 
+                  <!-- 수정모드일 때 parentCd -->
+                  <div class="mb-3" v-show="isEditMode">
+                     <label class="form-label">부모코드</label>
+                     <input type="text" v-model="parentCd" readonly class="form-control w30">
+                  </div>
+
+                  <!-- 수정모드일 때 DEPTH -->
+                  <div class="mb-3" v-show="isEditMode">
+                     <label class="form-label">DEPTH</label>
+                     <input type="text" v-model="depth" readonly class="form-control w30">
+                  </div>
+
                   <!-- 부서명 -->
                   <div class="mb-3">
                      <label class="form-label">부서명 <i class="fa-solid fa-asterisk point-red"></i></label>
@@ -196,7 +215,7 @@
 </template>
 
 <script setup>
-   import { ref, onBeforeMount, onMounted, onBeforeUnmount, computed, defineComponent } from "vue";
+   import { ref, onBeforeMount, onMounted, onBeforeUnmount, computed, defineComponent, nextTick } from "vue";
    import Swal from 'sweetalert2';
    import axios from "../../../assets/js/customAxios"; // 공통 Axios 설정 파일
    import Modal from '../../../components/Modal.vue';
@@ -289,21 +308,40 @@
    const modalTitle = computed(() => (isEditMode.value ? "부서 수정" : "부서 등록"));
 
    const modalOpen = () => {
+      modalReset();
       isShowModal.value = true;
    }
 
    const modalClose = (e) => {
       if (!e || (e.type === "click")) {  // ✅ 클릭 이벤트도 모달을 닫도록 처리
          isShowModal.value = false;
+         modalReset();
          return;
       }
 
       if (e.key === "Escape") {
          if(isShowModal.value) {
+            modalReset();
             isShowModal.value = !isShowModal.value
          }
       }
    }
+
+   const modalReset = () => {
+      isEditMode.value = false;
+      isSubDeptMode.value = false;
+
+      deptCd.value = "";       // ✅ 부서 코드 초기화
+      deptNm.value = "";       // ✅ 부서명 초기화
+      description.value = "";  // ✅ 부서 설명 초기화
+      parentCd.value = "";     // ✅ 부모 부서 코드 초기화
+
+      nextTick(() => { // ✅ Vue 반응형 업데이트 보장
+         deptCd.value = "";
+         deptNm.value = "";
+         description.value = "";
+      });
+   };
 // ================================================== 버튼 이벤트 ==================================================
    // 모달 등록 버튼
    const btnDeptAdd = () => {
@@ -339,6 +377,8 @@
          deptCd: deptCd.value,
          deptNm: deptNm.value,
          description: description.value,
+         depth: depth.value,
+         parentCd: parentCd.value,
       }
 
       Swal.fire({
@@ -374,7 +414,8 @@
       deptCd.value = node.key;
       deptNm.value = node.label;
       description.value = node.description || "";
-
+      depth.value = node.depth;
+      parentCd.value = node.parentCd
       // 모달 열기
       isShowModal.value = true;
    };
@@ -546,18 +587,20 @@
    // 부서 수정
    const departmentModify = async (requestData) => {
       try {
+         console.log("수정 requestData => ", requestData)
          const response = await axios.put(`/api/department`, requestData);
 
          if (response.data.result === true) {
+            console.log(response.data.deptList)
             const modifyTree = buildPrimeVueTree(response.data.deptList);
-            departmentTree.value = modifyTree; // 삭제 후 업데이트
+            departmentTree.value = modifyTree; // 수정 후 업데이트
          }
 
       } catch (err) {
 
          Swal.fire({
             icon: "error",
-            title: "삭제 실패",
+            title: "수정 실패",
             text: `Error: ${err.response?.data?.error || err.message}`
          })
       }

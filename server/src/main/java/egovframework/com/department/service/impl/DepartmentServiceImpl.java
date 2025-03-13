@@ -62,12 +62,18 @@ public class DepartmentServiceImpl implements DepartmantService {
 	// 부서 수정
 	@Transactional
 	public boolean departmentUpdate(DepartmentDTO dto) {
+		log.info("🔍 departmentUpdate - deptCd: {}", dto.getDeptCd());
+		log.info("🔍 departmentUpdate - 현재 depth 값: {}", dto.getDepth());
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        CustomerUser user = (CustomerUser) auth.getPrincipal();
+        
+		log.info("로그이이이인되어이이이있는 ID = {} ", user.getUserDTO().getMberId());
 		// 이력히스토리 관리를 위한 객체
 		CommonDTO commDto = new CommonDTO();
 
 		commDto.setTypeCd("T02");	// 수정
 		commDto.setTblNm("DEPARTMENT"); // 이력이 일어난 테이블명 
-		commDto.setCreateId(dto.getCreateId());
+		commDto.setCreateId(user.getUserDTO().getMberId());
         
 		commMapper.historyInsert(commDto);
 		return dMapper.departmentUpdate(dto) == 1 ? true : false ;
