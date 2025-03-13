@@ -57,7 +57,7 @@
               <div class="d-flex" style='margin-top: 20px;'>
                 <!-- 왼쪽 -->
                 <div class="col-5" >
-                  <div class="mb-1">F
+                  <div class="mb-1">
                     <span>첨부파일</span>
                   </div>
                   <div>
